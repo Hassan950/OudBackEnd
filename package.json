@@ -1,0 +1,31 @@
+{
+  "name": "oud",
+  "version": "1.0.0",
+  "description": "Oud Music Streaming service Back-End\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[S",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "config": "^3.2.6",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.2",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hassan950/SpotifiyBackEnd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hassan950/SpotifiyBackEnd/issues"
+  },
+  "homepage": "https://github.com/Hassan950/SpotifiyBackEnd#readme"
+}
