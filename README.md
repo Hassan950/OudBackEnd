@@ -85,7 +85,10 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Abdelrahman Tarek - abdelrahman.tarek1910@gmail.com
+Abdelrahman Tarek - abdelrahman.tarek1910@gmail.com  
+Ahmed Magdy - omagdy837@gmail.com  
+Hassan Mohamed - hmibrahim1999@gmail.com  
+Mohamed Abo Bakr - Mo.abobakr.11@gmail.com  
 
 Project Link: [https://github.com/Hassan950/OudBackEnd](https://github.com/Hassan950/OudBackEnd)
 
