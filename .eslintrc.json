@@ -1,0 +1,15 @@
+{
+  "extends": ["google"],
+  "rules": {
+    "linebreak-style": "off",
+    "no-console": "warn",
+    "prefer-destructuring": "warn",
+    "prefer-const": "warn"
+  },
+  "env": {
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
+  }
+}
