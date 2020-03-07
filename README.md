@@ -5,7 +5,6 @@
 
 <h3 align="center"> :musical_score: Oud </h3>
 
-<div align="center">
 
 [![GitHub contributors](https://img.shields.io/github/contributors/Hassan950/OudBackEnd)](https://github.com/Hassan950/OudBackEnd/contributors)
 [![GitHub issues](https://img.shields.io/github/issues/Hassan950/OudBackEnd)](https://github.com/Hassan950/OudBackEnd/issues)
