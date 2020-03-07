@@ -10,7 +10,7 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "start": "node ./src/server.js"
+    "start": "nodemon ./src/server.js"
   },
   "keywords": [
     "node",
@@ -73,7 +73,7 @@
     "jest": "^25.1.0",
     "lint-staged": "^10.0.7",
     "node-mocks-http": "^1.8.0",
-    "nodemon": "^2.0.0",
+    "nodemon": "^2.0.2",
     "prettier": "^1.18.2",
     "supertest": "^4.0.2"
   }
