@@ -3,7 +3,7 @@
  <img width=400px  src="https://user-images.githubusercontent.com/35429211/76151624-b3377e80-60bf-11ea-94e5-d55c9a515dc1.png" alt="Oud image"></a>
 </p>
 
-<h3 align="center"> :musical_score: Oud </h3>
+<h1 align="center"> :musical_score: Oud </h1>
 
 
 [![GitHub contributors](https://img.shields.io/github/contributors/Hassan950/OudBackEnd)](https://github.com/Hassan950/OudBackEnd/contributors)
