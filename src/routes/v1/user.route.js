@@ -9,4 +9,8 @@ router
   .route('/signup')
   .post(validate(authValidation.signup), authController.signup);
 
+router
+  .route('/login')
+  .post(validate(authValidation.login), authController.login);
+
 module.exports = router;

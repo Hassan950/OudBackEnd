@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const moment = require('moment');
 
 const userSchema = mongoose.Schema({
   displayName: {
@@ -49,7 +50,13 @@ const userSchema = mongoose.Schema({
     required: [true, 'Please Enter the user role!']
   },
   birthDate: {
-    type: Date
+    type: Date,
+    validate: {
+      validator: function (bd) {
+        return moment().diff(bd, 'years') > 10;
+      },
+      message: 'You must be at least 10 years old'
+    }
   },
   verified: {
     type: Boolean,
@@ -93,11 +100,16 @@ userSchema.pre('save', async function (next) {
 
   this.passwordConfirm = undefined;
   next();
-})
+});
 
 userSchema.post('save', (docs, next) => {
   docs.password = undefined;
   docs.passwordConfirm = undefined;
+  docs.__v = undefined;
+  next();
+});
+
+userSchema.post(/^find/, function (docs, next) {
   docs.__v = undefined;
   next();
 })

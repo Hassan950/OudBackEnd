@@ -1,10 +1,12 @@
 const userMocks = require('../../utils/models/user.model.mocks.js');
-
+const moment = require('moment');
 
 describe('User model', () => {
   let user;
   beforeEach(() => {
     user = userMocks.createFakeUser();
+    const age = moment().diff(user.birthDate, 'years');
+    console.log(user.birthDate);
   });
 
   describe('User model - displayName', () => {
@@ -14,7 +16,7 @@ describe('User model', () => {
         user.displayName = a;
         const error = user.validateSync();
         expect(error.errors['displayName']).toBeDefined();
-      });   
+      });
     });
   });
 
@@ -25,7 +27,7 @@ describe('User model', () => {
         user.username = a;
         const error = user.validateSync();
         expect(error.errors['username']).toBeDefined();
-      });  
+      });
     });
 
     it('should thorw error if username is less than 5 chars', () => {
@@ -54,7 +56,7 @@ describe('User model', () => {
         user.email = a;
         const error = user.validateSync();
         expect(error.errors['email']).toBeDefined();
-      });  
+      });
     })
   });
 
@@ -65,7 +67,7 @@ describe('User model', () => {
         user.password = a;
         const error = user.validateSync();
         expect(error.errors['password']).toBeDefined();
-      }); 
+      });
     })
 
     it('should be longer than 8 chars', () => {
@@ -82,7 +84,7 @@ describe('User model', () => {
         user.passwordConfirm = a;
         const error = user.validateSync();
         expect(error.errors['passwordConfirm']).toBeDefined();
-      }); 
+      });
     })
 
     it('should be longer than 8 chars', () => {
@@ -142,7 +144,7 @@ describe('User model', () => {
       const error = user.validateSync();
       expect(error.errors['country']).toBeDefined();
     })
-    
+
     it('should be required', () => {
       const args = [null, undefined];
       args.forEach(a => {
