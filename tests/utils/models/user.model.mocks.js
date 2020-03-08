@@ -3,7 +3,6 @@ const faker = require('faker');
 
 exports.createFakeUser = () => {
   const password = faker.internet.password(8, true);
-  console.log(password);
     const user = new User({
       displayName: faker.name.firstName(),
       username: faker.internet.userName(),
@@ -20,4 +19,4 @@ exports.createFakeUser = () => {
       country: 'EG'
     });
   return user;
-}
+};
