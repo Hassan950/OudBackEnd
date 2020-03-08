@@ -6,11 +6,11 @@ const compression = require('compression');
 const cors = require('cors');
 const httpStatus = require('http-status');
 const AppError = require('./utils/AppError');
-const {errorConverter, errorHandler} = require('./middlewares/error');
-const {authLimiter} = require('./middlewares/rateLimiter');
+const { errorConverter, errorHandler } = require('./middlewares/error');
+const { authLimiter } = require('./middlewares/rateLimiter');
 const config = require('config');
 const morgan = require('./config/morgan');
-const routes = require('./routes/v1/index.js');
+const routes = require('./routes/v1');
 
 const app = express();
 
@@ -26,7 +26,11 @@ app.use(helmet());
 app.use(express.json());
 
 // parse urlencoded request body
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+);
 
 // sanitize request data
 app.use(xss());

@@ -1,6 +1,7 @@
 {
-  "jwtPrivateKey": "1234",
+  "JWT_KEY": "1234",
+  "JWT_EXPIRES_IN": "30d",
   "db": "mongodb://localhost:27017/oud",
-  "PORT": "3000", 
+  "PORT": "3000",
   "NODE_ENV": "development"
 }

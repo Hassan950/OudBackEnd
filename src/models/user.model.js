@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema({
   displayName: {
@@ -48,8 +49,7 @@ const userSchema = mongoose.Schema({
     required: [true, 'Please Enter the user role!']
   },
   birthDate: {
-    type: Date,
-    get: bd => format('yyyy-MM-dd')
+    type: Date
   },
   verified: {
     type: Boolean,
@@ -61,8 +61,8 @@ const userSchema = mongoose.Schema({
     uppercase: true
   },
   country: {
-    type: String, 
-    validate: [ validator.isISO31661Alpha2, 'Invalid country'],
+    type: String,
+    validate: [validator.isISO31661Alpha2, 'Invalid country'],
     trim: true,
     uppercase: true,
     required: [true, 'Please Enter your Country!']
@@ -73,7 +73,34 @@ const userSchema = mongoose.Schema({
   google_id: {
     type: String
   }
+}, {
+  toJSON: {
+    virtuals: true
+  },
+  toObject: {
+    virtuals: true
+  }
 });
+
+userSchema.virtual('type').get(function () {
+  return 'user';
+});
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  this.password = await bcrypt.hash(this.password, 8);
+
+  this.passwordConfirm = undefined;
+  next();
+})
+
+userSchema.post('save', (docs, next) => {
+  docs.password = undefined;
+  docs.passwordConfirm = undefined;
+  docs.__v = undefined;
+  next();
+})
 
 const User = mongoose.model('User', userSchema);
 
