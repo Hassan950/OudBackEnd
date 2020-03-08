@@ -10,7 +10,8 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "start": "nodemon ./src/server.js"
+    "start": "nodemon ./src/server.js",
+    "test": "jest --watchAll --verbose"
   },
   "keywords": [
     "node",

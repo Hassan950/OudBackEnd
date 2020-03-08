@@ -4,16 +4,20 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 const cors = require('cors');
-const passport = require('passport');
 const httpStatus = require('http-status');
 const AppError = require('./utils/AppError');
 const {errorConverter, errorHandler} = require('./middlewares/error');
 const {authLimiter} = require('./middlewares/rateLimiter');
 const config = require('config');
+const morgan = require('./config/morgan');
 const routes = require('./routes/v1/index.js');
-const logger = require('./config/logger.js');
 
 const app = express();
+
+if (config.get('NODE_ENV') !== 'test') {
+  app.use(morgan.successHandler);
+  app.use(morgan.errorHandler);
+}
 
 // set security HTTP headers
 app.use(helmet());
