@@ -59,6 +59,7 @@ exports.authenticate = async (req, res, next) => {
   // getting token and check if it is there
   let token;
   if (
+    req.headers &&
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer ')
   ) {

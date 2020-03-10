@@ -4,6 +4,7 @@ const authController = require('../../../src/controllers/auth.controller.js');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 let User = require('../../../src/models/user.model.js');
+const authService = require('../../../src/services/auth.services.js');
 
 describe('Auth controllers', () => {
   let user;
@@ -98,6 +99,48 @@ describe('Auth controllers', () => {
       const newUser = res.json.mock.calls[0][0].user;
       expect(newUser).toBeDefined();
       expect(newUser).toHaveProperty(...Object.keys(user._doc));
+    });
+  });
+
+  describe('Authenticate test', () => {
+    it('should return 401 if no token passed', async () => {
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if token passed without Bearer', async () => {
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = token;
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if token passed with id doesn`t exists', async () => {
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = `Bearer ${token}`;
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should append user to req if valid token', async () => {
+      await authController.signup(req, res, next);
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = `Bearer ${token}`;
+      await authController.authenticate(req, res, next);
+      expect(req.user).toBeDefined();
+      expect(req.user).toHaveProperty(...Object.keys(user._doc));
+    });
+
+    it('should call next if valid token', async () => {
+      await authController.signup(req, res, next);
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = `Bearer ${token}`;
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
     });
   });
 

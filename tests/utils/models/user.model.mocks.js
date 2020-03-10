@@ -78,6 +78,19 @@ User.findOne = jest.fn().mockImplementation((userData) => {
   }
 });
 
+User.findById = jest.fn().mockImplementation((id) => {
+  return new Promise((resolve, reject) => {
+    const user = _.find(users, function (obj) {
+      return obj._id == id;
+    });
+    if (user) {
+      resolve(user);
+    } else {
+      resolve(null);
+    }
+  })
+});
+
 module.exports = {
   createFakeUser,
   User
