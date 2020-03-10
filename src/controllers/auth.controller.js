@@ -1,8 +1,16 @@
-const catchAsync = require('./../utils/catchAsync.js');
 const User = require('../models/user.model.js')
 const authService = require('../services/auth.services.js');
 const AppError = require('../utils/AppError.js');
 
+
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @description takes user details from the user and return user and token with 200 status code
+ *  if valid else return error with 400 status code
+ * @summary User Registration
+ */
 exports.signup = async (req, res, next) => {
   if (req.body.password != req.body.passwordConfirm) {
     return next(new AppError('Please confirm your password', 400));
@@ -15,6 +23,14 @@ exports.signup = async (req, res, next) => {
   });
 };
 
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @description takes user email and password from the user and return user and token with 200 status code
+ *  if valid else return error with 400 status code
+ * @summary User Login
+ */
 exports.login = async (req, res, next) => {
   const {
     email,

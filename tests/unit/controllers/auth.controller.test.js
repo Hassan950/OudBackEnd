@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 let User = require('../../../src/models/user.model.js');
 
-describe('signup - test', () => {
+describe('Auth controllers', () => {
   let user;
   let req;
   let res;
@@ -18,34 +18,87 @@ describe('signup - test', () => {
     next = jest.fn();
   });
 
-  it('should throw error 400 when password not equal to password confirm', async () => {
-    user.password = '11111111';
-    user.passwordConfirm = '22222222';
-    req.body = user;
-    await authController.signup(req, res, next);
-    expect(next.mock.calls.length).toBe(1);
-    expect(next.mock.calls[0][0].statusCode).toBe(400);
+  describe('signup - test', () => {
+    it('should throw error 400 when password not equal to password confirm', async () => {
+      user.password = '11111111';
+      user.passwordConfirm = '22222222';
+      req.body = user;
+      await authController.signup(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+
+    it('should return 200 if request is valid', async () => {
+      await authController.signup(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+
+    it('should return token', async () => {
+      await authController.signup(req, res, next);
+      expect(res.json.mock.calls.length).toBe(1);
+      const token = res.json.mock.calls[0][0].token;
+      const decoded = jwt.verify(token, config.get('JWT_KEY'));
+      expect(decoded).toBeDefined();
+      expect(decoded.id).toBe(user._id.toString());
+    });
+
+    it('should return user', async () => {
+      await authController.signup(req, res, next);
+      expect(res.json.mock.calls.length).toBe(1);
+      const newUser = res.json.mock.calls[0][0].user;
+      expect(newUser).toBeDefined();
+      expect(newUser).toHaveProperty(...Object.keys(user._doc));
+    });
   });
 
-  it('should return 200 if request is valid', async () => {
-    await authController.signup(req, res, next);
-    expect(res.status.mock.calls[0][0]).toBe(200);
+
+  describe('login test', () => {
+    it('should return 401 if user is not found', async () => {
+      // the user we created is not in the list
+      await authController.login(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if password is wrong', async () => {
+      // create a user
+      await authController.signup(req, res, next);
+      // use it
+      user.password = '111111111111111111111'; // differnt password
+      req.body = user.password;
+      await authController.login(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 200 if request is valid', async () => {
+      // create a user
+      await authController.signup(req, res, next);
+      // use it
+      await authController.login(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+
+    it('should return token', async () => {
+      // create a user
+      await authController.signup(req, res, next);
+      // use it
+      await authController.login(req, res, next);
+      const token = res.json.mock.calls[0][0].token;
+      const decoded = jwt.verify(token, config.get('JWT_KEY'));
+      expect(decoded).toBeDefined();
+      expect(decoded.id).toBe(user._id.toString());
+    });
+
+    it('should return user', async () => {
+      // create a user
+      await authController.signup(req, res, next);
+      // use it
+      await authController.login(req, res, next);
+      const newUser = res.json.mock.calls[0][0].user;
+      expect(newUser).toBeDefined();
+      expect(newUser).toHaveProperty(...Object.keys(user._doc));
+    });
   });
 
-  it('should return token', async () => {
-    await authController.signup(req, res, next);
-    expect(res.json.mock.calls.length).toBe(1);
-    const token = res.json.mock.calls[0][0].token;
-    const decoded = jwt.verify(token, config.get('JWT_KEY'));
-    expect(decoded).toBeDefined();
-    expect(decoded.id).toBe(user._id.toString());
-  });
-
-  it('should return user', async () => {
-    await authController.signup(req, res, next);
-    expect(res.json.mock.calls.length).toBe(1);
-    const newUser = res.json.mock.calls[0][0].user;
-    expect(newUser).toBeDefined();
-    expect(newUser).toHaveProperty(...Object.keys(user._doc));
-  });
 });

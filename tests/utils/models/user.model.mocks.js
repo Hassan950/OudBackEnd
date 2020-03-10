@@ -3,6 +3,7 @@ const moment = require('moment');
 const faker = require('faker');
 const _ = require('lodash');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const createFakeUser = () => {
   const password = faker.internet.password(8, true);
@@ -42,18 +43,40 @@ const users = [
 
 User.create = userData => {
   return new Promise((resolve, reject) => {
-    if (_.some(users, ['username', userData.username]),
+    if (_.some(users, ['username', userData.username]) ||
       _.some(users, ['email', userData.email])) {
       reject({ error: 'That username already exists.' });
     } else {
       const newUser = {
         id: mongoose.Types.ObjectId(),
         ...userData._doc
-      }; users.push(newUser);
-      resolve(newUser);
+      };
+      bcrypt.hash(newUser.password, 8)
+        .then((result) => {
+          newUser.password = result;
+          users.push(newUser);
+          resolve(newUser);
+        }, err => { });
     }
   });
 };
+
+User.findOne = jest.fn().mockImplementation((userData) => {
+  return {
+    select: jest.fn().mockResolvedValue(
+      new Promise((resolve, reject) => {
+        const user = _.find(users, function (obj) {
+          return obj.email == userData.email;
+        });
+        if (user) {
+          resolve(user);
+        } else {
+          resolve(null);
+        }
+      })
+    )
+  }
+});
 
 module.exports = {
   createFakeUser,
