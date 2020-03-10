@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 let User = require('../../../src/models/user.model.js');
 const authService = require('../../../src/services/auth.services.js');
+const _ = require('lodash');
 
 describe('Auth controllers', () => {
   let user;
@@ -144,4 +145,23 @@ describe('Auth controllers', () => {
     });
   });
 
+  describe('Authorize test', () => {
+    it('should return 403 if you don`t have permission', async () => {
+      const args = ['free', 'premium', 'artist'];
+      args.forEach(async a => {
+        user.role = a;
+        await authController.authorize(_.filter(args, function (el) {
+          return el != a;
+        }))
+      });
+    });
+
+    it('should call next if valid', async () => {
+      const args = ['free', 'premium', 'artist'];
+      args.forEach(async a => {
+        user.role = a;
+        await authController.authorize(args);
+      });
+    });
+  });
 });
