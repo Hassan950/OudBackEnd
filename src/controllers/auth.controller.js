@@ -3,7 +3,7 @@ const User = require('../models/user.model.js')
 const authService = require('../services/auth.services.js');
 const AppError = require('../utils/AppError.js');
 
-exports.signup = catchAsync(async (req, res, next) => {
+exports.signup = async (req, res, next) => {
   if (req.body.password != req.body.passwordConfirm) {
     return next(new AppError('Please confirm your password', 400));
   }
@@ -13,9 +13,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     token: token,
     user: newUser
   });
-});
+};
 
-exports.login = catchAsync(async (req, res, next) => {
+exports.login = async (req, res, next) => {
   const {
     email,
     password
@@ -35,4 +35,4 @@ exports.login = catchAsync(async (req, res, next) => {
     token: token,
     user: user
   });
-});
+};

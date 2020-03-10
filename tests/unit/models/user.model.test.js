@@ -6,7 +6,6 @@ describe('User model', () => {
   beforeEach(() => {
     user = userMocks.createFakeUser();
     const age = moment().diff(user.birthDate, 'years');
-    console.log(user.birthDate);
   });
 
   describe('User model - displayName', () => {
@@ -152,6 +151,14 @@ describe('User model', () => {
         const error = user.validateSync();
         expect(error.errors['country']).toBeDefined();
       });
+    });
+  });
+
+  describe('user model - birthDate', () => {
+    it('You must be at least 10 years old', () => {
+      user.birthDate = moment().subtract(1, 'years');
+      const error = user.validateSync();
+      expect(error.errors['birthDate']).toBeDefined();
     });
   });
 });
