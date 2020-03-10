@@ -19,7 +19,6 @@ exports.signup = async (req, res, next) => {
   }
   const newUser = await User.create(req.body);
   const token = authService.generateAuthToken(newUser._id);
-  res.setHeader('x-auth-token', token);
   res.status(200).json({
     token: token,
     user: newUser
@@ -49,7 +48,6 @@ exports.login = async (req, res, next) => {
 
   user.password = undefined;
   const token = authService.generateAuthToken(user._id);
-  res.setHeader('x-auth-token', token);
   res.status(200).json({
     token: token,
     user: user
