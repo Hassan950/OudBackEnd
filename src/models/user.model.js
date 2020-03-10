@@ -75,10 +75,18 @@ const userSchema = mongoose.Schema({
     required: [true, 'Please Enter your Country!']
   },
   facebook_id: {
-    type: String
+    type: {
+      id: String,
+      token: String
+    },
+    select: false
   },
   google_id: {
-    type: String
+    type: {
+      id: String,
+      token: String
+    },
+    select: false
   }
 }, {
   toJSON: {

@@ -19,6 +19,7 @@ exports.signup = async (req, res, next) => {
   }
   const newUser = await User.create(req.body);
   const token = authService.generateAuthToken(newUser._id);
+  res.setHeader('x-auth-token', token);
   res.status(200).json({
     token: token,
     user: newUser
@@ -48,13 +49,21 @@ exports.login = async (req, res, next) => {
 
   user.password = undefined;
   const token = authService.generateAuthToken(user._id);
-
+  res.setHeader('x-auth-token', token);
   res.status(200).json({
     token: token,
     user: user
   });
 };
 
+
+/**
+ * @version 1.0.0
+ * @throws AppError 401 if no/wrong token passed 
+ * @author Abdelrahman Tarek
+ * @description takes user token to authenticate user
+ * @summary User Authentication
+ */
 exports.authenticate = async (req, res, next) => {
   // getting token and check if it is there
   let token;
@@ -84,6 +93,13 @@ exports.authenticate = async (req, res, next) => {
   next();
 };
 
+/**
+ * @version 1.0.0
+ * @throws AppError 403 if user doesn`t have permission 
+ * @author Abdelrahman Tarek
+ * @description give permission to users based on roles
+ * @summary User Authorization
+ */
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
