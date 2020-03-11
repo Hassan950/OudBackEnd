@@ -12,6 +12,7 @@ const { promisify } = require('util');
  * @description takes user details from the user and return user and token with 200 status code
  *  if valid else return error with 400 status code
  * @summary User Registration
+ * @todo return 401 if set role to premium without credit or atrtist without request
  */
 exports.signup = async (req, res, next) => {
   if (req.body.password != req.body.passwordConfirm) {
@@ -19,6 +20,13 @@ exports.signup = async (req, res, next) => {
   }
   const newUser = await User.create(req.body);
   const token = authService.generateAuthToken(newUser._id);
+  // TODO
+  // Return 401 if role is premium without credit 
+  // Return 401 if role is artist without request
+  // Add device
+  // Send token as header
+  // use mail to verify user
+
   res.status(200).json({
     token: token,
     user: newUser
@@ -45,6 +53,10 @@ exports.login = async (req, res, next) => {
   if (!user || !await authService.checkPassword(password, user.password)) {
     return next(new AppError('Incorrect mail or password!', 401));
   }
+
+  // TODO
+  // Add device
+  // Send token as header
 
   user.password = undefined;
   const token = authService.generateAuthToken(user._id);
@@ -84,6 +96,10 @@ exports.updatePassword = async (req, res, next) => {
   user.password = password;
   user.passwordConfirm = password;
 
+
+  // TODO
+  // Add last change password date
+
   await user.save();
   const token = authService.generateAuthToken(user._id);
 
@@ -115,6 +131,10 @@ exports.authenticate = async (req, res, next) => {
 
   // verification token
   const payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
+
+
+  // TODO
+  // Add checks if the user changed password after creating this token
 
   // check if user still exists
   const user = await User.findById(payload.id);
