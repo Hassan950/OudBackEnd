@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi');
 const moment = require('moment');
 const validator = require('validator');
-const AppError = require('../utils/AppError');
 
 const ageCheck = (value, helpers) => {
   const age = moment().diff(value, 'years');
@@ -61,3 +60,17 @@ exports.login = {
       .min(8),
   })
 };
+
+exports.updatePassword = {
+  body: Joi.object().keys({
+    currentPassword: Joi.string()
+      .required()
+      .min(8),
+    password: Joi.string()
+      .required()
+      .min(8),
+    passwordConfirm: Joi.string()
+      .required()
+      .min(8),
+  })
+}

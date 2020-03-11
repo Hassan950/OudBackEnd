@@ -42,7 +42,7 @@ exports.login = async (req, res, next) => {
     email: email,
   }).select('+password');
 
-  if (!user || await authService.checkPassword(password, user.password)) {
+  if (!user || !await authService.checkPassword(password, user.password)) {
     return next(new AppError('Incorrect mail or password!', 401));
   }
 
@@ -54,6 +54,42 @@ exports.login = async (req, res, next) => {
   });
 };
 
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status, AppError 401 status 
+ * @author Abdelrahman Tarek
+ * @description takes currentPassword, Password and passwordConfirm. if currentPassword is wrong return 401 status
+ * if password != passwordConfirm return 400
+ * @summary User Update Password
+ */
+exports.updatePassword = async (req, res, next) => {
+  const {
+    currentPassword,
+    password,
+    passwordConfirm
+  } = req.body;
+
+  // get user with a password
+  const user = await User.findById(req.user._id).select('+password');
+
+  if (await authService.checkPassword(currentPassword, user.password)) {
+    return next(new AppError('Incorrect password!', 401));
+  }
+
+  if (password != passwordConfirm) {
+    return next(new AppError('Please confirm your password', 400));
+  }
+
+  user.password = password;
+
+  await user.save();
+  const token = authService.generateAuthToken(user._id);
+
+  res.status(200).json({
+    token: token,
+    user: user
+  });
+};
 
 /**
  * @version 1.0.0

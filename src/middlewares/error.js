@@ -9,7 +9,7 @@ const errorConverter = (err, req, res, next) => {
   if (!(error instanceof AppError)) {
     const statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
     const message = error.message || httpStatus[statusCode];
-    error = new AppError(statusCode, message, false, err.stack);
+    error = new AppError(message, statusCode, false, err.stack);
   }
   next(error);
 };
