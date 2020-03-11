@@ -1,4 +1,4 @@
-const User = require('../models/user.model.js')
+const { User } = require('../models/user.model.js')
 const authService = require('../services/auth.services.js');
 const AppError = require('../utils/AppError.js');
 const jwt = require('jsonwebtoken');
@@ -69,18 +69,20 @@ exports.updatePassword = async (req, res, next) => {
     passwordConfirm
   } = req.body;
 
+  if (!req.user) {
+    return next(new AppError('PLease Authentcate first', 500));
+  }
   // get user with a password
   const user = await User.findById(req.user._id).select('+password');
-
-  if (await authService.checkPassword(currentPassword, user.password)) {
+  if (!user || !await authService.checkPassword(currentPassword, user.password)) {
     return next(new AppError('Incorrect password!', 401));
   }
-
   if (password != passwordConfirm) {
     return next(new AppError('Please confirm your password', 400));
   }
 
   user.password = password;
+  user.passwordConfirm = password;
 
   await user.save();
   const token = authService.generateAuthToken(user._id);

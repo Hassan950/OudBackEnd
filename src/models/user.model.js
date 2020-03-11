@@ -124,4 +124,4 @@ userSchema.post(/^find/, function (docs, next) {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+module.exports = { User, userSchema };

@@ -3,7 +3,7 @@ const requestMocks = require('../../utils/request.mock.js');
 const authController = require('../../../src/controllers/auth.controller.js');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-let User = require('../../../src/models/user.model.js');
+let { User } = require('../../../src/models/user.model.js');
 const authService = require('../../../src/services/auth.services.js');
 const _ = require('lodash');
 
@@ -146,21 +146,84 @@ describe('Auth controllers', () => {
   });
 
   describe('Authorize test', () => {
-    it('should return 403 if you don`t have permission', async () => {
+    it('should return 403 if you don`t have permission', () => {
       const args = ['free', 'premium', 'artist'];
       args.forEach(async a => {
         user.role = a;
-        await authController.authorize(_.filter(args, function (el) {
+        authController.authorize(_.filter(args, function (el) {
           return el != a;
         }))
       });
     });
 
-    it('should call next if valid', async () => {
+    it('should call next if valid', () => {
       const args = ['free', 'premium', 'artist'];
       args.forEach(async a => {
         user.role = a;
-        await authController.authorize(args);
+        authController.authorize(args);
+      });
+    });
+  });
+
+  describe('Password - test', () => {
+    beforeEach(async () => {
+      user.password = '12345678';
+      user.passwordConfirm = user.password;
+      await User.create(user);
+      req.user = user;
+      // fill request body
+      req.body = {};
+      req.body = {
+        currentPassword: user.password,
+        password: '11111111',
+        passwordConfirm: '11111111'
+      }
+      // mocks
+      User.findById = userMocks.findByIdWithSelect;
+    });
+
+    describe('Update Password test', () => {
+      it('should return 500 if your didn`t authenticate', async () => {
+        req.user = undefined;
+        await authController.updatePassword(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(500);
+      })
+      it('should return 401 if password is wrong', async () => {
+        req.body.currentPassword = '11111111' // different from password we created the user with
+        await authController.updatePassword(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(401);
+      })
+      it('should return 401 if no user found with the given id', async () => {
+        req.user = userMocks.createFakeUser();
+        await authController.updatePassword(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(401);
+      });
+      it('should return 400 if password doesn`t match with password confirm', async () => {
+        req.body.passwordConfirm = '22222222';
+        await authController.updatePassword(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+      it('should save the user', async () => {
+        await authController.updatePassword(req, res, next);
+        expect(userMocks.save.mock.calls).toBeDefined();
+        expect(userMocks.save.mock.calls.length).toBe(1);
+      });
+      it('should return 200 if input is valid', async () => {
+        await authController.updatePassword(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+      });
+      it('should return token if input is valid', async () => {
+        await authController.updatePassword(req, res, next);
+        const token = res.json.mock.calls[0][0].token;
+        const decoded = jwt.verify(token, config.get('JWT_KEY'));
+        expect(decoded).toBeDefined();
+        expect(decoded.id).toBe(user._id.toString());
+      });
+      it('should return user if input is valid', async () => {
+        await authController.updatePassword(req, res, next);
+        const newUser = res.json.mock.calls[0][0].user;
+        expect(newUser).toBeDefined();
+        expect(newUser).toHaveProperty(...Object.keys(user._doc));
       });
     });
   });

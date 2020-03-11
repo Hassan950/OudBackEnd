@@ -11,7 +11,7 @@ exports.generateAuthToken = (userId) => {
   });
 };
 
-exports.checkPassword = async (password, correctPassword) => {
-  const isPasswordMatch = await bcrypt.compare(password, correctPassword);
+exports.checkPassword = async (password, hashedPassword) => {
+  const isPasswordMatch = await bcrypt.compare(password, hashedPassword);
   return isPasswordMatch;
 };
