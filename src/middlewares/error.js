@@ -6,6 +6,7 @@ const logger = require('./../config/logger');
 const errorConverter = (err, req, res, next) => {
   let error = err;
   if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+  if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
   if (!(error instanceof AppError)) {
     const statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
     const message = error.message || httpStatus[statusCode];
