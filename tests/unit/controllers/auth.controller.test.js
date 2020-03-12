@@ -11,7 +11,6 @@ let userService = require('../../../src/services/user.services.js');
 let emailService = require('../../../src/services/mail.services.js');
 let emailServiceMocks = require('../../utils/services/email.services.mock.js');
 
-
 describe('Auth controllers', () => {
   let user;
   let req;
@@ -234,6 +233,85 @@ describe('Auth controllers', () => {
         await authController.forgotPassword(req, res, next);
         expect(next.mock.calls[0][0].statusCode).toBe(500);
       });
+    });
+=======
+  describe('Authenticate test', () => {
+    it('should return 401 if no token passed', async () => {
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if token passed without Bearer', async () => {
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = token;
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if token passed with id doesn`t exists', async () => {
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = `Bearer ${token}`;
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should append user to req if valid token', async () => {
+      await authController.signup(req, res, next);
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = `Bearer ${token}`;
+      await authController.authenticate(req, res, next);
+      expect(req.user).toBeDefined();
+      expect(req.user).toHaveProperty(...Object.keys(user._doc));
+    });
+
+    it('should call next if valid token', async () => {
+      await authController.signup(req, res, next);
+      const token = authService.generateAuthToken(user._id);
+      req.headers = {};
+      req.headers.authorization = `Bearer ${token}`;
+      await authController.authenticate(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+    });
+  });
+
+  describe('Authorize test', () => {
+    it('should return 403 if you don`t have permission', () => {
+      const args = ['free', 'premium', 'artist'];
+      args.forEach(async a => {
+        user.role = a;
+        authController.authorize(_.filter(args, function (el) {
+          return el != a;
+        }))
+      });
+    });
+
+    it('should call next if valid', () => {
+      const args = ['free', 'premium', 'artist'];
+      args.forEach(async a => {
+        user.role = a;
+        authController.authorize(args);
+      });
+    });
+  });
+
+  describe('Password - test', () => {
+    beforeEach(async () => {
+      user.password = '12345678';
+      user.passwordConfirm = user.password;
+      await User.create(user);
+      req.user = user;
+      // fill request body
+      req.body = {};
+      req.body = {
+        currentPassword: user.password,
+        password: '11111111',
+        passwordConfirm: '11111111'
+      }
+      // mocks
+      User.findById = userMocks.findByIdWithSelect;
     });
 
     describe('Update Password test', () => {
