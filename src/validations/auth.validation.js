@@ -41,6 +41,7 @@ exports.signup = {
       .isoDate()
       .custom(ageCheck),
     country: Joi.string()
+      .required()
       .custom(countryCheck),
     gender: Joi.string()
       .valid('M', 'F'),
