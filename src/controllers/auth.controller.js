@@ -117,7 +117,9 @@ exports.forgotPassword = async (req, res, next) => {
   // TODOS
   // generate reset token and save user
   const resetToken = authService.createPasswordResetToken(user);
-  await user.save();
+  await user.save({
+    validateBeforeSave: false
+  });
   // send reset token via email
   const resetURL = `${req.protocol}://${req.get(
     'host'
@@ -140,7 +142,9 @@ exports.forgotPassword = async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
 
-    await user.save();
+    await user.save({
+      validateBeforeSave: false
+    });
 
     return next(
       new AppError(
