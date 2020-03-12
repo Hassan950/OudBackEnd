@@ -1,9 +1,16 @@
-const { User } = require('../models/user.model.js')
 const authService = require('../services/auth.services.js');
 const AppError = require('../utils/AppError.js');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const { promisify } = require('util');
+const userService = require('../services/user.services.js');
+
+const createTokenAndSend = (user, res) => {
+  const token = authService.generateAuthToken(user._id);
+  res.setHeader('x-auth-token', token);
+  return res.status(200).json({
+    token: token,
+    user: user
+  });
+};
+
 
 /**
  * @version 1.0.0
@@ -18,14 +25,14 @@ exports.signup = async (req, res, next) => {
   if (req.body.password != req.body.passwordConfirm) {
     return next(new AppError('Please confirm your password', 400));
   }
-  const newUser = await User.create(req.body);
+  const newUser = await userService.createUser(req.body);
   // TODO
   // Return 401 if role is premium without credit 
   // Return 401 if role is artist without request
   // Add device
   // use mail to verify user
 
-  authService.createTokenAndSend(newUser, res);
+  createTokenAndSend(newUser, res);
 };
 
 /**
@@ -41,12 +48,10 @@ exports.login = async (req, res, next) => {
     email,
     password
   } = req.body;
-  const user = await User.findOne({
-    email: email,
-  }).select('+password');
 
-  if (!user || !await authService.checkPassword(password, user.password)) {
-    return next(new AppError('Incorrect mail or password!', 401));
+  const user = await userService.findUserAndCheckPassword({ email: email }, password);
+  if (!user) {
+    return next(new AppError('Incorrect email or password!', 401));
   }
 
   // TODO
@@ -54,7 +59,7 @@ exports.login = async (req, res, next) => {
   // Send token as header
 
   user.password = undefined;
-  authService.createTokenAndSend(user, res);
+  createTokenAndSend(user, res);
 };
 
 /**
@@ -76,12 +81,13 @@ exports.updatePassword = async (req, res, next) => {
     return next(new AppError('PLease Authentcate first', 500));
   }
   // get user with a password
-  const user = await User.findById(req.user._id).select('+password');
-  if (!user || !await authService.checkPassword(currentPassword, user.password)) {
-    return next(new AppError('Incorrect password!', 401));
-  }
   if (password != passwordConfirm) {
     return next(new AppError('Please confirm your password', 400));
+  }
+
+  const user = await userService.findUserByIdAndCheckPassword(req.user._id, currentPassword);
+  if (!user) {
+    return next(new AppError('Incorrect password!', 401));
   }
 
   user.password = password;
@@ -92,5 +98,5 @@ exports.updatePassword = async (req, res, next) => {
   // Add last change password date
 
   await user.save();
-  authService.createTokenAndSend(user, res);
+  createTokenAndSend(user, res);
 };
