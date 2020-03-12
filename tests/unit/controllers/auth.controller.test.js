@@ -67,7 +67,17 @@ describe('Auth controllers', () => {
       await authController.signup(req, res, next);
       // use it
       user.password = '111111111111111111111'; // differnt password
-      req.body = user.password;
+      req.body = user;
+      await authController.login(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+    it('should return 401 if email is wrong', async () => {
+      // create a user
+      await authController.signup(req, res, next);
+      // use it
+      user.email = 'admin@admin.com'; // differnt password
+      req.body = user;
       await authController.login(req, res, next);
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(401);

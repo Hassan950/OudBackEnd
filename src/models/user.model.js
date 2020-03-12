@@ -112,7 +112,10 @@ userSchema.post('save', (docs, next) => {
 });
 
 userSchema.post(/^find/, function (docs, next) {
-  docs.__v = undefined;
+  if (docs) {
+    docs.__v = undefined;
+  }
+
   next();
 })
 
