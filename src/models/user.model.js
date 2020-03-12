@@ -124,9 +124,9 @@ userSchema.pre('save', function (next) {
 });
 
 userSchema.post('save', (docs, next) => {
-  docs.password = undefined;
-  docs.passwordConfirm = undefined;
-  docs.__v = undefined;
+  if (docs.password) docs.password = undefined;
+  if (docs.passwordConfirm) docs.passwordConfirm = undefined;
+  if (docs.__v) docs.__v = undefined;
   next();
 });
 

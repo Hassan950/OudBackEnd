@@ -73,3 +73,11 @@ exports.updatePassword = {
       .required()
   })
 }
+
+exports.forgotPassword = {
+  body: Joi.object().keys({
+    email: Joi.string()
+      .required()
+      .email()
+  })
+}

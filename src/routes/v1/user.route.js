@@ -16,6 +16,6 @@ router
 
 router
   .route('/forgotPassword')
-  .post(catchAsync(authController.forgotPassword));
+  .post(validate(authValidation.forgotPassword), catchAsync(authController.forgotPassword));
 
 module.exports = router;
