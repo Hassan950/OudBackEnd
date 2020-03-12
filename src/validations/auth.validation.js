@@ -26,8 +26,7 @@ exports.signup = {
       .required()
       .min(8),
     passwordConfirm: Joi.string()
-      .required()
-      .min(8),
+      .required(),
     username: Joi.string()
       .required()
       .min(5)
@@ -36,12 +35,13 @@ exports.signup = {
       .required()
       .email(),
     role: Joi.string()
-      .required()
+      .default('free')
       .valid('free', 'premium', 'artist'),
     birthDate: Joi.string()
       .isoDate()
       .custom(ageCheck),
     country: Joi.string()
+      .required()
       .custom(countryCheck),
     gender: Joi.string()
       .valid('M', 'F'),
@@ -71,6 +71,5 @@ exports.updatePassword = {
       .min(8),
     passwordConfirm: Joi.string()
       .required()
-      .min(8),
   })
 }
