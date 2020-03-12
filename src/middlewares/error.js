@@ -8,7 +8,7 @@ const errorConverter = (err, req, res, next) => {
   if (config.get('NODE_ENV') === 'production') {
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
-    if (error.name === 'jsonWebTokenError') error = handleJWTError(error);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(error);
     if (error.name === 'CastError') error = handleCastErrorDB(error);
   }

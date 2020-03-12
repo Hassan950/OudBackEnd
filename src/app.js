@@ -40,8 +40,15 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-app.use(cors());
-app.options('*', cors());
+const corsOptions = {
+  exposedHeaders: ['x-auth-token'],
+  origin: 'http:\\localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'PUT']
+}
+
+app.use(cors(corsOptions));
+// app.options('*', cors());
 
 // limit repeated failed requests to auth endpoints
 if (config.get('NODE_ENV') === 'production') {
