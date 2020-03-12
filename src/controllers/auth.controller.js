@@ -154,3 +154,34 @@ exports.forgotPassword = async (req, res, next) => {
     );
   }
 };
+
+
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status 
+ * @author Abdelrahman Tarek
+ * @summary User reset password
+ */
+exports.resetPassword = async (req, res, next) => {
+  // get user based on token
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await userService.getUser({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: {
+      $gt: Date.now()
+    }
+  });
+  // if token has not expired, and there is user, set the new password
+  if (!user) return next(new AppError('Token is invalid or has expired', 400));
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  createTokenAndSend(user, res)
+};

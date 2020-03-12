@@ -18,4 +18,8 @@ router
   .route('/forgotPassword')
   .post(validate(authValidation.forgotPassword), catchAsync(authController.forgotPassword));
 
+router
+  .route('/resetPassword/:token')
+  .patch(catchAsync(authController.resetPassword));
+
 module.exports = router;
