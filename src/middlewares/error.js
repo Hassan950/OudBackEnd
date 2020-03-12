@@ -8,6 +8,8 @@ const errorConverter = (err, req, res, next) => {
   if (config.get('NODE_ENV') === 'production') {
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
+    if (error.name === 'jsonWebTokenError') error = handleJWTError(error);
+    if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(error);
   }
   if (!(error instanceof AppError)) {
     const statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
@@ -16,6 +18,12 @@ const errorConverter = (err, req, res, next) => {
   }
   next(error);
 };
+
+const handleJWTError = err =>
+  new AppError('Invalid Token. Please log in again', 401);
+
+const handleJWTExpiredError = err =>
+  new AppError('Your token has expired! Please log in again.', 401);
 
 const handleValidationErrorDB = err => {
   const errors = Object.values(err.errors).map(el => el.message);
