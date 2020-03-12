@@ -20,6 +20,6 @@ router
 
 router
   .route('/resetPassword/:token')
-  .patch(catchAsync(authController.resetPassword));
+  .patch(validate(authValidation.resetPassword), catchAsync(authController.resetPassword));
 
 module.exports = router;

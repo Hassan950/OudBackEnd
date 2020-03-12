@@ -158,10 +158,7 @@ exports.forgotPassword = async (req, res, next) => {
  */
 exports.resetPassword = async (req, res, next) => {
   // get user based on token
-  const hashedToken = crypto
-    .createHash('sha256')
-    .update(req.params.token)
-    .digest('hex');
+  const hashedToken = authService.getHashedToken(req.params.token);
 
   const user = await userService.getUser({
     passwordResetToken: hashedToken,

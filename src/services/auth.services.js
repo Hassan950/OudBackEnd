@@ -19,10 +19,7 @@ const checkPassword = async (password, hashedPassword) => {
 const createPasswordResetToken = (user) => {
   const resetToken = crypto.randomBytes(32).toString('hex');
 
-  const passwordResetToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
+  const passwordResetToken = getHashedToken(resetToken);
 
   const passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
@@ -32,8 +29,17 @@ const createPasswordResetToken = (user) => {
   return resetToken;
 };
 
+const getHashedToken = (token) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
+  return hashedToken;
+}
+
 module.exports = {
   generateAuthToken,
   checkPassword,
-  createPasswordResetToken
+  createPasswordResetToken,
+  getHashedToken
 };
