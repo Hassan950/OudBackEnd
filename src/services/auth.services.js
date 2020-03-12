@@ -11,9 +11,7 @@ exports.generateAuthToken = (userId) => {
   });
 };
 
-exports.checkPassword = async (password, correctPassword) => {
-  const isPasswordMatch = await bcrypt.compare(password, correctPassword);
-  if (!isPasswordMatch) {
-    throw new AppError('Passwords do not match', 400);
-  }
+exports.checkPassword = async (password, hashedPassword) => {
+  const isPasswordMatch = await bcrypt.compare(password, hashedPassword);
+  return isPasswordMatch;
 };

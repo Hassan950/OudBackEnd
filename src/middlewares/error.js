@@ -5,14 +5,31 @@ const logger = require('./../config/logger');
 
 const errorConverter = (err, req, res, next) => {
   let error = err;
-  if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+  if (config.get('NODE_ENV') === 'production') {
+    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+    if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
+    if (error.name === 'jsonWebTokenError') error = handleJWTError(error);
+    if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(error);
+    if (error.name === 'CastError') error = handleCastErrorDB(error);
+  }
   if (!(error instanceof AppError)) {
     const statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
     const message = error.message || httpStatus[statusCode];
-    error = new AppError(statusCode, message, false, err.stack);
+    error = new AppError(message, statusCode, false, err.stack);
   }
   next(error);
 };
+
+const handleCastErrorDB = err => {
+  const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
+};
+
+const handleJWTError = err =>
+  new AppError('Invalid Token. Please log in again', 401);
+
+const handleJWTExpiredError = err =>
+  new AppError('Your token has expired! Please log in again.', 401);
 
 const handleValidationErrorDB = err => {
   const errors = Object.values(err.errors).map(el => el.message);

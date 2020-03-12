@@ -35,7 +35,7 @@ const userSchema = mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, 'Please confirm your password!'],
-    minlength: [8, 'Password Confirm is very short!'],
+    minlength: [8, 'Please confirm your password!'],
     select: false,
     validate: {
       validator: function (el) {
@@ -47,7 +47,7 @@ const userSchema = mongoose.Schema({
   role: {
     type: String,
     enum: ['free', 'premium', 'artist'],
-    required: [true, 'Please Enter the user role!']
+    default: 'free'
   },
   birthDate: {
     type: Date,
@@ -75,10 +75,12 @@ const userSchema = mongoose.Schema({
     required: [true, 'Please Enter your Country!']
   },
   facebook_id: {
-    type: String
+    type: String,
+    select: false
   },
   google_id: {
-    type: String
+    type: String,
+    select: false
   }
 }, {
   toJSON: {
@@ -110,10 +112,13 @@ userSchema.post('save', (docs, next) => {
 });
 
 userSchema.post(/^find/, function (docs, next) {
-  docs.__v = undefined;
+  if (docs) {
+    docs.__v = undefined;
+  }
+
   next();
 })
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+module.exports = { User, userSchema };

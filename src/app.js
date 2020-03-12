@@ -45,7 +45,8 @@ app.options('*', cors());
 
 // limit repeated failed requests to auth endpoints
 if (config.get('NODE_ENV') === 'production') {
-  app.use('/v1/auth', authLimiter);
+  app.use('/api/v1/auth', authLimiter);
+  app.use('/api/v1/users/login', authLimiter);
 }
 
 // v1 api routes
@@ -53,7 +54,7 @@ app.use('/api/v1', routes);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
-  next(new AppError(httpStatus.NOT_FOUND, 'Not found'));
+  next(new AppError('Not found', httpStatus.NOT_FOUND));
 });
 
 // convert error to AppError, if needed
