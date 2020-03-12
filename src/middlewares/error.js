@@ -10,6 +10,7 @@ const errorConverter = (err, req, res, next) => {
     if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
     if (error.name === 'jsonWebTokenError') error = handleJWTError(error);
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(error);
+    if (error.name === 'CastError') error = handleCastErrorDB(error);
   }
   if (!(error instanceof AppError)) {
     const statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
@@ -17,6 +18,11 @@ const errorConverter = (err, req, res, next) => {
     error = new AppError(message, statusCode, false, err.stack);
   }
   next(error);
+};
+
+const handleCastErrorDB = err => {
+  const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
 };
 
 const handleJWTError = err =>
