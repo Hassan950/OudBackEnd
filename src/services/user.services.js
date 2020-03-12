@@ -39,8 +39,9 @@ const createUser = async (userData) => {
   return newUser;
 };
 
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
-  createUser
+  createUser,
 }

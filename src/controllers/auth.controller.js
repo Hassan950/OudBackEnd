@@ -56,7 +56,6 @@ exports.login = async (req, res, next) => {
 
   // TODO
   // Add device
-  // Send token as header
 
   user.password = undefined;
   createTokenAndSend(user, res);
@@ -92,11 +91,6 @@ exports.updatePassword = async (req, res, next) => {
 
   user.password = password;
   user.passwordConfirm = password;
-
-
-  // TODO
-  // Add last change password date
-
   await user.save();
   createTokenAndSend(user, res);
 };
