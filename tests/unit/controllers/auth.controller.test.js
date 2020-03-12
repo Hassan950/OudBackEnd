@@ -6,6 +6,11 @@ const config = require('config');
 let { User } = require('../../../src/models/user.model.js');
 const authService = require('../../../src/services/auth.services.js');
 const _ = require('lodash');
+const userServiceMocks = require('../../utils/services/user.services.mock.js');
+let userService = require('../../../src/services/user.services.js');
+let emailService = require('../../../src/services/mail.services.js');
+let emailServiceMocks = require('../../utils/services/email.services.mock.js');
+
 
 describe('Auth controllers', () => {
   let user;
@@ -18,6 +23,8 @@ describe('Auth controllers', () => {
     req = requestMocks.mockRequest(user);
     res = requestMocks.mockResponse();
     next = jest.fn();
+    userService = userServiceMocks;
+    emailService = emailServiceMocks;
   });
 
   describe('signup - test', () => {
@@ -147,6 +154,57 @@ describe('Auth controllers', () => {
       User.findById = userMocks.findByIdWithSelect;
     });
 
+    describe('Forgot Password test', () => {
+      beforeEach(() => {
+        req.body = {
+          email: user.email
+        }
+      });
+
+      it('should return 404 if email is not found', async () => {
+        req.body.email = 'example@example.com';
+        await authController.forgotPassword(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
+      });
+      it('should generate reset token with expire date', async () => {
+        await authController.forgotPassword(req, res, next);
+        user = await userService.getUser(user);
+        expect(user.passwordResetToken).toBeDefined();
+        expect(user.passwordResetExpires).toBeDefined();
+      });
+      it('should save the user', async () => {
+        await authController.forgotPassword(req, res, next);
+        expect(userMocks.save.mock.calls).toBeDefined();
+        expect(userMocks.save.mock.calls.length).toBeGreaterThan(1);
+      });
+      it('should return status 200 if valid', async () => {
+        await authController.forgotPassword(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+      });
+      it('should save the user if valid with token and expire date is undefined', async () => {
+        emailService.sendEmail = jest.fn().mockImplementation((Options) => {
+          return new Promise((resolve, reject) => {
+            reject(Options);
+          })
+        });
+        user = await userService.getUser(user);
+        expect(user.passwordResetToken).toBeUndefined();
+        expect(user.passwordResetExpires).toBeUndefined();
+        await authController.forgotPassword(req, res, next);
+        expect(userMocks.save.mock.calls).toBeDefined();
+        expect(userMocks.save.mock.calls.length).toBeGreaterThan(2);
+      });
+      it('should return status 500 if falid', async () => {
+        emailService.sendEmail = jest.fn().mockImplementation((Options) => {
+          return new Promise((resolve, reject) => {
+            reject(Options);
+          })
+        });
+        await authController.forgotPassword(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(500);
+      });
+    });
+
     describe('Update Password test', () => {
       it('should return 500 if your didn`t authenticate', async () => {
         req.user = undefined;
@@ -171,7 +229,7 @@ describe('Auth controllers', () => {
       it('should save the user', async () => {
         await authController.updatePassword(req, res, next);
         expect(userMocks.save.mock.calls).toBeDefined();
-        expect(userMocks.save.mock.calls.length).toBe(1);
+        expect(userMocks.save.mock.calls.length).toBeGreaterThan(1);
       });
       it('should return 200 if input is valid', async () => {
         await authController.updatePassword(req, res, next);
