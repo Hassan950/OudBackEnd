@@ -39,8 +39,19 @@ const createUser = async (userData) => {
   return newUser;
 };
 
+/**
+ * 
+ * @param {Object} userData 
+ * @returns user with the given userDate
+ */
+const getUser = async (userData) => {
+  const user = await User.findOne(userData);
+  return user;
+};
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
-  createUser
+  createUser,
+  getUser
 }

@@ -14,4 +14,8 @@ router
   .route('/login')
   .post(validate(authValidation.login), catchAsync(authController.login));
 
+router
+  .route('/forgotPassword')
+  .post(catchAsync(authController.forgotPassword));
+
 module.exports = router;
