@@ -6,7 +6,7 @@ const config = require('config');
 let { User } = require('../../../src/models/user.model.js');
 const authService = require('../../../src/services/auth.services.js');
 const _ = require('lodash');
-const userServiceMocks = require('../../utils/services/user.services.mock.js');
+const { getUser } = require('../../utils/services/user.services.mock.js');
 let userService = require('../../../src/services/user.services.js');
 let emailService = require('../../../src/services/mail.services.js');
 let emailServiceMocks = require('../../utils/services/email.services.mock.js');
@@ -23,7 +23,7 @@ describe('Auth controllers', () => {
     req = requestMocks.mockRequest(user);
     res = requestMocks.mockResponse();
     next = jest.fn();
-    userService = userServiceMocks;
+    userService.getUser = getUser;
     emailService = emailServiceMocks;
   });
 
@@ -144,14 +144,45 @@ describe('Auth controllers', () => {
       await User.create(user);
       req.user = user;
       // fill request body
-      req.body = {};
-      req.body = {
-        currentPassword: user.password,
-        password: '11111111',
-        passwordConfirm: '11111111'
-      }
+      req.body.currentPassword = user.password;
+      req.body.password = '11111111';
+      req.body.passwordConfirm = '11111111';
       // mocks
       User.findById = userMocks.findByIdWithSelect;
+    });
+
+    describe('Resest Password test', () => {
+      beforeEach(() => {
+        req.body.passwordConfirm = user.passwordConfirm;
+        req.body.password = user.password;
+        req.params = {};
+        req.params.token = authService.createPasswordResetToken(user);
+      });
+
+      it('should return 400 if token is not valid', async () => {
+        await authController.resetPassword(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+
+      it('should return 200 if token is valid', async () => {
+        userService.getUser = jest.fn().mockImplementation((data) => {
+          return new Promise((resolve, reject) => {
+            resolve(user);
+          })
+        });
+        await authController.resetPassword(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+      });
+      it('should return token and user if token is valid', async () => {
+        userService.getUser = jest.fn().mockImplementation((data) => {
+          return new Promise((resolve, reject) => {
+            resolve(user);
+          })
+        });
+        await authController.resetPassword(req, res, next);
+        expect(res.json.mock.calls[0][0].token).toBeDefined();
+        expect(res.json.mock.calls[0][0].user).toBeDefined();
+      });
     });
 
     describe('Forgot Password test', () => {
@@ -229,7 +260,6 @@ describe('Auth controllers', () => {
       it('should save the user', async () => {
         await authController.updatePassword(req, res, next);
         expect(userMocks.save.mock.calls).toBeDefined();
-        expect(userMocks.save.mock.calls.length).toBeGreaterThan(1);
       });
       it('should return 200 if input is valid', async () => {
         await authController.updatePassword(req, res, next);
