@@ -27,10 +27,6 @@ exports.authenticate = async (req, res, next) => {
   // verification token
   const payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
 
-
-  // TODO
-  // Add checks if the user changed password after creating this token
-
   // check if user still exists
   const user = await User.findById(payload.id);
   if (!user)
@@ -40,6 +36,14 @@ exports.authenticate = async (req, res, next) => {
         401
       )
     )
+
+  // check if user changed password
+  if (user.changedPasswordAfter(payload.iat)) {
+    return next(
+      new AppError('User recently changed password! Please log in again.', 401)
+    );
+  }
+
   req.user = user;
   next();
 };
@@ -61,3 +65,4 @@ exports.authorize = (...roles) => {
     next();
   };
 };
+

@@ -136,7 +136,21 @@ userSchema.post(/^find/, function (docs, next) {
   }
 
   next();
-})
+});
+
+
+userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  return false;
+};
 
 const User = mongoose.model('User', userSchema);
 
