@@ -43,6 +43,46 @@ exports.verify = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @throws AppError 500 status, AppError 400 status
+ * @author Abdelrahman Tarek
+ * @summary User Request Verify
+ */
+exports.requestVerify = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('PLease Authentcate first', 500));
+  }
+  const user = req.user;
+
+  if (user.verified) {
+    return next(new AppError('User is Already verified!', 400));
+  }
+
+  const verifyToken = authService.createVerifyToken(user);
+  await user.save({ validateBeforeSave: false });
+
+  const verifyURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/verify/${verifyToken}`;
+
+  const message = `Hello ${user.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+
+  try {
+    await emailService.sendEmail({
+      email: user.email,
+      subject: 'Verify your Oud user',
+      message
+    });
+    user.verifyToken = undefined;
+    createTokenAndSend(user, res);
+  } catch (error) {
+    user.verifyToken = undefined;
+    user.save({ validateBeforeSave: false });
+    return next(new AppError('There was an error sending the email. Try again later!', 500));
+  }
+};
+
+/**
+ * @version 1.0.0
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
  * @description takes user details from the user and return user and token with 200 status code
@@ -69,7 +109,7 @@ exports.signup = async (req, res, next) => {
     'host'
   )}/api/v1/users/verify/${verifyToken}`;
 
-  const message = `Hello ${newUser.username}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+  const message = `Hello ${newUser.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
 
   try {
     await emailService.sendEmail({

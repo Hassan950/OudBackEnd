@@ -134,6 +134,33 @@ describe('Auth controllers', () => {
   });
 
   describe('Verify - test', () => {
+
+    describe('check request verify test', () => {
+      beforeEach(async () => {
+        await User.create(user);
+        req.user = user;
+      });
+
+      it('should return 500 if route not authenticated', async () => {
+        req.user = undefined;
+        await authController.requestVerify(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(500);
+      });
+
+      it('should return 400 is user is verified', async () => {
+        user.verified = true;
+        await authController.requestVerify(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+
+      it('should return 500 if email is failed', async () => {
+        emailService.sendEmail = jest.fn().mockRejectedValue(user);
+        await authController.requestVerify(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(500);
+      });
+    });
+
+
     describe('check verify token test', () => {
       let verifyToken;
       beforeEach(async () => {
