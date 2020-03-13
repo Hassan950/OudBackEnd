@@ -1,12 +1,12 @@
 const { promisify } = require('util');
 const config = require('config');
-const AppError = require('../utils/AppError.js');
-const { User } = require('../models/user.model.js');
+const AppError = require('../utils/AppError');
+const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 
 /**
  * @version 1.0.0
- * @throws AppError 401 if no/wrong token passed 
+ * @throws AppError 401 if no/wrong token passed
  * @author Abdelrahman Tarek
  * @description takes user token to authenticate user
  * @summary User Authentication
@@ -65,4 +65,3 @@ exports.authorize = (...roles) => {
     next();
   };
 };
-

@@ -1,14 +1,6 @@
-const authService = require('../services/auth.services.js');
-const AppError = require('../utils/AppError.js');
-const userService = require('../services/user.services.js');
-const emailService = require('../services/mail.services.js');
+const { userService, authService, emailService } = require('../services');
+const AppError = require('../utils/AppError');
 
-/**
- * Create token and send it with user 
- * Add token to x-auth-token header
- * @param {User} user 
- * @param {Response} res 
- */
 const createTokenAndSend = (user, res) => {
   const token = authService.generateAuthToken(user._id);
   res.setHeader('x-auth-token', token);
@@ -49,7 +41,7 @@ exports.signup = async (req, res, next) => {
   }
   const newUser = await userService.createUser(req.body);
   // TODO
-  // Return 401 if role is premium without credit 
+  // Return 401 if role is premium without credit
   // Return 401 if role is artist without request
   // Add device
   // generate verify token
@@ -70,20 +62,10 @@ exports.signup = async (req, res, next) => {
       subject: 'Verify your Oud user',
       message
     });
-    newUser.verifyToken = undefined;
-    createTokenAndSend(newUser, res);
   } catch (error) {
-
-    // delete user
-    await userService.deleteUserById(newUser._id);
-
-    return next(
-      new AppError(
-        'There was an error Creating account. Try again later!',
-        500
-      )
-    );
   }
+  newUser.verifyToken = undefined;
+  createTokenAndSend(newUser, res);
 };
 
 /**
@@ -95,12 +77,12 @@ exports.signup = async (req, res, next) => {
  * @summary User Login
  */
 exports.login = async (req, res, next) => {
-  const {
-    email,
-    password
-  } = req.body;
+  const { email, password } = req.body;
 
-  const user = await userService.findUserAndCheckPassword({ email: email }, password);
+  const user = await userService.findUserAndCheckPassword(
+    { email: email },
+    password
+  );
   if (!user) {
     return next(new AppError('Incorrect email or password!', 401));
   }
@@ -114,18 +96,14 @@ exports.login = async (req, res, next) => {
 
 /**
  * @version 1.0.0
- * @throws AppError 400 status, AppError 401 status 
+ * @throws AppError 400 status, AppError 401 status
  * @author Abdelrahman Tarek
  * @description takes currentPassword, Password and passwordConfirm. if currentPassword is wrong return 401 status
  * if password != passwordConfirm return 400
  * @summary User Update Password
  */
 exports.updatePassword = async (req, res, next) => {
-  const {
-    currentPassword,
-    password,
-    passwordConfirm
-  } = req.body;
+  const { currentPassword, password, passwordConfirm } = req.body;
 
   if (!req.user) {
     return next(new AppError('PLease Authentcate first', 500));
@@ -135,7 +113,10 @@ exports.updatePassword = async (req, res, next) => {
     return next(new AppError('Please confirm your password', 400));
   }
 
-  const user = await userService.findUserByIdAndCheckPassword(req.user._id, currentPassword);
+  const user = await userService.findUserByIdAndCheckPassword(
+    req.user._id,
+    currentPassword
+  );
   if (!user) {
     return next(new AppError('Incorrect password!', 401));
   }

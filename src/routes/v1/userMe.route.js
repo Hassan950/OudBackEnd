@@ -1,9 +1,9 @@
 const express = require('express');
-const authController = require('../../controllers/auth.controller.js');
-const authMiddleware = require('../../middlewares/auth.js');
-const validate = require('../../middlewares/validate.js');
-const authValidation = require('../../validations/auth.validation.js');
-const catchAsync = require('../../utils/catchAsync.js');
+const { authController } = require('../../controllers');
+const authMiddleware = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
+const { authValidation } = require('../../validations');
+const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router();
 

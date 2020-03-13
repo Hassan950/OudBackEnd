@@ -1,5 +1,5 @@
 const { User } = require('../models/user.model.js');
-const authService = require('./auth.services.js');
+const authService = require('./auth.service.js');
 
 /**
  * 

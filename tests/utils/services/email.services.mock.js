@@ -1,4 +1,4 @@
-const emailService = require('../../../src/services/mail.services.js');
+const emailService = {};
 
 emailService.sendEmail = jest.fn().mockImplementation((Options) => {
   return new Promise((resolve, reject) => {
