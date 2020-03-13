@@ -1,14 +1,12 @@
 const userMocks = require('../../utils/models/user.model.mocks.js');
 const requestMocks = require('../../utils/request.mock.js');
-const authController = require('../../../src/controllers/auth.controller.js');
+const { authController } = require('../../../src/controllers');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 let { User } = require('../../../src/models/user.model.js');
-const authService = require('../../../src/services/auth.services.js');
 const _ = require('lodash');
 const { getUser } = require('../../utils/services/user.services.mock.js');
-let userService = require('../../../src/services/user.services.js');
-let emailService = require('../../../src/services/mail.services.js');
+let { emailService, userService, authService } = require('../../../src/services');
 let emailServiceMocks = require('../../utils/services/email.services.mock.js');
 
 describe('Auth controllers', () => {
@@ -23,7 +21,6 @@ describe('Auth controllers', () => {
     res = requestMocks.mockResponse();
     next = jest.fn();
     userService.getUser = getUser;
-    emailService = emailServiceMocks;
   });
 
   describe('signup - test', () => {
@@ -197,6 +194,7 @@ describe('Auth controllers', () => {
         expect(next.mock.calls[0][0].statusCode).toBe(404);
       });
       it('should generate reset token with expire date', async () => {
+        emailService.sendEmail = jest.fn().mockResolvedValue(user);
         await authController.forgotPassword(req, res, next);
         user = await userService.getUser(user);
         expect(user.passwordResetToken).toBeDefined();

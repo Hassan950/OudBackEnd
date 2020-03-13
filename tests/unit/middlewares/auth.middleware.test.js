@@ -1,6 +1,6 @@
-const authController = require('../../../src/controllers/auth.controller.js');
+const { authController } = require('../../../src/controllers');
 const authMiddleware = require('../../../src/middlewares/auth.js');
-const authService = require('../../../src/services/auth.services.js');
+const { authService } = require('../../../src/services');
 const requestMocks = require('../../../tests/utils/request.mock.js');
 const userMocks = require('../../utils/models/user.model.mocks.js');
 
@@ -39,6 +39,7 @@ describe('Authenticate test', () => {
   });
 
   it('should append user to req if valid token', async () => {
+    User.findById = jest.fn().mockResolvedValue(user);
     await authController.signup(req, res, next);
     const token = authService.generateAuthToken(user._id);
     req.headers = {};
