@@ -24,7 +24,12 @@ exports.authenticate = async (req, res, next) => {
   if (!token) return next(new AppError('Please log in.', 401));
 
   // verification token
-  const payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
+  let payload;
+  try {
+    payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
+  } catch (er) {
+    return next(new AppError('Invalid Token', 400));
+  }
 
   // TODO
   // Add checks if the user changed password after creating this token
