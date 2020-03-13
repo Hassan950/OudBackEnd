@@ -2,6 +2,7 @@ const { User, userSchema } = require('./user.model');
 const { Artist, artistSchema } = require('./artist.model');
 const { Track, trackSchema } = require('./track.model');
 const { Album, albumSchema } = require('./album.model');
+const {Category , categorySchema} = require('./category.model');
 
 module.exports = {
   User,
@@ -11,5 +12,7 @@ module.exports = {
   Track,
   trackSchema,
   Album,
-  albumSchema
+  albumSchema,
+  Category,
+  categorySchema
 };
