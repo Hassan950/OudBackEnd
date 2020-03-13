@@ -30,9 +30,38 @@ exports.signup = async (req, res, next) => {
   // Return 401 if role is premium without credit 
   // Return 401 if role is artist without request
   // Add device
+  // generate verify token
+  const verifyToken = authService.createVerifyToken(newUser);
+  await newUser.save({
+    validateBeforeSave: false
+  });
   // use mail to verify user
+  const verifyURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/verify/${verifyToken}`;
 
-  createTokenAndSend(newUser, res);
+  const message = `Hello ${newUser.username}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+
+  try {
+    await emailService.sendEmail({
+      email: newUser.email,
+      subject: 'Verify your Oud user',
+      message
+    });
+    newUser.verifyToken = undefined;
+    createTokenAndSend(newUser, res);
+  } catch (error) {
+
+    // delete user
+    await userService.deleteUserById(newUser._id);
+
+    return next(
+      new AppError(
+        'There was an error Creating account. Try again later!',
+        500
+      )
+    );
+  }
 };
 
 /**

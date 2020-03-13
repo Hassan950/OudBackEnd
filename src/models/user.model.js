@@ -94,6 +94,10 @@ const userSchema = mongoose.Schema({
     type: Date,
     select: false
   },
+  verifyToken: {
+    type: String,
+    select: false
+  }
 }, {
   toJSON: {
     virtuals: true
@@ -108,7 +112,7 @@ userSchema.virtual('type').get(function () {
 });
 
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.password || !this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 8);
 

@@ -49,9 +49,15 @@ const getUser = async (userData) => {
   return user;
 };
 
+const deleteUserById = async (userId) => {
+  const deletedUser = await User.findByIdAndDelete(userId, { select: true });
+  return deletedUser;
+}
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
   createUser,
-  getUser
+  getUser,
+  deleteUserById
 }
