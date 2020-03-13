@@ -1,7 +1,7 @@
 const express = require('express');
-const homeRoute = require('./home.route.js');
-const userRoute = require('./user.route.js');
-const userMeRoute = require('./userMe.route.js');
+const homeRoute = require('./home.route');
+const userRoute = require('./user.route');
+const userMeRoute = require('./userMe.route');
 
 const router = express.Router();
 

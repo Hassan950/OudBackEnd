@@ -1,12 +1,12 @@
 const { promisify } = require('util');
 const config = require('config');
-const AppError = require('../utils/AppError.js');
-const { User } = require('../models/user.model.js');
+const AppError = require('../utils/AppError');
+const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 
 /**
  * @version 1.0.0
- * @throws AppError 401 if no/wrong token passed 
+ * @throws AppError 401 if no/wrong token passed
  * @author Abdelrahman Tarek
  * @description takes user token to authenticate user
  * @summary User Authentication
@@ -27,26 +27,25 @@ exports.authenticate = async (req, res, next) => {
   // verification token
   const payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
 
-
   // TODO
   // Add checks if the user changed password after creating this token
 
   // check if user still exists
-  const user = await User.findById(payload.id);
+  const user = await User.findById(payload._id);
   if (!user)
     return next(
       new AppError(
         'The user belonging to this token does no longer exists.',
         401
       )
-    )
+    );
   req.user = user;
   next();
 };
 
 /**
  * @version 1.0.0
- * @throws AppError 403 if user doesn`t have permission 
+ * @throws AppError 403 if user doesn`t have permission
  * @author Abdelrahman Tarek
  * @description give permission to users based on roles
  * @summary User Authorization
