@@ -3,6 +3,12 @@ const AppError = require('../utils/AppError.js');
 const userService = require('../services/user.services.js');
 const emailService = require('../services/mail.services.js');
 
+/**
+ * Create token and send it with user 
+ * Add token to x-auth-token header
+ * @param {User} user 
+ * @param {Response} res 
+ */
 const createTokenAndSend = (user, res) => {
   const token = authService.generateAuthToken(user._id);
   res.setHeader('x-auth-token', token);
@@ -11,6 +17,22 @@ const createTokenAndSend = (user, res) => {
     user: user
   });
 };
+
+exports.verify = async (req, res, next) => {
+  const hashedToken = authService.getHashedToken(req.params.token);
+
+  const user = await userService.getUser({
+    verifyToken: hashedToken
+  });
+
+  if (!user) return next(new AppError('Token is invalid', 400));
+
+  user.verified = true;
+  user.verifyToken = undefined;
+
+  await user.save({ validateBeforeSave: false });
+  createTokenAndSend(user, res);
+}
 
 /**
  * @version 1.0.0

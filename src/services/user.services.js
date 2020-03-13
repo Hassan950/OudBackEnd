@@ -49,6 +49,12 @@ const getUser = async (userData) => {
   return user;
 };
 
+
+/**
+ * 
+ * @param {String} userId 
+ * @returns deletedUser
+ */
 const deleteUserById = async (userId) => {
   const deletedUser = await User.findByIdAndDelete(userId, { select: true });
   return deletedUser;
