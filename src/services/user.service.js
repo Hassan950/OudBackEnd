@@ -39,8 +39,27 @@ const createUser = async userData => {
   return newUser;
 };
 
+const editProfile = async (userId, userData) => {
+  let user = await User.findById(userId);
+  console.log(user.email, userData.email);
+  if(user.email !== userData.email) {
+    user.verified = false;
+  }
+  user = await User.findByIdAndUpdate(userId, {
+    email: userData.email,
+    birthDate: userData.dateOfBirth,
+    country: userData.country,
+    gender: userData.gender,
+    displayName: userData.displayName,
+    verified: user.verified
+  }, { new: true })
+
+  return user;
+};
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
-  createUser
+  createUser,
+  editProfile
 };
