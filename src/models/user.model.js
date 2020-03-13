@@ -127,22 +127,6 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-userSchema.post('save', (docs, next) => {
-  if (docs.password) docs.password = undefined;
-  if (docs.passwordConfirm) docs.passwordConfirm = undefined;
-  if (docs.__v) docs.__v = undefined;
-  next();
-});
-
-userSchema.post(/^find/, function (docs, next) {
-  if (docs) {
-    docs.__v = undefined;
-  }
-
-  next();
-});
-
-
 userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(

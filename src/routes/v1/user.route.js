@@ -24,6 +24,6 @@ router
 
 router
   .route('/verify/:token')
-  .patch(catchAsync(authController.verify));
+  .patch(validate(authValidation.resetPassword), catchAsync(authController.verify));
 
 module.exports = router;

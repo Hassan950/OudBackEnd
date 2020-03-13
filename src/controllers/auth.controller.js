@@ -1,7 +1,16 @@
 const { userService, authService, emailService } = require('../services');
 const AppError = require('../utils/AppError');
 
+/**
+ * 
+ * @param {User} user 
+ * @param {Response} res 
+ * @author Abdelrahman Tarek
+ */
 const createTokenAndSend = (user, res) => {
+  user.password = undefined;
+  user.passwordConfirm = undefined;
+  user.__v = undefined;
   const token = authService.generateAuthToken(user._id);
   res.setHeader('x-auth-token', token);
   return res.status(200).json({
@@ -10,13 +19,19 @@ const createTokenAndSend = (user, res) => {
   });
 };
 
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @description takes user verify token and change verify to true if token is valid else return 400 status
+ * @summary User Verify
+ */
 exports.verify = async (req, res, next) => {
   const hashedToken = authService.getHashedToken(req.params.token);
 
   const user = await userService.getUser({
     verifyToken: hashedToken
   });
-
   if (!user) return next(new AppError('Token is invalid', 400));
 
   user.verified = true;
@@ -63,6 +78,8 @@ exports.signup = async (req, res, next) => {
       message
     });
   } catch (error) {
+    newUser.verifyToken = undefined;
+    newUser.save({ validateBeforeSave: false });
   }
   newUser.verifyToken = undefined;
   createTokenAndSend(newUser, res);

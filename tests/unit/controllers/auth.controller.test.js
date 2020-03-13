@@ -74,7 +74,7 @@ describe('Auth controllers', () => {
 
     it('should return 401 if password is wrong', async () => {
       // create a user
-      await authController.signup(req, res, next);
+      await User.create(user);
       // use it
       user.password = '111111111111111111111'; // differnt password
       req.body = user;
@@ -84,7 +84,7 @@ describe('Auth controllers', () => {
     });
     it('should return 401 if email is wrong', async () => {
       // create a user
-      await authController.signup(req, res, next);
+      await User.create(user);
       // use it
       user.email = 'admin@admin.com'; // differnt password
       req.body = user;
@@ -95,7 +95,7 @@ describe('Auth controllers', () => {
 
     it('should return 200 if request is valid', async () => {
       // create a user
-      await authController.signup(req, res, next);
+      await User.create(user);
       // use it
       await authController.login(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -103,7 +103,7 @@ describe('Auth controllers', () => {
 
     it('should return token', async () => {
       // create a user
-      await authController.signup(req, res, next);
+      await User.create(user);
       // use it
       await authController.login(req, res, next);
       const token = res.json.mock.calls[0][0].token;
@@ -114,7 +114,7 @@ describe('Auth controllers', () => {
 
     it('should return user', async () => {
       // create a user
-      await authController.signup(req, res, next);
+      await User.create(user);
       // use it
       await authController.login(req, res, next);
       const newUser = res.json.mock.calls[0][0].user;
@@ -123,7 +123,7 @@ describe('Auth controllers', () => {
     });
     it('should send token in x-auth-token header', async () => {
       // create a user
-      await authController.signup(req, res, next);
+      await User.create(user);
       // use it
       await authController.login(req, res, next);
       const headerName = res.setHeader.mock.calls[0][0];
@@ -132,6 +132,72 @@ describe('Auth controllers', () => {
       expect(token).toBe(res.json.mock.calls[0][0].token);
     });
   });
+
+  describe('Verify - test', () => {
+    describe('check verify token test', () => {
+      let verifyToken;
+      beforeEach(async () => {
+        verifyToken = authService.createVerifyToken(user);
+        await User.create(user);
+        req.params = {};
+        req.params.token = verifyToken;
+        userService.getUser = jest.fn().mockImplementation((userData) => {
+          return new Promise((resolve, reject) => {
+            const user = _.find(userMocks.users, function (obj) {
+              return obj.verifyToken === userData.verifyToken;
+            });
+            if (user) {
+              resolve(user);
+            } else {
+              resolve(null);
+            }
+          })
+        });
+      });
+      it('should should return 400 if token is invalid', async () => {
+        req.params.token = 'invalidToken';
+        await authController.verify(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+      it('should change verified to true if token is valid', async () => {
+        await authController.verify(req, res, next);
+        user = await getUser(user);
+        expect(user.verified).toBe(true);
+      });
+      it('should change verify token to undefined if token is valid', async () => {
+        await authController.verify(req, res, next);
+        user = await getUser(user);
+        expect(user.verifyToken).toBeUndefined();
+      });
+      it('should save the user if token is valid', async () => {
+        await authController.verify(req, res, next);
+        user = await getUser(user);
+        expect(user.save.mock.calls.length).toBe(1);
+      });
+      it('should send status 200 if token is valid', async () => {
+        await authController.verify(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+      });
+      it('should send user if token is valid', async () => {
+        await authController.verify(req, res, next);
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc));
+      });
+      it('should send status 200 if token is valid', async () => {
+        await authController.verify(req, res, next);
+        const token = res.json.mock.calls[0][0].token;
+        const decoded = jwt.verify(token, config.get('JWT_KEY'));
+        expect(decoded).toBeDefined();
+        expect(decoded.id).toBe(user._id.toString());
+      });
+      it('should send token in x-auth-header', async () => {
+        await authController.verify(req, res, next);
+        const headerName = res.setHeader.mock.calls[0][0];
+        const token = res.setHeader.mock.calls[0][1];
+        expect(headerName).toBe('x-auth-token');
+        expect(token).toBe(res.json.mock.calls[0][0].token);
+      });
+    });
+  })
 
   describe('Password - test', () => {
     beforeEach(async () => {
