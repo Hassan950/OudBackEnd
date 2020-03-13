@@ -1,0 +1,7 @@
+{
+  "JWT_KEY": "1234",
+  "JWT_EXPIRES_IN": "30s",
+  "db": "mongodb://localhost:27017/oud_test",
+  "PORT": "3005",
+  "NODE_ENV": "test"
+}

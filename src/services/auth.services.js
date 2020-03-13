@@ -10,6 +10,7 @@ const generateAuthToken = (userId) => {
   });
 };
 
+
 const checkPassword = async (password, hashedPassword) => {
   const isPasswordMatch = await bcrypt.compare(password, hashedPassword);
   return isPasswordMatch;
