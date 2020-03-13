@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('config');
-const AppError = require('./../utils/AppError.js');
 
-exports.generateAuthToken = (userId) => {
+const generateAuthToken = (userId) => {
   return jwt.sign({
     id: userId
   }, config.get('JWT_KEY'), {
@@ -11,7 +10,13 @@ exports.generateAuthToken = (userId) => {
   });
 };
 
-exports.checkPassword = async (password, hashedPassword) => {
+
+const checkPassword = async (password, hashedPassword) => {
   const isPasswordMatch = await bcrypt.compare(password, hashedPassword);
   return isPasswordMatch;
+};
+
+module.exports = {
+  generateAuthToken,
+  checkPassword
 };
