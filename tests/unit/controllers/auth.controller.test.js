@@ -1,10 +1,10 @@
 const userMocks = require('../../utils/models/user.model.mocks.js');
 const requestMocks = require('../../utils/request.mock.js');
-const authController = require('../../../src/controllers/auth.controller.js');
+const { authController } = require('../../../src/controllers');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 let { User } = require('../../../src/models/user.model.js');
-const authService = require('../../../src/services/auth.services.js');
+const { authService } = require('../../../src/services');
 const _ = require('lodash');
 
 describe('Auth controllers', () => {
@@ -41,7 +41,7 @@ describe('Auth controllers', () => {
       const token = res.json.mock.calls[0][0].token;
       const decoded = jwt.verify(token, config.get('JWT_KEY'));
       expect(decoded).toBeDefined();
-      expect(decoded.id).toBe(user._id.toString());
+      expect(decoded._id).toBe(user._id.toString());
     });
 
     it('should return user', async () => {
@@ -106,7 +106,7 @@ describe('Auth controllers', () => {
       const token = res.json.mock.calls[0][0].token;
       const decoded = jwt.verify(token, config.get('JWT_KEY'));
       expect(decoded).toBeDefined();
-      expect(decoded.id).toBe(user._id.toString());
+      expect(decoded._id).toBe(user._id.toString());
     });
 
     it('should return user', async () => {
@@ -182,7 +182,7 @@ describe('Auth controllers', () => {
         const token = res.json.mock.calls[0][0].token;
         const decoded = jwt.verify(token, config.get('JWT_KEY'));
         expect(decoded).toBeDefined();
-        expect(decoded.id).toBe(user._id.toString());
+        expect(decoded._id).toBe(user._id.toString());
       });
       it('should return user if input is valid', async () => {
         await authController.updatePassword(req, res, next);
