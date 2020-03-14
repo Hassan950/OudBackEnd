@@ -1,17 +1,19 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
-const customJoi = Joi.extend(Joi => ({
-  base: Joi.array(),
-  type: 'idArray',
-  coerce: (value, state, options) => (value.split ? value.split(',') : value)
-}));
+const mongoose = require('mongoose');
+
+const idArray = (value, helper) => {
+  const values = value.split(',');
+  values.forEach(v => {
+    if (!mongoose.Types.ObjectId.isValid(v))
+      return helper.message(v + ' is not a valid Id');
+  });
+  return value;
+};
 
 exports.getSeveral = {
   query: Joi.object().keys({
-    ids: customJoi
-      .idArray()
-      .items(Joi.objectId())
-      .single()
+    ids: Joi.string().custom(idArray)
   })
 };
 

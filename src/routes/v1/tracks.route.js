@@ -7,12 +7,20 @@ const { trackValidation } = require('../../validations');
 
 router
   .route('/:id')
-  .get(validate(trackValidation.oneTrack), catchAsync(tracksController.getTrack))
-  .delete(validate(trackValidation.oneTrack), catchAsync(tracksController.deleteTrack))
+  .get(
+    validate(trackValidation.oneTrack),
+    catchAsync(tracksController.getTrack)
+  )
+  .delete(
+    validate(trackValidation.oneTrack),
+    catchAsync(tracksController.deleteTrack)
+  );
 
 router
   .route('/')
-  .get(validate(trackValidation.getSeveral), catchAsync(tracksController.getTracks))
+  .get(
+    validate(trackValidation.getSeveral),
+    catchAsync(tracksController.getTracks)
+  );
 
-  module.exports = router
-
+module.exports = router;
