@@ -43,7 +43,9 @@ exports.signup = {
     gender: Joi.string()
       .valid('M', 'F'),
     displayName: Joi.string()
-      .required()
+      .required(),
+    facebook_id: Joi.string(),
+    google_id: Joi.string()
   })
 };
 

@@ -266,7 +266,15 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 
-exports.facebookOAuth = async (req, res, next) => {
-  console.log('facebook yaaaaaaaaay');
-  console.log('req.user', req.user);
+exports.facebookAuth = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Invalid Token', 400));
+  }
+  if (req.user._id) {
+    createTokenAndSend(req.user, res);
+  } else {
+    res.status(200).json({
+      user: req.user
+    });
+  }
 }
