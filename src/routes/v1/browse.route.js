@@ -11,10 +11,12 @@ router
 
 router
   .route('/categories/:id')
-  .get(catchAsync(authMiddleware.authenticate), catchAsync(browseController.getCategory));
+  //.get(catchAsync(authMiddleware.authenticate), catchAsync(browseController.categoryPlaylists));
+  .get( catchAsync(browseController.getCategory));
 router
   .route('/categories/:id/playlists')
-  .get(catchAsync(authMiddleware.authenticate), catchAsync(browseController.categoryPlaylists));
+  //.get(catchAsync(authMiddleware.authenticate), catchAsync(browseController.categoryPlaylists));
+  .get( catchAsync(browseController.categoryPlaylists));
 router
   .route('/new-releases')
   .get(catchAsync(browseController.newReleases));

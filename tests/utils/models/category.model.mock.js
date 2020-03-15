@@ -2,6 +2,7 @@ const {Category} = require('../../../src/models');
 const faker = require('faker');
 const _ = require('lodash');
 const {browseService} =require('../../../src/services');
+const mongoose = require('mongoose');
 
 const save = jest.fn();
 
@@ -12,11 +13,10 @@ const categories = [
 
 const createFakeStoredCategory = () => {
   const category = new Category({
-    name: faker.name.title(),
+    name: faker.name.title().slice(0,4),
     icon: faker.image.imageUrl(),
     playlists: [{
-      name: faker.name.title(),
-      image: faker.image.imageUrl()
+     _id: mongoose.Types.ObjectId()
     }]
   });
   category.save = jest.fn().mockImplementation(function() {
