@@ -1,4 +1,4 @@
-const { userService, authService } = require('../services');
+const { userService, authService, emailService } = require('../services');
 const AppError = require('../utils/AppError');
 
 const createTokenAndSend = (user, res) => {
@@ -53,7 +53,6 @@ exports.login = async (req, res, next) => {
 
   // TODO
   // Add device
-  // Send token as header
 
   user.password = undefined;
   createTokenAndSend(user, res);
@@ -88,10 +87,87 @@ exports.updatePassword = async (req, res, next) => {
 
   user.password = password;
   user.passwordConfirm = password;
-
-  // TODO
-  // Add last change password date
-
   await user.save();
   createTokenAndSend(user, res);
+};
+
+/**
+ * @version 1.0.0
+ * @throws AppError 404 status, AppError 401 status, AppError 500 status 
+ * @author Abdelrahman Tarek
+ * @description takes user email then generate reset token and send it via email to reset your password
+ * @summary User forgot password
+ */
+exports.forgotPassword = async (req, res, next) => {
+  const user = await userService.getUser({ email: req.body.email });
+  if (!user) {
+    return next(new AppError('No user with the given email!', 404));
+  }
+  // TODOS
+  // generate reset token and save user
+  const resetToken = authService.createPasswordResetToken(user);
+  await user.save({
+    validateBeforeSave: false
+  });
+  // send reset token via email
+  const resetURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/resetPassword/${resetToken}`;
+
+  const message = `Forgot your password? Submit a PATCH request with your new password and
+   passwordConfirm to: ${resetURL}.`;
+
+  try {
+    await emailService.sendEmail({
+      email: user.email,
+      subject: 'Your password reset token (valid for 10 mins)',
+      message
+    });
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent to email!'
+    });
+  } catch (error) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save({
+      validateBeforeSave: false
+    });
+
+    return next(
+      new AppError(
+        'There was an error sending the email. Try again later!',
+        500
+      )
+    );
+  }
+};
+
+
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status 
+ * @author Abdelrahman Tarek
+ * @summary User reset password
+ */
+exports.resetPassword = async (req, res, next) => {
+  // get user based on token
+  const hashedToken = authService.getHashedToken(req.params.token);
+
+  const user = await userService.getUser({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: {
+      $gt: Date.now()
+    }
+  });
+  // if token has not expired, and there is user, set the new password
+  if (!user) return next(new AppError('Token is invalid or has expired', 400));
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  createTokenAndSend(user, res)
 };

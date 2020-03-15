@@ -24,7 +24,7 @@ const createFakeUser = () => {
     country: 'EG',
     _id: mongoose.Types.ObjectId()
   });
-  user.save = jest.fn().mockImplementation(function () {
+  user.save = jest.fn().mockImplementation(function (Options) {
     save();
     return new Promise(function (resolve, reject) {
       resolve(this);

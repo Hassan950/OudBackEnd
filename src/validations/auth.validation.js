@@ -72,4 +72,28 @@ exports.updatePassword = {
     passwordConfirm: Joi.string()
       .required()
   })
+};
+
+exports.forgotPassword = {
+  body: Joi.object().keys({
+    email: Joi.string()
+      .required()
+      .email()
+  })
+};
+
+
+exports.resetPassword = {
+  body: Joi.object().keys({
+    password: Joi.string()
+      .required()
+      .min(8),
+    passwordConfirm: Joi.string()
+      .required()
+  }),
+  params: Joi.object().keys({
+    token: Joi.string()
+      .required()
+      .min(8)
+  })
 }

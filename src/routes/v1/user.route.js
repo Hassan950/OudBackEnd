@@ -14,4 +14,12 @@ router
   .route('/login')
   .post(validate(authValidation.login), catchAsync(authController.login));
 
+router
+  .route('/forgotPassword')
+  .post(validate(authValidation.forgotPassword), catchAsync(authController.forgotPassword));
+
+router
+  .route('/resetPassword/:token')
+  .patch(validate(authValidation.resetPassword), catchAsync(authController.resetPassword));
+
 module.exports = router;

@@ -21,11 +21,15 @@ exports.authenticate = async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
-
   if (!token) return next(new AppError('Please log in.', 401));
 
   // verification token
-  const payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
+  let payload;
+  try {
+    payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
+  } catch (er) {
+    return next(new AppError('Invalid Token', 400));
+  }
 
   // TODO
   // Add checks if the user changed password after creating this token
@@ -38,7 +42,13 @@ exports.authenticate = async (req, res, next) => {
         'The user belonging to this token does no longer exists.',
         401
       )
+    )
+  // check if user changed password
+  if (user.changedPasswordAfter(payload.iat)) {
+    return next(
+      new AppError('User recently changed password! Please log in again.', 401)
     );
+  }
   req.user = user;
   next();
 };

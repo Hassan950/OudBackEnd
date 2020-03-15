@@ -5,6 +5,7 @@ const logger = require('./../config/logger');
 
 const errorConverter = (err, req, res, next) => {
   let error = err;
+  console.log(err);
   if (config.get('NODE_ENV') === 'production') {
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
