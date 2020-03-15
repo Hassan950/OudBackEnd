@@ -3,9 +3,9 @@ const authMiddleware = require('../../../src/middlewares/auth.js');
 const { authService } = require('../../../src/services');
 const requestMocks = require('../../../tests/utils/request.mock.js');
 const userMocks = require('../../utils/models/user.model.mocks.js');
+const _ = require('lodash')
 
 describe('Authenticate test', () => {
-  let user;
   let req;
   let res;
   let next;
