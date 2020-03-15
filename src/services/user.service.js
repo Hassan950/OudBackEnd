@@ -1,4 +1,6 @@
 const { User } = require('../models');
+const AppError = require('../utils/AppError');
+const httpStatus = require('http-status');
 const authService = require('./auth.service');
 
 /**
@@ -39,20 +41,36 @@ const createUser = async userData => {
   return newUser;
 };
 
+const getUser = async userId => {
+  const user = await User.findById(userId, {
+    role: 0,
+    verified: 0,
+    password: 0,
+    username: 0
+  });
+  if (!user) {
+    throw new AppError('User not found', httpStatus.NOT_FOUND);
+  }
+  return user;
+};
+
 const editProfile = async (userId, userData) => {
   let user = await User.findById(userId);
-  console.log(user.email, userData.email);
-  if(user.email !== userData.email) {
+  if (user.email !== userData.email) {
     user.verified = false;
   }
-  user = await User.findByIdAndUpdate(userId, {
-    email: userData.email,
-    birthDate: userData.dateOfBirth,
-    country: userData.country,
-    gender: userData.gender,
-    displayName: userData.displayName,
-    verified: user.verified
-  }, { new: true })
+  user = await User.findByIdAndUpdate(
+    userId,
+    {
+      email: userData.email,
+      birthDate: userData.dateOfBirth,
+      country: userData.country,
+      gender: userData.gender,
+      displayName: userData.displayName,
+      verified: user.verified
+    },
+    { new: true }
+  );
 
   return user;
 };
@@ -61,5 +79,6 @@ module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
   createUser,
+  getUser,
   editProfile
 };

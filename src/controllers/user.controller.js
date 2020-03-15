@@ -6,6 +6,11 @@ exports.getProfile = async (req, res) => {
   res.status(httpStatus.OK).send(req.user);
 };
 
+exports.getUser = async (req, res) => {
+  const user = await userService.getUser(req.params.userId);
+  res.status(httpStatus.OK).send(user);
+};
+
 exports.editProfile = async (req, res) => {
   const user = userService.findUserByIdAndCheckPassword(req.user._id, req.body.passwordConfirm);
   if(!user) {

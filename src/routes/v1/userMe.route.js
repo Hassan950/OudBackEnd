@@ -14,10 +14,10 @@ router
 
 router
   .route('/')
-  .get(catchAsync(authMiddleware.authenticate), catchAsync(userController.getProfile))
+  .get(catchAsync(authMiddleware.authenticate), catchAsync(userController.getProfile));
 
 router
   .route('/profile')
-  .put(catchAsync(authMiddleware.authenticate), validate(userValidation.editProfile), catchAsync(userController.editProfile))
+  .put(catchAsync(authMiddleware.authenticate), validate(userValidation.editProfile), catchAsync(userController.editProfile));
 
 module.exports = router;
