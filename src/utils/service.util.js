@@ -1,8 +1,8 @@
 module.exports.getLimits = function getLimits(limits){
-  if (!limits.offset) limits.offset = 0;
-	if (!limits.limit) limits.limit = 20;
-	if (limits.limit < 1) limits.limit = 1;
-	if (limits.limit > 50) limits.limit = 50;
+  (!limits.offset) ? 0 : limits.offset;
+	(!limits.limit) ? 20 : limits.limit ;
+	(limits.limit < 1) ? 1 : limits.limit ;
+	(limits.limit > 50) ? 50 : limits.limit ;
 
 	const start = parseInt(limits.offset);
 	limits.limit = parseInt(limits.limit);
