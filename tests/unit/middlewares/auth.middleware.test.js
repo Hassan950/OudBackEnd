@@ -39,6 +39,7 @@ describe('Authenticate test', () => {
   });
 
   it('should append user to req if valid token', async () => {
+    User.findById = jest.fn().mockResolvedValue(user);
     await authController.signup(req, res, next);
     const token = authService.generateAuthToken(user._id);
     req.headers = {};

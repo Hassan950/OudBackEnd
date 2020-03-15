@@ -13,3 +13,6 @@ yarn-error.log
 
 # Code coverage
 coverage
+
+# Config
+development.json
