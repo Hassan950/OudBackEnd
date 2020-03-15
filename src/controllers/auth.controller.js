@@ -264,3 +264,9 @@ exports.resetPassword = async (req, res, next) => {
   await user.save();
   createTokenAndSend(user, res)
 };
+
+
+exports.facebookOAuth = async (req, res, next) => {
+  console.log('facebook yaaaaaaaaay');
+  console.log('req.user', req.user);
+}
