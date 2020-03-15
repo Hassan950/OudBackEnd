@@ -31,9 +31,6 @@ exports.signup = {
       .required()
       .min(5)
       .max(30),
-    email: Joi.string()
-      .required()
-      .email(),
     role: Joi.string()
       .default('free')
       .valid('free', 'premium', 'artist'),
@@ -91,6 +88,14 @@ exports.resetPassword = {
     passwordConfirm: Joi.string()
       .required()
   }),
+  params: Joi.object().keys({
+    token: Joi.string()
+      .required()
+      .min(8)
+  })
+};
+
+exports.verify = {
   params: Joi.object().keys({
     token: Joi.string()
       .required()

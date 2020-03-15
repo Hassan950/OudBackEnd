@@ -29,6 +29,16 @@ const createPasswordResetToken = (user) => {
   return resetToken;
 };
 
+const createVerifyToken = (user) => {
+  const verifyToken = crypto.randomBytes(32).toString('hex');
+
+  const HashedVerifyToken = getHashedToken(verifyToken);
+
+  user.verifyToken = HashedVerifyToken;
+
+  return verifyToken;
+};
+
 const getHashedToken = (token) => {
   const hashedToken = crypto
     .createHash('sha256')
@@ -41,5 +51,6 @@ module.exports = {
   generateAuthToken,
   checkPassword,
   createPasswordResetToken,
-  getHashedToken
+  getHashedToken,
+  createVerifyToken
 };
