@@ -15,8 +15,7 @@ router
   .get(catchAsync(authMiddleware.authenticate),validate(browseValidation.getCategory), catchAsync(browseController.categoryPlaylists));
 router
   .route('/categories/:id/playlists')
-  //.get(catchAsync(authMiddleware.authenticate),validate(browseValidation.categoryPlaylist),  catchAsync(browseController.categoryPlaylists));
-  .get(validate(browseValidation.categoryPlaylist),  catchAsync(browseController.categoryPlaylists));
+  .get(catchAsync(authMiddleware.authenticate),validate(browseValidation.categoryPlaylist),  catchAsync(browseController.categoryPlaylists));
 router
   .route('/new-releases')
   .get(validate(browseValidation.newRelease),catchAsync(browseController.newReleases));
