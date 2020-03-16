@@ -4,8 +4,8 @@ module.exports.getLimits = function getLimits(limits){
 	(limits.limit < 1) ? limits.limit = 1 : limits.limit ;
 	(limits.limit > 50) ? limits.limit = 50 : limits.limit ;
 
-	const start = parseInt(limits.offset);
-	const end = parseInt(limits.limit);
+	const offset = parseInt(limits.offset);
+	const limit = parseInt(limits.limit);
 	
-  return {start , end} ;
+  return {offset , limit} ;
 }

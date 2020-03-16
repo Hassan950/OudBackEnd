@@ -10,6 +10,9 @@ const playlistSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    trim: true,
+    minlength: 10,
+    maxlength: 25 
   },
   tracks: [{
     type: mongoose.Schema.Types.ObjectId, 
@@ -18,12 +21,6 @@ const playlistSchema = new mongoose.Schema({
   owner : {
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User',
-    validate: {
-      validator: function(v) {
-        return v && v.length > 0;
-      },
-      message: 'A playlist must have at an owner'
-    }
   },
   collabrative: {
     type: Boolean,
