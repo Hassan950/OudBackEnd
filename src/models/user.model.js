@@ -76,11 +76,9 @@ const userSchema = mongoose.Schema({
   },
   facebook_id: {
     type: String,
-    select: false
   },
   google_id: {
     type: String,
-    select: false
   },
   passwordChangedAt: {
     type: Date,

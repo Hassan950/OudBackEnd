@@ -103,4 +103,17 @@ exports.verify = {
       .required()
       .min(8)
   })
-}
+};
+
+exports.facebookOAuth = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+      .required()
+  })
+};
+
+exports.facebookConnect = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+  })
+};

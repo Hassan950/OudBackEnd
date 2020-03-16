@@ -277,4 +277,19 @@ exports.facebookAuth = async (req, res, next) => {
       user: req.user
     });
   }
+};
+
+exports.facebookConnect = async (req, res, next) => {
+  if (req.body.access_token) {
+    // connect case
+    return next(); // send to passport facebookOAuth
+  } else {
+    // disconnect case
+    if (!req.user) {
+      return next(new AppError('Must Authenticate user', 500));
+    }
+    // set facebook account to null
+    req.user.facebook_id = undefined;
+    createTokenAndSend(req.user, res);
+  }
 }

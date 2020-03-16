@@ -35,7 +35,7 @@ exports.authenticate = async (req, res, next) => {
   // Add checks if the user changed password after creating this token
 
   // check if user still exists
-  const user = await User.findById(payload._id);
+  const user = await User.findById(payload.id);
   if (!user)
     return next(
       new AppError(
@@ -49,6 +49,7 @@ exports.authenticate = async (req, res, next) => {
       new AppError('User recently changed password! Please log in again.', 401)
     );
   }
+  console.log(user);
   req.user = user;
   next();
 };
