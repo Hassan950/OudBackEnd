@@ -49,7 +49,6 @@ exports.authenticate = async (req, res, next) => {
       new AppError('User recently changed password! Please log in again.', 401)
     );
   }
-  console.log(user);
   req.user = user;
   next();
 };

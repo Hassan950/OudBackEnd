@@ -266,6 +266,12 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 
+/**
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @summary if token is invalid return 400, if user`s account already connected to facebook send user 
+ * and token with 200 status else send user information with 200 status
+ */
 exports.facebookAuth = async (req, res, next) => {
   if (!req.user) {
     return next(new AppError('Invalid Token', 400));
@@ -279,6 +285,12 @@ exports.facebookAuth = async (req, res, next) => {
   }
 };
 
+/**
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @summary if not authentivated return 500, if user sent access_token call next to connect to facebook
+ * else disconnect from facebook and send user and token
+ */
 exports.facebookConnect = async (req, res, next) => {
   if (req.body.access_token) {
     // connect case

@@ -1,10 +1,11 @@
 const express = require('express');
 const passport = require('passport');
+const passportConf = require('../../config/passport.js');
 const validate = require('../../middlewares/validate');
 const auth = require('../../middlewares/auth');
 const { authValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
-const { passportController, authController } = require('../../controllers/index');
+const { authController } = require('../../controllers/index');
 
 const router = express.Router();
 

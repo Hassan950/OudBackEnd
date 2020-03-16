@@ -1,21 +1,12 @@
-const passport = require('passport');
-const FacebookTokenStrategy = require('passport-facebook-token');
 const { userService } = require('../services');
 const AppError = require('../utils/AppError');
-const config = require('config');
 
-passport.use('facebook-token', new FacebookTokenStrategy({
-  clientID: config.get('FBclientID'),
-  clientSecret: config.get('FBclientSecret'),
-  profileFields: ['id', 'displayName', 'email', 'birthday', 'gender'],
-  passReqToCallback: true
-}, async (req, accessToken, refreshToken, profile, done) => {
+exports.facebookPassport = async (req, accessToken, refreshToken, profile, done) => {
   try {
     if (req.user) {
       // handle connect case
       if (req.user.facebook_id) {
         // if user sent valid access token and he is connected with facebook
-        console.log('aaaaaaaaa');
         throw new AppError('User already connected', 400);
       }
 
@@ -41,4 +32,4 @@ passport.use('facebook-token', new FacebookTokenStrategy({
   } catch (error) {
     done(error, false, error.message);
   }
-}));
+};
