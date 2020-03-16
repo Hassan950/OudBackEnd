@@ -15,4 +15,4 @@ yarn-error.log
 coverage
 
 # Config
-config/development.json
+development.json

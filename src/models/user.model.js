@@ -95,7 +95,19 @@ const userSchema = mongoose.Schema({
   verifyToken: {
     type: String,
     select: false
-  }
+  },
+  passwordChangedAt: {
+    type: Date,
+    select: false
+  },
+  passwordResetToken: {
+    type: String,
+    select: false
+  },
+  passwordResetExpires: {
+    type: Date,
+    select: false
+  },
 }, {
   toJSON: {
     virtuals: true

@@ -4,9 +4,9 @@ const { authService, emailService } = require('../../../src/services');
 const requestMocks = require('../../../tests/utils/request.mock.js');
 const userMocks = require('../../utils/models/user.model.mocks.js');
 const emailServiceMocks = require('../../utils/services/email.services.mock');
+const _ = require('lodash')
 
 describe('Authenticate test', () => {
-  let user;
   let req;
   let res;
   let next;
