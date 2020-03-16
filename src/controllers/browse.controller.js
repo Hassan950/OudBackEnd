@@ -47,6 +47,7 @@ exports.getCategory = async(req, res, next) => {
 
 exports.categoryPlaylists = async(req, res, next) => {
 	const categoryPlaylists = await browseService.getPlaylists(req.params, req.query);
+	if(!categoryPlaylists.playlists)return next(new AppError('The category with the given ID was not found.', 404));
 	res.status(200).json({
 		category: categoryPlaylists.playlists,
 		offset: categoryPlaylists.offset,

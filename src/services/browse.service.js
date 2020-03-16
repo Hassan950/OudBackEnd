@@ -17,11 +17,12 @@ module.exports.findCategory = async function findCategories(params){
 module.exports.getPlaylists = async function 
 getPlaylists(category , query) {
   const newQuery = limits.getLimits(query);
-  console.log(category.id);
   const playlists = await Category.findById(category.id).populate('playlists').skip(newQuery.offset).limit(newQuery.limit);
-  if(!playlists)throw (new AppError('The category with the given ID was not found.', 404));
   const offset = newQuery.offset;
   const limit = newQuery.limit;
+  if(!playlists){const total = 0 ;
+    return{ playlists , offset  ,limit , total };
+  } 
   const total = await Category.findById(category.id).select('playlist').countDocuments();
   return {playlists , offset ,limit ,total };
 } 
