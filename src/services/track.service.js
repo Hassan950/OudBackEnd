@@ -1,5 +1,6 @@
 const { Track } = require('../models/track.model');
 const AppError = require('../utils/AppError');
+const _ = require('lodash');
 
 exports.findTracks = async ids => {
   const result = await Track.find({ _id: { $in: ids } }).limit(50);
@@ -30,6 +31,15 @@ exports.deleteTrack = async id => {
 
 exports.findTrack = async id => {
   const track = await Track.findById(id);
+  if (!track) throw new AppError('The requested resource is not found', 404);
+  return track;
+};
+
+// Update track service
+// new track contains the properties to update which may be one of (name, artists) or both
+exports.update = async (id, newTrack) => {
+  console.log(newTrack);
+  const track = await Track.findByIdAndUpdate(id, newTrack, { new: true});
   if (!track) throw new AppError('The requested resource is not found', 404);
   return track;
 };

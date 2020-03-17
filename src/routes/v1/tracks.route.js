@@ -14,6 +14,10 @@ router
   .delete(
     validate(trackValidation.oneTrack),
     catchAsync(tracksController.deleteTrack)
+  )
+  .patch(
+    validate(trackValidation.update),
+    catchAsync(tracksController.updateTrack)
   );
 
 router
