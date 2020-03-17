@@ -1,14 +1,9 @@
 const { Category ,Album, Playlist } = require('../models');
-const AppError = require('../utils/AppError');
-const limits = require('../utils/service.util');
 
 module.exports.findCategories = async function findCategories(query){
-  const newQuery = limits.getLimits(query);
-  const categories = await Category.find().skip(newQuery.offset).limit(newQuery.limit);
-  const offset = newQuery.offset;
-  const limit = newQuery.limit;
+  const categories = await Category.find().skip(query.offset).limit(query.limit);
   const total = await Category.countDocuments();
-  return {categories , offset ,limit ,total };
+  return {categories , total };
 } 
 module.exports.findCategory = async function findCategories(params){
   const category = await Category.findById(params.id);
@@ -16,22 +11,16 @@ module.exports.findCategory = async function findCategories(params){
 }
 module.exports.getPlaylists = async function 
 getPlaylists(category , query) {
-  const newQuery = limits.getLimits(query);
-  const playlists = await Category.findById(category.id).populate('playlists').skip(newQuery.offset).limit(newQuery.limit);
-  const offset = newQuery.offset;
-  const limit = newQuery.limit;
+  const playlists = await Category.findById(category.id).populate('playlists').skip(query.offset).limit(query.limit);
   if(!playlists){const total = 0 ;
-    return{ playlists , offset  ,limit , total };
+    return{ playlists , total };
   } 
   const total = await Category.findById(category.id).select('playlist').countDocuments();
-  return {playlists , offset ,limit ,total };
+  return {playlists  ,total };
 } 
 module.exports.getNewReleases = async function getNewReleases(query)
 {
-  const newQuery = limits.getLimits(query);
-  const albums = await Album.find().skip(newQuery.offset).limit(newQuery.limit).sort({release_date: -1}); 
-  const offset = newQuery.offset;
-  const limit = newQuery.limit;
+  const albums = await Album.find().skip(query.offset).limit(query.limit).sort({release_date: -1}); 
   const total = await Album.countDocuments();
-  return {albums , offset ,limit ,total };
+  return {albums  ,total };
 } 

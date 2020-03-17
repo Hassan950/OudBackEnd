@@ -19,21 +19,23 @@ const playlistSchema = new mongoose.Schema({
     ref: 'Track',
   }],
   owner : {
-    type: mongoose.Schema.Types.ObjectId, 
+    type: mongoose.Schema.Types.ObjectId,
+    required:true, 
     ref: 'User',
   },
   collabrative: {
     type: Boolean,
     default:false
   },
-  type: {
-    type: String,
-    enum: ['playlist']
-  },
   public:{
     type: Boolean,
     default:false,
   }
   });
+
+playlistSchema.virtual('type').get(function(){
+  return 'playlist';
+});
+
   const Playlist = mongoose.model('Playlist', playlistSchema);
   module.exports = { Playlist, playlistSchema };

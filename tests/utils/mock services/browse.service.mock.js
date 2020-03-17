@@ -62,14 +62,12 @@ browseService.findCategory = jest.fn().mockImplementation((neededCategory) => {
   })
 });
  browseService.findCategories = jest.fn().mockImplementation(async(query) => {
-   const offset = query.offset;
-   const limit = query.limit;
    const total = addCategories.length;
    const categoriess =  new Promise((resolve,reject)=>{
 resolve(addCategories.slice(query.offset,query.limit));
    });
   let categories = await categoriess;
-  return { categories,offset,limit,total}; 
+  return { categories,total}; 
 });
 
 
@@ -85,12 +83,10 @@ browseService.getPlaylists = jest.fn().mockImplementation(async(neededCategory,q
     }
    
   })
-  const offset = query.offset;
-  const limit = query.limit;
   let playlists = await neededPlaylists;
-  if(!playlists){const total =0 ;return{playlists,offset,limit,total};}
+  if(!playlists){const total =0 ;return{playlists ,total};}
   const total = playlists.length;
-  return{playlists,offset,limit,total};
+  return{playlists , total};
 });
 
 const albumss = [
@@ -123,8 +119,6 @@ const createFakeStoredAlbum = () => {
   return album;
 };
 browseService.getNewReleases = jest.fn().mockImplementation(async(query) => {
-  const offset = query.offset;
-   const limit = query.limit;
    const total = albumss.length;
   const albumsss =  new Promise((resolve,reject)=>{
     albumss.forEach(element => {
@@ -133,7 +127,7 @@ browseService.getNewReleases = jest.fn().mockImplementation(async(query) => {
     resolve(releasedAlbums.slice(query.offset,query.limit));
    });
    let albums = await albumsss;
-   return {albums,offset,limit,total};
+   return {albums ,total};
 });
 
 module.exports = {
