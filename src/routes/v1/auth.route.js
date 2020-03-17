@@ -20,4 +20,15 @@ router
     catchAsync(authController.facebookAuth)
   );
 
+router
+  .route('/google')
+  .post(validate(authValidation.googleOAuth), passport.authenticate('google-token', { session: false }), catchAsync(authController.googleAuth))
+  .patch(
+    catchAsync(auth.authenticate),
+    validate(authValidation.googleConnect),
+    authController.googleConnect,
+    passport.authenticate('google-token', { session: false }),
+    catchAsync(authController.googleAuth)
+  );
+
 module.exports = router;

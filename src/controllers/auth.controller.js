@@ -304,4 +304,44 @@ exports.facebookConnect = async (req, res, next) => {
     req.user.facebook_id = undefined;
     createTokenAndSend(req.user, res);
   }
-}
+};
+
+/**
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @summary if token is invalid return 400, if user`s account already connected to google send user 
+ * and token with 200 status else send user information with 200 status
+ */
+exports.googleAuth = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Invalid Token', 400));
+  }
+  if (req.user._id) {
+    createTokenAndSend(req.user, res);
+  } else {
+    res.status(200).json({
+      user: req.user
+    });
+  }
+};
+
+/**
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @summary if not authentivated return 500, if user sent access_token call next to connect to google
+ * else disconnect from google and send user and token
+ */
+exports.googleConnect = async (req, res, next) => {
+  if (req.body.access_token) {
+    // connect case
+    return next(); // send to passport googleOAuth
+  } else {
+    // disconnect case
+    if (!req.user) {
+      return next(new AppError('Must Authenticate user', 500));
+    }
+    // set google account to null
+    req.user.google_id = undefined;
+    createTokenAndSend(req.user, res);
+  }
+};

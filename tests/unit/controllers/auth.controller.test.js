@@ -425,5 +425,55 @@ describe('Auth controllers', () => {
         expect(res.json.mock.calls[0][0].user.facebook_id).toBeUndefined();
       })
     });
+  });
+
+  describe('Google auth', () => {
+    describe('Google auth middleware', () => {
+      it('should return 400 if token is invalid', async () => {
+        req.user = undefined;
+        await authController.googleAuth(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+
+      it('should return user and token with 200 if user already connected to google', async () => {
+        req.user = user;
+        await authController.googleAuth(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].token).toBeDefined();
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc));
+      });
+
+      it('should return user data with 200 if user is not connected to google', async () => {
+        req.user = user;
+        req.user._id = null;
+        await authController.googleAuth(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc));
+      });
+    })
+
+    describe('Google Connect middleware', () => {
+      it('should call next if access_token is defined', async () => {
+        req.body.access_token = 'token';
+        await authController.googleConnect(req, res, next);
+        expect(next.mock.calls.length).toBe(1);
+      });
+
+      it('should return 500 if user is not authenticated', async () => {
+        req.user = null;
+        await authController.googleConnect(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(500);
+      });
+
+      it('should disconnect user from google and send it with token with status 200', async () => {
+        user.google_id = 'id';
+        req.user = user;
+        await authController.googleConnect(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].token).toBeDefined();
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc))
+        expect(res.json.mock.calls[0][0].user.google_id).toBeUndefined();
+      })
+    });
   })
 });

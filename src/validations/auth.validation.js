@@ -118,3 +118,15 @@ exports.facebookConnect = {
   })
 };
 
+exports.googleOAuth = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+      .required()
+  })
+};
+
+exports.googleConnect = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+  })
+};
