@@ -5,6 +5,7 @@ const authMiddleware = require('../../middlewares/auth')
 const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
+
 const router = express.Router();
 
 router
@@ -17,6 +18,6 @@ router
 
 router
   .route('/:userId')
-  .get(authMiddleware.authenticate, validate(userValidation.getUser), catchAsync(userController.getUser));
+  .get(catchAsync(authMiddleware.authenticate), validate(userValidation.getUser), catchAsync(userController.getUser));
 
 module.exports = router;

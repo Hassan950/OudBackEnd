@@ -2,6 +2,7 @@ const { User } = require('../models');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 const authService = require('./auth.service');
+const fs = require('fs');
 
 /**
  *
@@ -41,7 +42,7 @@ const createUser = async userData => {
   return newUser;
 };
 
-const getUser = async userId => {
+const getUserById = async userId => {
   const user = await User.findById(userId, {
     role: 0,
     verified: 0,
@@ -75,10 +76,33 @@ const editProfile = async (userId, userData) => {
   return user;
 };
 
+const updateImages = async (userId, images) => {
+  let user = await User.findById(userId);
+  // console.log(user.images.filter(path => path.split().pop().matches(/a7a/) != 'test'));
+  const paths = user.images.filter(
+    path =>
+      !path
+        .split('\\')
+        .pop()
+        .match(/^(default-){1,1}.*\.(jpg|png|jpeg)$/)
+  );
+  paths.forEach(path =>
+    fs.unlink(path, err => {
+      if (err) throw err;
+      console.log(`delete ${path}`);
+    })
+  );
+  user = await User.findByIdAndUpdate(userId, {
+    images: images
+  }, { new: true });
+  return user;
+};
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
   createUser,
-  getUser,
-  editProfile
+  getUserById,
+  editProfile,
+  updateImages
 };
