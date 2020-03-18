@@ -24,6 +24,6 @@ router
 
 router
   .route('/profilePicure')
-  .patch(catchAsync(authMiddleware.authenticate), userController.uploadImages, catchAsync(userController.updateImages))
+  .patch(catchAsync(authMiddleware.authenticate), catchAsync(userController.uploadImages), catchAsync(userController.updateImages))
 
 module.exports = router;

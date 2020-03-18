@@ -78,7 +78,6 @@ const editProfile = async (userId, userData) => {
 
 const updateImages = async (userId, images) => {
   let user = await User.findById(userId);
-  // console.log(user.images.filter(path => path.split().pop().matches(/a7a/) != 'test'));
   const paths = user.images.filter(
     path =>
       !path
@@ -92,9 +91,13 @@ const updateImages = async (userId, images) => {
       console.log(`delete ${path}`);
     })
   );
-  user = await User.findByIdAndUpdate(userId, {
-    images: images
-  }, { new: true });
+  user = await User.findByIdAndUpdate(
+    userId,
+    {
+      images: images
+    },
+    { new: true }
+  );
   return user;
 };
 
