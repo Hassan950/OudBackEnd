@@ -1,13 +1,84 @@
 const { userService, authService, emailService } = require('../services');
 const AppError = require('../utils/AppError');
 
+/**
+ * 
+ * @param {User} user 
+ * @param {Response} res 
+ * @author Abdelrahman Tarek
+ */
 const createTokenAndSend = (user, res) => {
+  user.password = undefined;
+  user.passwordConfirm = undefined;
+  user.__v = undefined;
   const token = authService.generateAuthToken(user._id);
   res.setHeader('x-auth-token', token);
   return res.status(200).json({
     token: token,
     user: user
   });
+};
+
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @description takes user verify token and change verify to true if token is valid else return 400 status
+ * @summary User Verify
+ */
+exports.verify = async (req, res, next) => {
+  const hashedToken = authService.getHashedToken(req.params.token);
+
+  const user = await userService.getUser({
+    verifyToken: hashedToken
+  });
+  if (!user) return next(new AppError('Token is invalid', 400));
+
+  user.verified = true;
+  user.verifyToken = undefined;
+
+  await user.save({ validateBeforeSave: false });
+  createTokenAndSend(user, res);
+}
+
+/**
+ * @version 1.0.0
+ * @throws AppError 500 status, AppError 400 status
+ * @author Abdelrahman Tarek
+ * @summary User Request Verify
+ */
+exports.requestVerify = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('PLease Authentcate first', 500));
+  }
+  const user = req.user;
+
+  if (user.verified) {
+    return next(new AppError('User is Already verified!', 400));
+  }
+
+  const verifyToken = authService.createVerifyToken(user);
+  await user.save({ validateBeforeSave: false });
+
+  const verifyURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/verify/${verifyToken}`;
+
+  const message = `Hello ${user.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+
+  try {
+    await emailService.sendEmail({
+      email: user.email,
+      subject: 'Verify your Oud user',
+      message
+    });
+    user.verifyToken = undefined;
+    createTokenAndSend(user, res);
+  } catch (error) {
+    user.verifyToken = undefined;
+    user.save({ validateBeforeSave: false });
+    return next(new AppError('There was an error sending the email. Try again later!', 500));
+  }
 };
 
 /**
@@ -28,7 +99,29 @@ exports.signup = async (req, res, next) => {
   // Return 401 if role is premium without credit
   // Return 401 if role is artist without request
   // Add device
+  // generate verify token
+  const verifyToken = authService.createVerifyToken(newUser);
+  await newUser.save({
+    validateBeforeSave: false
+  });
   // use mail to verify user
+  const verifyURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/verify/${verifyToken}`;
+
+  const message = `Hello ${newUser.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+
+  try {
+    await emailService.sendEmail({
+      email: newUser.email,
+      subject: 'Verify your Oud user',
+      message
+    });
+  } catch (error) {
+    newUser.verifyToken = undefined;
+    newUser.save({ validateBeforeSave: false });
+  }
+  newUser.verifyToken = undefined;
   createTokenAndSend(newUser, res);
 };
 
@@ -170,4 +263,85 @@ exports.resetPassword = async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
   createTokenAndSend(user, res)
+};
+
+
+/**
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @summary if token is invalid return 400, if user`s account already connected to facebook send user 
+ * and token with 200 status else send user information with 200 status
+ */
+exports.facebookAuth = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Invalid Token', 400));
+  }
+  if (req.user._id) {
+    createTokenAndSend(req.user, res);
+  } else {
+    res.status(200).json({
+      user: req.user
+    });
+  }
+};
+
+/**
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @summary if not authentivated return 500, if user sent access_token call next to connect to facebook
+ * else disconnect from facebook and send user and token
+ */
+exports.facebookConnect = async (req, res, next) => {
+  if (req.body.access_token) {
+    // connect case
+    return next(); // send to passport facebookOAuth
+  } else {
+    // disconnect case
+    if (!req.user) {
+      return next(new AppError('Must Authenticate user', 500));
+    }
+    // set facebook account to null
+    req.user.facebook_id = undefined;
+    createTokenAndSend(req.user, res);
+  }
+};
+
+/**
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @summary if token is invalid return 400, if user`s account already connected to google send user 
+ * and token with 200 status else send user information with 200 status
+ */
+exports.googleAuth = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Invalid Token', 400));
+  }
+  if (req.user._id) {
+    createTokenAndSend(req.user, res);
+  } else {
+    res.status(200).json({
+      user: req.user
+    });
+  }
+};
+
+/**
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @summary if not authentivated return 500, if user sent access_token call next to connect to google
+ * else disconnect from google and send user and token
+ */
+exports.googleConnect = async (req, res, next) => {
+  if (req.body.access_token) {
+    // connect case
+    return next(); // send to passport googleOAuth
+  } else {
+    // disconnect case
+    if (!req.user) {
+      return next(new AppError('Must Authenticate user', 500));
+    }
+    // set google account to null
+    req.user.google_id = undefined;
+    createTokenAndSend(req.user, res);
+  }
 };

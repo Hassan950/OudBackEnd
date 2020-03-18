@@ -12,4 +12,8 @@ router
   .route('/updatePassword')
   .patch(catchAsync(authMiddleware.authenticate), validate(authValidation.updatePassword), catchAsync(authController.updatePassword));
 
+router
+  .route('/verify')
+  .post(catchAsync(authMiddleware.authenticate), catchAsync(authController.requestVerify));
+
 module.exports = router;

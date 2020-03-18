@@ -1,17 +1,17 @@
 {
-  "name": "node-express-mongoose-boilerplate",
-  "version": "1.1.2",
-  "description": "A boilerplate for building production-ready RESTful APIs using Node.js, Express, and Mongoose",
-  "main": "src/index.js",
+  "name": "OudBackEnd",
+  "version": "1.0.0",
+  "description": "Music Player API with Node.js Express",
+  "main": "src/server.js",
   "repository": "https://github.com/hagopj13/node-express-mongoose-boilerplate.git",
-  "author": "Hagop Jamkojian <hagopj13@gmail.com>",
+  "author": "ZeroBase.co",
   "license": "MIT",
   "engines": {
     "node": ">=12.0.0"
   },
   "scripts": {
     "start": "nodemon ./src/server.js",
-    "test": "jest --watchAll --verbose"
+    "test": "jest --watchAll --verbose --coverage"
   },
   "keywords": [
     "node",
@@ -49,6 +49,7 @@
     "fuzzaldrin": "^2.1.0",
     "helmet": "^3.21.2",
     "http-status": "^1.4.0",
+    "i18n-iso-countries": "^5.1.0",
     "joi-country-extension": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
@@ -58,6 +59,8 @@
     "morgan": "^1.9.1",
     "nodemailer": "^6.3.1",
     "passport": "^0.4.0",
+    "passport-facebook-token": "^3.3.0",
+    "passport-google-plus-token": "^2.1.0",
     "passport-jwt": "^4.0.0",
     "pm2": "^4.1.2",
     "validator": "^12.0.0",

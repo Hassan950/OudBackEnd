@@ -4,7 +4,7 @@ const _ = require('lodash');
 const getUser = jest.fn().mockImplementation((userData) => {
   return new Promise((resolve, reject) => {
     const user = _.find(userMocks.users, function (obj) {
-      return obj.email == userData.email;
+      return obj.email === userData.email;
     });
     if (user) {
       resolve(user);

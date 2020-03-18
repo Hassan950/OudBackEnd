@@ -76,9 +76,23 @@ const userSchema = mongoose.Schema({
   },
   facebook_id: {
     type: String,
-    select: false
   },
   google_id: {
+    type: String,
+  },
+  passwordChangedAt: {
+    type: Date,
+    select: false
+  },
+  passwordResetToken: {
+    type: String,
+    select: false
+  },
+  passwordResetExpires: {
+    type: Date,
+    select: false
+  },
+  verifyToken: {
     type: String,
     select: false
   },
@@ -108,7 +122,7 @@ userSchema.virtual('type').get(function () {
 });
 
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.password || !this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 8);
 
@@ -122,22 +136,6 @@ userSchema.pre('save', function (next) {
   this.passwordChangedAt = Date.now();
   next();
 });
-
-userSchema.post('save', (docs, next) => {
-  if (docs.password) docs.password = undefined;
-  if (docs.passwordConfirm) docs.passwordConfirm = undefined;
-  if (docs.__v) docs.__v = undefined;
-  next();
-});
-
-userSchema.post(/^find/, function (docs, next) {
-  if (docs) {
-    docs.__v = undefined;
-  }
-
-  next();
-});
-
 
 userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
   if (this.passwordChangedAt) {
