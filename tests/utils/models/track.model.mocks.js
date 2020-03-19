@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class TrackMocks {
   constructor(name, artists, album, audioUrl, duration, _id) {
     this.name = name;
@@ -10,9 +12,7 @@ class TrackMocks {
   save() {
     return this;
   }
-  // To Do
-  // static functions
-  // findbyid, findbyidandupdate
+
   static find({ _id: ids }) {
     let result = [];
     ids = [...new Set(ids)];
@@ -39,6 +39,17 @@ class TrackMocks {
     const track = tracks.find(track => track._id == id);
     return new Promise((resolve, reject) => {
       resolve(track);
+    });
+  }
+
+  static findByIdAndUpdate(id, newTrack, { new: option }) {
+    const trackIndex = tracks.findIndex(track => track._id == id);
+    if (trackIndex == -1) return null;
+    for (let key in newTrack) {
+      tracks[trackIndex][key] = newTrack[key];
+    }
+    return new Promise((resolve, reject) => {
+      resolve(tracks[trackIndex]);
     });
   }
 }
