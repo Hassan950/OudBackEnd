@@ -71,8 +71,8 @@ exports.getTracks  = async (req , res , next)=>{
  * @version 1.0.0
  * @throws AppError 400 status
  * @author Ahmed Magdy
- * @description create a playlist 
- * @summary create a playlist
+ * @description get playlists of a specific id 
+ * @summary get playlists
  */
 
 exports.getUserPlaylists = async(req , res , next)=>{
@@ -86,9 +86,31 @@ exports.getUserPlaylists = async(req , res , next)=>{
   });
 }
 
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status
+ * @author Ahmed Magdy
+ * @description create a playlist 
+ * @summary create a playlist
+ */
+
 exports.createUserPlaylist = async(req , res , next)=>{
   await playlistService.createUserPlaylist(req.params , req.body);
   res.status(200).send('Playlist is created');
-} 
+}
+
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status
+ * @author Ahmed Magdy
+ * @description delete tracks in playlist of a specific id
+ * @summary delete tracks
+ */
+
+exports.deleteTracks = async(req , res , next)=>{
+  const playlist = await playlistService.deleteTracks(req.params ,req.body);
+  if(!playlist) return next(new AppError('no playlist with this id', 404));
+  res.status(200).send('found tracks from tracks send to be deleted are deleted');
+}
 
 

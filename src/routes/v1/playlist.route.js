@@ -17,7 +17,7 @@ router
   .get(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.getTracks), catchAsync(playlistController.getTracks))
 //   .post()
 //   .put()
-//   .delete();
+   .delete(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
 router
   .route('/:id/images')
   .put( validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImage));

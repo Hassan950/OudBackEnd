@@ -52,11 +52,26 @@ const createUserPlaylist = async(params , body)=>{
   playlist.save();
 }
 
+const deleteTracks = async(params , body)=>{
+  let playlist = await Playlist.findById(params.id);
+  if(!playlist)return playlist;
+  let valuesToRemove = body.tracks;
+  let notFound = [];
+  valuesToRemove.forEach(element => {
+    if(!playlist.tracks.includes(element)) notFound.push(element);
+  });
+  valuesToRemove = valuesToRemove.filter(item => !notFound.includes(item));
+  playlist.tracks = playlist.tracks.filter(item => !valuesToRemove.includes(item));
+  playlist.save();
+  return playlist;
+}
+
 module.exports = {
   getPlaylist,
   changePlaylist,
   uploadImage,
   getTracks,
   getUserPlaylists,
-  createUserPlaylist
+  createUserPlaylist,
+  deleteTracks
 }

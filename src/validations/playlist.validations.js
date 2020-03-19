@@ -54,6 +54,15 @@ exports.getUserPlaylists = {
   })
 };
 
+exports.deleteTracks = {
+  params: Joi.object().keys({
+    id: Joi.objectID()
+  }),
+  body: Joi.object().keys({
+    tracks: Joi.array().items(Joi.objectID())
+  })
+};
+
 exports.createUserPlaylist = {
   params: Joi.object().keys({
     id: Joi.objectID()

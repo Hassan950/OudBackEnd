@@ -24,6 +24,6 @@ router
   .patch(validate(authValidation.resetPassword), catchAsync(authController.resetPassword));
 router
   .route('/:id/playlists')
-  .get(validate(PlaylistValidation.getUserPlaylists), catchAsync(playlistController.getUserPlaylists))
-  .post( validate(PlaylistValidation.createUserPlaylist), catchAsync(playlistController.createUserPlaylist));
+  .get(catchAsync(authMiddleware.authenticate) ,validate(PlaylistValidation.getUserPlaylists), catchAsync(playlistController.getUserPlaylists))
+  .post(catchAsync(authMiddleware.authenticate) ,validate(PlaylistValidation.createUserPlaylist), catchAsync(playlistController.createUserPlaylist));
 module.exports = router;
