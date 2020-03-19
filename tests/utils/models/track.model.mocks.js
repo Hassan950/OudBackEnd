@@ -12,7 +12,7 @@ class TrackMocks {
   }
   // To Do
   // static functions
-  // findbyidanddelete , findbyid, findbyidandupdate
+  // findbyid, findbyidandupdate
   static find({ _id: ids }) {
     let result = [];
     ids = [...new Set(ids)];
@@ -22,6 +22,23 @@ class TrackMocks {
     }
     return new Promise((resolve, reject) => {
       resolve(result);
+    });
+  }
+
+  static findByIdAndDelete(id) {
+    const trackIndex = tracks.findIndex(track => track._id == id);
+    if (trackIndex == -1) return null;
+    const track = tracks[trackIndex];
+    tracks.splice(trackIndex, 1);
+    return new Promise((resolve, reject) => {
+      resolve(track);
+    });
+  }
+
+  static findById(id) {
+    const track = tracks.find(track => track._id == id);
+    return new Promise((resolve, reject) => {
+      resolve(track);
     });
   }
 }
@@ -49,7 +66,7 @@ let tracks = [
     'idalbum',
     'shit.mp3',
     30000,
-    '5e6c8ebb8b40fc5508fe8b32'
+    '5e6c8ebb8b40fc5518fe8b32'
   )
 ];
 

@@ -33,7 +33,6 @@ exports.findTrack = async id => {
 // Update track service
 // new track contains the properties to update which may be one of (name, artists) or both
 exports.update = async (id, newTrack) => {
-  console.log(newTrack);
   const track = await Track.findByIdAndUpdate(id, newTrack, { new: true });
   if (!track) throw new AppError('The requested resource is not found', 404);
   return track;

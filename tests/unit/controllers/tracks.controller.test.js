@@ -48,4 +48,38 @@ describe('Tracks controller', () => {
       expect(res.send.mock.calls[0][0][2]).toEqual(null);
     });
   });
+  describe('deleteTrack', () => {
+    it('Should delete the track with the given ID and return it with status code 200', async () => {
+      Track.findByIdAndDelete = TrackMocks.findByIdAndDelete;
+      // A valid ID that belongs to an object
+      req.params.id = '5e6c8ebb8b40fc5518fe8b32';
+      await tracksController.deleteTrack(req, res, next);
+      expect(res.send.mock.calls[0][0]).toMatchObject({ audioUrl: /.mp3/ });
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it("Should throw an error with a status code of 404 if the ID didn't match any track", async () => {
+      Track.findByIdAndDelete = TrackMocks.findByIdAndDelete;
+      // An ID that doesn't belong to any track
+      req.params.id = '5a6c8ebb8b40fc5518fe8b32';
+      expect(tracksController.deleteTrack(req, res, next)).rejects.toThrow(
+        new AppError('The requested resource is not found', 404)
+      );
+    });
+  });
+  describe('getTrack', () => {
+    it('Should return the track with the given ID with status code of 200', async () => {
+      Track.findById = TrackMocks.findById;
+      req.params.id = '5e6c8ebb8b40fc5508fe8b32';
+      await tracksController.getTrack(req, res, next);
+      expect(res.send.mock.calls[0][0]).toMatchObject({ audioUrl: /.mp3/ });
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it("Should throw an error with a status code of 404 if the ID didn't match any track", async () => {
+      Track.findById = TrackMocks.findById;
+      req.params.id = 'invalid id';
+      expect(tracksController.getTrack(req, res, next)).rejects.toThrow(
+        new AppError('The requested resource is not found', 404)
+      );
+    });
+  });
 });
