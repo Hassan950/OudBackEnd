@@ -26,6 +26,12 @@ const deviceSchema = mongoose.Schema({
     type: Number,
     minimum: 0,
     maximum: 100
+  },
+  userId: {
+    type: String,
+    ref: 'User',
+    required: [true, 'Device must belong to a user'],
+    select: false
   }
 }, {
   toJSON: {
@@ -35,6 +41,9 @@ const deviceSchema = mongoose.Schema({
     virtuals: true
   }
 });
+
+deviceSchema.index({ userId: 1 });
+
 
 const Device = mongoose.model('Device', deviceSchema);
 
