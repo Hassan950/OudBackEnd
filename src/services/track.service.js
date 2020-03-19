@@ -3,8 +3,7 @@ const AppError = require('../utils/AppError');
 const _ = require('lodash');
 
 exports.findTracks = async ids => {
-  const result = await Track.find({ _id: { $in: ids } }).limit(50);
-
+  const result = await Track.find({ _id: ids });
   if (!result.length)
     throw new AppError('The requested resource is not found', 404);
 
@@ -13,13 +12,9 @@ exports.findTracks = async ids => {
   const tracks = [];
 
   for (let i = 0, n = ids.length; i < n; i++) {
-    const val = result.find(track => {
-      return track.id == ids[i];
-    });
-
+    const val = result.find(track => track._id == ids[i]);
     tracks[i] = val == undefined ? null : val;
   }
-
   return tracks;
 };
 
@@ -39,7 +34,7 @@ exports.findTrack = async id => {
 // new track contains the properties to update which may be one of (name, artists) or both
 exports.update = async (id, newTrack) => {
   console.log(newTrack);
-  const track = await Track.findByIdAndUpdate(id, newTrack, { new: true});
+  const track = await Track.findByIdAndUpdate(id, newTrack, { new: true });
   if (!track) throw new AppError('The requested resource is not found', 404);
   return track;
 };

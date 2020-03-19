@@ -13,7 +13,9 @@ const idArray = (value, helper) => {
 
 exports.getSeveral = {
   query: Joi.object().keys({
-    ids: Joi.string().custom(idArray).required()
+    ids: Joi.string()
+      .custom(idArray)
+      .required()
   })
 };
 
@@ -27,19 +29,13 @@ exports.update = {
   params: Joi.object().keys({
     id: Joi.objectId().required()
   }),
-  body: Joi.object().keys({
-    name: Joi.string().min(1).max(30).trim(),
-    artists: Joi.array().items(Joi.objectId())
-  }).min(1)
-}
-// exports.validateTrack = function validate(track) {
-//   const schema = {
-//     name: Joi.string()
-//       .min(1)
-//       .max(30)
-//       .required(),
-//     artists: [Joi.objectId().required()],
-//     album: Joi.objectId().required()
-//   };
-//   return Joi.validate(track, schema);
-// };
+  body: Joi.object()
+    .keys({
+      name: Joi.string()
+        .min(1)
+        .max(30)
+        .trim(),
+      artists: Joi.array().items(Joi.objectId())
+    })
+    .min(1)
+};
