@@ -16,7 +16,7 @@ exports.changePlaylist = {
     collabrative: Joi.boolean().default(false),
     description: Joi.string().trim().min(10).max(25)
   }) 
-}
+};
 exports.uploadImage = {
   params: Joi.object().keys({
     id: Joi.objectID()
@@ -38,4 +38,30 @@ exports.getTracks = {
       .max(50)
       .default(20)
   })
+};
+
+exports.getUserPlaylists = {
+  params: Joi.object().keys({
+    id: Joi.objectID()
+  }),
+  query: Joi.object().keys({
+    offset: Joi.number()
+      .default(0),
+    limit: Joi.number()
+      .min(1)
+      .max(50)
+      .default(20)
+  })
+};
+
+exports.createUserPlaylist = {
+  params: Joi.object().keys({
+    id: Joi.objectID()
+  }),
+  body: Joi.object().keys({
+    name: Joi.string().required().trim().min(3).max(20),
+    public: Joi.boolean().default(false),
+    collabrative: Joi.boolean().default(false),
+    description: Joi.string().trim().min(10).max(25)
+  }) 
 };

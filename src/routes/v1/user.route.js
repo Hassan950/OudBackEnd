@@ -1,7 +1,8 @@
 const express = require('express');
-const { authController } = require('../../controllers');
+const { authController , playlistController} = require('../../controllers');
+const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const { authValidation } = require('../../validations');
+const { authValidation , PlaylistValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router();
@@ -21,5 +22,8 @@ router
 router
   .route('/resetPassword/:token')
   .patch(validate(authValidation.resetPassword), catchAsync(authController.resetPassword));
-
+router
+  .route('/:id/playlists')
+  .get(validate(PlaylistValidation.getUserPlaylists), catchAsync(playlistController.getUserPlaylists))
+  .post( validate(PlaylistValidation.createUserPlaylist), catchAsync(playlistController.createUserPlaylist));
 module.exports = router;

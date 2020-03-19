@@ -10,7 +10,7 @@ const router = express.Router();
 
 router
   .route('/:id')
-  .get( validate(PlaylistValidation.getPlaylist), catchAsync(playlistController.getPlaylist))
+  .get(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.getPlaylist), catchAsync(playlistController.getPlaylist))
   .put(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.changePlaylist), catchAsync(playlistController.changePlaylist));
 router
   .route('/:id/tracks')
@@ -18,7 +18,7 @@ router
 //   .post()
 //   .put()
 //   .delete();
- router
+router
   .route('/:id/images')
   .put( validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImage));
 // router

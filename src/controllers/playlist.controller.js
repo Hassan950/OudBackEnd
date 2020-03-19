@@ -67,3 +67,28 @@ exports.getTracks  = async (req , res , next)=>{
   });
 }
 
+/**
+ * @version 1.0.0
+ * @throws AppError 400 status
+ * @author Ahmed Magdy
+ * @description create a playlist 
+ * @summary create a playlist
+ */
+
+exports.getUserPlaylists = async(req , res , next)=>{
+  const playlists = await playlistService.getUserPlaylists(req.params , req.query);
+  if(!playlists.playlists) return next(new AppError('this user has no playlists', 404));
+  res.status(200).json({
+    playlists: playlists.playlists,
+    offset: req.query.offset,
+    limit: req.query.limit,
+    total: playlists.total
+  });
+}
+
+exports.createUserPlaylist = async(req , res , next)=>{
+  await playlistService.createUserPlaylist(req.params , req.body);
+  res.status(200).send('Playlist is created');
+} 
+
+

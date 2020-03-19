@@ -32,9 +32,31 @@ const getTracks = async(params , query)=>{
   return {tracks , total};
 }
 
+const getUserPlaylists = async(params , query)=>{
+  const playlists = await Playlist.find({owner: params.id}).select('-owner').skip(query.offset).limit(query.limit);
+  if(!playlists){const total = 0 ;
+    return{ playlists , total };
+  }
+  const total = playlists.length; 
+  return {playlists , total};
+}
+
+const createUserPlaylist = async(params , body)=>{
+  const playlist = new Playlist({
+    name : body.name ,
+    public :  body.public ,
+    collabrative : body.collabrative,
+    description : body.description,
+    owner : params.id
+  });
+  playlist.save();
+}
+
 module.exports = {
   getPlaylist,
   changePlaylist,
   uploadImage,
-  getTracks
+  getTracks,
+  getUserPlaylists,
+  createUserPlaylist
 }
