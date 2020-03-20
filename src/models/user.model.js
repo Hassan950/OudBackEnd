@@ -122,24 +122,50 @@ const userSchema = mongoose.Schema(
     google_id: {
       type: String,
       select: false
-    }
-  },
-  {
+    },
+    passwordChangedAt: {
+      type: Date,
+      select: false
+    },
+    passwordResetToken: {
+      type: String,
+      select: false
+    },
+    passwordResetExpires: {
+      type: Date,
+      select: false
+    },
+    verifyToken: {
+      type: String,
+      select: false
+    },
+    passwordChangedAt: {
+      type: Date,
+      select: false
+    },
+    passwordResetToken: {
+      type: String,
+      select: false
+    },
+    passwordResetExpires: {
+      type: Date,
+      select: false
+    },
+    }, {
     toJSON: {
       virtuals: true
     },
     toObject: {
       virtuals: true
     }
-  }
-);
+  });
 
 userSchema.virtual('type').get(function() {
   return 'user';
 });
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function (next) {
+  if (!this.password || !this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 8);
 
@@ -147,20 +173,25 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-userSchema.post('save', (docs, next) => {
-  docs.password = undefined;
-  docs.passwordConfirm = undefined;
-  docs.__v = undefined;
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now();
   next();
 });
 
-userSchema.post(/^find/, function(docs, next) {
-  if (docs) {
-    docs.__v = undefined;
+userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimestamp;
   }
 
-  next();
-});
+  return false;
+};
 
 const User = mongoose.model('User', userSchema);
 

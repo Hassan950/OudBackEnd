@@ -26,4 +26,8 @@ router
   .route('/profilePicture')
   .patch(catchAsync(authMiddleware.authenticate), userController.uploadImages, catchAsync(userController.updateImages))
 
+router
+  .route('/verify')
+  .post(catchAsync(authMiddleware.authenticate), catchAsync(authController.requestVerify));
+
 module.exports = router;

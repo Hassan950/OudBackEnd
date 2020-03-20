@@ -5,12 +5,15 @@ const logger = require('./../config/logger');
 
 const errorConverter = (err, req, res, next) => {
   let error = err;
+  if (config.get('NODE_ENV') === 'development')
+    console.log(err);
   if (config.get('NODE_ENV') === 'production') {
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
     if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(error);
     if (error.name === 'CastError') error = handleCastErrorDB(error);
+    if (error.name === 'InternalOAuthError') error = handleOAuthError(error);
   }
   if (!(error instanceof AppError)) {
     const statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
@@ -19,6 +22,10 @@ const errorConverter = (err, req, res, next) => {
   }
   next(error);
 };
+
+const handleOAuthError = err => {
+  return new AppError(err.message, err.oauthError.statusCode);
+}
 
 const handleCastErrorDB = err => {
   const message = `Invalid ${err.path}: ${err.value}.`;

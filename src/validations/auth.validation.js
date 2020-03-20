@@ -16,9 +16,6 @@ exports.signup = {
       .required()
       .min(5)
       .max(30),
-    email: Joi.string()
-      .required()
-      .email(),
     role: Joi.string()
       .default('free')
       .valid('free', 'premium', 'artist'),
@@ -28,8 +25,12 @@ exports.signup = {
     country: Joi.string()
       .required()
       .custom(countryCheck),
-    gender: Joi.string().valid('M', 'F'),
-    displayName: Joi.string().required()
+    gender: Joi.string()
+      .valid('M', 'F'),
+    displayName: Joi.string()
+      .required(),
+    facebook_id: Joi.string(),
+    google_id: Joi.string()
   })
 };
 
@@ -53,5 +54,63 @@ exports.updatePassword = {
       .required()
       .min(8),
     passwordConfirm: Joi.string().required()
+  })
+};
+
+exports.forgotPassword = {
+  body: Joi.object().keys({
+    email: Joi.string()
+      .required()
+      .email()
+  })
+};
+
+
+exports.resetPassword = {
+  body: Joi.object().keys({
+    password: Joi.string()
+      .required()
+      .min(8),
+    passwordConfirm: Joi.string()
+      .required()
+  }),
+  params: Joi.object().keys({
+    token: Joi.string()
+      .required()
+      .min(8)
+  })
+};
+
+exports.verify = {
+  params: Joi.object().keys({
+    token: Joi.string()
+      .required()
+      .min(8)
+  })
+};
+
+exports.facebookOAuth = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+      .required()
+  })
+};
+
+exports.facebookConnect = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+  })
+};
+
+exports.googleOAuth = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+      .required()
+  })
+};
+
+exports.googleConnect = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
   })
 };

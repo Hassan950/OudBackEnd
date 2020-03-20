@@ -28,7 +28,7 @@ const createFakeUser = () => {
     ],
     _id: mongoose.Types.ObjectId()
   });
-  user.save = jest.fn().mockImplementation(function() {
+  user.save = jest.fn().mockImplementation(function (Options) {
     save();
     return new Promise(function(resolve, reject) {
       resolve(this);
@@ -135,7 +135,22 @@ findByIdWithPopulate = jest.fn().mockImplementation(id => {
   };
 });
 
-findByIdWithSelect = jest.fn().mockImplementation(id => {
+User.findByIdAndDelete = jest.fn().mockImplementation((userId) => {
+  return new Promise((resolve, reject) => {
+    let user = _.find(users, function (obj) {
+      return obj._id == userId;
+    });
+    const idx = users.indexOf(user);
+    user = users.splice(idx, 1);
+    if (user) {
+      resolve(user);
+    } else {
+      resolve(null);
+    }
+  })
+});
+
+findByIdWithSelect = jest.fn().mockImplementation((id) => {
   return {
     select: jest.fn().mockResolvedValue(
       new Promise((resolve, reject) => {
