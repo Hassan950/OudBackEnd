@@ -16,7 +16,13 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.split('/')[1].match(/(png|jpg|jpeg)/)) {
     cb(null, true);
   } else {
-    cb(new AppError('Not an image! Please upload only images.', httpStatus.BAD_REQUEST), false)
+    cb(
+      new AppError(
+        'Not an image! Please upload only images.',
+        httpStatus.BAD_REQUEST
+      ),
+      false
+    );
   }
 };
 const upload = multer({
@@ -26,36 +32,40 @@ const upload = multer({
 
 exports.uploadImages = upload.array('images');
 
-exports.getProfile = async (req, res) => {
+exports.getProfile = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Please Authenticate first', httpStatus.INTERNAL_SERVER_ERROR));
+  }
   res.status(httpStatus.OK).send(req.user);
 };
 
-exports.getUser = async (req, res) => {
-  const user = await userService
-    .getUserById(req.params.userId)
-    .populate('artist');
+exports.getUser = async (req, res, next) => {
+  const user = await userService.getUserById(req.params.userId);
+  if (!user) {
+    return next(new AppError('User not found', httpStatus.NOT_FOUND));
+  }
   res.status(httpStatus.OK).send(user);
 };
 
-exports.editProfile = async (req, res) => {
-  const user = userService.findUserByIdAndCheckPassword(
+exports.editProfile = async (req, res, next) => {
+  const user = await userService.findUserByIdAndCheckPassword(
     req.user._id,
     req.body.passwordConfirm
   );
   if (!user) {
-    throw new AppError(
+    return next(new AppError(
       "The password you entered doesn't match your password. Please try again.",
       httpStatus.BAD_REQUEST
-    );
-  }
-  const profile = await userService.editProfile(
-    req.user._id,
-    req.body
-  );
+      ));
+    }
+  const profile = await userService.editProfile(req.user, req.body);
   res.status(httpStatus.OK).send(profile);
 };
 
-exports.updateImages = async (req, res) => {
-  const user = await userService.updateImages(req.user._id, req.files.map(file => file.path))
+exports.updateImages = async (req, res, next) => {
+  const user = await userService.updateImages(
+    req.user,
+    req.files.map(file => file.path)
+  );
   res.status(httpStatus.OK).send(user);
-}
+};

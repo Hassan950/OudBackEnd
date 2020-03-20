@@ -23,7 +23,7 @@ router
   .put(catchAsync(authMiddleware.authenticate), validate(userValidation.editProfile), catchAsync(userController.editProfile));
 
 router
-  .route('/profilePicure')
-  .patch(catchAsync(authMiddleware.authenticate), catchAsync(userController.uploadImages), catchAsync(userController.updateImages))
+  .route('/profilePicture')
+  .patch(catchAsync(authMiddleware.authenticate), userController.uploadImages, catchAsync(userController.updateImages))
 
 module.exports = router;

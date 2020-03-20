@@ -44,24 +44,20 @@ const createUser = async userData => {
 
 const getUserById = async userId => {
   const user = await User.findById(userId, {
-    role: 0,
     verified: 0,
-    password: 0,
-    username: 0
-  });
-  if (!user) {
-    throw new AppError('User not found', httpStatus.NOT_FOUND);
-  }
+    role: 0,
+    username: 0,
+    password: 0
+  }).populate('artist');
   return user;
 };
 
-const editProfile = async (userId, userData) => {
-  let user = await User.findById(userId);
+const editProfile = async (user, userData) => {
   if (user.email !== userData.email) {
     user.verified = false;
   }
   user = await User.findByIdAndUpdate(
-    userId,
+    user._id,
     {
       email: userData.email,
       birthDate: userData.dateOfBirth,
@@ -76,8 +72,7 @@ const editProfile = async (userId, userData) => {
   return user;
 };
 
-const updateImages = async (userId, images) => {
-  let user = await User.findById(userId);
+const updateImages = async (user, images) => {
   const paths = user.images.filter(
     path =>
       !path
@@ -92,7 +87,7 @@ const updateImages = async (userId, images) => {
     })
   );
   user = await User.findByIdAndUpdate(
-    userId,
+    user._id,
     {
       images: images
     },

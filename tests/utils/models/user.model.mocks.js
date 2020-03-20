@@ -12,38 +12,40 @@ const createFakeUser = () => {
     displayName: faker.name.firstName(),
     username: faker.name.findName(),
     email: faker.internet.email(),
-    images: [
-      faker.internet.url()
-    ],
     password: password,
     passwordConfirm: password,
     role: 'free',
-    birthDate: faker.date.between(moment().subtract(11, 'years'), moment().subtract(150, 'years')), // from 11 to 150 years
+    birthDate: faker.date.between(
+      moment().subtract(11, 'years'),
+      moment().subtract(150, 'years')
+    ), // from 11 to 150 years
     gender: 'M',
     verified: false,
     country: 'EG',
+    images: [
+      'uploads\\users\\default-Profile.jpg',
+      'uploads\\users\\default-Cover.jpg'
+    ],
     _id: mongoose.Types.ObjectId()
   });
-  user.save = jest.fn().mockImplementation(function () {
+  user.save = jest.fn().mockImplementation(function() {
     save();
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       resolve(this);
-    })
+    });
   });
+
   return user;
 };
 
-const users = [
-  createFakeUser(),
-  createFakeUser(),
-  createFakeUser()
-];
-
+const users = [createFakeUser(), createFakeUser(), createFakeUser()];
 
 User.create = userData => {
   return new Promise((resolve, reject) => {
-    if (_.some(users, ['username', userData.username]) ||
-      _.some(users, ['email', userData.email])) {
+    if (
+      _.some(users, ['username', userData.username]) ||
+      _.some(users, ['email', userData.email])
+    ) {
       reject({ error: 'That username already exists.' });
     } else {
       const newUser = new User({
@@ -51,30 +53,30 @@ User.create = userData => {
         ...userData._doc
       });
 
-      bcrypt.hash(newUser.password, 8)
-        .then((result) => {
+      bcrypt.hash(newUser.password, 8).then(
+        result => {
           newUser.password = result;
           newUser.passwordConfirm = undefined;
-          newUser.save = jest.fn().mockImplementation(function () {
+          newUser.save = jest.fn().mockImplementation(function() {
             save();
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
               resolve(this);
-            })
+            });
           });
           users.push(newUser);
           resolve(newUser);
-        }, err => { });
+        },
+        err => {}
+      );
     }
   });
 };
 
-
-
-User.findOne = jest.fn().mockImplementation((userData) => {
+User.findOne = jest.fn().mockImplementation(userData => {
   return {
     select: jest.fn().mockResolvedValue(
       new Promise((resolve, reject) => {
-        const user = _.find(users, function (obj) {
+        const user = _.find(users, function(obj) {
           return obj.email == userData.email;
         });
         if (user) {
@@ -84,12 +86,12 @@ User.findOne = jest.fn().mockImplementation((userData) => {
         }
       })
     )
-  }
+  };
 });
 
-User.findById = jest.fn().mockImplementation((id) => {
+User.findById = jest.fn().mockImplementation((id, options) => {
   return new Promise((resolve, reject) => {
-    const user = _.find(users, function (obj) {
+    const user = _.find(users, function(obj) {
       return obj._id == id;
     });
     if (user) {
@@ -97,14 +99,30 @@ User.findById = jest.fn().mockImplementation((id) => {
     } else {
       resolve(null);
     }
-  })
+  });
 });
 
-findByIdWithSelect = jest.fn().mockImplementation((id) => {
+User.findByIdAndUpdate = jest.fn().mockImplementation((id, options) => {
+  return new Promise((resolve, reject) => {
+    const user = _.find(users, function(obj) {
+      return obj._id == id;
+    });
+    if (options && options.images) {
+      user.images[0] = options.images[0]
+    }
+    if (user) {
+      resolve(user);
+    } else {
+      resolve(null);
+    }
+  });
+});
+
+findByIdWithPopulate = jest.fn().mockImplementation(id => {
   return {
-    select: jest.fn().mockResolvedValue(
+    populate: jest.fn().mockResolvedValue(
       new Promise((resolve, reject) => {
-        const user = _.find(users, function (obj) {
+        const user = _.find(users, function(obj) {
           return obj._id == id;
         });
         if (user) {
@@ -114,12 +132,30 @@ findByIdWithSelect = jest.fn().mockImplementation((id) => {
         }
       })
     )
-  }
+  };
+});
+
+findByIdWithSelect = jest.fn().mockImplementation(id => {
+  return {
+    select: jest.fn().mockResolvedValue(
+      new Promise((resolve, reject) => {
+        const user = _.find(users, function(obj) {
+          return obj._id == id;
+        });
+        if (user) {
+          resolve(user);
+        } else {
+          resolve(null);
+        }
+      })
+    )
+  };
 });
 module.exports = {
   createFakeUser,
   User,
   users,
   findByIdWithSelect,
+  findByIdWithPopulate,
   save
-}
+};

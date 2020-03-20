@@ -70,7 +70,6 @@ const errorHandler = (err, req, res, next) => {
   if (config.get('NODE_ENV') === 'development') {
     logger.error(err);
   }
-
   res.status(statusCode).send(response);
 };
 
