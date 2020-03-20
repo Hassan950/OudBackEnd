@@ -30,7 +30,6 @@ const trackSchema = new mongoose.Schema({
   },
   duration: {
     type: Number,
-    required: true,
     min: 5000,
     default: 10000
   },
