@@ -5,7 +5,12 @@ const validate = require('../../middlewares/validate');
 const { PlaylistValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
-const router = express.Router();
+const router = express.Router({mergeParams: true});
+
+router
+  .route('/')
+  .get(catchAsync(authMiddleware.authenticate) ,validate(PlaylistValidation.getUserPlaylists), catchAsync(playlistController.getUserPlaylists))
+  .post(catchAsync(authMiddleware.authenticate) ,validate(PlaylistValidation.createUserPlaylist), catchAsync(playlistController.createUserPlaylist));
 
 
 router
