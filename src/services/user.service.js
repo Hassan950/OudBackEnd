@@ -40,6 +40,17 @@ const createUser = async (userData) => {
   return newUser;
 };
 
+/**
+ * A method that gets the User By its ID
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get a User By ID
+ * @param {Object} userId - The Id of the user
+ * @returns {null} if user was not found
+ * @returns {Document} if a user was found
+ */
+
 const getUserById = async userId => {
   const user = await User.findById(userId, {
     verified: 0,
@@ -49,6 +60,17 @@ const getUserById = async userId => {
   }).populate('artist');
   return user;
 };
+
+/**
+ * A method that edits the user profile
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Edit the user's profile
+ * @param {Object} user - The User's Current Data
+ * @param {Object} userData - The new Data
+ * @returns {Object} The user after updates
+ */
 
 const editProfile = async (user, userData) => {
   if (user.email !== userData.email) {
@@ -70,6 +92,17 @@ const editProfile = async (user, userData) => {
   return user;
 };
 
+/**
+ * A method that updates the images paths of the user
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Update the images
+ * @param {Object} user - The User's Current Data
+ * @param {Object} images - The new paths
+ * @returns {Object} The user after updates
+ */
+
 const updateImages = async (user, images) => {
   const paths = user.images.filter(
     path =>
@@ -81,7 +114,6 @@ const updateImages = async (user, images) => {
   paths.forEach(path =>
     fs.unlink(path, err => {
       if (err) throw err;
-      console.log(`delete ${path}`);
     })
   );
   user = await User.findByIdAndUpdate(

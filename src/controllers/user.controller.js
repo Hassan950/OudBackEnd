@@ -30,7 +30,30 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
+/**
+ * calls multer to upload multiple images that are in req.body.images and put it in req.files
+ *
+ * @function
+ * @throws AppError 500 Internal Server Error if not authenticated
+ * @author Hassan Mohamed
+ * @description 
+ * @summary A middleware that uses multer to upload multiple images
+ */
+
 exports.uploadImages = upload.array('images');
+
+
+/**
+ * A middleware that gets the profile of the user
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get The User Profile
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 500 Internal Server Error if not authenticated
+ */
 
 exports.getProfile = async (req, res, next) => {
   if (!req.user) {
@@ -39,6 +62,17 @@ exports.getProfile = async (req, res, next) => {
   res.status(httpStatus.OK).send(req.user);
 };
 
+/**
+ * A middleware that gets a user's profile
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get a User's Profile
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if req.params.userId was invalid
+ */
 exports.getUser = async (req, res, next) => {
   const user = await userService.getUserById(req.params.userId);
   if (!user) {
@@ -47,6 +81,19 @@ exports.getUser = async (req, res, next) => {
   res.status(httpStatus.OK).send(user);
 };
 
+
+/**
+ * A middleware that edits the user's profile
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Edit the user's profile
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if req.params.userId was invalid
+ * @throws AppError 400 if req.body.passwordConfirm doesn't match the user's password
+ */
 exports.editProfile = async (req, res, next) => {
   const user = await userService.findUserByIdAndCheckPassword(
     req.user._id,
@@ -62,6 +109,18 @@ exports.editProfile = async (req, res, next) => {
   res.status(httpStatus.OK).send(profile);
 };
 
+
+/**
+ * A middleware that is called after multer has put images on the server side.
+ * Updates the paths of images of the user
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Updates the paths of images of the user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.updateImages = async (req, res, next) => {
   const user = await userService.updateImages(
     req.user,
