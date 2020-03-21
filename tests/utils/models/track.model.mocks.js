@@ -11,7 +11,7 @@ class TrackMocks {
   }
   save() {
     return new Promise((resolve, reject) => {
-      resolve(this)
+      resolve(this);
     });
   }
 
@@ -27,12 +27,12 @@ class TrackMocks {
     });
   }
 
-  set(newTrack){
+  set(newTrack) {
     for (let key in newTrack) {
       this[key] = newTrack[key];
     }
     return new Promise((resolve, reject) => {
-      resolve(this)
+      resolve(this);
     });
   }
 
@@ -65,8 +65,16 @@ class TrackMocks {
   }
 }
 
-artistids = ['5e6c8ebb8b40fc5508fe8b32','5e6c8ebb8b40fc6608fe8b32','5e6c8ebb8b40fc7708fe8b32']
-trackids = ['5e6c8ebb8b40fc5508fe8b32','5e6f6a7fac1d6d06f40706f2','5e6c8ebb8b40fc5518fe8b32']
+artistids = [
+  '5e6c8ebb8b40fc5508fe8b32',
+  '5e6c8ebb8b40fc6608fe8b32',
+  '5e6c8ebb8b40fc7708fe8b32'
+];
+trackids = [
+  '5e6c8ebb8b40fc5508fe8b32',
+  '5e6f6a7fac1d6d06f40706f2',
+  '5e6c8ebb8b40fc5518fe8b32'
+];
 
 let tracks = [
   new TrackMocks(

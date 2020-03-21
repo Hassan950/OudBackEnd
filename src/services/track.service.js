@@ -39,8 +39,6 @@ exports.findTrack = async id => {
 exports.update = async (id, newTrack, artistId) => {
   let track = await Track.findById(id);
   if (!track) throw new AppError('The requested resource is not found', 404);
-  // console.log(artistId)
-  // console.log(track.artists)
   if (!track.artists.find(aId => aId.toString() == artistId.toString()))
     throw new AppError(
       'You do not have permission to perform this action.',

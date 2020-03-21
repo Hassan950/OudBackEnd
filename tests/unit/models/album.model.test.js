@@ -62,7 +62,7 @@ describe('Album Model', () => {
     album.release_date = '12-1-199';
     expect(album.validateSync().errors['release_date']).toBeDefined();
   });
-  it("Should throw an error if release_date is empty", () => {
+  it('Should throw an error if release_date is empty', () => {
     album.release_date = null;
     expect(album.validateSync().errors['release_date']).toBeDefined();
   });

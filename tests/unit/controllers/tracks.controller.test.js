@@ -1,7 +1,11 @@
 const tracksController = require('../../../src/controllers/tracks.controller');
 const requestMocks = require('../../utils/request.mock');
 let { Track } = require('../../../src/models');
-const { TrackMocks, artistids, trackids } = require('../../utils/models/track.model.mocks');
+const {
+  TrackMocks,
+  artistids,
+  trackids
+} = require('../../utils/models/track.model.mocks');
 const AppError = require('../../../src/utils/AppError');
 
 describe('Tracks controller', () => {
@@ -17,7 +21,7 @@ describe('Tracks controller', () => {
     it("Should return list of tracks with the ID's given with status code 200", async () => {
       Track.find = TrackMocks.find;
       // two valid ID's
-      req.query.ids = trackids[0]+','+trackids[1];
+      req.query.ids = trackids[0] + ',' + trackids[1];
       await tracksController.getTracks(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('tracks');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -33,10 +37,18 @@ describe('Tracks controller', () => {
     it("Should return the same result for the same ID (null for invalid ID's)", async () => {
       Track.find = TrackMocks.find;
       // One valid ID and another invalid one each passed twice
-      req.query.ids = trackids[0]+','+trackids[0]+',5e6c8ebb8b40fc5508fe8b31,5e6c8ebb8b40fc5508fe8b31';
+      req.query.ids =
+        trackids[0] +
+        ',' +
+        trackids[0] +
+        ',5e6c8ebb8b40fc5508fe8b31,5e6c8ebb8b40fc5508fe8b31';
       await tracksController.getTracks(req, res, next);
-      expect(res.json.mock.calls[0][0].tracks[0]).toEqual(res.json.mock.calls[0][0].tracks[1]);
-      expect(res.json.mock.calls[0][0].tracks[2]).toEqual(res.json.mock.calls[0][0].tracks[3]);
+      expect(res.json.mock.calls[0][0].tracks[0]).toEqual(
+        res.json.mock.calls[0][0].tracks[1]
+      );
+      expect(res.json.mock.calls[0][0].tracks[2]).toEqual(
+        res.json.mock.calls[0][0].tracks[3]
+      );
       expect(res.json.mock.calls[0][0].tracks[2]).toEqual(null);
     });
   });
@@ -51,21 +63,25 @@ describe('Tracks controller', () => {
       expect(res.json.mock.calls[0][0]).toHaveProperty('track');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
-    it("Should throw an error with a status code of 403 if the artist is not one of the track artists", async () => {
+    it('Should throw an error with a status code of 403 if the artist is not one of the track artists', async () => {
       Track.findByIdAndDelete = TrackMocks.findByIdAndDelete;
       // An ID that doesn't belong to any track
       req.params.id = trackids[0];
       req.user = { artist: artistids[2] };
-      await expect(tracksController.deleteTrack(req, res, next)).rejects.toThrow(
+      await expect(
+        tracksController.deleteTrack(req, res, next)
+      ).rejects.toThrow(
         new AppError('You do not have permission to perform this action.', 403)
       );
     });
     it("Should throw an error with a status code of 404 if the ID didn't match any track", async () => {
       Track.findByIdAndDelete = TrackMocks.findByIdAndDelete;
       // An ID that doesn't belong to any track
-      req.params.id = 'a track id that doesn\'nt belong to any';
+      req.params.id = "a track id that doesn'nt belong to any";
       req.user = { artist: artistids[0] };
-      await expect(tracksController.deleteTrack(req, res, next)).rejects.toThrow(
+      await expect(
+        tracksController.deleteTrack(req, res, next)
+      ).rejects.toThrow(
         new AppError('The requested resource is not found', 404)
       );
     });
@@ -97,7 +113,9 @@ describe('Tracks controller', () => {
         name: 'new Track'
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.json.mock.calls[0][0]).toMatchObject({ track: { name: 'new Track' }});
+      expect(res.json.mock.calls[0][0]).toMatchObject({
+        track: { name: 'new Track' }
+      });
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should update the list of artist IDs of the track with the given ID with the list given', async () => {
@@ -110,9 +128,11 @@ describe('Tracks controller', () => {
         artists: ['new artist id', 'another new artist id']
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.json.mock.calls[0][0]).toMatchObject({ track:{
-        artists: ['new artist id', 'another new artist id']
-      }});
+      expect(res.json.mock.calls[0][0]).toMatchObject({
+        track: {
+          artists: ['new artist id', 'another new artist id']
+        }
+      });
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should update the name and the list of artist IDs of the track with the given ID with the name and list given', async () => {
@@ -126,7 +146,9 @@ describe('Tracks controller', () => {
         artists: [artistids[2], 'another new artist id']
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.json.mock.calls[0][0]).toMatchObject({ track: {name: 'both are updated'}});
+      expect(res.json.mock.calls[0][0]).toMatchObject({
+        track: { name: 'both are updated' }
+      });
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with a status code of 403 if the artist ID is not one of the tracks artist ID's", async () => {
@@ -135,7 +157,9 @@ describe('Tracks controller', () => {
       req.body = {
         artists: ['new artist id', 'another new artist id']
       };
-      await expect(tracksController.updateTrack(req, res, next)).rejects.toThrow(
+      await expect(
+        tracksController.updateTrack(req, res, next)
+      ).rejects.toThrow(
         new AppError('You do not have permission to perform this action.', 403)
       );
     });
@@ -145,7 +169,9 @@ describe('Tracks controller', () => {
       req.body = {
         artists: ['new artist id', 'another new artist id']
       };
-      await expect(tracksController.updateTrack(req, res, next)).rejects.toThrow(
+      await expect(
+        tracksController.updateTrack(req, res, next)
+      ).rejects.toThrow(
         new AppError('The requested resource is not found', 404)
       );
     });
