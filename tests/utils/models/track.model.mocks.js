@@ -1,14 +1,5 @@
 const _ = require('lodash');
 
-class objectid {
-  constructor(id){
-    this.id = id
-  }
-  static equals(id){
-    return id == this.id
-  }
-}
-
 class TrackMocks {
   constructor(name, artists, album, audioUrl, duration, _id) {
     this.name = name;
@@ -74,35 +65,38 @@ class TrackMocks {
   }
 }
 
+artistids = ['5e6c8ebb8b40fc5508fe8b32','5e6c8ebb8b40fc6608fe8b32','5e6c8ebb8b40fc7708fe8b32']
+trackids = ['5e6c8ebb8b40fc5508fe8b32','5e6f6a7fac1d6d06f40706f2','5e6c8ebb8b40fc5518fe8b32']
+
 let tracks = [
   new TrackMocks(
     'mohamed',
-    ['5e6c8ebb8b40fc5508fe8b32', 'id2'],
+    [artistids[0], artistids[1]],
     'idalbum',
     'shit.mp3',
     30000,
-    '5e6c8ebb8b40fc5508fe8b32'
+    trackids[0]
   ),
   new TrackMocks(
     'mohamed',
-    ['5e6c8ebb8b40fc5508fe8b32', 'id2'],
+    [artistids[1], artistids[2]],
     'idalbum',
     'shit.mp3',
     30000,
-    '5e6f6a7fac1d6d06f40706f2'
+    trackids[1]
   ),
   new TrackMocks(
     'mohamed',
-    ['5e6c8ebb8b40fc5508fe8b32', 'id2'],
+    [artistids[2], artistids[0]],
     'idalbum',
     'shit.mp3',
     30000,
-    '5e6c8ebb8b40fc5518fe8b32'
+    trackids[2]
   )
 ];
 
 module.exports = {
   TrackMocks,
-  tracks, 
-  objectid
+  artistids,
+  trackids
 };
