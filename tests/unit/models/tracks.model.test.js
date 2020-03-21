@@ -22,6 +22,10 @@ describe('Track model', () => {
     track.name = '';
     expect(track.validateSync().errors['name']).toBeDefined();
   });
+  it('Should throw an error if name is longer than 30 character', () => {
+    track.name = 'more than thirty character long ';
+    expect(track.validateSync().errors['name']).toBeDefined();
+  });
   it("Should throw an error if no artists ID's were passed (empty list or no list at all)", () => {
     track.artists = null;
     expect(track.validateSync().errors['artists']).toBeDefined();
