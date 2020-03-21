@@ -1,5 +1,14 @@
 const _ = require('lodash');
 
+class objectid {
+  constructor(id){
+    this.id = id
+  }
+  static equals(id){
+    return id == this.id
+  }
+}
+
 class TrackMocks {
   constructor(name, artists, album, audioUrl, duration, _id) {
     this.name = name;
@@ -10,7 +19,9 @@ class TrackMocks {
     this._id = _id;
   }
   save() {
-    return this;
+    return new Promise((resolve, reject) => {
+      resolve(this)
+    });
   }
 
   static find({ _id: ids }) {
@@ -22,6 +33,15 @@ class TrackMocks {
     }
     return new Promise((resolve, reject) => {
       resolve(result);
+    });
+  }
+
+  set(newTrack){
+    for (let key in newTrack) {
+      this[key] = newTrack[key];
+    }
+    return new Promise((resolve, reject) => {
+      resolve(this)
     });
   }
 
@@ -65,7 +85,7 @@ let tracks = [
   ),
   new TrackMocks(
     'mohamed',
-    ['id1', 'id2'],
+    ['5e6c8ebb8b40fc5508fe8b32', 'id2'],
     'idalbum',
     'shit.mp3',
     30000,
@@ -73,7 +93,7 @@ let tracks = [
   ),
   new TrackMocks(
     'mohamed',
-    ['id1', 'id2'],
+    ['5e6c8ebb8b40fc5508fe8b32', 'id2'],
     'idalbum',
     'shit.mp3',
     30000,
@@ -83,5 +103,6 @@ let tracks = [
 
 module.exports = {
   TrackMocks,
-  tracks
+  tracks, 
+  objectid
 };

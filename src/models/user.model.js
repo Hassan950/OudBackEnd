@@ -49,6 +49,11 @@ const userSchema = mongoose.Schema({
     enum: ['free', 'premium', 'artist'],
     default: 'free'
   },
+  artist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Artist',
+    default: null
+  },
   birthDate: {
     type: Date,
     validate: {

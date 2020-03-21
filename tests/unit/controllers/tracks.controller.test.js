@@ -4,6 +4,7 @@ const requestMocks = require('../../utils/request.mock');
 let { Track } = require('../../../src/models');
 const { TrackMocks } = require('../../utils/models/track.model.mocks');
 const AppError = require('../../../src/utils/AppError');
+// const { objectid } = require('../../utils/models/track.model.mocks');
 
 describe('Tracks controller', () => {
   let req;
@@ -20,9 +21,7 @@ describe('Tracks controller', () => {
       // two valid ID's
       req.query.ids = '5e6c8ebb8b40fc5508fe8b32,5e6f6a7fac1d6d06f40706f2';
       await tracksController.getTracks(req, res, next);
-      res.send.mock.calls[0][0].forEach(obj =>
-        expect(obj).toMatchObject({ audioUrl: /.mp3/ })
-      );
+      expect(res.json.mock.calls[0][0]).toHaveProperty('tracks');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with a status code of 404 if none of the ID's given matches an object", async () => {
@@ -39,22 +38,20 @@ describe('Tracks controller', () => {
       req.query.ids =
         '5e6c8ebb8b40fc5508fe8b32,5e6c8ebb8b40fc5508fe8b32,5e6c8ebb8b40fc5508fe8b31,5e6c8ebb8b40fc5508fe8b31';
       await tracksController.getTracks(req, res, next);
-      expect(res.send.mock.calls[0][0][0]).toEqual(
-        res.send.mock.calls[0][0][1]
-      );
-      expect(res.send.mock.calls[0][0][2]).toEqual(
-        res.send.mock.calls[0][0][3]
-      );
-      expect(res.send.mock.calls[0][0][2]).toEqual(null);
+      expect(res.json.mock.calls[0][0]).toEqual(res.json.mock.calls[0][0]);
+      expect(res.json.mock.calls[0][0]).toEqual(res.json.mock.calls[0][0]);
+      expect(res.json.mock.calls[0][0][2]).toEqual(undefined);
     });
   });
   describe('deleteTrack', () => {
     it('Should delete the track with the given ID and return it with status code 200', async () => {
       Track.findByIdAndDelete = TrackMocks.findByIdAndDelete;
+      Track.findById = TrackMocks.findById;
       // A valid ID that belongs to an object
-      req.params.id = '5e6c8ebb8b40fc5518fe8b32';
+      req.params.id = '5e6c8ebb8b40fc5508fe8b32';
+      req.user = { artist: '5e6c8ebb8b40fc5508fe8b32' };
       await tracksController.deleteTrack(req, res, next);
-      expect(res.send.mock.calls[0][0]).toMatchObject({ audioUrl: /.mp3/ });
+      expect(res.json.mock.calls[0][0]).toHaveProperty('track');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with a status code of 404 if the ID didn't match any track", async () => {
@@ -69,9 +66,9 @@ describe('Tracks controller', () => {
   describe('getTrack', () => {
     it('Should return the track with the given ID with status code of 200', async () => {
       Track.findById = TrackMocks.findById;
-      req.params.id = '5e6c8ebb8b40fc5508fe8b32';
+      req.params.id = '5e6c8ebb8b40fc5518fe8b32';
       await tracksController.getTrack(req, res, next);
-      expect(res.send.mock.calls[0][0]).toMatchObject({ audioUrl: /.mp3/ });
+      expect(res.json.mock.calls[0][0]).toHaveProperty('track');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with a status code of 404 if the ID didn't match any track", () => {
@@ -85,51 +82,55 @@ describe('Tracks controller', () => {
   describe('updateTrack', () => {
     it('Should update the name of the track with the given ID with the name sent in the body of the request', async () => {
       Track.findByIdAndUpdate = TrackMocks.findByIdAndUpdate;
+      Track.findById = TrackMocks.findById;
       // An ID of a track object
-      req.params.id = '5e6c8ebb8b40fc5508fe8b32';
+      req.params.id = '5e6c8ebb8b40fc5518fe8b32';
+      req.user = { artist: '5e6c8ebb8b40fc5508fe8b32' };
       req.body = {
         name: 'new Track'
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.send.mock.calls[0][0]).toMatchObject({ name: 'new Track' });
+      expect(res.json.mock.calls[0][0]).toMatchObject({ track: { name: 'new Track' }});
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should update the list of artist IDs of the track with the given ID with the list given', async () => {
       Track.findByIdAndUpdate = TrackMocks.findByIdAndUpdate;
+      Track.findById = TrackMocks.findById;
       // An ID of a track object
-      req.params.id = '5e6c8ebb8b40fc5508fe8b32';
+      req.params.id = '5e6c8ebb8b40fc5518fe8b32';
+      req.user = { artist: '5e6c8ebb8b40fc5508fe8b32' };
       req.body = {
         artists: ['new artist id', 'another new artist id']
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.send.mock.calls[0][0]).toMatchObject({
+      expect(res.json.mock.calls[0][0]).toMatchObject({ track:{
         artists: ['new artist id', 'another new artist id']
-      });
+      }});
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should update the name and the list of artist IDs of the track with the given ID with the name and list given', async () => {
       Track.findByIdAndUpdate = TrackMocks.findByIdAndUpdate;
+      Track.findById = TrackMocks.findById;
       // An ID of a track object
-      req.params.id = '5e6c8ebb8b40fc5508fe8b32';
+      req.params.id = '5e6f6a7fac1d6d06f40706f2';
+      req.user = { artist: '5e6c8ebb8b40fc5508fe8b32' };
       req.body = {
         name: 'both are updated',
-        artists: ['new artist id', 'another new artist id']
+        artists: ['5e6c8ebb8b40fc5508fe8b32', 'another new artist id']
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.send.mock.calls[0][0]).toMatchObject({
-        name: 'both are updated',
-        artists: ['new artist id', 'another new artist id']
-      });
+      expect(res.json.mock.calls[0][0]).toMatchObject({ track: {name: 'both are updated'}});
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with a status code of 404 if the ID didn't match any track", async () => {
       req.params.id = 'not a valid id';
+      req.user = { artist: '5e6c8ebb8b40fc5508fe8b32' };
       req.body = {
         artists: ['new artist id', 'another new artist id']
       };
       expect(tracksController.updateTrack(req, res, next)).rejects.toThrow(
         new AppError('The requested resource is not found', 404)
       );
-    })
+    });
   });
 });

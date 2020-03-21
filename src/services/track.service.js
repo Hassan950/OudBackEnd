@@ -18,9 +18,15 @@ exports.findTracks = async ids => {
   return tracks;
 };
 
-exports.deleteTrack = async id => {
-  const track = await Track.findByIdAndDelete(id);
+exports.deleteTrack = async (id, artistId) => {
+  const track = await Track.findById(id);
   if (!track) throw new AppError('The requested resource is not found', 404);
+  if (!track.artists.find(aId => String(aId) == String(artistId)))
+    throw new AppError(
+      'You do not have permission to perform this action.',
+      403
+    );
+  await Track.findByIdAndDelete(id);
   return track;
 };
 
@@ -32,8 +38,16 @@ exports.findTrack = async id => {
 
 // Update track service
 // new track contains the properties to update which may be one of (name, artists) or both
-exports.update = async (id, newTrack) => {
-  const track = await Track.findByIdAndUpdate(id, newTrack, { new: true });
+exports.update = async (id, newTrack, artistId) => {
+  let track = await Track.findById(id);
   if (!track) throw new AppError('The requested resource is not found', 404);
+  if (!track.artists.find(aId => aId.toString() == artistId.toString()))
+    throw new AppError(
+      'You do not have permission to perform this action.',
+      403
+    );
+
+  track.set(newTrack);
+  track.save();
   return track;
 };

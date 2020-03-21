@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const moment = require('moment');
 const validator = require('validator');
 
@@ -34,6 +35,7 @@ exports.signup = {
     email: Joi.string()
       .required()
       .email(),
+    artist: Joi.objectId(),
     role: Joi.string()
       .default('free')
       .valid('free', 'premium', 'artist'),
