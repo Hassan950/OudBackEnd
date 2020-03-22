@@ -1,5 +1,6 @@
 const { User } = require('../models/user.model.js');
 const authService = require('./auth.service.js');
+const bcrypt = require('bcryptjs');
 
 /**
  * 
