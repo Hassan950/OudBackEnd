@@ -3,6 +3,7 @@ const { Artist, artistSchema } = require('./artist.model');
 const { Track, trackSchema } = require('./track.model');
 const { Album, albumSchema } = require('./album.model');
 const { Device, deviceSchema } = require('./device.model');
+const { Player, playerSchema } = require('./player.model');
 
 module.exports = {
   User,
@@ -14,5 +15,7 @@ module.exports = {
   Album,
   albumSchema,
   Device,
-  deviceSchema
+  deviceSchema,
+  Player,
+  playerSchema
 };
