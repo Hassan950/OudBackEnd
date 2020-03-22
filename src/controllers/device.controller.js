@@ -8,7 +8,7 @@ exports.getUserDevices = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const devices = await deviceService.getDevices(id);
+  const devices = await deviceService.getAvailableDevices(id);
 
   res.status(200).json({
     devices

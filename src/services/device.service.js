@@ -1,10 +1,10 @@
 const { Device } = require('../models');
 
-const getDevices = async (userId) => {
-  const devices = await Device.find({ userId: userId });
+const getAvailableDevices = async (userId) => {
+  const devices = await Device.find({ userId: userId, isActive: true });
   return devices;
 };
 
 module.exports = {
-  getDevices
+  getAvailableDevices
 }

@@ -6,7 +6,7 @@ const { deviceController } = require('../../controllers');
 const router = express.Router();
 
 router
-  .route('/device')
+  .route('/devices')
   .get(catchAsync(deviceController.getUserDevices));
 
 module.exports = router;

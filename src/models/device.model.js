@@ -42,7 +42,7 @@ const deviceSchema = mongoose.Schema({
   }
 });
 
-deviceSchema.index({ userId: 1 });
+deviceSchema.index({ userId: 1, isActive: 1 });
 
 
 const Device = mongoose.model('Device', deviceSchema);
