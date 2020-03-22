@@ -1,21 +1,7 @@
 const Joi = require('@hapi/joi');
 const moment = require('moment');
 const validator = require('validator');
-
-const ageCheck = (value, helpers) => {
-  const age = moment().diff(value, 'years');
-  if (age < 10) {
-    return helpers.message('You must be at least 10 years old');
-  }
-  return value;
-};
-
-const countryCheck = (value, helpers) => {
-  if (!validator.isISO31661Alpha2(value)) {
-    return helpers.message('Invalid Country');
-  }
-  return value;
-};
+const { ageCheck, countryCheck } = require('./custom.validation');
 
 exports.signup = {
   body: Joi.object().keys({
@@ -25,8 +11,7 @@ exports.signup = {
     password: Joi.string()
       .required()
       .min(8),
-    passwordConfirm: Joi.string()
-      .required(),
+    passwordConfirm: Joi.string().required(),
     username: Joi.string()
       .required()
       .min(5)
@@ -56,7 +41,7 @@ exports.login = {
       .email(),
     password: Joi.string()
       .required()
-      .min(8),
+      .min(8)
   })
 };
 
@@ -68,8 +53,7 @@ exports.updatePassword = {
     password: Joi.string()
       .required()
       .min(8),
-    passwordConfirm: Joi.string()
-      .required()
+    passwordConfirm: Joi.string().required()
   })
 };
 
