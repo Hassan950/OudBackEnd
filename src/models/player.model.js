@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const playerSchema = mongoose.Schema({
   device: {
-    type: String,
+    type: mongoose.Types.ObjectId,
     ref: 'Device'
   },
   userId: {
