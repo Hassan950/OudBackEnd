@@ -30,9 +30,8 @@ describe('Tracks controller', () => {
       Track.find = TrackMocks.find;
       // two ID's that doesn't belong to any objects
       req.query.ids = 'valid id,another valid id';
-      await expect(tracksController.getTracks(req, res, next)).rejects.toThrow(
-        new AppError('The requested resource is not found', 404)
-      );
+      await tracksController.getTracks(req, res, next);
+      expect(res.json.mock.calls[0][0].tracks).toMatchObject([null, null]);
     });
     it("Should return the same result for the same ID (null for invalid ID's)", async () => {
       Track.find = TrackMocks.find;

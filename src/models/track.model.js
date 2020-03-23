@@ -30,8 +30,8 @@ const trackSchema = new mongoose.Schema({
   },
   duration: {
     type: Number,
-    min: 5000,
-    default: 10000
+    min: 20000,
+    required: true
   },
   views: {
     type: Number,

@@ -8,7 +8,8 @@ describe('Track model', () => {
       name: 'Louder',
       artists: '5e6c8ebb8b40fc5508fe8b32',
       album: '5e6c8ebb8b40fc5508fe8b32',
-      audioUrl: 'data/tracks/louder.mp3'
+      audioUrl: 'data/tracks/louder.mp3',
+      duration: 21000
     });
   });
   it('Should return undefined when validating a valid track', () => {
