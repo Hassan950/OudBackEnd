@@ -4,29 +4,34 @@ const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
+const playerRouter = require('./player.route')
 
 const router = express.Router();
+
+// all routes need authentication
 router.use(catchAsync(authMiddleware.authenticate));
+
+// /me/player router
+router.use('/player', playerRouter);
+
 
 router
   .route('/updatePassword')
-  .patch(
-    catchAsync(authMiddleware.authenticate),
-    validate(authValidation.updatePassword),
-    catchAsync(authController.updatePassword)
-  );
+  .patch(validate(authValidation.updatePassword), catchAsync(authController.updatePassword));
+
+router
+  .route('/verify')
+  .post(catchAsync(authController.requestVerify));
 
 router
   .route('/')
   .get(
-    catchAsync(authMiddleware.authenticate),
     catchAsync(userController.getProfile)
   );
 
 router
   .route('/profile')
   .put(
-    catchAsync(authMiddleware.authenticate),
     validate(userValidation.editProfile),
     catchAsync(userController.editProfile)
   );
@@ -34,16 +39,8 @@ router
 router
   .route('/profilePicture')
   .patch(
-    catchAsync(authMiddleware.authenticate),
     userController.uploadImages,
     catchAsync(userController.updateImages)
-  );
-
-router
-  .route('/verify')
-  .post(
-    catchAsync(authMiddleware.authenticate),
-    catchAsync(authController.requestVerify)
   );
 
 module.exports = router;
