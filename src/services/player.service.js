@@ -9,7 +9,18 @@ const getPlayer = async (userId) => {
   return player;
 };
 
+const getCurrentlyPlaying = async (userId) => {
+  const currentlyPlaying = await Player.findOne({ userId: userId })
+    .populate('item', '-audioUrl')
+    .select('item context')
+    ;
+
+  if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
+
+  return currentlyPlaying;
+};
 
 module.exports = {
-  getPlayer
+  getPlayer,
+  getCurrentlyPlaying
 }

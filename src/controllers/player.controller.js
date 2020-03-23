@@ -42,15 +42,15 @@ exports.getCurrentlyPlaying = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const { item, context } = await playerService.getPlayer(id);
+  const currentlyPlaying = await playerService.getCurrentlyPlaying(id);
 
-  if (!item) {
+  if (!currentlyPlaying) {
     res.status(204);
     return res.end();
   }
 
   res.status(200).json({
-    track: item,
-    context: context
+    track: currentlyPlaying.item,
+    context: currentlyPlaying.context
   })
 };
