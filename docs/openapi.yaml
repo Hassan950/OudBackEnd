@@ -4050,32 +4050,9 @@ components:
       type: object
       description: 'Current Playing Context'
       properties:
-        progressMs:
-          description: Progress into the currently playing track. Can be null (e.g. If private session is enabled this will be null).
-          type: integer
-          format: Unix Millisecond
-          nullable: true
-        isPlaying:
-          description: If something is currently playing.
-          type: boolean
-        shuffleState:
-          description: If shuffle is on or off
-          type: boolean
-        repeatState:
-          description: off, track, context
-          type: string
-          enum: ['off', 'track', 'context']
-        currentlyPlayingType:
-          description: The object type of the currently playing item. Can be one of track, ad or unknown.
-          type: string
-          default: 'unknown'
-          enum: ['track', 'ad', 'unknown']
-        item:
+        track:
           description: The currently playing track. Can be null (e.g. If private session is enabled this will be null).
           $ref: '#/components/schemas/Track'
-        actions:
-          description: Allows to update the user interface based on which playback actions are available within the current context
-          $ref: '#/components/schemas/Disallows'
         context:
           description: A Context Object. Can be null (e.g. If private session is enabled this will be null).
           $ref: '#/components/schemas/Context'
@@ -4318,7 +4295,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/CurrentlyPlayingContext'
+            $ref: '#/components/schemas/CurrentlyPlaying'
     ListOfDevices:
       description: OK - The request has succeeded. The client can read the result of the request in the body and the headers of the response.
       content:
