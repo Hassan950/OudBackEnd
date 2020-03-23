@@ -13,4 +13,8 @@ router
   .route('/')
   .get(catchAsync(playerController.getPlayer));
 
+router
+  .route('/currently-playing')
+  .get(catchAsync(playerController.getCurrentlyPlaying));
+
 module.exports = router;

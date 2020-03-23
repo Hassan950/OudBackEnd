@@ -26,3 +26,31 @@ exports.getPlayer = async (req, res, next) => {
     player: player
   });
 };
+
+
+/**
+ * @version 1.0.0
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @description get user`s currently playing track
+ * @summary User Currently Playing track
+ */
+exports.getCurrentlyPlaying = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Must Authenticate user', 500));
+  }
+
+  const id = req.user._id;
+
+  const { item, context } = await playerService.getPlayer(id);
+
+  if (!item) {
+    res.status(204);
+    return res.end();
+  }
+
+  res.status(200).json({
+    track: item,
+    context: context
+  })
+};
