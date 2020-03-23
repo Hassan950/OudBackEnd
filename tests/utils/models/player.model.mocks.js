@@ -1,6 +1,7 @@
 const { Player } = require('../../../src/models');
 const mongoose = require('mongoose');
 const faker = require('faker');
+const _ = require('lodash');
 
 const createFakePlayer = () => {
   const player = new Player({
@@ -25,8 +26,6 @@ const players = [
   createFakePlayer(),
   createFakePlayer()
 ];
-
-
 
 module.exports = {
   createFakePlayer,

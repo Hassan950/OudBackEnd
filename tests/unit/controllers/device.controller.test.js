@@ -3,6 +3,7 @@ const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
 const { Device } = require('../../../src/models');
 const { deviceController } = require('../../../src/controllers');
+const mockingoose = require('mockingoose').default;
 
 describe('Device controller', () => {
   let device;
@@ -17,7 +18,7 @@ describe('Device controller', () => {
     req.user = user;
     res = requestMocks.mockResponse();
     next = jest.fn();
-    Device.find = jest.fn().mockResolvedValue([device]);
+    mockingoose(Device).toReturn([device]);
   });
 
   describe('Get user available devices', () => {

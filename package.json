@@ -83,6 +83,7 @@
     "faker": "^4.1.0",
     "jest": "^25.1.0",
     "lint-staged": "^10.0.7",
+    "mockingoose": "^2.13.2",
     "node-mocks-http": "^1.8.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.18.2",
