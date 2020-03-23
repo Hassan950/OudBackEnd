@@ -39,14 +39,12 @@ const playerSchema = mongoose.Schema({
   },
   context: {
     type: {
-      type: {
-        type: String,
-        enum: ['album', 'artist', 'playlist', 'unknown'],
-        default: 'unknown'
-      },
-      id: {
-        type: mongoose.Types.ObjectId
-      }
+      type: String,
+      enum: ['album', 'artist', 'playlist', 'unknown'],
+      default: 'unknown'
+    },
+    id: {
+      type: mongoose.Types.ObjectId
     }
   }
 }, {
