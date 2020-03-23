@@ -37,7 +37,7 @@ exports.findTracks = async ids => {
 exports.deleteTrack = async (id, artistId) => {
   const track = await Track.findById(id);
   if (!track) throw new AppError('The requested resource is not found', 404);
-  if (!(String(track.artists[0]) === artistId))
+  if (!(String(track.artists[0]) === String(artistId)))
     throw new AppError(
       'You do not have permission to perform this action.',
       403
@@ -78,7 +78,7 @@ exports.findTrack = async id => {
 exports.update = async (id, newTrack, artistId) => {
   let track = await Track.findById(id);
   if (!track) throw new AppError('The requested resource is not found', 404);
-  if (!(String(track.artists[0]) === artistId))
+  if (!(String(track.artists[0]) === String(artistId)))
     throw new AppError(
       'You do not have permission to perform this action.',
       403

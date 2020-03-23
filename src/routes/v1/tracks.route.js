@@ -9,7 +9,6 @@ const authMiddleware = require('../../middlewares/auth');
 router
   .route('/:id')
   .get(
-    catchAsync(authMiddleware.authenticate),
     validate(trackValidation.oneTrack),
     catchAsync(tracksController.getTrack)
   )
@@ -29,7 +28,6 @@ router
 router
   .route('/')
   .get(
-    catchAsync(authMiddleware.authenticate),
     validate(trackValidation.getSeveral),
     catchAsync(tracksController.getTracks)
   );
