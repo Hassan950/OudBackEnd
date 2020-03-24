@@ -12,7 +12,15 @@ const artistSchema = new mongoose.Schema({
       message: 'An album should have at least one genre'
     }
   },
-  images: [{ type: String, match: /.(png|jpg|jpeg)$/ }],
+  images: [{ type: String, match: /\.(png|jpg|jpeg)$/ }],
+  name: {
+    type: String,
+    minlength: 3,
+    maxlength: 30,
+    required: true,
+    trim: true,
+    unique: true
+  },
   bio: {
     type: String,
     maxlength: 255,
