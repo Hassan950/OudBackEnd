@@ -49,7 +49,6 @@ const playerSchema = mongoose.Schema({
     }
   }
 }, {
-  _id: false,
   toJSON: {
     virtuals: true
   },
