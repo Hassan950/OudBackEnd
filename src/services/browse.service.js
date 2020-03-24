@@ -28,7 +28,6 @@ getPlaylists(params , query) {
       }
     }
   ]);
-  console.log(await Category);
   const total = no[0].numberOfPlaylists;
   return {  playlists  ,total };
 } 
