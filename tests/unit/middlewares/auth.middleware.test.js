@@ -1,11 +1,12 @@
 const { authController } = require('../../../src/controllers');
 const authMiddleware = require('../../../src/middlewares/auth.js');
-const { authService } = require('../../../src/services');
+const { authService, emailService } = require('../../../src/services');
 const requestMocks = require('../../../tests/utils/request.mock.js');
 const userMocks = require('../../utils/models/user.model.mocks.js');
+const emailServiceMocks = require('../../utils/services/email.services.mock');
+const _ = require('lodash')
 
 describe('Authenticate test', () => {
-  let user;
   let req;
   let res;
   let next;
@@ -15,6 +16,7 @@ describe('Authenticate test', () => {
     req = requestMocks.mockRequest(user);
     res = requestMocks.mockResponse();
     next = jest.fn();
+    emailService.sendEmail = emailServiceMocks.sendEmail;
   });
 
   it('should return 401 if no token passed', async () => {
@@ -39,6 +41,7 @@ describe('Authenticate test', () => {
   });
 
   it('should append user to req if valid token', async () => {
+    User.findById = jest.fn().mockResolvedValue(user);
     await authController.signup(req, res, next);
     const token = authService.generateAuthToken(user._id);
     req.headers = {};
