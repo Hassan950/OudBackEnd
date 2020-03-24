@@ -1,4 +1,4 @@
-const {Playlist } = require('../../../src/models');
+const { Playlist } = require('../../../src/models');
 const faker = require('faker');
 const mongoose = require('mongoose');
 const save = jest.fn();

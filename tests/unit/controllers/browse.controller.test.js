@@ -1,7 +1,7 @@
 const browseMocks = require('../../utils/mock services/browse.service.mock');
 const requestMocks = require('../../utils/request.mock.js');
 const { browseController } = require('../../../src/controllers');
-let {Category , Album}= require('../../../src/models');
+let { Category , Album  }= require('../../../src/models');
 const _ = require('lodash');
 
 describe('browse controllers', () => {

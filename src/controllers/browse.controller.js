@@ -1,4 +1,4 @@
-const { browseService } = require('../services');
+const {	browseService	} = require('../services');
 const AppError = require('../utils/AppError');
 
 /** 

@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-Joi.objectID = require('joi-objectid')(Joi);
+Joi.objectId = require("joi-objectid")(Joi);
 
 exports.getCategories = {
   query: Joi.object().keys({
@@ -14,13 +14,13 @@ exports.getCategories = {
 
 exports.getCategory = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   })
 };
 
 exports.categoryPlaylist = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   query:Joi.object().keys({
     offset: Joi.number()

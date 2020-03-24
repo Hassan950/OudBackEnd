@@ -1,4 +1,4 @@
-const {Category } = require('../../../src/models');
+const { Category } = require('../../../src/models');
 const faker = require('faker');
 const mongoose = require('mongoose');
 const save = jest.fn();

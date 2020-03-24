@@ -1,7 +1,7 @@
-const {Category , Album} = require('../../../src/models');
+const { Category , Album  } = require('../../../src/models');
 const faker = require('faker');
 const _ = require('lodash');
-const {browseService} =require('../../../src/services');
+const { browseService } =require('../../../src/services');
 const mongoose = require('mongoose');
 const AppError = require('../../../src/utils/AppError');
 
@@ -67,7 +67,7 @@ browseService.findCategory = jest.fn().mockImplementation((neededCategory) => {
 resolve(addCategories.slice(query.offset,query.limit));
    });
   let categories = await categoriess;
-  return { categories,total}; 
+  return { categories,total }; 
 });
 
 
