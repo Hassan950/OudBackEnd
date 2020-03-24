@@ -30,7 +30,7 @@ exports.findTracks = async ids => {
  * @summary Deletes a track
  * @param {String} id ID of the track to be deleted
  * @param {String} artistId ID of the artist of the current user
- * @returns track if the track was found
+ * @returns Deleted track if the track was found
  * @throws AppError with status code 404 if the track was not found
  * @throws AppError with status code 403 if artist is not the track's main artist
  */

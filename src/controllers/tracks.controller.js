@@ -9,7 +9,6 @@ exports.getTrack = async (req, res, next) => {
 
 exports.getTracks = async (req, res, next) => {
   let ids = req.query.ids.split(',');
-  ids = ids.length > 50 ? ids.slice(0, 51) : ids;
   const tracks = await trackService.findTracks(ids);
   res.status(200).json({
     tracks: tracks
