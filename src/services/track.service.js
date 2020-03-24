@@ -11,8 +11,9 @@ const AppError = require('../utils/AppError');
  * @returns {Array} An array containing the tracks with nulls against unmatched ID's
  */
 exports.findTracks = async ids => {
-  const result = await Track.find({ _id: ids });
-
+  const result = await Track.find({ _id: ids })
+    .populate('artists album')
+    .select('-audioUrl');
   if (result.length == ids.length) return result;
   const tracks = [];
   for (let i = 0, n = ids.length; i < n; i++) {
@@ -35,7 +36,9 @@ exports.findTracks = async ids => {
  * @throws AppError with status code 403 if artist is not the track's main artist
  */
 exports.deleteTrack = async (id, artistId) => {
-  const track = await Track.findById(id);
+  const track = await Track.findById(id)
+    .populate('artists album')
+    .select('-audioUrl');
   if (!track) throw new AppError('The requested resource is not found', 404);
   if (!(String(track.artists[0]) === String(artistId)))
     throw new AppError(
@@ -57,7 +60,9 @@ exports.deleteTrack = async (id, artistId) => {
  * @throws AppError with status code 404 if the track was not found
  */
 exports.findTrack = async id => {
-  const track = await Track.findById(id);
+  const track = await Track.findById(id)
+    .populate('artists album')
+    .select('-audioUrl');
   if (!track) throw new AppError('The requested resource is not found', 404);
   return track;
 };
@@ -76,7 +81,9 @@ exports.findTrack = async id => {
  * @throws AppError with status code 403 if artist is not the track's main artist
  */
 exports.update = async (id, newTrack, artistId) => {
-  let track = await Track.findById(id);
+  let track = await Track.findById(id)
+    .populate('artists album')
+    .select('-audioUrl');
   if (!track) throw new AppError('The requested resource is not found', 404);
   if (!(String(track.artists[0]) === String(artistId)))
     throw new AppError(
