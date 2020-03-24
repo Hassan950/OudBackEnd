@@ -36,6 +36,10 @@ app.use(
 const path = require('path');
 app.use('/api/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+
 // sanitize request data
 app.use(xss());
 app.use(mongoSanitize());

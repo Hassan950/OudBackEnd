@@ -15,6 +15,7 @@ mongoose.connect(config.get('db'), {
   logger.info('Connected to MongoDB');
   server = app.listen(port, () => {
     logger.info(`Listening to port ${port}`);
+    require('./config/socket')(server);
   });
 }).catch(err => {
   logger.error('Error: ', err);
