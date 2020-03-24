@@ -15,7 +15,7 @@ module.exports = {
   Album,
   albumSchema,
   Genre,
-  genreSchema
+  genreSchema,
   Device,
   deviceSchema
 };
