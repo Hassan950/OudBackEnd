@@ -1,4 +1,4 @@
-const { userService, authService, emailService } = require('../services');
+const { userService, authService, emailService, playerService } = require('../services');
 const AppError = require('../utils/AppError');
 
 /**
@@ -95,10 +95,11 @@ exports.signup = async (req, res, next) => {
     return next(new AppError('Please confirm your password', 400));
   }
   const newUser = await userService.createUser(req.body);
+  // Create Player
+  await playerService.createPlayer(newUser._id);
   // TODO
   // Return 401 if role is premium without credit
   // Return 401 if role is artist without request
-  // Add device
   // generate verify token
   const verifyToken = authService.createVerifyToken(newUser);
   await newUser.save({
@@ -143,9 +144,6 @@ exports.login = async (req, res, next) => {
   if (!user) {
     return next(new AppError('Incorrect email or password!', 401));
   }
-
-  // TODO
-  // Add device
 
   user.password = undefined;
   createTokenAndSend(user, res);

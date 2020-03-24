@@ -3,10 +3,15 @@ const { authService } = require('./');
 const fs = require('fs');
 
 /**
+ * A method that find user with the given userData and check password with the given password
  * 
+ * @function
+ * @author Abdelrahman Tarek
+ * @summary find user and check password
  * @param {Object} userData 
  * @param {String} password 
- * @returns user if user found and password is correct else return null
+ * @returns {Document} user if user found and password is correct
+ * @returns {null} if user not found or password is wrong
  */
 const findUserAndCheckPassword = async (userData, password) => {
   const user = await User.findOne(userData).select('+password');
@@ -18,6 +23,7 @@ const findUserAndCheckPassword = async (userData, password) => {
 
 /**
  * 
+ * @author Abdelrahman Tarek
  * @param {String} userId 
  * @param {String} password 
  * @returns user if user found and password is correct else return null
@@ -31,9 +37,14 @@ const findUserByIdAndCheckPassword = async (userId, password) => {
 };
 
 /**
+ * A method that create user with the given data
  * 
+ * @function
+ * @author Abdelrahman Tarek
+ * @summary Create new user
  * @param {Object} userData 
- * @returns new user
+ * @returns {Document} newUser if user is created
+ * @returns {null} if failed
  */
 const createUser = async (userData) => {
   const newUser = await User.create(userData);
@@ -127,7 +138,7 @@ const updateImages = async (user, images) => {
 };
 
 /**
- * 
+ * @author Abdelrahman Tarek
  * @param {Object} userData 
  * @returns user with the given userDate
  */

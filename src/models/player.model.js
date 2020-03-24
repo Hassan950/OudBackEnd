@@ -9,7 +9,8 @@ const playerSchema = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: 'User',
     required: [true, 'Player must belong to a user'],
-    select: false
+    select: false,
+    unique: true
   },
   progressMs: {
     type: Number,
