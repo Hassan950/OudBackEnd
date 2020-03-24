@@ -84,9 +84,9 @@ browseService.getPlaylists = jest.fn().mockImplementation(async(neededCategory,q
    
   })
   let playlists = await neededPlaylists;
-  if(!playlists){const total =0 ;return{playlists ,total};}
+  if(!playlists){ const playlists=null ; return{  playlists  };}
   const total = playlists.length;
-  return{playlists , total};
+  return{ playlists , total};
 });
 
 const albumss = [
@@ -127,7 +127,7 @@ browseService.getNewReleases = jest.fn().mockImplementation(async(query) => {
     resolve(releasedAlbums.slice(query.offset,query.limit));
    });
    let albums = await albumsss;
-   return {albums ,total};
+   return { albums, total };
 });
 
 module.exports = {
