@@ -6,7 +6,7 @@ const logger = require('./../config/logger');
 const errorConverter = (err, req, res, next) => {
   let error = err;
   if (config.get('NODE_ENV') === 'development') {
-    logger.warn(err);
+    logger.error(err);
   }
 
   if (error.code === 11000) error = handleDuplicateFieldsDB(error);
@@ -47,8 +47,6 @@ const handleValidationErrorDB = err => {
 
 const handleDuplicateFieldsDB = err => {
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  console.log(value);
-
   const message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
 };
