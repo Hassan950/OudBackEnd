@@ -24,6 +24,7 @@ exports.categoryPlaylist = {
   }),
   query:Joi.object().keys({
     offset: Joi.number()
+      .min(0)
       .default(0),
     limit: Joi.number()
       .min(1)

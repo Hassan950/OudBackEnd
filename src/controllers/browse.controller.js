@@ -49,10 +49,12 @@ exports.categoryPlaylists = async(req, res, next) => {
 	const categoryPlaylists = await browseService.getPlaylists(req.params, req.query);
 	if(!categoryPlaylists.playlists)return next(new AppError('The category with the given ID was not found.', 404));
 	res.status(200).json({
-		category: categoryPlaylists.playlists,
-		offset: req.query.offset,
-		limit: req.query.limit,
-		total: categoryPlaylists.total
+		playlists: {
+			items:	categoryPlaylists.playlists,
+			offset: categoryPlaylists.offset,
+			limit: categoryPlaylists.limit,
+			total: categoryPlaylists.total
+		}
 	});
 };
 
@@ -69,9 +71,11 @@ exports.categoryPlaylists = async(req, res, next) => {
 exports.newReleases = async(req, res, next) => {
 	const albums = await browseService.getNewReleases(req.query);
 	res.status(200).json({
-		albums: albums.albums,
-		offset: req.query.offset,
-		limit: req.query.limit,
-		total: albums.total
+		albums:	{
+			items:	albums.albums,
+			offset: albums.offset,
+			limit: albums.limit,
+			total: albums.total
+		}
 	});
 };
