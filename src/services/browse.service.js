@@ -13,24 +13,18 @@ module.exports.findCategory = async function findCategories(params){
 }
 module.exports.getPlaylists = async function 
 getPlaylists(params , query) {
-  const id = params.id;
-  const offset = query.offset;
-  const limit = query.limit;
   const category = await Category.findById(params.id);
   if(!category){ const total = 0 ;
     return{ category , total };
   }
-  const ids = category.playlists;
-  const playlists = await Playlist.find( { _id: {  $in: ids  } }).skip(offset).limit(limit);
-  const no = await Category.aggregate().match({ _id: ObjectId(id) }).project({  numberOfPlaylists: {  $size: "$playlists" } });
+  const playlists = await Playlist.find( { _id: {  $in: category.playlists  } }).skip(query.offset).limit(query.limit);
+  const no = await Category.aggregate().match({ _id: ObjectId(params.id) }).project({  numberOfPlaylists: {  $size: "$playlists" } });
   const total = no[0].numberOfPlaylists;
-  return {  playlists, offset, limit  ,total };
+  return {  playlists  ,total };
 } 
 module.exports.getNewReleases = async function getNewReleases(query)
 {
-  const offset = query.offset;
-  const limit = query.limit;
   const albums = await Album.find().skip(query.offset).limit(query.limit).sort({release_date: -1}); 
   const total = await Album.countDocuments();
-  return {  albums, offset, limit  ,total };
+  return {  albums  ,total };
 } 
