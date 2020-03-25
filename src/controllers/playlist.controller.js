@@ -60,10 +60,12 @@ exports.getTracks  = async (req , res , next)=>{
   const playlist = await playlistService.getTracks(req.params , req.query);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
   res.status(200).json({
-    playlist: playlist.tracks,
-    offset: req.query.offset,
-    limit: req.query.limit,
-    total: playlist.total
+    tracks: {
+      items:  playlist.tracks,
+      offset: req.query.offset,
+      limit: req.query.limit,
+      total: playlist.total
+    }
   });
 }
 
@@ -76,13 +78,16 @@ exports.getTracks  = async (req , res , next)=>{
  */
 
 exports.getUserPlaylists = async(req , res , next)=>{
+  const user = await playlistService.checkUser(req.params);
+  if(!user) return next(new AppError('no user with this id', 404));
   const playlists = await playlistService.getUserPlaylists(req.params , req.query);
-  if(!playlists.playlists) return next(new AppError('this user has no playlists', 404));
   res.status(200).json({
-    playlists: playlists.playlists,
-    offset: req.query.offset,
-    limit: req.query.limit,
-    total: playlists.total
+    playlists: {
+      items:  playlists.playlists,
+      offset: req.query.offset,
+      limit: req.query.limit,
+      total: playlists.total
+    }
   });
 }
 
@@ -95,6 +100,8 @@ exports.getUserPlaylists = async(req , res , next)=>{
  */
 
 exports.createUserPlaylist = async(req , res , next)=>{
+  const user = await playlistService.checkUser(req.params);
+  if(!user) return next(new AppError('no user with this id', 404));
   await playlistService.createUserPlaylist(req.params , req.body);
   res.status(200).send('Playlist is created');
 }
@@ -108,9 +115,31 @@ exports.createUserPlaylist = async(req , res , next)=>{
  */
 
 exports.deleteTracks = async(req , res , next)=>{
-  const playlist = await playlistService.deleteTracks(req.params ,req.body);
+  const tracks = await playlistService.getTracksID(req.body.uris);
+  if(!tracks) return next(new AppError('no tracks with these uris', 404));
+  const playlist = await playlistService.deleteTracks(req.params ,tracks);
   if(!playlist) return next(new AppError('no playlist with this id', 404));
   res.status(200).send('found tracks from tracks send to be deleted are deleted');
 }
 
 
+exports.addTracks =async(req , res , next)=>{
+  const tracks = await playlistService.getTracksID(req.body.uris);
+  if(!tracks) return next(new AppError('no tracks with these uris', 404));
+  const playlist = await playlistService.addTracks(req.params , tracks ,req.body.postion);
+  if(!playlist) return next(new AppError('no playlist with this id', 404));
+  res.status(200).send('found tracks from tracks send to be added are added');
+}
+
+//need to be fixed
+exports.replaceTracks = async(req , res , next)=>{
+  const tracks = await playlistService.getTracksID(req.body.uris);
+  if(!tracks) return next(new AppError('no tracks with these uris', 404));
+  console.log(tracks);
+  let playlist = await playlistService.getPlaylist(req.params);
+  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  console.log(playlist);
+  playlist = await playlistService.deleteTracks(playlist ,playlist.tracks);
+  playlist = await playlistService.addTracks(req.params , tracks ,0 );
+  res.status(200).send('found tracks from tracks send to be added are added');
+}

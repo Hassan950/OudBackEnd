@@ -20,13 +20,13 @@ router
 router
   .route('/:id/tracks')
   .get(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.getTracks), catchAsync(playlistController.getTracks))
-//   .post()
-//   .put()
-   .delete(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
+  .post(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.addTracks), catchAsync(playlistController.addTracks))
+  .put()
+  .delete(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
 router
   .route('/:id/images')
   .put(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImage));
-// router
-//   .route('/:id/tracks/Replace')
-//   .put();    
+router
+  .route('/:id/tracks/Replace')
+  .put(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.replaceTracks), catchAsync(playlistController.replaceTracks));    
 module.exports = router;

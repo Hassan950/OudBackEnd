@@ -59,7 +59,7 @@ exports.deleteTracks = {
     id: Joi.objectID()
   }),
   body: Joi.object().keys({
-    tracks: Joi.array().items(Joi.objectID())
+    uris: Joi.array().items(Joi.string())
   })
 };
 
@@ -72,5 +72,24 @@ exports.createUserPlaylist = {
     public: Joi.boolean().default(false),
     collabrative: Joi.boolean().default(false),
     description: Joi.string().trim().min(10).max(25)
+  }) 
+};
+
+exports.replaceTracks = {
+  params: Joi.object().keys({
+    id: Joi.objectID()
+  }),
+  body: Joi.object().keys({
+    uris:Joi.array().items(Joi.string()),
+  }) 
+}
+
+exports.addTracks = {
+  params: Joi.object().keys({
+    id: Joi.objectID()
+  }),
+  body: Joi.object().keys({
+    uris:Joi.array().items(Joi.string()),
+    position: Joi.number()
   }) 
 };
