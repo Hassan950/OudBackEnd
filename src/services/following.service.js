@@ -1,4 +1,4 @@
-const { followings } = require('../models/');
+const { Followings } = require('../models/');
 const AppError = require('../utils/AppError');
 
 /**
@@ -14,12 +14,11 @@ const AppError = require('../utils/AppError');
  */
 
 exports.checkFollowings = async (ids, type, userId) => {
-  const result = await followings.find({
+  const result = await Followings.find({
     followedId: ids,
     userId: userId,
     type: type
   });
-
   const checks = ids.map(id => {
     val = result.find(follow => String(follow.followedId) === id);
     return val !== undefined;
