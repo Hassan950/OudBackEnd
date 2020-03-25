@@ -1,4 +1,4 @@
-const tracksController = require('../../../src/controllers/tracks.controller');
+const { tracksController } = require('../../../src/controllers');
 const requestMocks = require('../../utils/request.mock');
 let { Track } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
@@ -26,11 +26,7 @@ describe('Tracks controller', () => {
     track = new Track({
       name: 'mohamed',
       audioUrl: 'lol.mp3',
-      artists: [
-        '5e6c8ebb8b40fc5508fe8b32',
-        '5e6c8ebb8b40fc6608fe8b32',
-        '5e6c8ebb8b40fc7708fe8b32'
-      ],
+      artists: artistids,
       album: '5e6c8ebb8b40fc7708fe8b32',
       duration: 21000
     });
@@ -54,7 +50,7 @@ describe('Tracks controller', () => {
       expect(res.json.mock.calls[0][0]).toHaveProperty('tracks');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
-    it("Should throw an error with a status code of 404 if none of the ID's given matches an object", async () => {
+    it("Should return an array of nulls if none of the ID's given matches an object", async () => {
       tracks.populate = jest.fn();
       mockingoose(Track).toReturn([], 'find');
       // two ID's that doesn't belong to any objects
@@ -74,13 +70,10 @@ describe('Tracks controller', () => {
         trackids[0] +
         ',5e6c8ebb8b40fc5508fe8b31,5e6c8ebb8b40fc5508fe8b31';
       await tracksController.getTracks(req, res, next);
-      expect(res.json.mock.calls[0][0].tracks[0]).toEqual(
-        res.json.mock.calls[0][0].tracks[1]
-      );
-      expect(res.json.mock.calls[0][0].tracks[2]).toEqual(
-        res.json.mock.calls[0][0].tracks[3]
-      );
-      expect(res.json.mock.calls[0][0].tracks[2]).toEqual(null);
+      result = res.json.mock.calls;
+      expect(result[0][0].tracks[0]).toEqual(result[0][0].tracks[1]);
+      expect(result[0][0].tracks[2]).toEqual(result[0][0].tracks[3]);
+      expect(result[0][0].tracks[2]).toEqual(null);
     });
   });
   describe('deleteTrack', () => {
@@ -174,7 +167,9 @@ describe('Tracks controller', () => {
         artists: [artistids[0], artistids[1]]
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.json.mock.calls[0][0].track.artists.toString()).toEqual(artistids[0]+','+artistids[1]);
+      expect(res.json.mock.calls[0][0].track.artists.toString()).toEqual(
+        artistids[0] + ',' + artistids[1]
+      );
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should update the name and the list of artist IDs of the track with the given ID with the name and list given', async () => {

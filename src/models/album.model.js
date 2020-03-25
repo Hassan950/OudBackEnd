@@ -18,6 +18,9 @@ const albumSchema = new mongoose.Schema({
       message: 'An album must have at least one artist'
     }
   },
+  tracks: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Track' }]
+  },
   genres: {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Genre' }],
     validate: {
