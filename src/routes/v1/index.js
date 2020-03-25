@@ -9,8 +9,8 @@ const router = express.Router();
 
 router.use('/', homeRoute);
 router.use('/users', userRoute);
-router.use('/me', userMeRoute)
-router.use('/tracks', trackRoute)
+router.use('/me', userMeRoute);
+router.use('/tracks', trackRoute);
 router.use('/auth', authRoute);
 
 module.exports = router;
