@@ -3,7 +3,7 @@ const albumRoute = require('./album.route')
 
 const router = express.Router();
 
-router.route('/albums', albumRoute)
+router.use('/albums', albumRoute)
 
 
 

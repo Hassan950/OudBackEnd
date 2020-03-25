@@ -16,13 +16,13 @@ exports.findAlbum = async id => {
     .populate('genres')
     .populate({
       path: 'tracks',
-      options: { limit: 50 },
+      options: { limit: 20 },
       select: '-audioUrl'
     })
     .select('-album_group');
   if (album) {
     album.tracks = {
-      limit: 50,
+      limit: 20,
       offset: 0,
       total: album.tracks.length,
       items: album.tracks
@@ -56,7 +56,7 @@ exports.findAlbums = async ids => {
     const val = result.find(album => String(album._id) === ids[i]);
     if (val) {
       val.tracks = {
-        limit: 50,
+        limit: 20,
         offset: 0,
         total: val.tracks.length,
         items: val.tracks
@@ -76,24 +76,9 @@ exports.findAlbums = async ids => {
  * @author Mohamed Abo-Bakr
  * @summary Deletes an album
  * @param {String} id ID of the album to be deleted
- * @param {String} artistId ID of the artist of the current user
- * @returns {object} Deleted album if the album was found
- * @returns null if the album was not found
- * @throws AppError with status code 403 if artist is not the albums's main artist
  */
-exports.deleteAlbum = async (id, artistId) => {
-  const album = await Album.findById(id)
-    .populate('artists', '_id name images')
-    .populate('genres')
-    .select('-album_group');
-  if (!album) return null;
-  if (!(String(album.artists[0]) === artistId))
-    throw new AppError(
-      'You do not have permission to perform this action.',
-      403
-    );
+exports.deleteAlbum = async id => {
   await Album.findByIdAndDelete(id);
-  return album;
 };
 
 /**
@@ -104,13 +89,19 @@ exports.deleteAlbum = async (id, artistId) => {
  * @summary Get list of tracks of an album
  * @param {String} id - ID of the album containing the tracks
  * @returns {Array} An array containing the tracks of the album
+ * @returns null if the album was not found or has no tracks
  */
-exports.findTracksOfAlbum = async id => {
+exports.findTracksOfAlbum = async (id, limit, offset) => {
   const result = await Album.findById(id)
-    .populate('tracks')
+    .populate({
+      path: 'tracks',
+      options: { limit: limit, skip: offset },
+      select: '-audioUrl -album',
+      populate: { path: 'artists' }
+    })
     .select('tracks');
-
-  return result;
+  if (!result || result.tracks.length == 0) return null;
+  return result.tracks;
 };
 
 /**
@@ -121,25 +112,19 @@ exports.findTracksOfAlbum = async id => {
  * @summary updates an album
  * @param {String} id ID of the album to be updated
  * @param {object} newAlbum object containing the new values
- * @param {String} artistId ID of the artist of the current user
- * @returns Updated album if the album was found
- * @returns null if the album was not found
- * @throws AppError with status code 403 if artist is not the track's main artist
+ * @returns Updated album
  */
-exports.update = async (id, newAlbum, artistId) => {
-  let album = await album
-    .findById(id)
+exports.update = async (id, newAlbum) => {
+  let album = await Album.findByIdAndUpdate(id, newAlbum, { new: true })
     .populate('artists', '_id name images')
     .populate('genres')
     .select('-album_group');
-  if (!album) return null;
-  if (!album.artists.find(aId => aId.toString() == artistId.toString()))
-    throw new AppError(
-      'You do not have permission to perform this action.',
-      403
-    );
 
-  album.set(newAlbum);
-  await album.save();
+  album.tracks = {
+    limit: 20,
+    offset: 0,
+    total: album.tracks.length,
+    items: album.tracks
+  };
   return album;
 };

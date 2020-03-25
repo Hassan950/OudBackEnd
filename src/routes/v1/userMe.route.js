@@ -15,8 +15,8 @@ router.use(catchAsync(authMiddleware.authenticate));
 // /me/player router
 router.use('/player', playerRouter);
 
-// /me/artists router
-router.use('/artists', artistRoute);
+// /me/artist router
+router.use('/artist', artistRoute);
 
 router
   .route('/updatePassword')

@@ -16,7 +16,7 @@ router
     catchAsync(authMiddleware.authenticate),
     authMiddleware.authorize('artist'),
     validate(albumValidation.oneAlbum),
-    catchAsync(albumsController.deleteAlbum)
+    catchAsync(albumsController.findAndDeleteAlbum)
   );
 
 router
@@ -24,6 +24,22 @@ router
   .get(
     validate(albumValidation.severalAlbums),
     catchAsync(albumsController.getAlbums)
+  );
+
+router
+  .route('/:id/tracks')
+  .get(
+    validate(albumValidation.albumTracks),
+    catchAsync(albumsController.findAlbumTracks)
+  );
+
+router
+  .route('/:id/release')
+  .patch(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(albumValidation.release),
+    catchAsync(albumsController.releaseAlbum)
   );
 
 module.exports = router;

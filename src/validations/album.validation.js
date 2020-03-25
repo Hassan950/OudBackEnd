@@ -15,3 +15,25 @@ exports.severalAlbums = {
       .required()
   })
 };
+
+exports.albumTracks = {
+  params: Joi.object().keys({
+    id: Joi.objectId().required()
+  }),
+  query: Joi.object().keys({
+    limit: Joi.number()
+      .min(1)
+      .max(50)
+      .default(20),
+    offset: Joi.number().default(0)
+  })
+};
+
+exports.release = {
+  params: Joi.object().keys({
+    id: Joi.objectId().required()
+  }),
+  body: Joi.object().keys({
+    released: Joi.boolean().required()
+  })
+};

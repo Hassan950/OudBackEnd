@@ -14,8 +14,6 @@ trackIds = [
   '5e6c8ebb8b40fc5518fe8b32'
 ];
 
-const AppError = require('../../../src/utils/AppError');
-
 describe('Tracks controller', () => {
   let req;
   let res;

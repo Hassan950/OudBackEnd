@@ -29,7 +29,8 @@ describe('Albums Controller', () => {
       genres: '5e6c8ebb8b40fc5518fe8b32',
       image: 'example.jpg',
       name: 'The Begining',
-      release_date: '12-06-1999'
+      release_date: '12-06-1999',
+      tracks: [albumIds[0]]
     });
     albums = [album, albums];
     album.populate = jest.fn().mockReturnThis();
@@ -79,6 +80,63 @@ describe('Albums Controller', () => {
       expect(result[0][0].albums[0]).toEqual(result[0][0].albums[1]);
       expect(result[0][0].albums[2]).toEqual(result[0][0].albums[3]);
       expect(result[0][0].albums[2]).toEqual(null);
+    });
+  });
+  describe('findAlbumTracks', () => {
+    it('Should return the tracks of the album with the given Id in a paging object with status code 200', async () => {
+      mockingoose(Album).toReturn(album, 'findOne');
+      req.params.id = album._id;
+      req.query = { limit: 20, offset: 0 };
+      await albumsController.findAlbumTracks(req, res, next);
+      expect(res.json.mock.calls[0][0]).toMatchObject({
+        items: album.tracks
+      });
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('Should throw an error with status code 404 if the album is not found', async () => {
+      mockingoose(Album).toReturn(null, 'findOne');
+      req.params.id = "valid id that doesn't exist";
+      req.query = { limit: 20, offset: 0 };
+      await albumsController.findAlbumTracks(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('Should throw an error with status code 404 if the album has no tracks', async () => {
+      album.tracks = [];
+      mockingoose(Album).toReturn(album, 'findOne');
+      req.params.id = album._id;
+      req.query = { limit: 20, offset: 0 };
+      await albumsController.findAlbumTracks(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+  });
+  describe('deleteAblum', () => {
+    it('Should return the deleted album with status code 200 if the album was found', async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'findOneAndDelete');
+      req.user = { artist: album.artists[0]._id };
+      req.params.id = album._id;
+      await albumsController.findAndDeleteAlbum(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+    });
+    it('Should throw an error with status code 404 if the album is not found', async () => {
+      mockingoose(Album)
+        .toReturn(null, 'findOne')
+        .toReturn(null, 'findOneAndDelete');
+      req.user = { artist: album.artists[0]._id };
+      req.params.id = album._id;
+      await albumsController.findAndDeleteAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('Should throw an error with status code 403 if the user is not the album\'s main artist', async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'findOneAndDelete');
+      req.user = { artist: album.artists[1]._id };
+      req.params.id = album._id;
+      await albumsController.findAndDeleteAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });
 });
