@@ -1400,6 +1400,7 @@ paths:
       parameters: 
       - name: id
         in: path
+        required: true
         description: ID of the album, if not given then the track will be single
         schema:
           type: string
@@ -3190,20 +3191,12 @@ paths:
       tags:
         - Player
       description: "Transfer a User's Playback"
-      parameters:
-        - name: deviceIds
-          in: query
-          description: "Required. A JSON array containing the ID of the device on which playback should be started/transferred. For example: `{deviceIds:[\"74ASZWbe4lXaubB36ztrGX\"]}` Note: Although an array is accepted, only a single deviceId is currently supported. Supplying more than one will return `400` Bad Request"
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
-        - name: play
-          in: query
-          description: "Optional. `true`: ensure playback happens on new device.`false`: keep the current playback state."
-          schema:
-            type: boolean
+      requestBody:
+        description: DeviceIds and play
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferPlayback'
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
@@ -3353,6 +3346,21 @@ paths:
           
 components:
   schemas:
+    TransferPlayback:
+      type: object
+      description: TransferPlayback body request
+      required:
+        - deviceIds
+      properties:
+        deviceIds:
+          description: "Required. A JSON array containing the ID of the device on which playback should be started/transferred. For example: `{deviceIds:[\"74ASZWbe4lXaubB36ztrGX\"]}` Note: Although an array is accepted, only a single deviceId is currently supported. Supplying more than one will return `400` Bad Request"
+          type: array
+          items:
+            type: string
+        play:
+          description: "Optional. `true`: ensure playback happens on new device.`false`: keep the current playback state."
+          type: boolean
+  
     Artist:
       type: object
       description: 'Artist Full Object'
