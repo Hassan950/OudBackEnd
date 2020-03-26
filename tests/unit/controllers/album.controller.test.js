@@ -2,7 +2,6 @@ const { albumsController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 const requestMocks = require('../../utils/request.mock');
 let { Album } = require('../../../src/models');
-const AppError = require('../../../src/utils/AppError');
 
 artistIds = [
   '5e6c8ebb8b40fc5508fe8b32',
@@ -129,13 +128,43 @@ describe('Albums Controller', () => {
       await albumsController.findAndDeleteAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
-    it('Should throw an error with status code 403 if the user is not the album\'s main artist', async () => {
+    it("Should throw an error with status code 403 if the user is not the album's main artist", async () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
         .toReturn(album, 'findOneAndDelete');
       req.user = { artist: album.artists[1]._id };
       req.params.id = album._id;
       await albumsController.findAndDeleteAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
+  });
+  describe('releaseAlbum', () => {
+    it('Should return the album updated with status code 200', async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'findOneAndUpdate');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id };
+      await albumsController.releaseAlbum(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+    });
+    it('Should throw an error with status code 404 if the album was not found', async () => {
+      mockingoose(Album)
+        .toReturn(null, 'findOne')
+        .toReturn(null, 'findOneAndUpdate');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id };
+      await albumsController.releaseAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it("Should throw an error with status code 403 if the artist is not the album's main artist", async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'findOneAndUpdate');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[1]._id }; // the right artist is artist[0]
+      await albumsController.releaseAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });

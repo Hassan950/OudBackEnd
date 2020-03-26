@@ -50,8 +50,6 @@ exports.findAlbumTracks = async (req, res, next) => {
 
 exports.releaseAlbum = async (req, res, next) => {
   let album = await albumService.findAlbum(req.params.id);
-  console.log(album)
-  console.log(req.user.artist)
   if (!album)
     return next(new AppError('The requested resource is not found', 404));
   if (!(String(album.artists[0]._id) === String(req.user.artist)))
