@@ -1,4 +1,4 @@
-const ss = require('stream');
+const ss = require('socket.io-stream');
 const fs = require('fs');
 const logger = require('./logger');
 const activeSockets = [];
@@ -13,27 +13,31 @@ const activeSockets = [];
 */
 let io;
 
-const handleSocketConnection = (io) => {
-  io.on('connection', socket => {
-    logger.info(`Hello socket ${socket.id}...`);
+const fileName = '/media/fuboki/ALL/Quran/77-mp3/009-At-Taubah.mp3';
 
-    const existedSocket = activeSockets.find((el) => {
-      return el.id === socket.id;
-    });
+const handleConnection = (socket) => {
+  logger.info(`Hello socket ${socket.id}...`);
 
-    if (!existedSocket) {
-      activeSockets.push({
-        id: socket.id
-      });
-    }
+  let existedSocket = activeSockets.find((el) => {
+    return el.id === socket.id;
+  });
 
-    logger.info(`Connected sockets = ${activeSockets.length}`);
+  if (!existedSocket) {
+    existedSocket = {
+      id: socket.id,
+      stream: ss.createStream()
+    };
+    activeSockets.push(existedSocket);
+  }
 
-    handleSocketDisconnection(socket);
-  })
+  logger.info(`Connected sockets = ${activeSockets.length}`);
+
+  console.log(activeSockets);
+
+  return existedSocket;
 };
 
-const handleSocketDisconnection = (socket) => {
+const handleDisconnection = (socket) => {
   socket.on('disconnect', () => {
     logger.info('Disconnected ....');
     const existedSocket = activeSockets.find((el) => {
@@ -43,11 +47,24 @@ const handleSocketDisconnection = (socket) => {
     activeSockets.splice(idx, 1);
     logger.info(`Connected sockets = ${activeSockets.length}`);
   })
+};
+
+const handleAudioStream = (socket, stream, filename) => {
+  ss(socket).emit('audio-stream', stream, { name: filename });
+  fs.createReadStream(filename).pipe(stream);
+  console.log(filename);
 }
 
 exports.io = io;
 
+exports.activeSockets = activeSockets;
+
 exports.server = (server) => {
   io = require('socket.io').listen(server);
-  handleSocketConnection(io);
+  // connection 
+  io.on('connection', socket => {
+    const { stream } = handleConnection(socket);
+    handleDisconnection(socket);
+    handleAudioStream(socket, stream, fileName);
+  })
 };

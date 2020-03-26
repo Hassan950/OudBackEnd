@@ -11,7 +11,8 @@ router
 
 router
   .route('/')
-  .get(catchAsync(playerController.getPlayer));
+  .get(catchAsync(playerController.getPlayer))
+  .put(catchAsync(deviceController.transferPlayback));
 
 router
   .route('/currently-playing')

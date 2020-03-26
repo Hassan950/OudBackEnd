@@ -5,6 +5,14 @@ const getAvailableDevices = async (userId) => {
   return devices;
 };
 
+
+const getDevice = async (id) => {
+  const device = await Device.find({ id: id });
+  return device;
+};
+
+
 module.exports = {
-  getAvailableDevices
+  getAvailableDevices,
+  getDevice
 }
