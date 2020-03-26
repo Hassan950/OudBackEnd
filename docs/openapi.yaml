@@ -692,14 +692,10 @@ paths:
         description: "JSON object contains the needed information for the request."
         required: true
         content:
-          multipart/mixed:
+          application/json:
             schema:
               type: object
               properties:
-                image:
-                  type: string
-                  format: binary
-                  description: the file of the image
                 genres:
                   type: array
                   items: 
@@ -800,7 +796,7 @@ paths:
             format: string
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object  
               properties:
@@ -823,13 +819,12 @@ paths:
                 album_type:
                   type: string
                   description: "the type of the album: one of the following 'single', 'album' or 'compilation'"
+                album_group:
+                  type: string
+                  description: one of 'single', 'album', 'compilation' and 'appears_on' 
                 release_date: 
                   type: string
                   description: The date the album was first released
-                image:
-                  type: string
-                  format: binary
-                  description: The file of the image
       responses:
         '200':
           description: successful operation
@@ -1069,7 +1064,7 @@ paths:
       - bearerAuth: []
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
@@ -1089,13 +1084,12 @@ paths:
                   the array is empty.)'
                   items:
                     type: string
-                image:
-                  type: string
-                  format: binary
-                  description: The file of the image
                 album_type:
                   type: string
                   description: "the type of the album: one of the following 'single', 'album' or 'compilation'"
+                album_group:
+                  type: string
+                  description: one of the following 'single', 'album' or 'compilation', 'appears_on'
                 release_date: 
                   type: string
                   description: The date the album was first released
@@ -1103,6 +1097,8 @@ paths:
               - name
               - artists
               - album_type
+              - genres
+              - release_date
               description: Album data 
       responses:
         '200':
@@ -1117,6 +1113,51 @@ paths:
           $ref: '#/components/responses/NotFound'
         '403':
           $ref: '#/components/responses/Forbidden'
+
+  '/me/artist/albums/{id}/image':
+    patch:
+      tags:
+      - Albums
+      summary:  Update the image of an album
+      description: Updates the image of the album with the given ID
+      security:
+      - bearerAuth: []
+      parameters: 
+        - name: id
+          in: path
+          description: ID of album to update
+          required: true
+          schema:
+            type: string
+            format: string
+      requestBody:
+        content:
+          multipart/form-data:  
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+            encoding:
+              image:
+                contentType: image/png, image/jpeg
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    
 
   '/me/albums':
     put:
@@ -1290,7 +1331,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/me/artists/images':
+  '/me/artist/images':
     patch:
       tags: 
       - Artists
@@ -1322,8 +1363,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Artist'
-        '202':
-          description: accepted but not completed
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -1389,6 +1428,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+          
   '/me/artist/albums/{id}/tracks':
     post:
       tags: 
@@ -1407,18 +1447,21 @@ paths:
           format: string
       requestBody:
         content:
-          application/form-data:
+          application/json:
             schema:
               type: object
               properties:
                 name:
                   type: string
                   description: name of the track
-                track:
-                  type: string
-                  format: binary
-                  description: The file of the track  to be added
-          
+                artists:
+                  type: array
+                  items:
+                    type: string
+                  description: The ID's of the track's artists
+              required:
+              - name
+              - artists
       responses:
         '200':
           description: successful operation
@@ -1426,8 +1469,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Album'
-        '202':
-          description: Accepted but not completed
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1436,6 +1477,57 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+
+  '/me/artist/albums/{albumId}/tracks/{trackId}':
+    patch:
+      tags: 
+      - Albums
+      summary:  Upload Track's file
+      parameters: 
+      - name: albumId
+        in: path
+        description: ID of album of the track
+        required: true
+        schema:
+          type: string
+          format: string
+      - name: trackId
+        in: path
+        description: ID of the track
+        required: true
+        schema:
+          type: string
+          format: string
+      description: Updates the 
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:  
+            schema:
+              type: object
+              properties:
+                track:
+                  type: string
+                  format: binary
+            encoding:
+              track:
+                contentType: audio/mpeg
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /me/recentsearch:
     post:
       tags: 
