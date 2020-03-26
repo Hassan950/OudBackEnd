@@ -36,8 +36,8 @@ exports.transferPlayback = async (req, res, next) => {
     return next(new AppError('Must Authenticate user', 500));
   }
 
-  const deviceId = req.query.deviceIds[0];
-  const play = req.query.play || false;
+  const deviceId = req.body.deviceIds[0];
+  const play = req.body.play || false;
 
   const id = req.body._id;
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
 const catchAsync = require('../../utils/catchAsync');
+const { deviceValidation } = require('../../validations');
 const { deviceController, playerController } = require('../../controllers');
 
 const router = express.Router();
@@ -12,7 +13,10 @@ router
 router
   .route('/')
   .get(catchAsync(playerController.getPlayer))
-  .put(catchAsync(deviceController.transferPlayback));
+  .put(
+    validate(deviceValidation.transferPlayback),
+    catchAsync(deviceController.transferPlayback)
+  );
 
 router
   .route('/currently-playing')

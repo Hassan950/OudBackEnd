@@ -1,5 +1,6 @@
 const moment = require('moment');
 const validator = require('validator');
+const mongoose = require('mongoose');
 
 exports.ageCheck = (value, helpers) => {
   const age = moment().diff(value, 'years');
@@ -15,3 +16,11 @@ exports.countryCheck = (value, helpers) => {
   }
   return value;
 };
+
+
+exports.idCheck = (value, helpers) => {
+  if (!mongoose.Types.ObjectId.isValid(value[0]) || value.length != 1) {
+    return helpers.message('Invalid id');
+  }
+  return value;
+}
