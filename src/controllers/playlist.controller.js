@@ -1,6 +1,33 @@
 const { playlistService } = require('../services');
 const AppError = require('../utils/AppError');
+const multer = require('multer');
 
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${req.params.id}.${file.originalname}`);
+  }
+});
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.match(/(png|jpg|jpeg)/)) {
+    cb(null, true);
+  } else {
+    cb(
+      new AppError(
+        'Not an image! Please upload only images.',400
+      ),
+      false
+    );
+  }
+};
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+exports.uploadImage = upload.single('image');
 /**
  * @version 1.0.0
  * @throws AppError 400 status
@@ -27,7 +54,7 @@ exports.getPlaylist = async (req, res, next) => {
 
 
 exports.changePlaylist = async(req,res,next) => {
-  const playlist = await playlistService.changePlaylist(req.params ,req.body);
+  const playlist = await playlistService.changePlaylist(req.params ,req.body,req.file.path);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
   res.status(200).json({
     playlist: playlist
@@ -42,8 +69,8 @@ exports.changePlaylist = async(req,res,next) => {
  * @summary Upload Image
  */
 
-exports.uploadImage  = async (req , res , next)=>{
-  const playlist = await playlistService.uploadImage(req.params , req.body);
+exports.uploadImageRoute  = async (req , res , next)=>{
+  const playlist = await playlistService.uploadImage(req.params ,req.file.path);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
   res.status(200).send(200);
 }
@@ -102,8 +129,8 @@ exports.getUserPlaylists = async(req , res , next)=>{
 exports.createUserPlaylist = async(req , res , next)=>{
   const user = await playlistService.checkUser(req.params);
   if(!user) return next(new AppError('no user with this id', 404));
-  await playlistService.createUserPlaylist(req.params , req.body);
-  res.status(200).send('Playlist is created');
+  const playlist = await playlistService.createUserPlaylist(req.params , req.body, req.file.path);
+  res.status(200).send(playlist);
 }
 
 /**
@@ -138,8 +165,7 @@ exports.replaceTracks = async(req , res , next)=>{
   console.log(tracks);
   let playlist = await playlistService.getPlaylist(req.params);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
-  console.log(playlist);
-  playlist = await playlistService.deleteTracks(playlist ,playlist.tracks);
+  playlist = await playlistService.deleteTracks(playlist ,tracks);
   playlist = await playlistService.addTracks(req.params , tracks ,0 );
   res.status(200).send('found tracks from tracks send to be added are added');
 }

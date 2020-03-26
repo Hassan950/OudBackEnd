@@ -32,10 +32,13 @@ const playlistSchema = new mongoose.Schema({
     default:false,
   },
   image: {
-    type: String
+    type: 
+      {
+        type: String,
+        match: /(^.*-([a-f\d]{24})-[0-9]*\.(jpg|jpeg|png))/
+      }
   }
   });
-
 playlistSchema.virtual('type').get(function(){
   return 'playlist';
 });

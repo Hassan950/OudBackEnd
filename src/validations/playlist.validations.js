@@ -20,9 +20,6 @@ exports.changePlaylist = {
 exports.uploadImage = {
   params: Joi.object().keys({
     id: Joi.objectID()
-  }),
-  body:Joi.object().keys({
-    image: Joi.string()
   })
 };
 
@@ -71,7 +68,8 @@ exports.createUserPlaylist = {
     name: Joi.string().required().trim().min(3).max(20),
     public: Joi.boolean().default(false),
     collabrative: Joi.boolean().default(false),
-    description: Joi.string().trim().min(10).max(25)
+    description: Joi.string().trim().min(10).max(25),
+    images: Joi.string()
   }) 
 };
 
@@ -80,7 +78,7 @@ exports.replaceTracks = {
     id: Joi.objectID()
   }),
   body: Joi.object().keys({
-    uris:Joi.array().items(Joi.string()),
+    uris:Joi.array().items(Joi.string())
   }) 
 }
 
