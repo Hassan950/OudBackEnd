@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
+const { Followings, PlaylistFollowings } = require('./');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -183,6 +184,12 @@ userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now();
+  next();
+});
+
+userSchema.pre('remove', function(next) {
+  PlaylistFollowings.remove({ userId: this._id }).exec();
+  Followings.remove({ userId: this._id }).exec();
   next();
 });
 

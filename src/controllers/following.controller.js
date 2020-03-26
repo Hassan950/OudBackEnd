@@ -14,7 +14,19 @@ const httpStatus = require('http-status');
  */
 
 exports.checkFollowings = async (req, res, next) => {
-  const checks = await followingService.checkFollowings(req.query.ids, req.query.type, req.user._id);
+  const checks = await followingService.checkFollowings(
+    req.query.ids,
+    req.query.type,
+    req.user._id
+  );
   res.status(httpStatus.OK).send(checks);
-}
+};
 
+exports.checkFollowingsPlaylist = async (req, res, next) => {
+  const checks = await followingService.checkFollowingsPlaylist(
+    req.query.ids,
+    req.query.playlistId,
+    req.user
+  );
+  res.status(httpStatus.OK).send(checks);
+};

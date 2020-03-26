@@ -27,16 +27,18 @@ exports.tracksIds = (value, helper) => {
   return value;
 };
 
-exports.followingsIds = (value, helper) => {
-  const values = value.split(',');
-  if (values.length > 50) return helper.message('too many ids requested');
-  values.forEach(v => {
-    if (!mongoose.Types.ObjectId.isValid(v))
-      return helper.message(v + ' is not a valid Id');
-  });
-  return values;
+exports.arrayIds = maxNum => {
+  return function(value, helper) {
+    const values = value.split(',');
+    if (values.length > maxNum) return helper.message('too many ids requested');
+    values.forEach(v => {
+      if (!mongoose.Types.ObjectId.isValid(v))
+        return helper.message(v + ' is not a valid Id');
+    });
+    return values;
+  };
 };
 
 exports.capitalize = (value, helper) => {
-  return type.replace(/^./, type[0].toUpperCase());
+  return value.replace(/^./, value[0].toUpperCase());
 };

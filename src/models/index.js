@@ -4,7 +4,12 @@ const { Track, trackSchema } = require('./track.model');
 const { Album, albumSchema } = require('./album.model');
 const { Genre, genreSchema } = require('./genre.model');
 const { Device, deviceSchema } = require('./device.model');
-const { Followings, followingsSchema } = require('./following.model');
+const {
+  Followings,
+  followingsSchema,
+  playlistFollowingsSchema,
+  PlaylistFollowings
+} = require('./following.model');
 
 module.exports = {
   User,
@@ -20,5 +25,7 @@ module.exports = {
   Device,
   deviceSchema,
   Followings,
-  followingsSchema
+  followingsSchema,
+  playlistFollowingsSchema,
+  PlaylistFollowings
 };

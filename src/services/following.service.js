@@ -25,3 +25,21 @@ exports.checkFollowings = async (ids, type, userId) => {
   });
   return checks;
 };
+
+exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
+  const result = await Followings.find({
+    userId: ids,
+    playlistId: playlistId
+  }).populate({ path: 'playlistId', select: 'public' });
+  const checks = ids.map(id => {
+    val = result.find(follow => String(follow.userId) === id);
+    if (val === undefined) {
+      return false;
+    }
+    if (user && user._id === id) {
+      return true;
+    }
+    return val.public;
+  });
+  return checks;
+};
