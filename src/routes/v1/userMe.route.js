@@ -5,7 +5,6 @@ const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 const playerRouter = require('./player.route');
-const FollowingRouter = require('./following.route');
 
 const router = express.Router();
 
@@ -15,23 +14,16 @@ router.use(catchAsync(authMiddleware.authenticate));
 // /me/player router
 router.use('/player', playerRouter);
 
-// /me/following router
-router.use('/following', FollowingRouter);
-
-
 router
   .route('/updatePassword')
-  .patch(validate(authValidation.updatePassword), catchAsync(authController.updatePassword));
-
-router
-  .route('/verify')
-  .post(catchAsync(authController.requestVerify));
-
-router
-  .route('/')
-  .get(
-    catchAsync(userController.getProfile)
+  .patch(
+    validate(authValidation.updatePassword),
+    catchAsync(authController.updatePassword)
   );
+
+router.route('/verify').post(catchAsync(authController.requestVerify));
+
+router.route('/').get(catchAsync(userController.getProfile));
 
 router
   .route('/profile')
@@ -42,9 +34,6 @@ router
 
 router
   .route('/profilePicture')
-  .patch(
-    userController.uploadImages,
-    catchAsync(userController.updateImages)
-  );
+  .patch(userController.uploadImages, catchAsync(userController.updateImages));
 
 module.exports = router;

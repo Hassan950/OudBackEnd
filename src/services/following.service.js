@@ -1,4 +1,4 @@
-const { Followings } = require('../models/');
+const { Followings, PlaylistFollowings } = require('../models/');
 const AppError = require('../utils/AppError');
 
 /**
@@ -26,8 +26,21 @@ exports.checkFollowings = async (ids, type, userId) => {
   return checks;
 };
 
+/**
+ * A function to Check to see if one or more users are following a specified playlist.
+ * if a playlist if not public false will be returned unless this is your userId and you are logged in.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Check if Users Follow a Playlist
+ * @param {Array} ids - Array of the ids of the users
+ * @param {String} playlistId - The playlist id
+ * @param {Object} user - The user object. It's undefined if the user is not logged in
+ * @returns {Array} Array of booleans contains the results
+ */
+
 exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
-  const result = await Followings.find({
+  const result = await PlaylistFollowings.find({
     userId: ids,
     playlistId: playlistId
   }).populate({ path: 'playlistId', select: 'public' });
@@ -36,10 +49,10 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
     if (val === undefined) {
       return false;
     }
-    if (user && user._id === id) {
+    if (user && String(user._id) === id) {
       return true;
     }
-    return val.public;
+    return val.playlistId.public;
   });
   return checks;
 };

@@ -30,7 +30,6 @@ const playlistFollowingsSchema = mongoose.Schema({
   },
   playlistId: {
     type: mongoose.Types.ObjectId,
-    ref: 'Playlist',
     required: true
   }
 });

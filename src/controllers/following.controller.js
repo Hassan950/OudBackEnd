@@ -22,10 +22,21 @@ exports.checkFollowings = async (req, res, next) => {
   res.status(httpStatus.OK).send(checks);
 };
 
+/**
+ * A middleware to Check to see if one or more users are following a specified playlist.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Check if Users Follow a Playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
 exports.checkFollowingsPlaylist = async (req, res, next) => {
   const checks = await followingService.checkFollowingsPlaylist(
     req.query.ids,
-    req.query.playlistId,
+    req.params.playlistId,
     req.user
   );
   res.status(httpStatus.OK).send(checks);

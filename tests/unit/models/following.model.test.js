@@ -1,4 +1,4 @@
-const { Followings } = require('../../../src/models/index');
+const { Followings, PlaylistFollowings } = require('../../../src/models/index');
 
 describe('Followings model', () => {
   let following;
@@ -49,7 +49,7 @@ describe('Followings model', () => {
     following.type = 'uSeR';
     const error = following.validateSync();
     expect(error.errors.type).toBeDefined();
-  })
+  });
 
   it('expect error when type is empty', () => {
     const args = [null, undefined];
@@ -58,5 +58,50 @@ describe('Followings model', () => {
       const error = following.validateSync();
       expect(error.errors.type).toBeDefined();
     });
-  })
+  });
+});
+
+describe('PlaylistFollowings model', () => {
+  let following;
+  beforeEach(() => {
+    following = new PlaylistFollowings({
+      userId: '5e6ba8747d3eda317003c976',
+      playlistId: '5e6ba6917fb1cf2ad80b4fb2'
+    });
+  });
+
+  it('expect no error when validating a valid following', () => {
+    const error = following.validateSync();
+    expect(error).toBeUndefined();
+  });
+
+  it('expect error when passing empty userId', () => {
+    const args = [null, undefined];
+    args.forEach(a => {
+      following.userId = a;
+      const error = following.validateSync();
+      expect(error.errors.userId).toBeDefined();
+    });
+  });
+
+  it('expect error when passing invalid userId', () => {
+    following.userId = 'validId';
+    const error = following.validateSync();
+    expect(error.errors.userId).toBeDefined();
+  });
+
+  it('expect error when passing empty playlistId', () => {
+    const args = [null, undefined];
+    args.forEach(a => {
+      following.playlistId = a;
+      const error = following.validateSync();
+      expect(error.errors.playlistId).toBeDefined();
+    });
+  });
+
+  it('expect error when passing invalid playlistId', () => {
+    following.playlistId = 'validId';
+    const error = following.validateSync();
+    expect(error.errors.playlistId).toBeDefined();
+  });
 });

@@ -10,6 +10,7 @@ const {
   playlistFollowingsSchema,
   PlaylistFollowings
 } = require('./following.model');
+const { Playlist, playlistSchema } = require('./playlist.model');
 
 module.exports = {
   User,
@@ -27,5 +28,7 @@ module.exports = {
   Followings,
   followingsSchema,
   playlistFollowingsSchema,
-  PlaylistFollowings
+  PlaylistFollowings,
+  playlistSchema,
+  Playlist
 };

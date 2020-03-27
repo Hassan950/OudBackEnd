@@ -5,10 +5,10 @@ const validate = require('../../middlewares/validate');
 const { followingController } = require('../../controllers');
 const { followingValidation } = require('../../validations');
 
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 router
-  .route('/')
+  .route('/me/following/contains')
   .get(
     catchAsync(authMiddleware.authenticate),
     validate(followingValidation.checkFollowings),
@@ -16,8 +16,9 @@ router
   );
 
 router
-  .route('/followers/contains')
+  .route('/playlists/:playlistId/followers/contains')
   .get(
+    catchAsync(authMiddleware.optionalAuth),
     validate(followingValidation.checkFollowingsPlaylist),
     catchAsync(followingController.checkFollowingsPlaylist)
   );

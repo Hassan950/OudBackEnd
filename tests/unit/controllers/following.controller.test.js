@@ -1,8 +1,9 @@
 const { followingController } = require('../../../src/controllers/');
-const { Followings } = require('../../../src/models');
+const { Followings, PlaylistFollowings } = require('../../../src/models');
 const AppError = require('../../../src/utils/AppError');
 const httpStatus = require('http-status');
 const requestMocks = require('../../utils/request.mock');
+const mongoose = require('mongoose')
 const mockingoose = require('mockingoose').default;
 
 describe('Following controller', () => {
@@ -11,18 +12,20 @@ describe('Following controller', () => {
   let next;
   let following;
   beforeEach(() => {
-    following = new Followings({
-      userId: '5e6ba8747d3eda317003c976',
-      followedId: '5e6ba6917fb1cf2ad80b4fb2',
-      type: 'User'
-    });
-    following.populate = jest.fn().mockReturnThis();
-    following.select = jest.fn().mockReturnThis();
-    req = { params: {}, query: {}, body: {}, user: following.userId };
+    req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
   });
   describe('checkFollowings', () => {
+    beforeEach(() => {
+      following = new Followings({
+        userId: '5e6ba8747d3eda317003c976',
+        followedId: '5e6ba6917fb1cf2ad80b4fb2',
+        type: 'User'
+      });
+      req.user = following.userId;
+      next = jest.fn();
+    });
     it('Should return list of boolean that indicates the following for each user/artist with status code 200', async () => {
       mockingoose(Followings).toReturn([following], 'find');
       // two valid ID's
@@ -40,6 +43,66 @@ describe('Following controller', () => {
       req.query.ids = ['5e6ba6917fb1cf2ad80b4fb2', '5e6ba8747d3eda317003c976'];
       await followingController.checkFollowings(req, res, next);
       expect(res.send.mock.calls[0][0]).toEqual([false, false]);
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+  });
+  describe('checkFollowingsPlaylist', () => {
+    beforeEach(() => {
+      PlaylistFollowings.schema.path('playlistId', Object)
+      following = new PlaylistFollowings({
+        userId: '5e6ba8747d3eda317003c976',
+        playlistId: {
+          _id: '5e6ba6917fb1cf2ad80b4fb2',
+          public: true
+        }
+      });
+    });
+    it('Should return list of boolean that indicates whether the user follows this playlist or not with status code 200', async () => {
+      mockingoose(PlaylistFollowings).toReturn([following], 'find');
+      // valid ID
+      req.query.ids = ['5e6ba8747d3eda317003c976'];
+      req.params.playlistId = '5e6ba6917fb1cf2ad80b4fb2';
+      await followingController.checkFollowingsPlaylist(req, res, next);
+      expect(res.send.mock.calls[0][0]).toEqual([true]);
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+
+    it('Should return an array contains falses when no following found', async () => {
+      mockingoose(PlaylistFollowings).toReturn([], 'find');
+      // two valid ID's
+      req.query.ids = ['5e6ba6917fb1cf2ad80b4fb2', '5e6ba8747d3eda317003c976'];
+      await followingController.checkFollowingsPlaylist(req, res, next);
+      expect(res.send.mock.calls[0][0]).toEqual([false, false]);
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+
+    it('Should return false when checking a private playlist', async () => {
+      following.playlistId.public = false;
+      mockingoose(PlaylistFollowings).toReturn([following], 'find');
+      // two valid ID's
+      req.query.ids = ['5e6ba8747d3eda317003c976'];
+      await followingController.checkFollowingsPlaylist(req, res, next);
+      expect(res.send.mock.calls[0][0]).toEqual([false]);
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+
+    it('If the current user logged in and owns this playlist he is able to see the following even if the playlist is private', async () => {
+      following.playlistId.public = false;
+      req.userId = '5e6ba8747d3eda317003c976';
+      mockingoose(PlaylistFollowings).toReturn([following], 'find');
+      // two valid ID's
+      req.query.ids = [req.userId];
+      await followingController.checkFollowingsPlaylist(req, res, next);
+      expect(res.send.mock.calls[0][0]).toEqual([false]);
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+
+    it('Should return array of falses when no followings found', async () => {
+      mockingoose(PlaylistFollowings).toReturn([], 'find');
+      // two valid ID's
+      req.query.ids = ['5e6ba8747d3eda317003c976'];
+      await followingController.checkFollowingsPlaylist(req, res, next);
+      expect(res.send.mock.calls[0][0]).toEqual(expect.arrayContaining([false]));
       expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
     });
   });

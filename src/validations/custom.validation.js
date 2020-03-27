@@ -27,7 +27,7 @@ exports.tracksIds = (value, helper) => {
   return value;
 };
 
-exports.arrayIds = maxNum => {
+exports.idsArray = maxNum => {
   return function(value, helper) {
     const values = value.split(',');
     if (values.length > maxNum) return helper.message('too many ids requested');

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
-const { Followings, PlaylistFollowings } = require('./');
+// const { Followings, PlaylistFollowings } = require('./');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -187,11 +187,11 @@ userSchema.pre('save', function(next) {
   next();
 });
 
-userSchema.pre('remove', function(next) {
-  PlaylistFollowings.remove({ userId: this._id }).exec();
-  Followings.remove({ userId: this._id }).exec();
-  next();
-});
+// userSchema.pre('remove', function(next) {
+//   PlaylistFollowings.remove({ userId: this._id }).exec();
+//   Followings.remove({ userId: this._id }).exec();
+//   next();
+// });
 
 userSchema.methods.changedPasswordAfter = function(user, JWTTimestamp) {
   if (this.passwordChangedAt) {
