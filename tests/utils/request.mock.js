@@ -13,6 +13,7 @@ const mockRequest = (data) => {
   req.body = data;
   req.protocol = 'http';
   req.get = jest.fn().mockImplementation((name) => { return name; });
+  req.query = {};
   return req;
 };
 

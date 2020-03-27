@@ -81,6 +81,6 @@ describe('Device controller', () => {
       player.isPlaying = false;
       await deviceController.transferPlayback(req, res, next);
       expect(player.isPlaying).toBe(true);
-    })
+    });
   });
 });
