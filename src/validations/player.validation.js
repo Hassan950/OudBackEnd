@@ -16,7 +16,7 @@ exports.play = {
       position: Joi.number()
         .min(0),
       uri: Joi.string().custom(uriCheck)
-    }),
+    }).length(1),
     uris: Joi.array().custom(urisCheck),
     contextUri: Joi.string().custom(contextUriCheck)
   })
