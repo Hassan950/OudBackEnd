@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-const { idCheck } = require('./custom.validation');
+const { idCheck, idArrayCheck } = require('./custom.validation');
 
 exports.transferPlayback = {
   body: Joi.object().keys({
@@ -7,7 +7,14 @@ exports.transferPlayback = {
       .min(1)
       .max(1)
       .required()
-      .custom(idCheck),
+      .custom(idArrayCheck),
     play: Joi.boolean()
+  })
+};
+
+exports.deviceIdQuery = {
+  query: Joi.object().keys({
+    deviceId: Joi.string()
+      .custom(idCheck)
   })
 }

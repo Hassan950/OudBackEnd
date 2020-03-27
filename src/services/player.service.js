@@ -8,11 +8,15 @@ const { Player } = require('../models');
  * @param {String} userId 
  * @returns player
  */
-const getPlayer = async (userId) => {
-  const player = await Player.findOne({ userId: userId })
-    .populate('item', '-audioUrl')
-    .populate('device')
-    ;
+const getPlayer = async (userId, ops = { populate: true }) => {
+  let player;
+
+  if (ops.populate) {
+    player = await Player.findOne({ userId: userId })
+      .populate('item', '-audioUrl')
+      .populate('device')
+      ;
+  } else player = await Player.findOne({ userId: userId });
 
   return player;
 };

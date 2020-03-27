@@ -45,10 +45,6 @@ describe('Device controller', () => {
       req.body.deviceIds = [device._id];
       req.body.play = true;
       player = playerMocks.createFakePlayer();
-      const trackId = player.item;
-      player.item = {
-        _id: trackId
-      };
       player.save = jest.fn().mockResolvedValue(player);
       mockingoose(Player).toReturn(player, 'findOne');
       mockingoose(Device).toReturn(device, 'findOne');

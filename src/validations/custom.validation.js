@@ -18,9 +18,16 @@ exports.countryCheck = (value, helpers) => {
 };
 
 
-exports.idCheck = (value, helpers) => {
+exports.idArrayCheck = (value, helpers) => {
   if (!mongoose.Types.ObjectId.isValid(value[0]) || value.length != 1) {
     return helpers.message('Invalid id');
   }
   return value;
-}
+};
+
+exports.idCheck = (value, helpers) => {
+  if (!mongoose.Types.ObjectId.isValid(value)) {
+    return helpers.message('Invalid id');
+  }
+  return value;
+};

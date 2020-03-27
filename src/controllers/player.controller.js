@@ -1,4 +1,4 @@
-const { playerService } = require('../services');
+const { playerService, deviceService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
 /**
@@ -54,3 +54,42 @@ exports.getCurrentlyPlaying = async (req, res, next) => {
     context: currentlyPlaying.context
   })
 };
+
+/**
+ * @version 1.0.0
+ * @throws AppError 500 status
+ * @throws AppError 404 status
+ * @author Abdelrahman Tarek
+ * @description change isPlaying to false
+ * @summary Pause the player
+ */
+exports.pausePlayer = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Must Authenticate user', 500));
+  }
+
+  const id = req.user._id;
+
+  const deviceId = req.query.deviceId;
+
+  const player = await playerService.getPlayer(id, { populate: false });
+
+  if (!player) {
+    return next(new AppError('Player is not found', 404));
+  }
+
+  player.isPlaying = false;
+
+  if (deviceId) {
+    const device = await deviceService.getDevice(deviceId);
+    if (!device) {
+      return next(new AppError('Device is not found', 404));
+    }
+    player.device = deviceId;
+  }
+
+  await player.save();
+
+  res.status(204).end();
+};
+

@@ -22,4 +22,11 @@ router
   .route('/currently-playing')
   .get(catchAsync(playerController.getCurrentlyPlaying));
 
+router
+  .route('/pause')
+  .put(
+    validate(deviceValidation.deviceIdQuery),
+    catchAsync(playerController.pausePlayer)
+  );
+
 module.exports = router;

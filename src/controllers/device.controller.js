@@ -41,7 +41,7 @@ exports.transferPlayback = async (req, res, next) => {
 
   const id = req.body._id;
 
-  const player = await playerService.getPlayer(id);
+  const player = await playerService.getPlayer(id, { populate: false });
 
   if (!player) {
     return next(new AppError('Player is not found', 404));
@@ -54,7 +54,6 @@ exports.transferPlayback = async (req, res, next) => {
   }
 
   player.device = deviceId;
-  player.item = player.item._id; // so we don't save the whole track
 
   if (play) player.isPlaying = true;
 
