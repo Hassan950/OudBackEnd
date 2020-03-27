@@ -204,7 +204,7 @@ describe('Albums Controller', () => {
       req.file = {
         path: 'lol.jpg'
       };
-      fs.link = jest.fn();
+      fs.unlink = jest.fn();
       await albumsController.setImage(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('album');
       expect(res.status.mock.calls[0][0]).toBe(200);

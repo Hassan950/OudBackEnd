@@ -52,6 +52,21 @@ exports.findTrack = async id => {
 };
 
 /**
+ * A method that gets a track by it's ID with its audioUrl it (helper used in other services)
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets a track
+ * @param {String} id ID of the track to be retrieved
+ * @returns track if the track was found
+ * @returns null the track was not found
+ */
+exports.findTrackUtil = async id => {
+  const track = await Track.findById(id).populate('artists album');
+  return track;
+};
+
+/**
  * A method that updates a track by it's ID
  *
  * @function
@@ -78,5 +93,23 @@ exports.update = async (id, newTrack) => {
  * @returns the new track
  */
 exports.createTrack = async (albumId, newTrack) => {
-  return await Track.create({...newTrack, album: albumId});
+  return await Track.create({ ...newTrack, album: albumId });
+};
+
+/**
+ * A method that updates the file of a track
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary updates the url of the given track
+ * @param {object} track track to be updated
+ * @param {string} url the url of the file of the track
+ * @returns Updated track
+ */
+exports.setTrack = async (track, url, duration) => {
+  track.audioUrl = url;
+  // track.duration = duration;
+  await track.save();
+
+  return track;
 };

@@ -2,6 +2,7 @@ const { tracksController } = require('../../../src/controllers');
 const requestMocks = require('../../utils/request.mock');
 let { Track } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
+let fs = require('fs');
 
 artistIds = [
   { _id: '5e6c8ebb8b40fc5508fe8b32' },
@@ -185,6 +186,48 @@ describe('Tracks controller', () => {
       };
       await tracksController.updateTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+  });
+  describe('setTrack', () => {
+    it('Should return album with new path with status code 200', async () => {
+      mockingoose(Track)
+        .toReturn(track, 'findOne')
+        .toReturn(track, 'save');
+      req.user = { artist: track.artists[0]._id };
+      req.params.id = track._id;
+      req.file = {
+        path: 'lol.mp3'
+      };
+      fs.unlink = jest.fn();
+      await tracksController.setTrack(req, res, next);
+      expect(res.json.mock.calls[0][0]).toHaveProperty('track');
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('Should throw an error with status code 404 if the track was not found', async () => {
+      mockingoose(Track)
+        .toReturn(null, 'findOne')
+        .toReturn(null, 'save');
+      req.user = { artist: track.artists[0]._id };
+      req.params.id = track._id;
+      req.file = {
+        path: 'lol.mp3'
+      };
+      fs.unlink = jest.fn();
+      await tracksController.setTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it("Should throw an error with status code 403 if the user is not the track's main artist", async () => {
+      mockingoose(Track)
+        .toReturn(track, 'findOne')
+        .toReturn(track, 'save');
+      req.user = { artist: track.artists[1]._id };
+      req.params.id = track._id;
+      req.file = {
+        path: 'lol.mp3'
+      };
+      fs.unlink = jest.fn();
+      await tracksController.setTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });
 });

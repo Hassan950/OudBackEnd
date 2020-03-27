@@ -89,6 +89,7 @@ exports.updateAlbum = async (req, res, next) => {
 };
 
 exports.setImage = async (req, res, next) => {
+  if (!req.file) return next(new AppError('No files were uploaded', 400));
   let album = await albumService.findAlbumUtil(req.params.id);
   if (!album) {
     fs.unlink(req.file.path, err => {
