@@ -39,7 +39,7 @@ exports.transferPlayback = async (req, res, next) => {
   const deviceId = req.body.deviceIds[0];
   const play = req.body.play || false;
 
-  const id = req.body._id;
+  const id = req.user._id;
 
   const player = await playerService.getPlayer(id, { populate: false });
 
@@ -79,7 +79,7 @@ exports.setVolume = async (req, res, next) => {
   let deviceId = req.query.deviceId;
   const volumePercent = req.query.volumePercent;
 
-  const id = req.body._id;
+  const id = req.user._id;
 
   if (!deviceId) {
     const player = await playerService.getPlayer(id, { populate: false });
@@ -93,7 +93,7 @@ exports.setVolume = async (req, res, next) => {
 
   const device = await deviceService.getDevice(deviceId);
 
-  if (!device || device.userId != id) {
+  if (!device || device.userId !== id) {
     return next(new AppError('Device is not found', 404));
   }
 
