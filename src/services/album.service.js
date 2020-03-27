@@ -32,6 +32,29 @@ exports.findAlbum = async id => {
 };
 
 /**
+ * A method that gets an album by it's ID (helper for other services)
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets an album
+ * @param {String} id ID of the album to be retrieved
+ * @returns album if the album was found
+ * @returns null if the album was not found
+ */
+exports.findAlbumUtil = async id => {
+  let album = await Album.findById(id)
+    .populate('artists', '_id name images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      options: { limit: 20 },
+      select: '-audioUrl'
+    })
+    .select('-album_group');
+  return album;
+};
+
+/**
  * A method that gets array of albums By their ID's
  *
  * @function
@@ -118,6 +141,11 @@ exports.update = async (id, newAlbum) => {
   let album = await Album.findByIdAndUpdate(id, newAlbum, { new: true })
     .populate('artists', '_id name images')
     .populate('genres')
+    .populate({
+      path: 'tracks',
+      options: { limit: 50 },
+      select: '-audioUrl'
+    })
     .select('-album_group');
 
   album.tracks = {
@@ -141,20 +169,16 @@ exports.update = async (id, newAlbum) => {
  */
 exports.setImage = async (album, path) => {
   album.image = path;
-  await album.save()
-    // .populate('artists', '_id name images')
-    // .populate('genres')
-    // .select('-album_group');
+  await album.save();
+  album.tracks = {
+    limit: 20,
+    offset: 0,
+    total: album.tracks.length,
+    items: album.tracks
+  };
 
-  // album.tracks = {
-  //   limit: 20,
-  //   offset: 0,
-  //   total: album.tracks.length,
-  //   items: album.tracks
-  // };
   return album;
 };
-
 
 /**
  * A method that creates a new album
@@ -166,5 +190,8 @@ exports.setImage = async (album, path) => {
  * @returns Created album
  */
 exports.createAlbum = async newAlbum => {
-  return await Album.create(newAlbum);
+  return await (await Album.create(newAlbum))
+    .populate('artists', '_id name images')
+    .populate('genres')
+    .execPopulate();
 };

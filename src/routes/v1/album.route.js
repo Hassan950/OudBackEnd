@@ -56,6 +56,11 @@ router
 
 router
   .route('/:id/image')
-  .patch(albumsController.uploadImage, catchAsync(albumsController.setImage));
+  .patch(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(albumValidation.oneAlbum),
+    albumsController.uploadImage,
+     catchAsync(albumsController.setImage));
 
 module.exports = router;

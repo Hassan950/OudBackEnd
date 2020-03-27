@@ -2,7 +2,6 @@ const { albumService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs');
-const { albumValidation } = require('../validations');
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -10,7 +9,7 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split('/')[1];
-    cb(null, `${req.body.name}-${req.user.artist}-${Date.now()}.${ext}`);
+    cb(null, `${req.params.id}-${req.user.artist}-${Date.now()}.${ext}`);
   }
 });
 const multerFilter = (req, file, cb) => {
@@ -75,10 +74,10 @@ exports.findAlbumTracks = async (req, res, next) => {
 };
 
 exports.updateAlbum = async (req, res, next) => {
-  let album = await albumService.findAlbum(req.params.id);
+  let album = await albumService.findAlbumUtil(req.params.id);
   if (!album)
     return next(new AppError('The requested resource is not found', 404));
-    if (
+  if (
     album.released ||
     String(album.artists[0]._id) !== String(req.user.artist)
   )
@@ -90,10 +89,7 @@ exports.updateAlbum = async (req, res, next) => {
 };
 
 exports.setImage = async (req, res, next) => {
-  let album;
-  if (req.params.id) {
-    album = await albumService.findAlbum(req.params.id);
-  }
+  let album = await albumService.findAlbumUtil(req.params.id);
   if (!album) {
     fs.unlink(req.file.path, err => {
       if (err) throw err;
