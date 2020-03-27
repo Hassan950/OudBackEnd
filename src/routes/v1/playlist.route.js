@@ -21,7 +21,7 @@ router
   .route('/:id/tracks')
   .get(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.getTracks), catchAsync(playlistController.getTracks))
   .post(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.addTracks), catchAsync(playlistController.addTracks))
-  .put(validate(PlaylistValidation.reorderTracks), catchAsync(playlistController.reorderTracks))
+  .put(catchAsync(authMiddleware.authenticate),validate(PlaylistValidation.reorderTracks), catchAsync(playlistController.reorderTracks))
   .delete(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
 router
   .route('/:id/images')

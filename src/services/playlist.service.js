@@ -3,7 +3,7 @@ const fs  = require('fs');
 
 
 const getPlaylist =  async (params) => {
-  const playlist = await Playlist.findById(params.id);
+  const playlist = await Playlist.findById(params.id).select('-tracks');
   return playlist ;
 }
 
@@ -22,7 +22,7 @@ const changePlaylist = async (params , body, image) =>{
   playlist = await Playlist.findByIdAndUpdate(params.id,{
     image: image
   },
-  { new: true });
+  { new: true }).select('-tracks');
   
   return playlist; 
 }
@@ -38,7 +38,7 @@ const uploadImage = async(params, image)=>{
   playlist = await Playlist.findByIdAndUpdate(params.id,{
     image: image
   },
-  { new: true });
+  { new: true }).select('-tracks');
   if(!playlist) return playlist;
   return playlist ;
 }
@@ -53,7 +53,7 @@ const getTracks = async(params , query)=>{
 }
 
 const getUserPlaylists = async(params , query)=>{
-  const playlists = await Playlist.find({owner: params.id}).select('-owner').skip(query.offset).limit(query.limit);
+  const playlists = await Playlist.find({owner: params.id}).select('-owner').skip(query.offset).limit(query.limit).select('-tracks');
   const total = (await Playlist.find({owner: params.id})).length;
   return {  playlists , total };
 }
