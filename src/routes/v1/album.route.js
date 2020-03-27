@@ -24,6 +24,12 @@ router
   .get(
     validate(albumValidation.severalAlbums),
     catchAsync(albumsController.getAlbums)
+  )
+  .post(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(albumValidation.createAlbum),
+    catchAsync(albumsController.createAlbum)
   );
 
 router

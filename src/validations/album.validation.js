@@ -37,3 +37,37 @@ exports.release = {
     released: Joi.boolean().required()
   })
 };
+
+exports.createAlbum = {
+  body: Joi.object().keys({
+    name: Joi.string()
+    .min(1)
+    .max(30)
+    .required()
+    .trim(),
+  artists: Joi.array()
+    .items(Joi.objectId().required())
+    .min(1)
+    .required(),
+  genres: Joi.array()
+    .items(Joi.objectId().required())
+    .min(1)
+    .required(),
+  image: Joi.binary(),
+  album_type: Joi.string()
+    .valid('single', 'compilation', 'album')
+    .required(),
+  album_group: Joi.string().valid(
+    'single',
+    'compilation',
+    'album',
+    'appears_on'
+  ).required(),
+  release_date: Joi.string()
+    .regex(
+      /^([0-2][0-9]|(3)[0-1])(-)(((0)[0-9])|((1)[0-2]))(-)((1)[5-9]\d{2}|(2)(0)[0-1][0-9]|2020)$/
+    )
+    .message('Date must match the format "DD-MM-YYYY"')
+    .required()
+  })
+}

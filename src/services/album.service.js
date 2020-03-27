@@ -128,3 +128,16 @@ exports.update = async (id, newAlbum) => {
   };
   return album;
 };
+
+/**
+ * A method that creates a new album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary creates an album
+ * @param {object} newAlbum object containing the new values
+ * @returns Created album
+ */
+exports.createAlbum = newAlbum => {
+  return Album.create(newAlbum);
+};
