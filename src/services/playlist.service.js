@@ -114,8 +114,23 @@ const addTracks = async(params , tracks , position)=>{
   return playlist
 }
 
-const reorderTracks = async()=>{
-  const playlist = await Playlist.findById()
+const reorderTracks = async(params, body)=>{
+  await Playlist.findOne({ _id: params.id  }, {'tracks': 1})
+  .then(async function(track) {
+    let begin = body.range_start;
+    let before = body.insert_before ;
+    let temp;
+    let i =0;
+    while(i<body.range_length){
+      temp = track.tracks[begin];
+      track.tracks[begin] = track.tracks[before];
+      track.tracks[before] = temp;
+      i++;
+      before++;
+      begin++;
+    }
+    await Playlist.updateOne({ _id: track._id }, { $set: { tracks: track.tracks } });
+  });
 }
 
 module.exports = {

@@ -130,9 +130,12 @@ exports.getUserPlaylists = async(req , res , next)=>{
  */
 
 exports.createUserPlaylist = async(req , res , next)=>{
+  let image;
+  if(!req.file) image = 'uploads\\default.jpg';
+  else  image = req.file.path;
   const user = await playlistService.checkUser(req.params);
   if(!user) return next(new AppError('no user with this id', 404));
-  const playlist = await playlistService.createUserPlaylist(req.params , req.body, req.file.path);
+  const playlist = await playlistService.createUserPlaylist(req.params , req.body, image);
   res.status(200).send(playlist);
 }
 
