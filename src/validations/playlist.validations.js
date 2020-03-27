@@ -23,6 +23,17 @@ exports.uploadImage = {
   })
 };
 
+exports.reorderTracks = {
+  params: Joi.object().keys({
+    id: Joi.objectID()
+  }),
+  body: Joi.object().keys({
+    range_start: Joi.number().required().min(0),
+    range_length: Joi.number().default(1),
+    insert_before: Joi.number().required().min(0)
+  })
+}
+
 exports.getTracks = {
   params: Joi.object().keys({
     id: Joi.objectID()

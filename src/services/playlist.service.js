@@ -10,11 +10,11 @@ const getPlaylist =  async (params) => {
 const changePlaylist = async (params , body, image) =>{
   let playlist = await Playlist.findByIdAndUpdate(params.id,{ $set:  {'name':  body.name,'collabrative':  body.collabrative,
     'description':  body.description,
-    'public': body.public}});
+    'public': body.public}},{new: true});
   if(!playlist) return playlist;
   if(!image)return playlist;
-  const path = playlist.image
-  if(path != image){
+  const path = playlist.image;
+  if(path != image  && path != 'uploads\\default.jpg'){
     fs.unlink(`${path}`, err => {
       if (err) throw err;
     })
@@ -114,8 +114,8 @@ const addTracks = async(params , tracks , position)=>{
   return playlist
 }
 
-const replaceTracks = async()=>{
-
+const reorderTracks = async()=>{
+  const playlist = await Playlist.findById()
 }
 
 module.exports = {
@@ -129,5 +129,5 @@ module.exports = {
   getTracksID,
   addTracks,
   checkUser,
-  replaceTracks
+  reorderTracks
 }

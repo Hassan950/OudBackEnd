@@ -54,7 +54,10 @@ exports.getPlaylist = async (req, res, next) => {
 
 
 exports.changePlaylist = async(req,res,next) => {
-  const playlist = await playlistService.changePlaylist(req.params ,req.body,req.file.path);
+  let image;
+  if(!req.file) image = 'uploads\\default.jpg';
+  else  image = req.file.path;
+  const playlist = await playlistService.changePlaylist(req.params ,req.body, image);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
   res.status(200).json({
     playlist: playlist
@@ -158,14 +161,19 @@ exports.addTracks =async(req , res , next)=>{
   res.status(200).send('found tracks from tracks send to be added are added');
 }
 
-//need to be fixed
 exports.replaceTracks = async(req , res , next)=>{
   const tracks = await playlistService.getTracksID(req.body.uris);
   if(!tracks) return next(new AppError('no tracks with these uris', 404));
-  console.log(tracks);
   let playlist = await playlistService.getPlaylist(req.params);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
   playlist = await playlistService.deleteTracks(playlist ,tracks);
   playlist = await playlistService.addTracks(req.params , tracks ,0 );
   res.status(200).send('found tracks from tracks send to be added are added');
+}
+
+exports.reorderTracks = async(req ,res ,next)=>{
+  let playlist = await playlistService.getPlaylist(req.params);
+  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  await playlistService.reorderTracks(playlist, req.body);
+  res.status(200).send('Tracks has beeb reordered');
 }

@@ -16,16 +16,16 @@ router
 router
   .route('/:id')
   .get(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.getPlaylist), catchAsync(playlistController.getPlaylist))
-  .put(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.changePlaylist), catchAsync(playlistController.changePlaylist));
+  .put(playlistController.uploadImage, validate(PlaylistValidation.changePlaylist), catchAsync(playlistController.changePlaylist));
 router
   .route('/:id/tracks')
   .get(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.getTracks), catchAsync(playlistController.getTracks))
-  .post( validate(PlaylistValidation.addTracks), catchAsync(playlistController.addTracks))
-  .put()
-  .delete( validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
+  .post(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.addTracks), catchAsync(playlistController.addTracks))
+  .put(catchAsync(authMiddleware.authenticate),validate(PlaylistValidation.reorderTracks), catchAsync(playlistController.reorderTracks))
+  .delete(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
 router
   .route('/:id/images')
-  .put(playlistController.uploadImage ,validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImageRoute));
+  .put(catchAsync(authMiddleware.authenticate), playlistController.uploadImage ,validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImageRoute));
 router
   .route('/:id/tracks/Replace')
   .put(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.replaceTracks), catchAsync(playlistController.replaceTracks));    
