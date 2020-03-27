@@ -195,3 +195,26 @@ exports.createAlbum = async newAlbum => {
     .populate('genres')
     .execPopulate();
 };
+
+/**
+ * A method that adds a track to an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Adds a track to an album
+ * @param {object} album album of the track
+ * @param {object} track the track
+ * @returns album after update
+ */
+exports.addTrack = async (album, track) => {
+  album.tracks.push(track);
+  await album.save();
+  return await album
+    .populate('artists', '_id name images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      select: '-audioUrl -album'
+    })
+    .execPopulate();
+};

@@ -28,19 +28,13 @@ describe('Tracks controller', () => {
       album: '5e6c8ebb8b40fc7708fe8b32',
       duration: 21000
     });
-    track.populate = jest.fn().mockReturnThis();
-    track.select = jest.fn().mockReturnThis();
     tracks = [track, track];
-    tracks.populate = jest.fn().mockReturnThis();
-    tracks.select = jest.fn().mockReturnThis();
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
   });
   describe('getTracks', () => {
     it("Should return list of tracks with the ID's given with status code 200", async () => {
-      tracks.populate = jest.fn().mockReturnThis();
-      tracks.select = jest.fn().mockReturnThis();
       mockingoose(Track).toReturn(tracks, 'find');
       // two valid ID's
       req.query.ids = trackIds[0] + ',' + trackIds[1];
@@ -49,7 +43,6 @@ describe('Tracks controller', () => {
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should return an array of nulls if none of the ID's given matches an object", async () => {
-      tracks.populate = jest.fn();
       mockingoose(Track).toReturn([], 'find');
       // two ID's that doesn't belong to any objects
       req.query.ids = 'valid id,another valid id';
@@ -57,7 +50,6 @@ describe('Tracks controller', () => {
       expect(res.json.mock.calls[0][0].tracks).toMatchObject([null, null]);
     });
     it("Should return the same result for the same ID (null for invalid ID's)", async () => {
-      tracks.populate = jest.fn();
       track._id = trackIds[0];
       tracks = [track];
       mockingoose(Track).toReturn(tracks, 'find');

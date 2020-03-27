@@ -1,4 +1,4 @@
-const { albumService } = require('../services');
+const { albumService, trackService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs');
@@ -119,6 +119,22 @@ exports.setImage = async (req, res, next) => {
 
 exports.createAlbum = async (req, res, next) => {
   const album = await albumService.createAlbum(req.body);
+  res.status(200).json({
+    album: album
+  });
+};
+
+exports.newTrack = async (req, res, next) => {
+  let album = await albumService.findAlbumUtil(req.params.id);
+  if (!album)
+    return next(new AppError('The requested resource is not found', 404));
+  if (
+    album.released ||
+    String(album.artists[0]._id) !== String(req.user.artist)
+  )
+    return next(new AppError('Forbidden.', 403));
+  let track = await trackService.createTrack(req.params.id, req.body);
+  album = await albumService.addTrack(album, track._id);
   res.status(200).json({
     album: album
   });

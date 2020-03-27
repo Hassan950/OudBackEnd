@@ -1,7 +1,7 @@
 const { albumsController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 const requestMocks = require('../../utils/request.mock');
-let { Album } = require('../../../src/models');
+let { Album, Track } = require('../../../src/models');
 let fs = require('fs');
 
 artistIds = [
@@ -33,10 +33,6 @@ describe('Albums Controller', () => {
       tracks: [albumIds[0]]
     });
     albums = [album, albums];
-    album.populate = jest.fn().mockReturnThis();
-    album.select = jest.fn().mockReturnThis();
-    albums.populate = jest.fn().mockReturnThis();
-    albums.select = jest.fn().mockReturnThis();
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
@@ -168,6 +164,16 @@ describe('Albums Controller', () => {
       await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
+    it("Should throw an error with status code 403 if the album is released", async () => {
+      album.released = true
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'findOneAndUpdate');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      await albumsController.updateAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
   });
   describe('createAlbum', () => {
     it('Should return the created album with staus code 200', async () => {
@@ -181,7 +187,6 @@ describe('Albums Controller', () => {
         release_date: '12-06-1999',
         tracks: [albumIds[0]]
       };
-      album.execPopulate = jest.fn().mockReturnThis();
       mockingoose(Album).toReturn(album, 'save');
 
       await albumsController.createAlbum(req, res, next);
@@ -217,6 +222,20 @@ describe('Albums Controller', () => {
       await albumsController.setImage(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
+    it("Should throw an error with status code 403 if album is released", async () => {
+      album.released = true;
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'save');
+      req.user = { artist: album.artists[0]._id };
+      req.params.id = album._id;
+      req.file = {
+        path: 'lol.jpg'
+      };
+      fs.unlink = jest.fn();
+      await albumsController.setImage(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
     it('Should throw an error with status code 404 if the album is not found', async () => {
       mockingoose(Album)
         .toReturn(null, 'findOne')
@@ -229,6 +248,54 @@ describe('Albums Controller', () => {
       fs.unlink = jest.fn();
       await albumsController.setImage(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+  });
+  describe('newTrack', () => {
+    it('Should return the updated album with status code 200', async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'save');
+      mockingoose(Track).toReturn(album.tracks[0], 'save');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.body = { name: album.name, artists: album.artists };
+      await albumsController.newTrack(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+    });
+    it('Should throw an error with status code 404 if the album was not found', async () => {
+      mockingoose(Album)
+        .toReturn(null, 'findOne')
+        .toReturn(null, 'save');
+      mockingoose(Track).toReturn(album.tracks[0], 'save');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.body = { name: album.name, artists: album.artists };
+      await albumsController.newTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it("Should throw an error with status code 403 if the user is not the album's main artist", async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'save');
+      mockingoose(Track).toReturn(album.tracks[0], 'save');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[1]._id }; // the right artist is artist[0]
+      req.body = { name: album.name, artists: album.artists };
+      await albumsController.newTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
+    it("Should throw an error with status code 403 if the album is released", async () => {
+      album.released = true
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'save');
+      mockingoose(Track).toReturn(album.tracks[0], 'save');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.body = { name: album.name, artists: album.artists };
+      await albumsController.newTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });
 });

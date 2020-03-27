@@ -101,3 +101,20 @@ exports.updateAlbum = {
     })
     .min(1)
 };
+
+exports.createTrack = {
+  params: Joi.object().keys({
+    id: Joi.objectId().required()
+  }),
+  body: Joi.object().keys({
+    name: Joi.string()
+      .min(1)
+      .max(30)
+      .trim()
+      .required(),
+    artists: Joi.array()
+      .items(Joi.objectId().required())
+      .min(1)
+      .required()
+  })
+};

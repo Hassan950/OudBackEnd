@@ -43,6 +43,12 @@ router
   .get(
     validate(albumValidation.albumTracks),
     catchAsync(albumsController.findAlbumTracks)
+  )
+  .post(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(albumValidation.createTrack),
+    catchAsync(albumsController.newTrack)
   );
 
 router
@@ -61,6 +67,7 @@ router
     authMiddleware.authorize('artist'),
     validate(albumValidation.oneAlbum),
     albumsController.uploadImage,
-     catchAsync(albumsController.setImage));
+    catchAsync(albumsController.setImage)
+  );
 
 module.exports = router;

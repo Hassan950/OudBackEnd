@@ -67,3 +67,16 @@ exports.update = async (id, newTrack) => {
     .select('-audioUrl');
   return track;
 };
+
+/**
+ * A method that creates a track
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary creates a track
+ * @param {object} newTrack object containing the new values
+ * @returns the new track
+ */
+exports.createTrack = async (albumId, newTrack) => {
+  return await Track.create({...newTrack, album: albumId});
+};
