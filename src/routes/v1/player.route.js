@@ -1,7 +1,7 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
 const catchAsync = require('../../utils/catchAsync');
-const { deviceValidation } = require('../../validations');
+const { deviceValidation, playerValidation } = require('../../validations');
 const { deviceController, playerController } = require('../../controllers');
 
 const router = express.Router();
@@ -27,6 +27,13 @@ router
   .put(
     validate(deviceValidation.deviceIdQuery),
     catchAsync(playerController.pausePlayer)
+  );
+
+router
+  .route('/play')
+  .put(
+    validate(playerValidation.play),
+    catchAsync(playerController.resumePlayer)
   );
 
 module.exports = router;

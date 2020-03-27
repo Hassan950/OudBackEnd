@@ -93,3 +93,57 @@ exports.pausePlayer = async (req, res, next) => {
   res.status(204).end();
 };
 
+
+/**
+ * @version 1.0.0
+ * @throws AppError 500 status
+ * @throws AppError 404 status
+ * @author Abdelrahman Tarek
+ * @description start or resume the player, change deviceId, change isPlaying state to true
+ * add tracks to queue, change positionMs
+ * @summary Resume the player
+ */
+exports.resumePlayer = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Must Authenticate user', 500));
+  }
+
+  const { contextUri, uris, offset, positionMs } = req.body;
+
+  const id = req.user._id;
+
+  const deviceId = req.query.deviceId;
+  // TODO
+  // get player
+  const player = await playerService.getPlayer(id, { populate: false });
+
+  if (!player) {
+    return next(new AppError('Player is not found', 404));
+  }
+  // Change player state
+  player.isPlaying = true;
+  // handle deviceId
+  if (deviceId) {
+    const device = await deviceService.getDevice(deviceId);
+    if (!device) {
+      return next(new AppError('Device is not found', 404));
+    }
+    player.device = deviceId;
+  }
+  // handle Queue
+  // add current track
+  if (uris) {
+    const trackId = uris.split(':')[2];
+    // check if track is valid (add it when track is done)
+    player.item = trackId;
+  }
+  // add tracks to queue
+  // change position
+  if (positionMs) player.positionMs = positionMs;
+  // if position > track duration go to next
+  // save
+  await player.save();
+  // return 204
+  res.status(204).end();
+};
+
