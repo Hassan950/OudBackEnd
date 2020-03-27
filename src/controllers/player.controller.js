@@ -132,10 +132,11 @@ exports.resumePlayer = async (req, res, next) => {
   }
   // handle Queue
   // add current track
-  if (uris) {
-    const trackId = uris.split(':')[2];
+  if (uris && uris.length) {
+    const trackId = uris[0].split(':')[2];
     // check if track is valid (add it when track is done)
     player.item = trackId;
+    player.positionMs = 0;
   }
   // add tracks to queue
   // change position

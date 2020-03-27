@@ -78,6 +78,7 @@ describe('Player controller', () => {
   describe('Pause player', () => {
     let device;
     beforeEach(() => {
+      player.save = jest.fn().mockResolvedValue(player);
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.deviceId = device._id;
@@ -106,15 +107,65 @@ describe('Player controller', () => {
     });
 
     it('should save the player', async () => {
-      player.save = jest.fn().mockResolvedValue(player);
       await playerController.pausePlayer(req, res, next);
       expect(player.save.mock.calls.length).toBe(1);
     });
 
     it('should change isPlaying to false', async () => {
-      player.isPlaying = false;
+      player.isPlaying = true;
       await playerController.pausePlayer(req, res, next);
       expect(player.isPlaying).toBe(false);
+    });
+  });
+
+  describe('Resume player', () => {
+    let device;
+    let dummyId;
+    beforeEach(() => {
+      player.save = jest.fn().mockResolvedValue(player);
+      device = deviceMocks.createFakeDevice();
+      mockingoose(Device).toReturn(device, 'findOne');
+      req.query.deviceId = device._id;
+      req.query.queueIndex = 0;
+      dummyId = req.user._id;
+      req.body.uris = [`oud:track:${dummyId}`];
+      req.body.offset = {};
+      req.body.positionMs = 0;
+      req.body.contextUri = [`oud:playlist:${dummyId}`];
+    });
+
+    it('it should return 500 status code if not authenticated', async () => {
+      req.user = null;
+      await playerController.resumePlayer(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(500);
+    });
+
+    it('should return 404 status if player is not found', async () => {
+      mockingoose(Player).toReturn(null, 'findOne');
+      await playerController.resumePlayer(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 status if device is not found', async () => {
+      mockingoose(Device).toReturn(null, 'findOne');
+      await playerController.resumePlayer(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 204 if valid', async () => {
+      await playerController.resumePlayer(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(204);
+    });
+
+    it('should save the player', async () => {
+      await playerController.resumePlayer(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
+    });
+
+    it('should change isPlaying to true', async () => {
+      player.isPlaying = false;
+      await playerController.resumePlayer(req, res, next);
+      expect(player.isPlaying).toBe(true);
     });
   });
 });
