@@ -60,4 +60,46 @@ exports.transferPlayback = async (req, res, next) => {
   await player.save();
 
   res.status(204).end();
-}
+};
+
+
+/**
+ * @version 1.0.0
+ * @throws AppError 500 status
+ * @throws AppError 404 status
+ * @author Abdelrahman Tarek
+ * @description Set Device volume by volumePercent
+ * @summary Set Device Volume
+ */
+exports.setVolume = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Must Authenticate user', 500));
+  }
+
+  let deviceId = req.query.deviceId;
+  const volumePercent = req.query.volumePercent;
+
+  const id = req.body._id;
+
+  if (!deviceId) {
+    const player = await playerService.getPlayer(id, { populate: false });
+
+    if (!player) {
+      return next(new AppError('Player is not found', 404));
+    }
+
+    deviceId = player.device;
+  }
+
+  const device = await deviceService.getDevice(deviceId);
+
+  if (!device || device.userId != id) {
+    return next(new AppError('Device is not found', 404));
+  }
+
+  device.volumePercent = volumePercent;
+
+  await device.save();
+
+  res.status(204).end();
+};

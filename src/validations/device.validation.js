@@ -17,4 +17,15 @@ exports.deviceIdQuery = {
     deviceId: Joi.string()
       .custom(idCheck)
   })
-}
+};
+
+exports.volume = {
+  query: Joi.object().keys({
+    deviceId: Joi.string()
+      .custom(idCheck),
+    volumePercent: Joi.number()
+      .required()
+      .min(0)
+      .max(100)
+  })
+};

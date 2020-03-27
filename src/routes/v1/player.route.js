@@ -43,4 +43,12 @@ router
     catchAsync(playerController.seekPlayer)
   );
 
+router
+  .route('/seek')
+  .put(
+    validate(deviceValidation.volume),
+    catchAsync(deviceController.setVolume)
+  );
+
+
 module.exports = router;
