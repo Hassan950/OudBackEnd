@@ -36,4 +36,11 @@ router
     catchAsync(playerController.resumePlayer)
   );
 
+router
+  .route('/seek')
+  .put(
+    validate(playerValidation.seek),
+    catchAsync(playerController.seekPlayer)
+  );
+
 module.exports = router;

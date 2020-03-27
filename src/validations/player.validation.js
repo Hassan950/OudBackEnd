@@ -21,3 +21,13 @@ exports.play = {
     contextUri: Joi.string().custom(contextUriCheck)
   })
 };
+
+exports.seek = {
+  query: Joi.object().keys({
+    deviceId: Joi.string()
+      .custom(idCheck),
+    positionMs: Joi.number()
+      .required()
+      .min(0),
+  })
+}
