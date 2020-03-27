@@ -4,15 +4,14 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
 const setImages = imgs => {
-  if(imgs.length == 0) {
+  if (imgs.length == 0) {
     imgs.push('uploads\\users\\default-Profile.jpg');
-  } 
-  if(imgs.length == 1) {
+  }
+  if (imgs.length == 1) {
     imgs.push('uploads\\users\\default-Cover.jpg');
   }
-  return imgs
-}
-
+  return imgs;
+};
 
 const userSchema = mongoose.Schema(
   {
@@ -59,6 +58,11 @@ const userSchema = mongoose.Schema(
       type: String,
       enum: ['free', 'premium', 'artist'],
       default: 'free'
+    },
+    artist: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Artist',
+      default: null
     },
     birthDate: {
       type: Date,
@@ -150,21 +154,23 @@ const userSchema = mongoose.Schema(
     passwordResetExpires: {
       type: Date,
       select: false
-    },
-    }, {
+    }
+  },
+  {
     toJSON: {
       virtuals: true
     },
     toObject: {
       virtuals: true
     }
-  });
+  }
+);
 
 userSchema.virtual('type').get(function() {
   return 'user';
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function(next) {
   if (!this.password || !this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 8);
@@ -173,14 +179,14 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now();
   next();
 });
 
-userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function(user, JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
