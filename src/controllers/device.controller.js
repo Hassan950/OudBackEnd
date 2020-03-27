@@ -55,6 +55,9 @@ exports.transferPlayback = async (req, res, next) => {
 
   player.device = deviceId;
   player.item = player.item._id; // so we don't save the whole track
+
+  if (play) player.isPlaying = true;
+
   await player.save();
 
   res.status(204).end();

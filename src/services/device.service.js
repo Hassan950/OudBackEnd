@@ -7,7 +7,7 @@ const getAvailableDevices = async (userId) => {
 
 
 const getDevice = async (id) => {
-  const device = await Device.find({ id: id });
+  const device = await Device.findOne({ id: id });
   return device;
 };
 

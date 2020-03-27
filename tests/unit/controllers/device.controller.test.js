@@ -1,7 +1,8 @@
 const deviceMocks = require('../../utils/models/device.model.mocks');
+const playerMocks = require('../../utils/models/player.model.mocks');
 const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
-const { Device } = require('../../../src/models');
+const { Device, Player } = require('../../../src/models');
 const { deviceController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 
@@ -37,5 +38,53 @@ describe('Device controller', () => {
       await deviceController.getUserDevices(req, res, next);
       expect(res.json.mock.calls[0][0].devices).toEqual([device]);
     });
+  });
+
+  describe('Transfer device', () => {
+    beforeEach(() => {
+      req.body.deviceIds = [device._id];
+      req.body.play = true;
+      player = playerMocks.createFakePlayer();
+      const trackId = player.item;
+      player.item = {
+        _id: trackId
+      };
+      player.save = jest.fn().mockResolvedValue(player);
+      mockingoose(Player).toReturn(player, 'findOne');
+      mockingoose(Device).toReturn(device, 'findOne');
+    });
+    it('should return 500 status code if not authenticated', async () => {
+      req.user = null;
+      await deviceController.transferPlayback(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(500);
+    });
+
+    it('should return 404 status if player is not found', async () => {
+      mockingoose(Player).toReturn(null, 'findOne');
+      await deviceController.transferPlayback(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 status if device is not found', async () => {
+      mockingoose(Device).toReturn(null, 'findOne');
+      await deviceController.transferPlayback(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 204 if valid', async () => {
+      await deviceController.transferPlayback(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(204);
+    });
+
+    it('should save the player', async () => {
+      await deviceController.transferPlayback(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
+    });
+
+    it('should change isPlaying to true if play is true', async () => {
+      player.isPlaying = false;
+      await deviceController.transferPlayback(req, res, next);
+      expect(player.isPlaying).toBe(true);
+    })
   });
 });
