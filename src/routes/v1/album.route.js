@@ -17,6 +17,12 @@ router
     authMiddleware.authorize('artist'),
     validate(albumValidation.oneAlbum),
     catchAsync(albumsController.findAndDeleteAlbum)
+  )
+  .patch(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(albumValidation.updateAlbum),
+    catchAsync(albumsController.updateAlbum)
   );
 
 router
@@ -45,7 +51,11 @@ router
     catchAsync(authMiddleware.authenticate),
     authMiddleware.authorize('artist'),
     validate(albumValidation.release),
-    catchAsync(albumsController.releaseAlbum)
+    catchAsync(albumsController.updateAlbum)
   );
+
+router
+  .route('/:id/image')
+  .patch(albumsController.uploadImage, catchAsync(albumsController.setImage));
 
 module.exports = router;

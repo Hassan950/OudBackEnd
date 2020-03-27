@@ -138,14 +138,14 @@ describe('Albums Controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });
-  describe('releaseAlbum', () => {
+  describe('updateAlbum', () => {
     it('Should return the album updated with status code 200', async () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
         .toReturn(album, 'findOneAndUpdate');
       req.params.id = album._id;
       req.user = { artist: album.artists[0]._id };
-      await albumsController.releaseAlbum(req, res, next);
+      await albumsController.updateAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toHaveProperty('album');
     });
@@ -155,7 +155,7 @@ describe('Albums Controller', () => {
         .toReturn(null, 'findOneAndUpdate');
       req.params.id = album._id;
       req.user = { artist: album.artists[0]._id };
-      await albumsController.releaseAlbum(req, res, next);
+      await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
     it("Should throw an error with status code 403 if the artist is not the album's main artist", async () => {
@@ -164,8 +164,27 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOneAndUpdate');
       req.params.id = album._id;
       req.user = { artist: album.artists[1]._id }; // the right artist is artist[0]
-      await albumsController.releaseAlbum(req, res, next);
+      await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
+  });
+  describe('createAlbum', () => {
+    it('Should return the created album with staus code 200', async () => {
+      req.body = {
+        album_type: 'single',
+      album_group: 'compilation',
+      artists: artistIds,
+      genres: '5e6c8ebb8b40fc5518fe8b32',
+      image: 'example.jpg',
+      name: 'The Begining',
+      release_date: '12-06-1999',
+      tracks: [albumIds[0]]
+      }
+      mockingoose(Album).toReturn(album, 'save');
+
+      await albumsController.createAlbum(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
     });
   });
 });

@@ -130,6 +130,33 @@ exports.update = async (id, newAlbum) => {
 };
 
 /**
+ * A method that updates the image of an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary updates the image of the given album
+ * @param {object} album album to be updated
+ * @param {string} path the path of the image
+ * @returns Updated album
+ */
+exports.setImage = async (album, path) => {
+  album.image = path;
+  await album.save()
+    // .populate('artists', '_id name images')
+    // .populate('genres')
+    // .select('-album_group');
+
+  // album.tracks = {
+  //   limit: 20,
+  //   offset: 0,
+  //   total: album.tracks.length,
+  //   items: album.tracks
+  // };
+  return album;
+};
+
+
+/**
  * A method that creates a new album
  *
  * @function
@@ -138,6 +165,6 @@ exports.update = async (id, newAlbum) => {
  * @param {object} newAlbum object containing the new values
  * @returns Created album
  */
-exports.createAlbum = newAlbum => {
-  return Album.create(newAlbum);
+exports.createAlbum = async newAlbum => {
+  return await Album.create(newAlbum);
 };

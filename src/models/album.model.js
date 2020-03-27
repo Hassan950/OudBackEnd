@@ -36,8 +36,7 @@ const albumSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 30,
     required: true,
-    trim: true,
-    unique: true
+    trim: true
   },
   released: {
     type: Boolean,
