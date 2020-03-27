@@ -1026,6 +1026,49 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+    put:
+      tags: 
+      - Tracks
+      summary:  Upload Track's file
+      parameters: 
+      - name: id
+        in: path
+        description: ID of the track
+        required: true
+        schema:
+          type: string
+          format: string
+      description: Uploads the file of the track
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:  
+            schema:
+              type: object
+              properties:
+                track:
+                  type: string
+                  format: binary
+            encoding:
+              track:
+                contentType: audio/mpeg
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   '/tracks':
     get:
       tags: 
@@ -1479,56 +1522,6 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
-  '/me/artist/albums/{albumId}/tracks/{trackId}':
-    patch:
-      tags: 
-      - Albums
-      summary:  Upload Track's file
-      parameters: 
-      - name: albumId
-        in: path
-        description: ID of album of the track
-        required: true
-        schema:
-          type: string
-          format: string
-      - name: trackId
-        in: path
-        description: ID of the track
-        required: true
-        schema:
-          type: string
-          format: string
-      description: Updates the 
-      security:
-      - bearerAuth: []
-      requestBody:
-        content:
-          multipart/form-data:  
-            schema:
-              type: object
-              properties:
-                track:
-                  type: string
-                  format: binary
-            encoding:
-              track:
-                contentType: audio/mpeg
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artist'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
   /me/recentsearch:
     post:
       tags: 
