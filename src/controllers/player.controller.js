@@ -1,4 +1,4 @@
-const { playerService, deviceService } = require('../services');
+const { playerService, deviceService, trackService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
 /**
