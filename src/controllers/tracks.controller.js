@@ -2,7 +2,7 @@ const { trackService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs');
-const mp3Duration = require('mp3-duration');
+const getMP3Duration = require('get-mp3-duration');
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -58,9 +58,11 @@ exports.setTrack = async (req, res, next) => {
       if (err) console.log('no such file or directory');
     });
   }
-  mp3Duration(track.audioUrl, async (err, duration) => {
-    track = await trackService.setTrack(track, req.file.path, duration);    
-  })
+
+  fs.readFile(req.file.path, async (err, buffer) => {
+    const duration = getMP3Duration(buffer);
+    track = await trackService.setTrack(track, req.file.path, duration);
+  });
   res.status(200).json({
     track: track
   });

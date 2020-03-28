@@ -108,7 +108,7 @@ exports.createTrack = async (albumId, newTrack) => {
  */
 exports.setTrack = async (track, url, duration) => {
   track.audioUrl = url;
-  // track.duration = duration;
+  track.duration = duration;
   await track.save();
 
   return track;
