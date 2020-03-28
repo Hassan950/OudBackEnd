@@ -1,5 +1,6 @@
 const { Track } = require('../models/track.model');
 const _ = require('lodash');
+const fs = require('fs').promises;
 
 /**
  * A method that gets array of tracks By their ID's
@@ -32,7 +33,10 @@ exports.findTracks = async ids => {
  * @param {String} id ID of the track to be deleted
  */
 exports.deleteTrack = async id => {
-  await Track.findByIdAndDelete(id);
+  const track = await Track.findByIdAndDelete(id);
+  if (track.audioUrl !== 'default.mp3') {
+    await fs.unlink(track.audioUrl);
+  }
 };
 
 /**

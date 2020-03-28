@@ -1,6 +1,7 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { albumIds } = require('./custom.validation');
+const { Artist, Genre } = require('../models');
 
 exports.oneAlbum = {
   params: Joi.object().keys({
@@ -48,11 +49,11 @@ exports.createAlbum = {
       .required()
       .trim(),
     artists: Joi.array()
-      .items(Joi.objectId().required())
+      .items(Joi.objectId())
       .min(1)
       .required(),
     genres: Joi.array()
-      .items(Joi.objectId().required())
+      .items(Joi.objectId())
       .min(1)
       .required(),
     album_type: Joi.string()
@@ -81,10 +82,10 @@ exports.updateAlbum = {
         .max(30)
         .trim(),
       artists: Joi.array()
-        .items(Joi.objectId().required())
+        .items(Joi.objectId())
         .min(1),
       genres: Joi.array()
-        .items(Joi.objectId().required())
+        .items(Joi.objectId())
         .min(1),
       album_type: Joi.string().valid('single', 'compilation', 'album'),
       album_group: Joi.string().valid(
@@ -113,8 +114,20 @@ exports.createTrack = {
       .trim()
       .required(),
     artists: Joi.array()
-      .items(Joi.objectId().required())
+      .items(Joi.objectId())
       .min(1)
       .required()
   })
+};
+
+exports.artistsExist = async artistIds => {
+  const artists = await Artist.find({ _id: artistIds });
+  if (artistIds.length !== artists.length) return false;
+  return true;
+};
+
+exports.genresExist = async genreIds => {
+  const genres = await Genre.find({ _id: genreIds });
+  if (genreIds.length !== genres.length) return false;
+  return true;
 };

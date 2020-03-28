@@ -26,7 +26,9 @@ exports.update = {
         .min(1)
         .max(30)
         .trim(),
-      artists: Joi.array().items(Joi.objectId())
+      artists: Joi.array()
+        .items(Joi.objectId())
+        .min(1)
     })
     .min(1)
 };

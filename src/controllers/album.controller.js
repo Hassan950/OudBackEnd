@@ -1,7 +1,8 @@
 const { albumService, trackService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
-const fs = require('fs');
+const fs = require('fs').promises;
+const { albumValidation } = require('../validations');
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -82,6 +83,14 @@ exports.updateAlbum = async (req, res, next) => {
     String(album.artists[0]._id) !== String(req.user.artist)
   )
     return next(new AppError('Forbidden.', 403));
+  if (
+    req.body.artists &&
+    !(await albumValidation.artistsExist(req.body.artists))
+  )
+    return next(new AppError("The artist given doesn't exist", 400));
+
+  if (req.body.genres && !(await albumValidation.genresExist(req.body.genres)))
+    return next(new AppError("The genres given doesn't exist", 400));
   album = await albumService.update(req.params.id, req.body);
   res.status(200).json({
     album: album
@@ -92,18 +101,14 @@ exports.setImage = async (req, res, next) => {
   if (!req.file) return next(new AppError('No files were uploaded', 400));
   let album = await albumService.findAlbumUtil(req.params.id);
   if (!album) {
-    fs.unlink(req.file.path, err => {
-      if (err) throw err;
-    });
+    await fs.unlink(req.file.path);
     return next(new AppError('The requested resource is not found', 404));
   }
   if (
     album.released ||
     String(album.artists[0]._id) !== String(req.user.artist)
   ) {
-    fs.unlink(req.file.path, err => {
-      if (err) throw err;
-    });
+    await fs.unlink(req.file.path);
     return next(
       new AppError(
         'You do not have the permission to perform this action.',
@@ -111,7 +116,9 @@ exports.setImage = async (req, res, next) => {
       )
     );
   }
-
+  if (album.image !== 'default.jpg') {
+    await fs.unlink(album.image);
+  }
   album = await albumService.setImage(album, req.file.path);
   res.status(200).json({
     album: album
@@ -119,6 +126,12 @@ exports.setImage = async (req, res, next) => {
 };
 
 exports.createAlbum = async (req, res, next) => {
+  if (!(await albumValidation.artistsExist(req.body.artists)))
+    return next(new AppError("The artists given doesn't exist", 400));
+
+  if (!(await albumValidation.genresExist(req.body.genres)))
+    return next(new AppError("The genres given doesn't exist", 400));
+
   const album = await albumService.createAlbum(req.body);
   res.status(200).json({
     album: album
@@ -134,6 +147,10 @@ exports.newTrack = async (req, res, next) => {
     String(album.artists[0]._id) !== String(req.user.artist)
   )
     return next(new AppError('Forbidden.', 403));
+
+  if (!(await albumValidation.artistsExist(req.body.artists)))
+    return next(new AppError("The artists given doesn't exist", 400));
+
   let track = await trackService.createTrack(req.params.id, req.body);
   album = await albumService.addTrack(album, track._id);
   res.status(200).json({

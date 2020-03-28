@@ -3,6 +3,7 @@ const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs').promises;
 const getMP3Duration = require('get-mp3-duration');
+const { albumValidation } = require('../validations');
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -52,7 +53,7 @@ exports.setTrack = async (req, res, next) => {
   if (track.audioUrl !== 'default.mp3') {
     await fs.unlink(track.audioUrl);
   }
-  
+
   const duration = getMP3Duration(await fs.readFile(req.file.path));
   track = await trackService.setTrack(track, req.file.path, duration);
   res.status(200).json({
@@ -106,6 +107,11 @@ exports.updateTrack = async (req, res, next) => {
         403
       )
     );
+  if (
+    req.body.artists &&
+    !(await albumValidation.artistsExist(req.body.artists))
+  )
+    return next(new AppError("The artist given doesn't exist", 400));
 
   track = await trackService.update(req.params.id, req.body);
   res.status(200).json({

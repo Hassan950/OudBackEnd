@@ -61,8 +61,8 @@ router
   );
 
 router
-  .route('/:id/image')
-  .patch(
+  .route('/:id/images')
+  .put(
     catchAsync(authMiddleware.authenticate),
     authMiddleware.authorize('artist'),
     validate(albumValidation.oneAlbum),
