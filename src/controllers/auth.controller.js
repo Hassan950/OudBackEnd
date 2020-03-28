@@ -96,7 +96,7 @@ exports.signup = async (req, res, next) => {
   }
   const newUser = await userService.createUser(req.body);
   // Create Player
-  await playerService.createPlayer(newUser._id);
+  playerService.createPlayer(newUser._id);
   // TODO
   // Return 401 if role is premium without credit
   // Return 401 if role is artist without request

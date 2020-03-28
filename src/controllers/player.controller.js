@@ -137,7 +137,7 @@ exports.resumePlayer = async (req, res, next) => {
     // check if track is valid (add it when track is done)
     player.item = trackId;
     player.positionMs = 0;
-    await playHistoryService.addToHistory(id, trackId, contextUri);
+    playHistoryService.addToHistory(id, trackId, contextUri);
   }
   // add tracks to queue
   // change position
