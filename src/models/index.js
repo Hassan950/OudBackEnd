@@ -5,6 +5,7 @@ const { Album, albumSchema } = require('./album.model');
 const { Genre, genreSchema } = require('./genre.model');
 const { Device, deviceSchema } = require('./device.model');
 const { Player, playerSchema } = require('./player.model');
+const { PlayHistory, playHistorySchema } = require('./playHistory.model');
 
 module.exports = {
   User,
@@ -20,5 +21,7 @@ module.exports = {
   Device,
   deviceSchema,
   Player,
-  playerSchema
+  playerSchema,
+  PlayHistory,
+  playHistorySchema
 };
