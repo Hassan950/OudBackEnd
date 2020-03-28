@@ -33,7 +33,7 @@ exports.idCheck = (value, helpers) => {
 };
 
 exports.urisCheck = (value, helpers) => {
-  for (const uri in value) {
+  value.forEach(uri => {
     const arr = uri.split(':');
     if (arr.length != 3) {
       return helpers.message('Invalid uri');
@@ -46,7 +46,7 @@ exports.urisCheck = (value, helpers) => {
     if (arr[1] != 'track') {
       return helpers.message('Invalid uri');
     }
-  }
+  });
 
   return value;
 };

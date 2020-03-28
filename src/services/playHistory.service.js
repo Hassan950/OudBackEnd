@@ -21,12 +21,13 @@ const getHistory = async (userId, ops = {
   before: undefined
 }) => {
   const history = PlayHistory.find({ user: userId })
+    .populate('track')
     .limit(ops.limit);
 
   if (ops.after)
-    history.gt('playedAt', ops.after);
+    history.gt('playedAt', new Date(ops.after));
   else if (ops.before)
-    history.lt('playedAt', ops.before);
+    history.lt('playedAt', new Date(ops.before));
 
   await history;
 

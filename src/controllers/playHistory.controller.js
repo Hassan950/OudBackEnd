@@ -14,7 +14,7 @@ exports.recentlyPlayed = async (req, res, next) => {
     return next(new AppError('If after is specified, before must not be specified.', 400));
   }
 
-  const history = playHistoryService.getHistory(id, { limit, after, before });
+  const history = await playHistoryService.getHistory(id, { limit, after, before });
 
   if (history && history.length) {
     res.status(200).json({

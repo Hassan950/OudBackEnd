@@ -24,8 +24,8 @@ const playHistorySchema = mongoose.Schema({
     }
   },
   playedAt: {
-    type: Number,
-    default: moment().unix()
+    type: Date,
+    default: Date.now
   }
 }, {
   toJSON: {
@@ -36,7 +36,7 @@ const playHistorySchema = mongoose.Schema({
   }
 });
 
-playHistorySchema.index({ playedAt: 1, user: 1 });
+playHistorySchema.index({ user: 1, playedAt: 1 });
 
 const PlayHistory = mongoose.model('PlayHistory', playHistorySchema);
 

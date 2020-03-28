@@ -23,8 +23,8 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
       .populate('device')
       ;
 
-    if (player) {
-      if (player.item && ops.link) {
+    if (player && player.item) {
+      if (ops.link) {
         // Add host link
         const audio = player.item.audioUrl;
         player.item.audioUrl = ops.link + audio;
