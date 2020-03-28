@@ -23,4 +23,12 @@ router
     catchAsync(followingController.checkFollowingsPlaylist)
   );
 
+router
+  .route('/me/following')
+  .get(
+    catchAsync(authMiddleware.authenticate),
+    validate(followingValidation.getUserFollowed),
+    catchAsync(followingController.getUserFollowed)
+  );
+
 module.exports = router;

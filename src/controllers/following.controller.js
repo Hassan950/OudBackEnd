@@ -41,3 +41,24 @@ exports.checkFollowingsPlaylist = async (req, res, next) => {
   );
   res.status(httpStatus.OK).send(checks);
 };
+
+/**
+ * A middleware to Get the current user’s followed artists/users.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get User's Followed Artists or Users
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
+exports.getUserFollowed = async (req, res, next) => {
+  const list = await followingService.getUserFollowed(req.query, req.user);
+  res.status(httpStatus.OK).json({
+    items: list.result,
+    limit: req.query.limit,
+    offset: req.query.offset,
+    total: list.total
+  });
+};

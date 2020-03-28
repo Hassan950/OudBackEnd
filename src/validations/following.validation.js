@@ -25,3 +25,22 @@ exports.checkFollowingsPlaylist = {
     playlistId: Joi.objectId().required()
   })
 };
+
+exports.getUserFollowed = {
+  query: Joi.object().keys({
+    type: Joi.string()
+      .insensitive()
+      .lowercase()
+      .trim()
+      .custom(capitalize)
+      .valid('Artist', 'User')
+      .required(),
+    limit: Joi.number()
+      .min(1)
+      .max(50)
+      .default(50),
+    offset: Joi.number()
+      .min(0)
+      .default(0)
+  })
+};

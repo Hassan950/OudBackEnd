@@ -56,3 +56,67 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
   });
   return checks;
 };
+
+/**
+ * A function to Get the current user’s followed artists/users.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get the current user’s followed artists/users.
+ * @param {Object} query - The query parameters of the request
+ * @param {Object} user - The user object.
+ * @returns {Object} Contains the resultant list and the total count of the documents
+ */
+
+exports.getUserFollowed = async (query, user) => {
+  let result;
+  if (query.type === 'User') {
+    result = await Followings.aggregate()
+      .match({ userId: user._id, type: 'User' })
+      .lookup({
+        from: 'users',
+        localField: 'followedId',
+        foreignField: '_id',
+        as: 'user'
+      })
+      .project({ user: { $arrayElemAt: ['$user', 0] }, _id: 0 })
+      .project({
+        displayName: '$user.displayName',
+        followersCount: '$user.followersCount',
+        images: '$user.images',
+        verified: '$user.verified',
+        _id: '$user._id'
+      })
+      .skip(query.offset)
+      .limit(query.limit);
+  } else {
+    result = await Followings.aggregate()
+      .match({ userId: user._id, type: 'Artist' }) //TODO: change user._id to user.artist._id
+      .lookup({
+        from: 'artists',
+        localField: 'followedId',
+        foreignField: '_id',
+        as: 'artist'
+      })
+      .replaceRoot({ $arrayElemAt: ['$artist', 0] })
+      .lookup({
+        from: 'users',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'user'
+      })
+      .project({ user: { $arrayElemAt: ['$user', 0] } })
+      .project({
+        displayName: '$user.displayName',
+        followersCount: '$user.followersCount',
+        images: '$user.images'
+      })
+      .skip(query.offset)
+      .limit(query.limit);
+  }
+  const total = await Followings.countDocuments({
+    userId: user._id,
+    type: query.type
+  });
+  return { result, total };
+};

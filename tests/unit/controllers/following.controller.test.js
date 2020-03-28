@@ -1,9 +1,14 @@
 const { followingController } = require('../../../src/controllers/');
-const { Followings, PlaylistFollowings } = require('../../../src/models');
+const {
+  Followings,
+  PlaylistFollowings,
+  User,
+  Artist
+} = require('../../../src/models');
 const AppError = require('../../../src/utils/AppError');
 const httpStatus = require('http-status');
 const requestMocks = require('../../utils/request.mock');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const mockingoose = require('mockingoose').default;
 
 describe('Following controller', () => {
@@ -11,6 +16,8 @@ describe('Following controller', () => {
   let res;
   let next;
   let following;
+  let user;
+  let artist;
   beforeEach(() => {
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
@@ -48,7 +55,7 @@ describe('Following controller', () => {
   });
   describe('checkFollowingsPlaylist', () => {
     beforeEach(() => {
-      PlaylistFollowings.schema.path('playlistId', Object)
+      PlaylistFollowings.schema.path('playlistId', Object);
       following = new PlaylistFollowings({
         userId: '5e6ba8747d3eda317003c976',
         playlistId: {
@@ -88,12 +95,12 @@ describe('Following controller', () => {
 
     it('If the current user logged in and owns this playlist he is able to see the following even if the playlist is private', async () => {
       following.playlistId.public = false;
-      req.userId = '5e6ba8747d3eda317003c976';
+      req.user = { _id: '5e6ba8747d3eda317003c976' };
       mockingoose(PlaylistFollowings).toReturn([following], 'find');
       // two valid ID's
-      req.query.ids = [req.userId];
+      req.query.ids = [req.user._id];
       await followingController.checkFollowingsPlaylist(req, res, next);
-      expect(res.send.mock.calls[0][0]).toEqual([false]);
+      expect(res.send.mock.calls[0][0]).toEqual([true]);
       expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
     });
 
@@ -102,7 +109,77 @@ describe('Following controller', () => {
       // two valid ID's
       req.query.ids = ['5e6ba8747d3eda317003c976'];
       await followingController.checkFollowingsPlaylist(req, res, next);
-      expect(res.send.mock.calls[0][0]).toEqual(expect.arrayContaining([false]));
+      expect(res.send.mock.calls[0][0]).toEqual(
+        expect.arrayContaining([false])
+      );
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+  });
+
+  describe('getUserFollowed', () => {
+    beforeEach(() => {
+      user = new User({
+        displayName: 'test',
+        verified: true,
+        images: []
+      });
+      artist = new Artist({
+        user: user._id
+      });
+      following = new Followings({
+        userId: '5e6ba8747d3eda317003c976',
+        followedId: user._id,
+        type: 'User'
+      });
+      req.user = following.userId;
+      next = jest.fn();
+    });
+    it('Should return a list of followed users wrapped in paging object', async () => {
+      const doc = {
+        _id: user._id,
+        displayName: user.displayName,
+        verified: true,
+        images: user.images
+      };
+      mockingoose(Followings).toReturn([doc], 'aggregate');
+      mockingoose(Followings).toReturn(1, 'countDocuments');
+      // two valid ID's
+      req.query = {
+        type: 'User',
+        limit: 2,
+        offset: 0
+      };
+      await followingController.getUserFollowed(req, res, next);
+      expect(res.json.mock.calls[0][0]).toEqual({
+        items: [doc],
+        limit: req.query.limit,
+        offset: req.query.offset,
+        total: 1
+      });
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+
+    it('Should return a list of followed artists wrapped in paging object', async () => {
+      const doc = {
+        _id: artist._id,
+        displayName: user.displayName,
+        images: user.images
+      };
+      mockingoose(Followings).toReturn([doc], 'aggregate');
+      mockingoose(Followings).toReturn(2, 'countDocuments');
+      // two valid ID's
+      req.query = {
+        type: 'Artist',
+        limit: 2,
+        offset: 1
+      };
+      await followingController.getUserFollowed(req, res, next);
+      expect(res.json.mock.calls[0][0]).toEqual({
+        items: [doc],
+        limit: req.query.limit,
+        offset: req.query.offset,
+        total: 2
+      });
       expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
     });
   });

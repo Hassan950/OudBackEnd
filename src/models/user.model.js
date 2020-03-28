@@ -63,7 +63,7 @@ const userSchema = mongoose.Schema(
     artist: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Artist',
-      default: null
+      default: undefined
     },
     birthDate: {
       type: Date,
