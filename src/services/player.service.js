@@ -9,17 +9,27 @@ const { Player } = require('../models');
  * @param {String} userId User ID 
  * @param {Object} [ops] Options Object
  * @param {Boolean} [ops.populate=false] if true will populate (Default false)
- * @returns player
+ * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return audioUrl if populate is false nothing happens
+ * @returns {Document} player
+ * @returns {null} if player is not found
  * @summary Get player with the given userId
  */
-const getPlayer = async (userId, ops = { populate: true }) => {
+const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
   let player;
 
   if (ops.populate) {
     player = await Player.findOne({ userId: userId })
-      .populate('item', '-audioUrl')
+      .populate('item')
       .populate('device')
       ;
+
+    if (player && player.item && ops.link) {
+      // Add host link
+      const audio = player.item.audioUrl;
+      player.item.audioUrl = ops.link + audio;
+    } else
+      player.item.audioUrl = undefined;
+
   } else player = await Player.findOne({ userId: userId });
 
   return player;
@@ -48,9 +58,11 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
   if (currentlyPlaying && ops.link) {
+    // Add host link
     const audio = currentlyPlaying.item.audioUrl;
     currentlyPlaying.item.audioUrl = ops.link + audio;
-  } else currentlyPlaying.item.audioUrl = undefined;
+  } else
+    currentlyPlaying.item.audioUrl = undefined;
 
   return currentlyPlaying;
 };
