@@ -23,12 +23,14 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
       .populate('device')
       ;
 
-    if (player && player.item && ops.link) {
-      // Add host link
-      const audio = player.item.audioUrl;
-      player.item.audioUrl = ops.link + audio;
-    } else
-      player.item.audioUrl = undefined;
+    if (player) {
+      if (player.item && ops.link) {
+        // Add host link
+        const audio = player.item.audioUrl;
+        player.item.audioUrl = ops.link + audio;
+      } else
+        player.item.audioUrl = undefined;
+    }
 
   } else player = await Player.findOne({ userId: userId });
 
@@ -57,12 +59,14 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
 
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
-  if (currentlyPlaying && ops.link) {
-    // Add host link
-    const audio = currentlyPlaying.item.audioUrl;
-    currentlyPlaying.item.audioUrl = ops.link + audio;
-  } else
-    currentlyPlaying.item.audioUrl = undefined;
+  if (currentlyPlaying) {
+    if (ops.link) {
+      // Add host link
+      const audio = currentlyPlaying.item.audioUrl;
+      currentlyPlaying.item.audioUrl = ops.link + audio;
+    } else
+      currentlyPlaying.item.audioUrl = undefined;
+  }
 
   return currentlyPlaying;
 };

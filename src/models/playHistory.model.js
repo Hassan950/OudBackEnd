@@ -4,11 +4,12 @@ const playHistorySchema = mongoose.Schema({
   user: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
-    required: [true, 'Player must belong to a user'],
+    required: true,
     select: false,
   },
   track: {
     type: mongoose.Types.ObjectId,
+    required: true,
     ref: 'Track'
   },
   context: {
