@@ -18,13 +18,12 @@ getPlaylists(params , query) {
     return{ category , total };
   }
   const playlists = await Playlist.find( { _id: {  $in: category.playlists  } }).skip(query.offset).limit(query.limit);
-  const no = await Category.aggregate().match({ _id: ObjectId(params.id) }).project({  numberOfPlaylists: {  $size: "$playlists" } });
-  const total = no[0].numberOfPlaylists;
+  const total = category.playlists.length;
   return {  playlists  ,total };
 } 
 module.exports.getNewReleases = async function getNewReleases(query)
 {
-  const albums = await Album.find().skip(query.offset).limit(query.limit).sort({release_date: -1}).select('-tracks'); 
+  const albums = await Album.find().skip(query.offset).limit(query.limit).sort({release_date: -1}); 
   const total = await Album.countDocuments();
   return {  albums  ,total };
 } 

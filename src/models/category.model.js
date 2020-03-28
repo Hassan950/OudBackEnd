@@ -11,6 +11,7 @@ const categorySchema = new mongoose.Schema({
 },
   icon: {
     type: String,
+    match: /.(png|jpg|jpeg)$/,
     required: [true, 'the category should have an icon'],
     trim: true,
   },
