@@ -1,4 +1,5 @@
 const { Track } = require('../models/track.model');
+const _ = require('lodash');
 
 /**
  * A method that gets array of tracks By their ID's
@@ -110,6 +111,6 @@ exports.setTrack = async (track, url, duration) => {
   track.audioUrl = url;
   track.duration = duration;
   await track.save();
-
-  return track;
+  track = track.toJSON();
+  return _.omit(track, 'audioUrl');
 };

@@ -1,7 +1,7 @@
 const { trackService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
-const fs = require('fs');
+const fs = require('fs').promises;
 const getMP3Duration = require('get-mp3-duration');
 
 const multerStorage = multer.diskStorage({
@@ -36,15 +36,11 @@ exports.setTrack = async (req, res, next) => {
   if (!req.file) return next(new AppError('No files were uploaded', 400));
   let track = await trackService.findTrackUtil(req.params.id);
   if (!track) {
-    fs.unlink(req.file.path, err => {
-      if (err) throw err;
-    });
+    await fs.unlink(req.file.path);
     return next(new AppError('The requested resource is not found', 404));
   }
   if (String(track.artists[0]._id) !== String(req.user.artist)) {
-    fs.unlink(req.file.path, err => {
-      if (err) throw err;
-    });
+    await fs.unlink(req.file.path);
     return next(
       new AppError(
         'You do not have the permission to perform this action.',
@@ -54,15 +50,11 @@ exports.setTrack = async (req, res, next) => {
   }
 
   if (track.audioUrl !== 'default.mp3') {
-    fs.unlink(track.audioUrl, err => {
-      if (err) console.log('no such file or directory');
-    });
+    await fs.unlink(track.audioUrl);
   }
-
-  fs.readFile(req.file.path, async (err, buffer) => {
-    const duration = getMP3Duration(buffer);
-    track = await trackService.setTrack(track, req.file.path, duration);
-  });
+  
+  const duration = getMP3Duration(await fs.readFile(req.file.path));
+  track = await trackService.setTrack(track, req.file.path, duration);
   res.status(200).json({
     track: track
   });

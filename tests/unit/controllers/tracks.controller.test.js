@@ -2,7 +2,8 @@ const { tracksController } = require('../../../src/controllers');
 const requestMocks = require('../../utils/request.mock');
 let { Track } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
-let fs = require('fs');
+let fs = require('fs').promises;
+jest.mock('get-mp3-duration', () => () => 21000);
 
 artistIds = [
   { _id: '5e6c8ebb8b40fc5508fe8b32' },
@@ -198,7 +199,8 @@ describe('Tracks controller', () => {
       req.file = {
         path: 'lol.mp3'
       };
-      fs.unlink = jest.fn();
+      fs.unlink = jest.fn().mockResolvedValue();
+      fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('track');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -212,7 +214,8 @@ describe('Tracks controller', () => {
       req.file = {
         path: 'lol.mp3'
       };
-      fs.unlink = jest.fn();
+      fs.unlink = jest.fn().mockResolvedValue();
+      fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -226,6 +229,7 @@ describe('Tracks controller', () => {
         path: 'lol.mp3'
       };
       fs.unlink = jest.fn();
+      fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
