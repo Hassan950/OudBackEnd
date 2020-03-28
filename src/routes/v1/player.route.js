@@ -2,7 +2,7 @@ const express = require('express');
 const validate = require('../../middlewares/validate');
 const catchAsync = require('../../utils/catchAsync');
 const { deviceValidation, playerValidation } = require('../../validations');
-const { deviceController, playerController } = require('../../controllers');
+const { deviceController, playerController, playHistoryController } = require('../../controllers');
 
 const router = express.Router();
 
@@ -50,5 +50,8 @@ router
     catchAsync(deviceController.setVolume)
   );
 
+router
+  .route('/recently-played')
+  .get(catchAsync(playHistoryController.recentlyPlayed));
 
 module.exports = router;

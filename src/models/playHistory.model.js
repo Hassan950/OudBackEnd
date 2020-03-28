@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const playHistorySchema = mongoose.Schema({
   user: {
@@ -23,8 +24,8 @@ const playHistorySchema = mongoose.Schema({
     }
   },
   playedAt: {
-    type: Date,
-    default: Date.now()
+    type: Number,
+    default: moment().unix()
   }
 }, {
   toJSON: {
