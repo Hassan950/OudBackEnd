@@ -25,7 +25,7 @@ router
   .delete(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
 router
   .route('/:id/images')
-  .put(catchAsync(authMiddleware.authenticate), playlistController.uploadImage ,validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImageRoute));
+  .put( playlistController.uploadImage ,validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImageRoute));
 router
   .route('/:id/tracks/Replace')
   .put(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.replaceTracks), catchAsync(playlistController.replaceTracks));    

@@ -75,7 +75,7 @@ exports.changePlaylist = async(req,res,next) => {
 exports.uploadImageRoute  = async (req , res , next)=>{
   const playlist = await playlistService.uploadImage(req.params ,req.file.path);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
-  res.status(200).send(200);
+  res.status(200).send('uploaded');
 }
 
 /**
@@ -88,7 +88,7 @@ exports.uploadImageRoute  = async (req , res , next)=>{
 
 exports.getTracks  = async (req , res , next)=>{
   const playlist = await playlistService.getTracks(req.params , req.query);
-  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  if(!playlist.tracks) return next(new AppError('no playlist with such id', 404));
   res.status(200).json({
     tracks: {
       items:  playlist.tracks,

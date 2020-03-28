@@ -29,8 +29,9 @@ const changePlaylist = async (params , body, image) =>{
 
 const uploadImage = async(params, image)=>{
   let playlist = await Playlist.findById(params.id);
+  if(!playlist) return playlist;
   const path = playlist.image
-  if(path != image){
+  if(path != image && path != 'uploads\\default.jpg'){
     fs.unlink(`${path}`, err => {
       if (err) throw err;
     })
@@ -39,15 +40,16 @@ const uploadImage = async(params, image)=>{
     image: image
   },
   { new: true }).select('-tracks');
-  if(!playlist) return playlist;
   return playlist ;
 }
 
 const getTracks = async(params , query)=>{
-  const tracks = await Playlist.findById(params.id).populate('tracks').skip(query.offset).limit(query.limit);
-  if(!tracks){const total = 0 ;
+  const playlist = await Playlist.findById(params.id);
+  if(!playlist){const total = 0 ;
+    const tracks = null ;
     return{ tracks , total };
   }
+  const tracks = await Track.find({_id: {$in: playlist.tracks}}).skip(query.offset).limit(query.limit);
   const total = tracks.length; 
   return {  tracks , total  };
 }
