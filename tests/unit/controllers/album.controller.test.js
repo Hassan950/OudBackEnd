@@ -2,7 +2,7 @@ const { albumsController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 const requestMocks = require('../../utils/request.mock');
 let { Album, Track } = require('../../../src/models');
-let fs = require('fs');
+let fs = require('fs').promises;
 
 artistIds = [
   '5e6c8ebb8b40fc5508fe8b32',

@@ -43,7 +43,7 @@ exports.getAlbums = async (req, res, next) => {
 };
 
 exports.findAndDeleteAlbum = async (req, res, next) => {
-  const album = await albumService.findAlbum(req.params.id);
+  let album = await albumService.findAlbumUtil(req.params.id);
   if (!album)
     return next(new AppError('The requested resource is not found', 404));
   if (String(album.artists[0]._id) !== String(req.user.artist)) {
@@ -51,7 +51,12 @@ exports.findAndDeleteAlbum = async (req, res, next) => {
       new AppError('You do not have permission to perform this action.', 403)
     );
   }
-  await albumService.deleteAlbum(req.params.id);
+  let trackIds = album.tracks.map(track => track._id); 
+  album = await albumService.deleteAlbum(req.params.id);
+  if (album.image !== 'default.jpg') {
+    await fs.unlink(album.image);
+  }
+  await trackService.deleteTracks(trackIds); 
   res.status(200).json({
     album: album
   });
@@ -87,10 +92,14 @@ exports.updateAlbum = async (req, res, next) => {
     req.body.artists &&
     !(await albumValidation.artistsExist(req.body.artists))
   )
-    return next(new AppError("The artist given doesn't exist", 400));
+    return next(
+      new AppError("The artist ID's given are invalid or doesn't exist", 400)
+    );
 
   if (req.body.genres && !(await albumValidation.genresExist(req.body.genres)))
-    return next(new AppError("The genres given doesn't exist", 400));
+    return next(
+      new AppError("The genre ID's given are invalid doesn't exist", 400)
+    );
   album = await albumService.update(req.params.id, req.body);
   res.status(200).json({
     album: album
@@ -127,10 +136,14 @@ exports.setImage = async (req, res, next) => {
 
 exports.createAlbum = async (req, res, next) => {
   if (!(await albumValidation.artistsExist(req.body.artists)))
-    return next(new AppError("The artists given doesn't exist", 400));
+    return next(
+      new AppError("The artist ID's given are invalid or doesn't exist", 400)
+    );
 
   if (!(await albumValidation.genresExist(req.body.genres)))
-    return next(new AppError("The genres given doesn't exist", 400));
+    return next(
+      new AppError("The genre ID's given are invalid or doesn't exist", 400)
+    );
 
   const album = await albumService.createAlbum(req.body);
   res.status(200).json({
@@ -149,7 +162,9 @@ exports.newTrack = async (req, res, next) => {
     return next(new AppError('Forbidden.', 403));
 
   if (!(await albumValidation.artistsExist(req.body.artists)))
-    return next(new AppError("The artists given doesn't exist", 400));
+    return next(
+      new AppError("The artist ID's given are invalid or doesn't exist", 400)
+    );
 
   let track = await trackService.createTrack(req.params.id, req.body);
   album = await albumService.addTrack(album, track._id);

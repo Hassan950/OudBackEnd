@@ -111,7 +111,9 @@ exports.updateTrack = async (req, res, next) => {
     req.body.artists &&
     !(await albumValidation.artistsExist(req.body.artists))
   )
-    return next(new AppError("The artist given doesn't exist", 400));
+    return next(
+      new AppError("The artist ID's given are invalid or doesn't exist", 400)
+    );
 
   track = await trackService.update(req.params.id, req.body);
   res.status(200).json({

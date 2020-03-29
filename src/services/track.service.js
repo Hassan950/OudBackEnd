@@ -40,6 +40,23 @@ exports.deleteTrack = async id => {
 };
 
 /**
+ * A method that deletes tracks by their ID's
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes tracks
+ * @param {String} ids ID's of the tracks to be deleted
+ */
+exports.deleteTracks = async ids => {
+  await Promise.all(
+    ids.map(async id => {
+      this.deleteTrack(id);
+    })
+  );
+  // await Track.deleteMany({ _id: ids });
+};
+
+/**
  * A method that gets a track by it's ID
  *
  * @function

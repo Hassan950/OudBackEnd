@@ -101,7 +101,24 @@ exports.findAlbums = async ids => {
  * @param {String} id ID of the album to be deleted
  */
 exports.deleteAlbum = async id => {
-  await Album.findByIdAndDelete(id);
+  let album = await Album.findByIdAndDelete(id)
+  .populate('artists', '_id name images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      options: { limit: 20 },
+      select: '-audioUrl'
+    })
+    .select('-album_group');
+  if (album) {
+    album.tracks = {
+      limit: 20,
+      offset: 0,
+      total: album.tracks.length,
+      items: album.tracks
+    };
+  }
+  return album;
 };
 
 /**
