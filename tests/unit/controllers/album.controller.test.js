@@ -1,8 +1,9 @@
 const { albumsController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 const requestMocks = require('../../utils/request.mock');
-let { Album, Track } = require('../../../src/models');
+let { Album, Track, Artist, Genre } = require('../../../src/models');
 let fs = require('fs').promises;
+let { trackService } = require('../../../src/services');
 
 artistIds = [
   '5e6c8ebb8b40fc5508fe8b32',
@@ -26,7 +27,7 @@ describe('Albums Controller', () => {
       album_type: 'single',
       album_group: 'compilation',
       artists: artistIds,
-      genres: '5e6c8ebb8b40fc5518fe8b32',
+      genres: ['5e6c8ebb8b40fc5518fe8b32'],
       image: 'example.jpg',
       name: 'The Begining',
       release_date: '12-06-1999',
@@ -112,6 +113,8 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOneAndDelete');
       req.user = { artist: album.artists[0]._id };
       req.params.id = album._id;
+      fs.unlink = jest.fn();
+      trackService.deleteTracks = jest.fn();
       await albumsController.findAndDeleteAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toHaveProperty('album');
@@ -164,8 +167,8 @@ describe('Albums Controller', () => {
       await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
-    it("Should throw an error with status code 403 if the album is released", async () => {
-      album.released = true
+    it('Should throw an error with status code 403 if the album is released', async () => {
+      album.released = true;
       mockingoose(Album)
         .toReturn(album, 'findOne')
         .toReturn(album, 'findOneAndUpdate');
@@ -181,14 +184,15 @@ describe('Albums Controller', () => {
         album_type: 'single',
         album_group: 'compilation',
         artists: artistIds,
-        genres: '5e6c8ebb8b40fc5518fe8b32',
+        genres: ['5e6c8ebb8b40fc5518fe8b32'],
         image: 'example.jpg',
         name: 'The Begining',
         release_date: '12-06-1999',
         tracks: [albumIds[0]]
       };
       mockingoose(Album).toReturn(album, 'save');
-
+      mockingoose(Artist).toReturn(album.artists, 'find');
+      mockingoose(Genre).toReturn(album.genres, 'find');
       await albumsController.createAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toHaveProperty('album');
@@ -222,7 +226,7 @@ describe('Albums Controller', () => {
       await albumsController.setImage(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
-    it("Should throw an error with status code 403 if album is released", async () => {
+    it('Should throw an error with status code 403 if album is released', async () => {
       album.released = true;
       mockingoose(Album)
         .toReturn(album, 'findOne')
@@ -285,8 +289,8 @@ describe('Albums Controller', () => {
       await albumsController.newTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
-    it("Should throw an error with status code 403 if the album is released", async () => {
-      album.released = true
+    it('Should throw an error with status code 403 if the album is released', async () => {
+      album.released = true;
       mockingoose(Album)
         .toReturn(album, 'findOne')
         .toReturn(album, 'save');
