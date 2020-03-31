@@ -265,9 +265,7 @@ paths:
                 $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '404':
-          $ref: '#/components/responses/NotFound'
-          
+
   '/me/following/contains':
     get:
       tags:
@@ -865,12 +863,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Album'
-        '404':
-          $ref: '#/components/responses/NotFound'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
   '/albums/{id}/tracks':
     get:
       tags:
@@ -1026,7 +1020,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-    put:
+    post:
       tags: 
       - Tracks
       summary:  Upload Track's file
@@ -1093,8 +1087,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Track'
-        '404':
-          $ref: '#/components/responses/NotFound'
         '400':
           $ref: '#/components/responses/InvalidId'
   '/me/artist/albums':
@@ -1159,7 +1151,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
 
   '/me/artist/albums/{id}/image':
-    patch:
+    post:
       tags:
       - Albums
       summary:  Update the image of an album
@@ -1376,7 +1368,7 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
   '/me/artist/images':
-    patch:
+    post:
       tags: 
       - Artists
       summary:  Update artist images
