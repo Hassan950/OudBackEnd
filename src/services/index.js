@@ -4,3 +4,4 @@ exports.trackService = require('./track.service');
 exports.emailService = require('./mail.service');
 exports.deviceService = require('./device.service');
 exports.albumService = require('./album.service');
+exports.artistService = require('./artist.service');
