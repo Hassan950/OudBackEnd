@@ -33,7 +33,7 @@ describe('Albums Controller', () => {
       release_date: '12-06-1999',
       tracks: [albumIds[0]]
     });
-    albums = [album, albums];
+    albums = [album, album];
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();

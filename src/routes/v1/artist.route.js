@@ -23,4 +23,11 @@ router
     catchAsync(artistController.getArtists)
   );
 
+router
+  .route('/:id/albums')
+  .get(
+    validate(artistValidation.oneArtist),
+    catchAsync(artistController.getAlbums)
+  );
+
 module.exports = router;

@@ -6,6 +6,7 @@ const trackRoute = require('./tracks.route');
 const authRoute = require('./auth.route');
 const albumRoute = require('./album.route');
 const artistRoute = require('./artist.route');
+const genreRoute = require('./genre.route');
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use('/tracks', trackRoute);
 router.use('/auth', authRoute);
 router.use('/albums', albumRoute);
 router.use('/artists', artistRoute);
+router.use('/genres', genreRoute);
 
 module.exports = router;

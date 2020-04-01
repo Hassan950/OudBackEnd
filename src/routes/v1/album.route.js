@@ -6,6 +6,7 @@ const validate = require('../../middlewares/validate');
 const { albumValidation } = require('../../validations');
 const authMiddleware = require('../../middlewares/auth');
 
+
 router
   .route('/:id')
   .get(
