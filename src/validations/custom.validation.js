@@ -24,7 +24,7 @@ exports.tracksIds = (value, helper) => {
     if (!mongoose.Types.ObjectId.isValid(v))
       return helper.message(v + ' is not a valid Id');
   });
-  return value;
+  return values;
 };
 
 exports.albumIds = (value, helper) => {
@@ -34,5 +34,5 @@ exports.albumIds = (value, helper) => {
     if (!mongoose.Types.ObjectId.isValid(v))
       return helper.message(v + ' is not a valid Id');
   });
-  return value;
+  return values;
 };
