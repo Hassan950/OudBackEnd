@@ -71,8 +71,7 @@ exports.getTrack = async (req, res, next) => {
 };
 
 exports.getTracks = async (req, res, next) => {
-  let ids = req.query.ids.split(',');
-  const tracks = await trackService.findTracks(ids);
+  const tracks = await trackService.findTracks(req.query.ids);
   res.status(200).json({
     tracks: tracks
   });

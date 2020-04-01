@@ -9,7 +9,7 @@ const artistSchema = new mongoose.Schema({
       validator: function(v) {
         return v && v.length > 0;
       },
-      message: 'An album should have at least one genre'
+      message: 'An artist should have at least one genre'
     }
   },
   images: [{ type: String, match: /\.(png|jpg|jpeg)$/ }],

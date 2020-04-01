@@ -64,7 +64,7 @@ describe('Albums Controller', () => {
     });
     it("Should return an array of nulls if none of the ID's matches an album", async () => {
       mockingoose(Album).toReturn([], 'find');
-      req.query.ids = 'one valid ID, another valid ID';
+      req.query.ids = ['one valid ID','another valid ID'];
       await albumsController.getAlbums(req, res, next);
       expect(res.json.mock.calls[0][0].albums).toMatchObject([null, null]);
     });

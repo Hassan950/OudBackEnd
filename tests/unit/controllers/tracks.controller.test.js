@@ -47,7 +47,7 @@ describe('Tracks controller', () => {
     it("Should return an array of nulls if none of the ID's given matches an object", async () => {
       mockingoose(Track).toReturn([], 'find');
       // two ID's that doesn't belong to any objects
-      req.query.ids = 'valid id,another valid id';
+      req.query.ids = ['valid id','another valid id'];
       await tracksController.getTracks(req, res, next);
       expect(res.json.mock.calls[0][0].tracks).toMatchObject([null, null]);
     });

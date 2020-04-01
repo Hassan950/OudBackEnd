@@ -24,7 +24,7 @@ router
     validate(trackValidation.update),
     catchAsync(tracksController.updateTrack)
   )
-  .put(
+  .post(
     catchAsync(authMiddleware.authenticate),
     authMiddleware.authorize('artist'),
     validate(trackValidation.oneTrack),
