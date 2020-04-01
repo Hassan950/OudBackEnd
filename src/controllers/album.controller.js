@@ -35,8 +35,7 @@ exports.getAlbum = async (req, res, next) => {
 };
 
 exports.getAlbums = async (req, res, next) => {
-  let ids = req.query.ids.split(',');
-  const albums = await albumService.findAlbums(ids);
+  const albums = await albumService.findAlbums(req.query.ids);
   res.status(200).json({
     albums: albums
   });

@@ -62,7 +62,7 @@ router
 
 router
   .route('/:id/images')
-  .put(
+  .post(
     catchAsync(authMiddleware.authenticate),
     authMiddleware.authorize('artist'),
     validate(albumValidation.oneAlbum),
