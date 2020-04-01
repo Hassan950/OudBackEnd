@@ -15,3 +15,15 @@ exports.severalArtists = {
       .required()
   })
 };
+
+exports.artistAlbums = {
+  params: Joi.object().keys({
+    id: Joi.objectId().required()
+  }),
+  query: Joi.object().keys({
+    limit: Joi.number()
+      .default(20)
+      .max(50),
+    offset: Joi.number().default(0)
+  })
+};

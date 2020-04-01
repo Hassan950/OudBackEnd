@@ -85,9 +85,7 @@ describe('Albums Controller', () => {
       req.params.id = album._id;
       req.query = { limit: 20, offset: 0 };
       await albumsController.findAlbumTracks(req, res, next);
-      expect(res.json.mock.calls[0][0]).toMatchObject({
-        items: album.tracks
-      });
+      expect(res.json.mock.calls[0][0]).toHaveProperty("items");
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should throw an error with status code 404 if the album is not found', async () => {

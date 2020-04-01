@@ -14,7 +14,6 @@ exports.findArtist = async id => {
   const artist = await Artist.findById(id)
     .populate({
       path: 'popularSongs',
-      options: { limit: 20 },
       select: '-audioUrl'
     })
     .populate('genres');
@@ -23,7 +22,7 @@ exports.findArtist = async id => {
 
 /**
  * A method that gets an array of artists by their ID's
- * 
+ *
  * @function
  * @summary Get a list of artists
  * @param {Array<String>} ids - List of ID's of artists to be retrieved
@@ -33,12 +32,45 @@ exports.findArtists = async ids => {
   const result = await Artist.find({ _id: ids })
     .populate({
       path: 'popularSongs',
-      options: { limit: 20 },
       select: '-audioUrl'
     })
     .populate('genres');
   const artists = ids.map(id => {
     return result.find(artist => String(artist._id) === id);
   });
+  return artists;
+};
+
+/**
+ * A method that returns popular songs of a specific artist
+ *
+ * @function
+ * @summary Gets popular songs of an artist
+ * @param {String} artistId Id of the artist
+ * @returns {Array<Object>} array of popular songs of the artist up to 10
+ * @returns null if the artist has no popular songs or the ID doesn't belong to any artist
+ */
+exports.getPopularSongs = async artistId => {
+  const artist = await Artist.findById(artistId)
+    .populate({
+      path: 'popularSongs',
+      select: '-audioUrl'
+    })
+    .select('popularSongs');
+  if (!artist || artist.popularSongs.length === 0) return null;
+  return artist.popularSongs;
+};
+
+exports.relatedArtists = async artistId => {
+  const artist = await Artist.findById(artistId);
+  if (!artist) return null;
+  console.log(artist.genres);
+  const artists = await Artist.find({ genres: artist.genres })
+    .limit(20)
+    .populate({
+      path: 'popularSongs',
+      select: '-audioUrl'
+    })
+    .populate('genres');
   return artists;
 };

@@ -71,10 +71,10 @@ exports.findAlbumTracks = async (req, res, next) => {
   if (!tracks)
     return next(new AppError('The requested resource is not found', 404));
   res.status(200).json({
-    items: tracks,
+    items: tracks[0],
     limit: req.query.limit,
     offset: req.query.offset,
-    total: tracks.length
+    total: tracks[1]
   });
 };
 
