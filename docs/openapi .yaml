@@ -2256,20 +2256,13 @@ paths:
           schema:
             type: string
           description: Id of the Playlist
-        - name: fields
-          in: query
-          description: >-
-            Filters for the query a comma-separated list of the fields to
-            return. If omitted, all fields are returned.
-          schema:
-            type: string
       responses:
         '200':
           description: the response body contains Playlist object in JSON format.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Playlist'
+                $ref: '#/components/schemas/PlaylistSimple'
         '400':
           description: Invalid ID
           content:
@@ -2342,7 +2335,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Playlist'
+                $ref: '#/components/schemas/PlaylistSimple'
         '400':
           description: Invalid ID
           content:
@@ -2383,7 +2376,7 @@ paths:
           description: Id of the Playlist
         - name: Tracks
           in: query
-          description: Tracks to be removed from playlist
+          description: Tracks to be removed from playlist and should be sent in body api doesnot support that
           schema:
             type: object
             properties:
@@ -2461,7 +2454,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/PlaylistTrack'
+                      $ref: '#/components/schemas/Track'
                     description: the Requested releases
                   limit:
                     type: integer
@@ -2513,21 +2506,22 @@ paths:
           schema:
             type: string
           description: Id of the Playlist
-        - name: uris
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-              format: uri
-              minItems: 1
-              maxItems: 100
-          description: A comma-separated list of Spotify track URIs to add.
         - name: position
           in: query
           schema:
             type: integer
           description: 'The position to insert the tracks, a zero-based index.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uris:
+                  type: array
+                  items:
+                    type: string
       responses:
         '204':
           description: tracks has been added and the response body is empty
@@ -2592,11 +2586,6 @@ paths:
                     The position where the tracks should be inserted.To reorder
                     the tracks to the end of the playlist, simply set
                     insert_before to the position after the last track.
-                snapshot_id:
-                  type: string
-                  description: >-
-                    The playlist’s snapshot ID against which you want to make
-                    the changes.
       responses:
         '204':
           description: tracks has been ReOrdered
@@ -2698,8 +2687,7 @@ paths:
                   type: array
                   description: uris of the tracks
                   items:
-                    items:
-                      type: string
+                    type: string
       responses:
         '204':
           description: Replaced track in playlist
@@ -2779,7 +2767,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Playlist'
+                $ref: '#/components/schemas/PlaylistSimple'
         '400':
           $ref: '#/components/responses/InvalidId'
         '401':
