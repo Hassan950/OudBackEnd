@@ -5,9 +5,7 @@ exports.getArtist = async (req, res, next) => {
   const artist = await artistService.findArtist(req.params.id);
   if (!artist)
     return next(new AppError('The requested resource was not found', 404));
-  res.status(200).json({
-    artist: artist
-  });
+  res.status(200).json(artist);
 };
 
 exports.getArtists = async (req, res, next) => {

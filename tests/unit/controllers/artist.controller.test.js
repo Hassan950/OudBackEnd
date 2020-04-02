@@ -33,7 +33,7 @@ describe('Artists Controller', () => {
       mockingoose(Artist).toReturn(artist, 'findOne');
       await artistController.getArtist(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('artist');
+      expect(res.json.mock.calls[0][0]).toMatchObject(artist);
     });
     it('Should throw an error with status code 404 if the artist is not found', async () => {
       mockingoose(Artist).toReturn(null, 'findOne');

@@ -31,14 +31,12 @@ exports.getAlbum = async (req, res, next) => {
   const album = await albumService.findAlbum(req.params.id);
   if (!album)
     return next(new AppError('The requested resource was not found', 404));
-  res.status(200).json({ album: album });
+  res.status(200).json(album);
 };
 
 exports.getAlbums = async (req, res, next) => {
   const albums = await albumService.findAlbums(req.query.ids);
-  res.status(200).json({
-    albums: albums
-  });
+  res.status(200).json({ albums: albums });
 };
 
 exports.findAndDeleteAlbum = async (req, res, next) => {
@@ -50,15 +48,13 @@ exports.findAndDeleteAlbum = async (req, res, next) => {
       new AppError('You do not have permission to perform this action.', 403)
     );
   }
-  let trackIds = album.tracks.map(track => track._id); 
+  let trackIds = album.tracks.map(track => track._id);
   album = await albumService.deleteAlbum(req.params.id);
   if (album.image !== 'default.jpg') {
     await fs.unlink(album.image);
   }
-  await trackService.deleteTracks(trackIds); 
-  res.status(200).json({
-    album: album
-  });
+  await trackService.deleteTracks(trackIds);
+  res.status(200).json(album);
 };
 
 exports.findAlbumTracks = async (req, res, next) => {
@@ -100,9 +96,7 @@ exports.updateAlbum = async (req, res, next) => {
       new AppError("The genre ID's given are invalid doesn't exist", 400)
     );
   album = await albumService.update(req.params.id, req.body);
-  res.status(200).json({
-    album: album
-  });
+  res.status(200).json(album);
 };
 
 exports.setImage = async (req, res, next) => {
@@ -128,9 +122,7 @@ exports.setImage = async (req, res, next) => {
     await fs.unlink(album.image);
   }
   album = await albumService.setImage(album, req.file.path);
-  res.status(200).json({
-    album: album
-  });
+  res.status(200).json(album);
 };
 
 exports.createAlbum = async (req, res, next) => {
@@ -145,9 +137,7 @@ exports.createAlbum = async (req, res, next) => {
     );
 
   const album = await albumService.createAlbum(req.body);
-  res.status(200).json({
-    album: album
-  });
+  res.status(200).json(album);
 };
 
 exports.newTrack = async (req, res, next) => {
@@ -167,7 +157,5 @@ exports.newTrack = async (req, res, next) => {
 
   let track = await trackService.createTrack(req.params.id, req.body);
   album = await albumService.addTrack(album, track._id);
-  res.status(200).json({
-    album: album
-  });
+  res.status(200).json(album);
 };
