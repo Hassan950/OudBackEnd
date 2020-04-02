@@ -27,9 +27,17 @@ const trackSchema = new mongoose.Schema({
     required: true,
     match: /\.mp3$/,
     unique: true
+  },
+  duration: {
+    type: Number,
+    min: 20000,
+    required: true
+  },
+  views: {
+    type: Number,
+    default: 0
   }
 });
-
 
 const Track = mongoose.model('Track', trackSchema);
 

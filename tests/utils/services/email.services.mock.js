@@ -1,4 +1,3 @@
-
 const emailService = {};
 
 emailService.sendEmail = jest.fn().mockImplementation((Options) => {
