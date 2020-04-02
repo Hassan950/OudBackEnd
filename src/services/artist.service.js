@@ -1,4 +1,5 @@
-const { Artist } = require('../models');
+const { Artist, User } = require('../models');
+const mongoose = require('mongoose');
 
 /**
  * A method that gets an artist by it's ID
@@ -52,10 +53,7 @@ exports.findArtists = async ids => {
  */
 exports.getPopularSongs = async artistId => {
   const artist = await Artist.findById(artistId)
-    .populate({
-      path: 'popularSongs',
-      select: '-audioUrl'
-    })
+    .populate('popularSongs')
     .select('popularSongs');
   if (!artist || artist.popularSongs.length === 0) return null;
   return artist.popularSongs;
@@ -63,14 +61,14 @@ exports.getPopularSongs = async artistId => {
 
 exports.relatedArtists = async artistId => {
   const artist = await Artist.findById(artistId);
+
   if (!artist) return null;
-  console.log(artist.genres);
-  const artists = await Artist.find({ genres: artist.genres })
+
+  const artists = await Artist.find({
+    genres: artist.genres
+  })
     .limit(20)
-    .populate({
-      path: 'popularSongs',
-      select: '-audioUrl'
-    })
+    .populate('popularSongs')
     .populate('genres');
   return artists;
 };

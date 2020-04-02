@@ -104,4 +104,31 @@ describe('Artists Controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
   });
+  describe('relatedArtists', () => {
+    it('Should return the list of artists with status code 200', async () => {
+      mockingoose(Artist)
+        .toReturn(artist, 'findOne')
+        .toReturn(artists, 'find');
+      req.params = { id: artist._id };
+      await artistController.relatedArtists(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0]).toHaveProperty('artists');
+    });
+    it('Should throw an error with stats code 404 if the artist was not found', async () => {
+      mockingoose(Artist)
+        .toReturn(null, 'findOne')
+        .toReturn(artists, 'find');
+      req.params = { id: artist._id };
+      await artistController.relatedArtists(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('Should return an empty array with status code 200 if the artist has no related artists', async () => {
+      mockingoose(Artist)
+        .toReturn(artist, 'findOne')
+        .toReturn([], 'find');
+      req.params = { id: artist._id };
+      await artistController.relatedArtists(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    })
+  });
 });

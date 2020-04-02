@@ -135,3 +135,10 @@ exports.setTrack = async (track, url, duration) => {
   track = track.toJSON();
   return _.omit(track, 'audioUrl');
 };
+
+exports.checkFile = async id => {
+  const track = await Track.findById(id).select('audioUrl');
+  if (track.audioUrl !== 'default.mp3') {
+    await fs.unlink(track.audioUrl);
+  }
+};

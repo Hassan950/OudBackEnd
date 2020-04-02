@@ -50,9 +50,7 @@ exports.setTrack = async (req, res, next) => {
     );
   }
 
-  if (track.audioUrl !== 'default.mp3') {
-    await fs.unlink(track.audioUrl);
-  }
+  await trackService.checkFile(req.params.id)
 
   const duration = getMP3Duration(await fs.readFile(req.file.path));
   track = await trackService.setTrack(track, req.file.path, duration);
