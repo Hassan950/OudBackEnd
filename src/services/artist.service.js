@@ -72,3 +72,19 @@ exports.relatedArtists = async artistId => {
     .populate('genres');
   return artists;
 };
+
+/**
+ * A method that checks if the list of artists exist
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Checks if the list of artists exist
+ * @param {Array<ObjectId>} artistsIds ID's to check
+ * @returns true if they exist
+ * @returns false if they don't exist
+ */
+exports.artistsExist = async artistIds => {
+  const artists = await Artist.find({ _id: artistIds });
+  if (artistIds.length !== artists.length) return false;
+  return true;
+};

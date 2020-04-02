@@ -1,9 +1,8 @@
-const { trackService } = require('../services');
+const { trackService, artistService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs').promises;
 const getMP3Duration = require('get-mp3-duration');
-const { albumValidation } = require('../validations');
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -50,7 +49,7 @@ exports.setTrack = async (req, res, next) => {
     );
   }
 
-  await trackService.checkFile(req.params.id)
+  await trackService.checkFile(req.params.id);
 
   const duration = getMP3Duration(await fs.readFile(req.file.path));
   track = await trackService.setTrack(track, req.file.path, duration);
@@ -100,7 +99,7 @@ exports.updateTrack = async (req, res, next) => {
     );
   if (
     req.body.artists &&
-    !(await albumValidation.artistsExist(req.body.artists))
+    !(await artistService.artistsExist(req.body.artists))
   )
     return next(
       new AppError("The artist ID's given are invalid or doesn't exist", 400)

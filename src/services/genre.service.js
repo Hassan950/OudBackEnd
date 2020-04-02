@@ -29,3 +29,19 @@ exports.findGenres = async (limit, offset) => {
     .limit(limit)
     .skip(offset);
 };
+
+/**
+ * A method that checks if the list of genres exist
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Checks if the list of genres exist
+ * @param {Array<ObjectId>} genreIds ID's to check
+ * @returns true if they exist
+ * @returns false if they don't exist
+ */
+exports.genresExist = async genreIds => {
+  const genres = await Genre.find({ _id: genreIds });
+  if (genreIds.length !== genres.length) return false;
+  return true;
+};

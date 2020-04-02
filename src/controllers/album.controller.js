@@ -1,4 +1,9 @@
-const { albumService, trackService } = require('../services');
+const {
+  albumService,
+  trackService,
+  genreService,
+  artistService
+} = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs').promises;
@@ -91,7 +96,7 @@ exports.updateAlbum = async (req, res, next) => {
       new AppError("The artist ID's given are invalid or doesn't exist", 400)
     );
 
-  if (req.body.genres && !(await albumValidation.genresExist(req.body.genres)))
+  if (req.body.genres && !(await genreService.genresExist(req.body.genres)))
     return next(
       new AppError("The genre ID's given are invalid doesn't exist", 400)
     );
@@ -126,12 +131,12 @@ exports.setImage = async (req, res, next) => {
 };
 
 exports.createAlbum = async (req, res, next) => {
-  if (!(await albumValidation.artistsExist(req.body.artists)))
+  if (!(await artistService.artistsExist(req.body.artists)))
     return next(
       new AppError("The artist ID's given are invalid or doesn't exist", 400)
     );
 
-  if (!(await albumValidation.genresExist(req.body.genres)))
+  if (!(await genreService.genresExist(req.body.genres)))
     return next(
       new AppError("The genre ID's given are invalid or doesn't exist", 400)
     );
@@ -150,7 +155,7 @@ exports.newTrack = async (req, res, next) => {
   )
     return next(new AppError('Forbidden.', 403));
 
-  if (!(await albumValidation.artistsExist(req.body.artists)))
+  if (!(await artistService.artistsExist(req.body.artists)))
     return next(
       new AppError("The artist ID's given are invalid or doesn't exist", 400)
     );
