@@ -86,7 +86,7 @@ describe('browse controllers', () => {
       Category.select = jest.fn().mockReturnThis();
       mockingoose(Category).toReturn(category, 'findOne');
       await browseController.getCategory(req, res, next);
-      const foundCategory = res.json.mock.calls[0][0].category;
+      const foundCategory = res.json.mock.calls[0][0];
       expect(foundCategory).toBe(category);
     });
   });
@@ -122,7 +122,7 @@ describe('browse controllers', () => {
       mockingoose(Category).toReturn(category, 'findOne');
       mockingoose(Playlist).toReturn(playlists.slice(0, 1), 'find');
       await browseController.categoryPlaylists(req, res, next);
-      const foundCategoryPlaylists = res.json.mock.calls[0][0].playlists.items;
+      const foundCategoryPlaylists = res.json.mock.calls[0][0].items;
       expect(JSON.parse(JSON.stringify(foundCategoryPlaylists))).toStrictEqual(
         JSON.parse(JSON.stringify(playlists.slice(0, 1)))
       );
@@ -148,7 +148,7 @@ describe('browse controllers', () => {
       Category.select = jest.fn().mockReturnThis();
       mockingoose(Category).toReturn(categories.slice(0, 1), 'find');
       await browseController.getCategories(req, res, next);
-      const foundCategories = res.json.mock.calls[0][0].categories.items;
+      const foundCategories = res.json.mock.calls[0][0].items;
       expect(JSON.parse(JSON.stringify(foundCategories))).toStrictEqual(
         JSON.parse(JSON.stringify(categories.slice(0, 1)))
       );
@@ -175,7 +175,7 @@ describe('browse controllers', () => {
       albums.limit = jest.fn().mockReturnThis();
       mockingoose(Album).toReturn(albums.slice(0, 1), 'find');
       await browseController.newReleases(req, res, next);
-      const foundAlbums = res.json.mock.calls[0][0].albums.items;
+      const foundAlbums = res.json.mock.calls[0][0].items;
       expect(JSON.parse(JSON.stringify(foundAlbums))).toStrictEqual(
         JSON.parse(JSON.stringify(albums.slice(0, 1)))
       );
