@@ -1225,7 +1225,7 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
-  '/me/artists/albums/{id}/image':
+  '/me/artists/albums/{id}/images':
     post:
       tags:
         - Albums
