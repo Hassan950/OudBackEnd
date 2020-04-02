@@ -6,6 +6,7 @@ const { Genre, genreSchema } = require('./genre.model');
 const { Device, deviceSchema } = require('./device.model');
 const { Player, playerSchema } = require('./player.model');
 const { PlayHistory, playHistorySchema } = require('./playHistory.model');
+const { Queue, queueSchema } = require('./queue.model');
 
 module.exports = {
   User,
@@ -23,5 +24,7 @@ module.exports = {
   Player,
   playerSchema,
   PlayHistory,
-  playHistorySchema
+  playHistorySchema,
+  Queue,
+  queueSchema
 };
