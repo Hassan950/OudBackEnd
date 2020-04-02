@@ -1,8 +1,9 @@
 const playerMocks = require('../../utils/models/player.model.mocks');
+const queueMocks = require('../../utils/models/queue.model.mocks');
 const deviceMocks = require('../../utils/models/device.model.mocks');
 const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
-const { Player, Device } = require('../../../src/models');
+const { Player, Device, User, Queue } = require('../../../src/models');
 const { playerController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 
@@ -122,17 +123,23 @@ describe('Player controller', () => {
   describe('Resume player', () => {
     let device;
     let dummyId;
+    let queue;
     beforeEach(() => {
+      queue = queueMocks.createFakeQueue();
       player.save = jest.fn().mockResolvedValue(player);
       device = deviceMocks.createFakeDevice();
+      mockingoose(Queue).toReturn(queue, 'findOne');
       mockingoose(Device).toReturn(device, 'findOne');
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+      ));
       req.query.deviceId = device._id;
       req.query.queueIndex = 0;
       dummyId = req.user._id;
       req.body.uris = [`oud:track:${dummyId}`];
       req.body.offset = {};
       req.body.positionMs = 1;
-      req.body.contextUri = [`oud:playlist:${dummyId}`];
+      req.body.contextUri = `oud:playlist:${dummyId}`;
     });
 
     it('it should return 500 status code if not authenticated', async () => {

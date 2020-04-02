@@ -208,9 +208,9 @@ exports.resumePlayer = async (req, res, next) => {
   if (positionMs) player.positionMs = positionMs;
   // if position > track duration go to next
   // add queues to user
-  user.queues = queues;
+  req.user.queues = queues;
   // save
-  await Promise.all([user.save(), player.save()]);
+  await Promise.all([req.user.save({ validateBeforeSave: false }), player.save()]);
   // return 204
   res.status(204).end();
 };
