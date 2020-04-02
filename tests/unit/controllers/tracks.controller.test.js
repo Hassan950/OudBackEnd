@@ -47,7 +47,7 @@ describe('Tracks controller', () => {
     it("Should return an array of nulls if none of the ID's given matches an object", async () => {
       mockingoose(Track).toReturn([], 'find');
       // two ID's that doesn't belong to any objects
-      req.query.ids = ['valid id','another valid id'];
+      req.query.ids = ['valid id', 'another valid id'];
       await tracksController.getTracks(req, res, next);
       expect(res.json.mock.calls[0][0].tracks).toMatchObject([null, null]);
     });
@@ -80,7 +80,7 @@ describe('Tracks controller', () => {
       req.params.id = trackIds[1];
       req.user = { artist: artistIds[1]._id };
       await tracksController.deleteTrack(req, res, next);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('track');
+      expect(res.json.mock.calls[0][0]).toMatchObject(track);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should throw an error with a status code of 403 if the artist is not one of the track artists', async () => {
@@ -109,7 +109,7 @@ describe('Tracks controller', () => {
       mockingoose(Track).toReturn(track, 'findOne');
       req.params.id = trackIds[0];
       await tracksController.getTrack(req, res, next);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('track');
+      expect(res.json.mock.calls[0][0]).toMatchObject(track);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with a status code of 404 if the ID didn't match any track", async () => {
@@ -133,7 +133,7 @@ describe('Tracks controller', () => {
         name: 'new Track'
       };
       await tracksController.updateTrack(req, res, next);
-      expect(res.json.mock.calls[0][0].track.name).toEqual('new Track');
+      expect(res.json.mock.calls[0][0]).toMatchObject(track);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should update the list of artist IDs of the track with the given ID with the list given', async () => {
@@ -206,7 +206,7 @@ describe('Tracks controller', () => {
       fs.unlink = jest.fn().mockResolvedValue();
       fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('track');
+      expect(res.json.mock.calls[0][0]).toHaveProperty('name');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should throw an error with status code 404 if the track was not found', async () => {

@@ -33,7 +33,7 @@ describe('Albums Controller', () => {
       release_date: '12-06-1999',
       tracks: [albumIds[0]]
     });
-    albums = [album, albums];
+    albums = [album, album];
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
@@ -43,7 +43,7 @@ describe('Albums Controller', () => {
       mockingoose(Album).toReturn(album, 'findOne');
       req.params.id = albumIds[0];
       await albumsController.getAlbum(req, res, next);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+      expect(res.json.mock.calls[0][0]).toMatchObject(album);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should throw an error with status code 404', async () => {
@@ -85,9 +85,7 @@ describe('Albums Controller', () => {
       req.params.id = album._id;
       req.query = { limit: 20, offset: 0 };
       await albumsController.findAlbumTracks(req, res, next);
-      expect(res.json.mock.calls[0][0]).toMatchObject({
-        items: album.tracks
-      });
+      expect(res.json.mock.calls[0][0]).toHaveProperty("items");
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('Should throw an error with status code 404 if the album is not found', async () => {
@@ -117,7 +115,7 @@ describe('Albums Controller', () => {
       trackService.deleteTracks = jest.fn();
       await albumsController.findAndDeleteAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+      expect(res.json.mock.calls[0][0]).toMatchObject(album);
     });
     it('Should throw an error with status code 404 if the album is not found', async () => {
       mockingoose(Album)
@@ -147,7 +145,7 @@ describe('Albums Controller', () => {
       req.user = { artist: album.artists[0]._id };
       await albumsController.updateAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+      expect(res.json.mock.calls[0][0]).toMatchObject(album);
     });
     it('Should throw an error with status code 404 if the album was not found', async () => {
       mockingoose(Album)
@@ -195,7 +193,7 @@ describe('Albums Controller', () => {
       mockingoose(Genre).toReturn(album.genres, 'find');
       await albumsController.createAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+      expect(res.json.mock.calls[0][0]).toMatchObject(album);
     });
   });
   describe('setImage', () => {
@@ -210,7 +208,7 @@ describe('Albums Controller', () => {
       };
       fs.unlink = jest.fn();
       await albumsController.setImage(req, res, next);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+      expect(res.json.mock.calls[0][0]).toMatchObject(album);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with status code 403 if the user is not the album's main artist", async () => {
@@ -265,7 +263,7 @@ describe('Albums Controller', () => {
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('album');
+      expect(res.json.mock.calls[0][0]).toMatchObject(album);
     });
     it('Should throw an error with status code 404 if the album was not found', async () => {
       mockingoose(Album)

@@ -14,18 +14,14 @@ exports.findAlbum = async id => {
   let album = await Album.findById(id)
     .populate('artists', '_id name images')
     .populate('genres')
-    .populate({
-      path: 'tracks',
-      options: { limit: 20 },
-      select: '-audioUrl'
-    })
+    .populate('tracks')
     .select('-album_group');
   if (album) {
     album.tracks = {
       limit: 20,
       offset: 0,
       total: album.tracks.length,
-      items: album.tracks
+      items: album.tracks.slice(0, 20)
     };
   }
   return album;
@@ -45,11 +41,7 @@ exports.findAlbumUtil = async id => {
   let album = await Album.findById(id)
     .populate('artists', '_id name images')
     .populate('genres')
-    .populate({
-      path: 'tracks',
-      options: { limit: 20 },
-      select: '-audioUrl'
-    })
+    .populate('tracks')
     .select('-album_group');
   return album;
 };
@@ -67,11 +59,7 @@ exports.findAlbums = async ids => {
   const result = await Album.find({ _id: ids })
     .populate('artists', '_id name images')
     .populate('genres')
-    .populate({
-      path: 'tracks',
-      options: { limit: 50 },
-      select: '-audioUrl'
-    })
+    .populate('tracks')
     .select('-album_group');
 
   const albums = [];
@@ -82,7 +70,7 @@ exports.findAlbums = async ids => {
         limit: 20,
         offset: 0,
         total: val.tracks.length,
-        items: val.tracks
+        items: val.tracks.slice(0, 20)
       };
       albums[i] = val;
     } else {
@@ -104,18 +92,14 @@ exports.deleteAlbum = async id => {
   let album = await Album.findByIdAndDelete(id)
     .populate('artists', '_id name images')
     .populate('genres')
-    .populate({
-      path: 'tracks',
-      options: { limit: 20 },
-      select: '-audioUrl'
-    })
+    .populate('tracks')
     .select('-album_group');
   if (album) {
     album.tracks = {
       limit: 20,
       offset: 0,
       total: album.tracks.length,
-      items: album.tracks
+      items: album.tracks.slice(0, 20)
     };
   }
   return album;
@@ -137,13 +121,12 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
   const result = await Album.findById(id)
     .populate({
       path: 'tracks',
-      options: { limit: limit, skip: offset },
-      select: '-audioUrl -album',
+      select: '-album',
       populate: { path: 'artists' }
     })
     .select('tracks');
   if (!result || result.tracks.length == 0) return null;
-  return result.tracks;
+  return [result.tracks.slice(offset, offset + limit), result.tracks.length];
 };
 
 /**
@@ -160,18 +143,14 @@ exports.update = async (id, newAlbum) => {
   let album = await Album.findByIdAndUpdate(id, newAlbum, { new: true })
     .populate('artists', '_id name images')
     .populate('genres')
-    .populate({
-      path: 'tracks',
-      options: { limit: 50 },
-      select: '-audioUrl'
-    })
+    .populate('tracks')
     .select('-album_group');
 
   album.tracks = {
-    limit: 20,
+    limit: 50,
     offset: 0,
     total: album.tracks.length,
-    items: album.tracks
+    items: album.tracks.slice(0, 50)
   };
   return album;
 };
@@ -193,7 +172,7 @@ exports.setImage = async (album, path) => {
     limit: 20,
     offset: 0,
     total: album.tracks.length,
-    items: album.tracks
+    items: album.tracks.slice(0, 20)
   };
 
   return album;
@@ -233,7 +212,7 @@ exports.addTrack = async (album, track) => {
     .populate('genres')
     .populate({
       path: 'tracks',
-      select: '-audioUrl -album'
+      select: '-album'
     })
     .execPopulate();
 };

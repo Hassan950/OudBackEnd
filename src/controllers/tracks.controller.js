@@ -50,24 +50,18 @@ exports.setTrack = async (req, res, next) => {
     );
   }
 
-  if (track.audioUrl !== 'default.mp3') {
-    await fs.unlink(track.audioUrl);
-  }
+  await trackService.checkFile(req.params.id);
 
   const duration = getMP3Duration(await fs.readFile(req.file.path));
   track = await trackService.setTrack(track, req.file.path, duration);
-  res.status(200).json({
-    track: track
-  });
+  res.status(200).json(track);
 };
 
 exports.getTrack = async (req, res, next) => {
   const track = await trackService.findTrack(req.params.id);
   if (!track)
     return next(new AppError('The requested resource is not found', 404));
-  res.status(200).json({
-    track: track
-  });
+  res.status(200).json(track);
 };
 
 exports.getTracks = async (req, res, next) => {
@@ -90,9 +84,7 @@ exports.deleteTrack = async (req, res, next) => {
     );
 
   await trackService.deleteTrack(req.params.id);
-  res.status(200).json({
-    track: track
-  });
+  res.status(200).json(track);
 };
 
 exports.updateTrack = async (req, res, next) => {
@@ -115,7 +107,5 @@ exports.updateTrack = async (req, res, next) => {
     );
 
   track = await trackService.update(req.params.id, req.body);
-  res.status(200).json({
-    track: track
-  });
+  res.status(200).json(track);
 };
