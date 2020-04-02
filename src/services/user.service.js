@@ -167,7 +167,7 @@ const deleteUserById = async (userId) => {
  * @returns queues
  */
 const getUserQueues = async (userId) => {
-  const queues = await User.findById(userId).select('+queues');
+  const queues = await User.findById(userId).select('queues');
   return queues;
 };
 

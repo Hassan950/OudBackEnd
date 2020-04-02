@@ -9,8 +9,8 @@ exports.getQueue = async (req, res, next) => {
 
   const queueIndex = req.query.queueIndex || 0;
 
-  if (queueIndex > queues.length - 1) {
-    return next(AppError('No Queue with the given index', 400));
+  if (!queues || queueIndex > queues.length - 1) {
+    return next(new AppError('No Queue with the given index', 400));
   }
 
   const id = queues[queueIndex];

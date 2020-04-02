@@ -8,7 +8,10 @@ const createFakeQueue = () => {
       type: 'album',
       id: mongoose.Types.ObjectId()
     },
+    _id: mongoose.Types.ObjectId()
   });
+
+  return queue;
 };
 
 const queues = [
