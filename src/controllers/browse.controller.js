@@ -11,14 +11,11 @@ const AppError = require('../utils/AppError');
  */
 exports.getCategories = async(req, res, next) => {
 	const categories = await browseService.findCategories(req.query);
-	res.status(200).json({
-		categories: {
-			items:	categories.categories,
-			offset: req.query.offset,
-			limit: req.query.limit,
-			total: categories.total
-		}
-		
+res.status(200).json({
+		items:	categories.categories,
+		offset: req.query.offset,
+		limit: req.query.limit,
+		total: categories.total	
 	});
 };
 
@@ -34,9 +31,7 @@ exports.getCategories = async(req, res, next) => {
 exports.getCategory = async(req, res, next) => {
 	const category = await browseService.findCategory(req.params);
 	if (!category) return next(new AppError('The category with the given ID was not found.', 404));
-	res.status(200).json({
-		category: category
-	});
+	res.status(200).json(category);
 };
 
 /**
@@ -52,12 +47,10 @@ exports.categoryPlaylists = async(req, res, next) => {
 	const categoryPlaylists = await browseService.getPlaylists(req.params, req.query);
 	if(!categoryPlaylists.playlists)return next(new AppError('The category with the given ID was not found.', 404));
 	res.status(200).json({
-		playlists: {
-			items:	categoryPlaylists.playlists,
-			offset: req.query.offset,
-			limit: req.query.limit,
-			total: categoryPlaylists.total
-		}
+		items:	categoryPlaylists.playlists,
+		offset: req.query.offset,
+		limit: req.query.limit,
+		total: categoryPlaylists.total
 	});
 };
 
@@ -74,11 +67,9 @@ exports.categoryPlaylists = async(req, res, next) => {
 exports.newReleases = async(req, res, next) => {
 	const albums = await browseService.getNewReleases(req.query);
 	res.status(200).json({
-		albums:	{
-			items:	albums.albums,
-			offset: req.query.offset,
-			limit: req.query.limit,
-			total: albums.total
-		}
+		items:	albums.albums,
+		offset: req.query.offset,
+		limit: req.query.limit,
+		total: albums.total
 	});
 };
