@@ -1,10 +1,9 @@
 const Joi = require('@hapi/joi');
-Joi.objectId = require("joi-objectid")(Joi);
+Joi.objectId = require('joi-objectid')(Joi);
 
 exports.getCategories = {
   query: Joi.object().keys({
-    offset: Joi.number()
-      .default(0),
+    offset: Joi.number().default(0),
     limit: Joi.number()
       .min(1)
       .max(50)
@@ -22,7 +21,7 @@ exports.categoryPlaylist = {
   params: Joi.object().keys({
     id: Joi.objectId()
   }),
-  query:Joi.object().keys({
+  query: Joi.object().keys({
     offset: Joi.number()
       .min(0)
       .default(0),
@@ -35,8 +34,7 @@ exports.categoryPlaylist = {
 
 exports.newRelease = {
   query: Joi.object().keys({
-    offset: Joi.number()
-      .default(0),
+    offset: Joi.number().default(0),
     limit: Joi.number()
       .min(1)
       .max(50)
