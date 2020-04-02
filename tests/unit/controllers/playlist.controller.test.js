@@ -88,7 +88,7 @@ describe('playlist controllers', () => {
       Playlist.select = jest.fn().mockReturnThis();
       mockingoose(Playlist).toReturn(playlist, 'findOne');
       await playlistController.getPlaylist(req, res, next);
-      const foundPlaylist = res.json.mock.calls[0][0].playlist;
+      const foundPlaylist = res.json.mock.calls[0][0];
       expect(foundPlaylist).toBe(playlist);
     });
   });
@@ -128,7 +128,7 @@ describe('playlist controllers', () => {
       }
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.changePlaylist(req, res, next);
-      const foundPlaylist = res.json.mock.calls[0][0].playlist;
+      const foundPlaylist = res.json.mock.calls[0][0];
       expect(foundPlaylist).toBe(playlist);
     });
   });
@@ -182,7 +182,7 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOne');
       mockingoose(Track).toReturn(tracks.slice(0,1), 'find');
       await playlistController.getTracks(req, res, next);
-      const foundTracks = res.json.mock.calls[0][0].tracks.items;
+      const foundTracks = res.json.mock.calls[0][0].items;
       expect(JSON.parse(JSON.stringify(foundTracks))).toStrictEqual(JSON.parse(JSON.stringify(tracks.slice(0,1))));
     });
   });
@@ -208,7 +208,7 @@ describe('playlist controllers', () => {
       mockingoose(User).toReturn(user, 'findOne');
       mockingoose(Playlist).toReturn(playlists.slice(0,1), 'find');
       await playlistController.getUserPlaylists(req, res, next);
-      const foundPlaylists = res.json.mock.calls[0][0].playlists.items;
+      const foundPlaylists = res.json.mock.calls[0][0].items;
       expect(JSON.parse(JSON.stringify(foundPlaylists))).toStrictEqual(JSON.parse(JSON.stringify(playlists.slice(0,1))));
     });
   });
