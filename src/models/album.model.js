@@ -27,7 +27,7 @@ const albumSchema = new mongoose.Schema({
       message: 'An album should have at least one genre'
     }
   },
-  image: { type: String, match: /.(png|jpg|jpeg)$/ },
+  image: { type: String, match: /\.(png|jpg|jpeg)$/ },
   name: {
     type: String,
     minlength: 2,

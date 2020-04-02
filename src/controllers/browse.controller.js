@@ -1,7 +1,7 @@
-const {	browseService	} = require('../services');
+const { browseService } = require('../services');
 const AppError = require('../utils/AppError');
 
-/** 
+/**
  * @version 1.0.0
  * @throws AppError 400 status
  * @author Ahmed Magdy
@@ -22,7 +22,7 @@ res.status(200).json({
 /**
  * @version 1.0.0
  * @throws AppError 400 status
- * @author Ahmed Magdy 
+ * @author Ahmed Magdy
  * @description returns Category of a specific ID with 200 status code
  *  if valid else return error with 400 status code
  * @summary Get a category
@@ -53,7 +53,6 @@ exports.categoryPlaylists = async(req, res, next) => {
 		total: categoryPlaylists.total
 	});
 };
-
 
 /**
  * @version 1.0.0

@@ -22,16 +22,16 @@ describe('Playlist model', () => {
   });
   describe('playlist model - description', () => {
     it('should throw error if description less than 25', () => {
-      playlist.description='123';
+      playlist.description = '123';
       const error = playlist.validateSync();
-        expect(error.errors['description']).toBeDefined();
-      });
+      expect(error.errors['description']).toBeDefined();
+    });
     it('should thorw error if name is more than 20 chars', () => {
       playlist.description = new Array(21).fill('1');
       const error = playlist.validateSync();
       expect(error.errors['description']).toBeDefined();
     });
-  }); 
+  });
   describe('Playlist model - owner', () => {
     it('should throw error if no owner passed', () => {
       const args = [null, undefined];

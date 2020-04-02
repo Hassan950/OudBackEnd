@@ -34,5 +34,5 @@ describe('Category model', () => {
         expect(error.errors['icon']).toBeDefined();
       });
     });
-  });  
+  });
 });

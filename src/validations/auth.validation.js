@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const moment = require('moment');
 const validator = require('validator');
 const { ageCheck, countryCheck } = require('./custom.validation');
