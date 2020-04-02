@@ -161,4 +161,34 @@ describe('User model', () => {
       expect(error.errors['birthDate']).toBeDefined();
     });
   });
+
+  describe('user model - images', () => {
+    it('throw an error if an entry does not match the following pattern: uploads\\users\\displayName-userId-timestamp.(jpg|jpeg|png)', () => {
+      user.images = ['notValidName'];
+      const error = user.validateSync();
+      expect(error.errors['images.0']).toBeDefined();
+    })
+    it('if no images were set array will have by default have entries for profile and cover and more default options', () => {
+      user.images = [];
+      user.validateSync();
+      expect(user.images.length).toBeGreaterThan(0);
+      user.images.forEach(path => expect(path).toMatch(/^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg)$/));
+    })
+    it('if user uploaded images less than the default options array will be completed automatically', () => {
+      user.images = ['uploads\\users\\fakeName-5e6ba8747d3eda317003c976-1584622066176.jpeg'];
+      user.validateSync();
+      expect(user.images.length).toBeGreaterThan(1);
+      user.images.slice(1).forEach(path => expect(path).toMatch(/^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg)$/));
+    })
+    it('should accept paths that match the following pattern: uploads\\users\\displayName-userId-timestamp.(jpg|jpeg|png)', () => {
+      user.images = [
+        'uploads\\users\\fakeName-5e6ba8747d3eda317003c976-1584622066176.jpeg', 
+        'uploads\\users\\fakeName-5e6ba8747d3eda317003c976-1584622066180.jpeg',
+        'uploads\\users\\fakeName-5e6ba8747d3eda317003c976-1584622066189.jpeg'
+      ];
+      const error = user.validateSync();
+      expect(user.images.length).toBe(3);
+      expect(error).toBeUndefined();
+    }) 
+  })
 });
