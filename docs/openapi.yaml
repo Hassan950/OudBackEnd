@@ -204,9 +204,14 @@ paths:
         '200':
           description: the response body contains an object whose key is `"tracks"` and whose value is an array of up to 10 track objects in JSON format.
           content:
-            'application/json':
+            application/json:
               schema:
-                $ref: '#/components/schemas/Track'
+                type: object
+                properties:
+                  tracks:  
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/InvalidId'
         '404':
@@ -233,9 +238,14 @@ paths:
         '200':
           description: the response body contains an object whose key is `"artists"` and whose value is an array of up to 20 artist objects in JSON format.
           content:
-            'application/json':
+            application/json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                type: object
+                properties:
+                  artists:  
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
         '404':
@@ -260,9 +270,14 @@ paths:
         '200':
           description: the response body contains an object whose key is `"artists"` and whose value is an array of artist objects in JSON format. Objects are returned in the order requested. If an object is not found, a `null` value is returned in the appropriate position. Duplicate ids in the query will result in duplicate objects in the response.
           content:
-            'application/json':
+            application/json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                type: object
+                properties:
+                  artists:  
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
 
@@ -746,7 +761,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  '/me/artist/albums/{id}':
+  '/me/artists/albums/{id}':
     delete:
       tags:
       - Albums
@@ -860,9 +875,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Album'
+                type: object
+                properties:
+                  albums:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Album'
         '400':
           $ref: '#/components/responses/InvalidId'
   '/albums/{id}/tracks':
@@ -1053,7 +1071,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -1084,12 +1102,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Track'
+                type: object
+                properties:
+                  tracks:  
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/InvalidId'
-  '/me/artist/albums':
+  '/me/artists/albums':
     post:
       tags:
       - Albums
@@ -1150,7 +1171,7 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
-  '/me/artist/albums/{id}/image':
+  '/me/artists/albums/{id}/image':
     post:
       tags:
       - Albums
@@ -1326,7 +1347,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'  
-  '/me/artist/albums/{id}/release':
+  '/me/artists/albums/{id}/release':
     patch:
       security: 
         - bearerAuth: []
@@ -1367,7 +1388,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/me/artist/images':
+  '/me/artists/images':
     post:
       tags: 
       - Artists
@@ -1465,7 +1486,7 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
           
-  '/me/artist/albums/{id}/tracks':
+  '/me/artists/albums/{id}/tracks':
     post:
       tags: 
       - Albums
@@ -3545,9 +3566,6 @@ components:
         type: 
           type: string
           description: The object type i.e “track”
-        audioUrl:
-          type: string
-          description: Audio Url
         duartion: 
           type: integer
           description: The duartion of the song in ms
