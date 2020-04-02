@@ -12,9 +12,7 @@ const fs = require('fs').promises;
  * @returns {Array} An array containing the tracks with nulls against unmatched ID's
  */
 exports.findTracks = async ids => {
-  const result = await Track.find({ _id: ids })
-    .populate('artists album')
-    .select('-audioUrl');
+  const result = await Track.find({ _id: ids }).populate('artists album');
   if (result.length == ids.length) return result;
   const tracks = [];
   for (let i = 0, n = ids.length; i < n; i++) {
@@ -67,9 +65,7 @@ exports.deleteTracks = async ids => {
  * @returns null the track was not found
  */
 exports.findTrack = async id => {
-  const track = await Track.findById(id)
-    .populate('artists album')
-    .select('-audioUrl');
+  const track = await Track.findById(id).populate('artists album');
   return track;
 };
 
@@ -136,9 +132,22 @@ exports.setTrack = async (track, url, duration) => {
   return _.omit(track, 'audioUrl');
 };
 
+/**
+ * A method that checks if a track has an old file that is no longer needed
+ *
+ * @function
+ * @author Mohamed Abo-Bakr@summary Deletes old file of a track
+ * @param {ObjectId} id id of the track
+ */
 exports.checkFile = async id => {
   const track = await Track.findById(id).select('audioUrl');
   if (track.audioUrl !== 'default.mp3') {
     await fs.unlink(track.audioUrl);
   }
+};
+
+exports.findArtistTracks = async artistId => {
+  return await Track.find({ artists: artistId }).populate(
+    'artist album'
+  );
 };
