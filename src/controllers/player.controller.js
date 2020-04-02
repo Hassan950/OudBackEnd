@@ -1,4 +1,4 @@
-const { playerService, deviceService, trackService, playHistoryService } = require('../services');
+const { playerService, deviceService, userService, trackService, playHistoryService, queueService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
 /**
@@ -120,6 +120,9 @@ exports.resumePlayer = async (req, res, next) => {
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
+
+  // Get queues
+  let queues = await userService.getUserQueues(req.user._id);
   // Change player state
   player.isPlaying = true;
   // handle deviceId
@@ -131,20 +134,83 @@ exports.resumePlayer = async (req, res, next) => {
     player.device = deviceId;
   }
   // handle Queue
+  if (contextUri) {
+    const queue = await queueService.createQueueWithContext(contextUri);
+
+    if (!queue) {
+      return next(new AppError('Context is not found', 404));
+    }
+
+    if (queues && queues.length) {
+      if (queues.length > 1) {
+        const queueId = queues[1];
+        queues.pop();
+        queueService.deleteQueueById(queueId);
+      }
+
+      queues.unshift(queue._id);
+    } else {
+      queues = [queue._id];
+    }
+
+    player.item = queue.tracks[0];
+    player.positionMs = 0;
+    // get context from context uri
+    const uri = contextUri.split(':');
+    const context = {
+      type: uri[1],
+      id: uri[2]
+    }
+  }
   // add current track
   if (uris && uris.length) {
-    const trackId = uris[0].split(':')[2];
-    // check if track is valid (add it when track is done)
-    player.item = trackId;
-    player.positionMs = 0;
-    playHistoryService.addToHistory(id, trackId, contextUri);
+    if (!queues) {
+      queues = await userService.getUserQueues(req.user._id);
+    }
+
+    // fill tracks array
+    let tracks = [];
+    uris.forEach(async uri => {
+      const trackId = uri.split(':')[2];
+      const track = await trackService.findTrack(trackId);
+      if (track)
+        tracks.push(trackId);
+    });
+    let queue;
+    if (queues && queues.length) {
+      queue = await queueService.appendToQueue(queues[0], tracks);
+    } else {
+      queue = await queueService.createQueueFromTracks(tracks);
+      queues = [queue._id];
+      player.item = queue.tracks[0];
+      player.positionMs = 0;
+    }
   }
-  // add tracks to queue
+
+  if (offset && ((uris && uris.length) || (contextUri))) {
+    if (offset.position) {
+      if (queues[0].tracks.length > offset.position) {
+        player.item = queue.tracks[0];
+      } else {
+        player.item = queue.tracks[offset.position];
+      }
+    } else if (offset.uri) {
+      const trackId = offset.uri.split(':')[2];
+      const pos = await queueService.getTrackPosition(queues[0], trackId);
+      if (pos === -1) {
+        player.item = queue.tracks[0];
+      } else {
+        player.item = queue.tracks[pos];
+      }
+    }
+  }
   // change position
   if (positionMs) player.positionMs = positionMs;
   // if position > track duration go to next
+  // add queues to user
+  user.queues = queues;
   // save
-  await player.save();
+  await Promise.all([user.save(), player.save()]);
   // return 204
   res.status(204).end();
 };
