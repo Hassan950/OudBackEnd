@@ -154,6 +154,13 @@ const userSchema = mongoose.Schema(
     passwordResetExpires: {
       type: Date,
       select: false
+    },
+    queues: {
+      type: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Queue'
+      }],
+      select: false
     }
   },
   {

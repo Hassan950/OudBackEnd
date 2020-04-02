@@ -156,7 +156,20 @@ const getUser = async (userData) => {
 const deleteUserById = async (userId) => {
   const deletedUser = await User.findByIdAndDelete(userId, { select: true });
   return deletedUser;
-}
+};
+
+
+/**
+ * Get user Queues
+ * 
+ * @author Abdelrahman Tarek
+ * @param {String} userId 
+ * @returns queues
+ */
+const getUserQueues = async (userId) => {
+  const queues = await User.findById(userId).select('+queues');
+  return queues;
+};
 
 module.exports = {
   findUserAndCheckPassword,
@@ -166,5 +179,6 @@ module.exports = {
   getUser,
   deleteUserById,
   editProfile,
-  updateImages
+  updateImages,
+  getUserQueues
 };

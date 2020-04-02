@@ -5,3 +5,4 @@ exports.emailService = require('./mail.service');
 exports.deviceService = require('./device.service');
 exports.playerService = require('./player.service');
 exports.playHistoryService = require('./playHistory.service');
+exports.queueService = require('./queue.service');

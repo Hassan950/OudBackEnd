@@ -1,14 +1,10 @@
 const mongoose = require('mongoose');
 
 const queueSchema = mongoose.Schema({
-  userId: {
+  tracks: [{
     type: mongoose.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'Player must belong to a user'],
-    select: false,
-    unique: true
-  },
-  tracks: [mongoose.Types.ObjectId],
+    ref: 'Track'
+  }],
   context: {
     type: {
       type: String,
@@ -28,7 +24,7 @@ const queueSchema = mongoose.Schema({
   }
 });
 
-const Queue = mongoose.model('queue', queueSchema);
+const Queue = mongoose.model('Queue', queueSchema);
 
 module.exports = {
   queueSchema,
