@@ -124,6 +124,8 @@ exports.deleteAlbum = async id => {
  * @author Mohamed Abo-Bakr
  * @summary Get list of tracks of an album
  * @param {String} id - ID of the album containing the tracks
+ * @param {Number} limit The maximum number of tracks to return
+ * @param {Nuumber} offset The index of the first track to return starting from 0
  * @returns {Array} An array containing the tracks of the album
  * @returns null if the album was not found or has no tracks
  */
