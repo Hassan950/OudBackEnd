@@ -30,4 +30,12 @@ exports.seek = {
       .required()
       .min(0),
   })
-}
+};
+
+exports.recenltyPlayed = {
+  query: Joi.object().keys({
+    limit: Joi.number().max(50).min(1),
+    after: Joi.number().min(0),
+    before: Joi.number().min(0)
+  })
+};
