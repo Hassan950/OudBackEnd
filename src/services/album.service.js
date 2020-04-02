@@ -249,6 +249,7 @@ exports.findArtistAlbums = async (artistId, limit, offset) => {
     .populate('artists', '_id name images')
     .populate('genres')
     .select('-tracks');
+  if (!result) return null;
   const albums = result.filter(
     album => String(album.artists[0]._id) === artistId
   );

@@ -53,4 +53,55 @@ describe('Artists Controller', () => {
       expect(res.json.mock.calls[0][0].artists[2]).toEqual(undefined);
     });
   });
+  describe('getAlbums', () => {
+    it('Should return the albums in a paging object with status code 200', async () => {
+      mockingoose(Album).toReturn(
+        [
+          {
+            artists: [{ _id: artist._id }]
+          }
+        ],
+        'find'
+      );
+      req.params = { id: String(artist._id) };
+      req.query = { offset: 0, limit: 20 };
+      await artistController.getAlbums(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].total).toBe(1);
+    });
+    it('Should throw an error with status code 404 if no tracks are found', async () => {
+      mockingoose(Album).toReturn(null, 'find');
+      req.params = { id: String(artist._id) };
+      req.query = { offset: 0, limit: 20 };
+      await artistController.getAlbums(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+  });
+  describe('getPopularSongs', () => {
+    it('Should return array of popular songs of the artist with status code 200', async () => {
+      mockingoose(Artist).toReturn(
+        {
+          popularSongs: artist.popularSongs
+        },
+        'findOne'
+      );
+      req.params = { id: artist._id };
+      await artistController.getTracks(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0]).toHaveProperty('tracks');
+    });
+    it('Should throw an error with status code 404 if the artist was not found', async () => {
+      mockingoose(Artist).toReturn(null, 'findOne');
+      req.params = { id: artist._id };
+      await artistController.getTracks(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('Should throw an error with status code 404 if the artist has no popular songs', async () => {
+      artist.popularSongs = [];
+      mockingoose(Artist).toReturn(artist, 'findOne');
+      req.params = { id: artist._id };
+      await artistController.getTracks(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+  });
 });
