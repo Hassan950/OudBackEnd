@@ -9,7 +9,6 @@ const {
 const AppError = require('../../../src/utils/AppError');
 const httpStatus = require('http-status');
 const requestMocks = require('../../utils/request.mock');
-const mongoose = require('mongoose');
 const mockingoose = require('mockingoose').default;
 
 describe('Following controller', () => {
@@ -62,14 +61,14 @@ describe('Following controller', () => {
         userId: '5e6ba8747d3eda317003c976',
         playlistId: '5e6ba6917fb1cf2ad80b4fb2'
       });
-      playlist = {
+      playlist = new Playlist({
         _id: '5e6ba6917fb1cf2ad80b4fb2',
         public: true
-      };
+      });
     });
     it('Should return list of boolean that indicates whether the user follows this playlist or not with status code 200', async () => {
       mockingoose(PlaylistFollowings).toReturn([following], 'find');
-      mockingoose(Playlist).toReturn(playlist, 'find');
+      mockingoose(Playlist).toReturn(playlist, 'findOne');
       // valid ID
       req.query.ids = ['5e6ba8747d3eda317003c976'];
       req.params.playlistId = '5e6ba6917fb1cf2ad80b4fb2';
@@ -80,7 +79,7 @@ describe('Following controller', () => {
 
     it('Should return an array contains falses when no following found', async () => {
       mockingoose(PlaylistFollowings).toReturn([], 'find');
-      mockingoose(Playlist).toReturn(playlist, 'find');
+      mockingoose(Playlist).toReturn(playlist, 'findOne');
       // two valid ID's
       req.query.ids = ['5e6ba6917fb1cf2ad80b4fb2', '5e6ba8747d3eda317003c976'];
       await followController.checkFollowingsPlaylist(req, res, next);
@@ -91,7 +90,7 @@ describe('Following controller', () => {
     it('Should return false when checking a private playlist', async () => {
       playlist.public = false;
       mockingoose(PlaylistFollowings).toReturn([following], 'find');
-      mockingoose(Playlist).toReturn(playlist, 'find');
+      mockingoose(Playlist).toReturn(playlist, 'findOne');
       // two valid ID's
       req.query.ids = ['5e6ba8747d3eda317003c976'];
       await followController.checkFollowingsPlaylist(req, res, next);
@@ -103,7 +102,7 @@ describe('Following controller', () => {
       playlist.public = false;
       req.user = { _id: '5e6ba8747d3eda317003c976' };
       mockingoose(PlaylistFollowings).toReturn([following], 'find');
-      mockingoose(Playlist).toReturn(playlist, 'find');
+      mockingoose(Playlist).toReturn(playlist, 'findOne');
       // two valid ID's
       req.query.ids = [req.user._id];
       await followController.checkFollowingsPlaylist(req, res, next);
@@ -113,7 +112,7 @@ describe('Following controller', () => {
 
     it('Should return array of falses when no followings found', async () => {
       mockingoose(PlaylistFollowings).toReturn([], 'find');
-      mockingoose(Playlist).toReturn(playlist, 'find');
+      mockingoose(Playlist).toReturn(playlist, 'findOne');
       // two valid ID's
       req.query.ids = ['5e6ba8747d3eda317003c976'];
       await followController.checkFollowingsPlaylist(req, res, next);

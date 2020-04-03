@@ -46,7 +46,6 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
     playlistId: playlistId
   }).exec();
   const [playlist, result] = await Promise.all([playlistPromise, resultPromise])
-  console.log(playlist, '\n', result)
   const checks = ids.map(id => {
     val = result.find(follow => String(follow.userId) === id);
     if (val === undefined) {
@@ -55,7 +54,7 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
     if (user && String(user._id) === id) {
       return true;
     }
-    return val.playlistId.public;
+    return playlist.public;
   });
   return checks;
 };

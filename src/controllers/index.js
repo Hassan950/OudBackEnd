@@ -4,4 +4,4 @@ exports.authController = require('./auth.controller');
 exports.userController = require('./user.controller');
 exports.passportController = require('./passport.controller');
 exports.deviceController = require('./device.controller');
-exports.followingController = require('./following.controller');
+exports.followController = require('./follow.controller');

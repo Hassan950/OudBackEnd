@@ -3,4 +3,4 @@ exports.userService = require('./user.service');
 exports.trackService = require('./track.service');
 exports.emailService = require('./mail.service');
 exports.deviceService = require('./device.service');
-exports.followingService = require('./following.service')
+exports.followService = require('./follow.service')

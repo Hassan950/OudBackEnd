@@ -9,7 +9,7 @@ const {
   followingsSchema,
   playlistFollowingsSchema,
   PlaylistFollowings
-} = require('./following.model');
+} = require('./follow.model');
 const { Playlist, playlistSchema } = require('./playlist.model');
 
 module.exports = {
