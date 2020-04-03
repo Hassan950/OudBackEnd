@@ -12,7 +12,7 @@ router.use('/', homeRoute);
 router.use('/users', userRoute);
 router.use('/me', userMeRoute)
 router.use('/playlists', playlistRoute);
-router.use('/tracks', trackRoute)
+router.use('/tracks', trackRoute);
 router.use('/auth', authRoute);
 
 module.exports = router;
