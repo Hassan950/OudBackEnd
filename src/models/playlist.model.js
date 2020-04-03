@@ -38,6 +38,7 @@ const playlistSchema = new mongoose.Schema({
       default: 'uploads\\default.jpg'
   }
   });
+
 playlistSchema.virtual('type').get(function(){
   return 'playlist';
 });
