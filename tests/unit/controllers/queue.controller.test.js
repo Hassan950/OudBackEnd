@@ -33,6 +33,7 @@ describe('Queue controller', () => {
     player.audioUrl = undefined;
     user = userMocks.createFakeUser();
     queue = queueMocks.createFakeQueue();
+    queue.save = jest.fn().mockResolvedValue(queue);
     req = requestMocks.mockRequest();
     req.user = user;
     res = requestMocks.mockResponse();
@@ -241,6 +242,152 @@ describe('Queue controller', () => {
 
     it('should return 204 if valid', async () => {
       await queueController.addToQueue(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(204);
+    });
+  });
+
+  describe('Edit position', () => {
+    beforeEach(() => {
+      player.save = jest.fn().mockResolvedValue(player);
+      device = deviceMocks.createFakeDevice();
+      mockingoose(Device).toReturn(device, 'findOne');
+      req.query.queueIndex = 0;
+      req.query.trackIndex = 0;
+      req.query.trackId = null;
+      req.query.newIndex = 1;
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+      ));
+    });
+
+    it('it should return 500 status code if not authenticated', async () => {
+      req.user = null;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(500);
+    });
+
+    it('should return 404 status if player is not found', async () => {
+      mockingoose(Player).toReturn(null, 'findOne');
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is null', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(null) }
+      ));
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is empty', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([]) }
+      ));
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 400 if queueIndex=1 and queues.length<2', async () => {
+      req.query.queueIndex = 1;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+
+    it('should revese queues if queues.length>1 and queueIndex=1', async () => {
+      req.query.queueIndex = 1;
+      const queues = randomArray(2, 10);
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(queues) }
+      ));
+      await queueController.editPosition(req, res, next);
+      expect(queues).toEqual(queues.reverse());
+    });
+
+    it('should return 400 if trackIndex and trackId is passed', async () => {
+      req.query.trackIndex = null;
+      req.query.trackId = null;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+
+    it('should return 400 if trackIndex and trackId is not passed', async () => {
+      req.query.trackIndex = null;
+      req.query.trackId = null;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+
+    it('should return 400 if trackIndex and trackId is passed', async () => {
+      req.query.trackIndex = 0;
+      req.query.trackId = req.user._id;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+
+    it('should return 404 if queue is null', async () => {
+      mockingoose(Queue).toReturn(null, 'findOne');
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queue.tracks is null', async () => {
+      queue.tracks = null;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if trackIndex is passed and queue.tracks.length <= trackIndex', async () => {
+      req.query.trackIndex = queue.tracks.length;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if trackId is passed and no track found with the given id', async () => {
+      req.query.trackIndex = null;
+      req.query.trackId = req.user._id;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 400 if queue.tracks.length <= newIndex', async () => {
+      req.query.newIndex = queue.tracks.length;
+      await queueController.editPosition(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+
+    it('should move the track from the given trackIndex to newIndex', async () => {
+      queue.tracks = [req.user._id, player._id, req.user._id];
+      req.query.trackIndex = 0;
+      req.query.newIndex = 1;
+      await queueController.editPosition(req, res, next);
+      expect(queue.tracks[0]).toBe(player._id);
+      expect(queue.tracks[1]).toBe(req.user._id);
+    });
+
+    it('should move the track from the given index of the trackId to newIndex', async () => {
+      queue.tracks = [req.user._id, player._id, req.user._id];
+      req.query.trackIndex = null;
+      req.query.trackId = queue.tracks[0];
+      req.query.newIndex = 1;
+      await queueController.editPosition(req, res, next);
+      expect(queue.tracks[0]).toBe(player._id);
+      expect(queue.tracks[1]).toBe(req.user._id);
+    });
+
+    it('should save the queue', async () => {
+      queue.tracks = [req.user._id, player._id, req.user._id];
+      req.query.trackIndex = 0;
+      req.query.newIndex = 1;
+      await queueController.editPosition(req, res, next);
+      expect(queue.save.mock.calls.length).toBe(1);
+    });
+
+    it('should return 204 if valid', async () => {
+      queue.tracks = [req.user._id, player._id, req.user._id];
+      req.query.trackIndex = 0;
+      req.query.newIndex = 1;
+      await queueController.editPosition(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(204);
     });
   });

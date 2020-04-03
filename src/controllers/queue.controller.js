@@ -115,7 +115,7 @@ exports.addToQueue = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  if (queueIndex && queueIndex === 1) {
+  if (queueIndex) {
     if (queues.length < 2) {
       return next(new AppError('No queue with queueIndex=1', 400));
     }
@@ -172,7 +172,7 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  if (queueIndex && queueIndex === 1) {
+  if (queueIndex) {
     if (queues.length < 2) {
       return next(new AppError('No queue with queueIndex=1', 400));
     }
@@ -180,7 +180,7 @@ exports.editPosition = async (req, res, next) => {
     queues.reverse();
   }
 
-  if ((!trackIndex && !trackId) || (trackIndex && trackId)) {
+  if ((trackIndex === null && trackId === null) || (trackIndex !== null && trackId !== null)) {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
@@ -190,7 +190,7 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  if (trackIndex) {
+  if (trackIndex !== null) {
     if (queue.tracks.length <= trackIndex) {
       return next(new AppError(`Track with trackIndex=${trackIndex} is not found`, 404));
     }

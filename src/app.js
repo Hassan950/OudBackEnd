@@ -50,7 +50,7 @@ app.use(compression());
 // enable cors
 const corsOptions = {
   exposedHeaders: ['x-auth-token'],
-  origin: 'http:\\localhost:3000',
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT']
 }
