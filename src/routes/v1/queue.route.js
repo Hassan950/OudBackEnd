@@ -15,6 +15,11 @@ router
     auth.authorize('premium', 'artist'),
     validate(queueValidation.editPosition),
     catchAsync(queueController.editPosition)
+  )
+  .delete(
+    auth.authorize('premium', 'artist'),
+    validate(queueValidation.deleteTrack),
+    catchAsync(queueController.deleteTrack)
   );
 
 

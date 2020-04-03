@@ -225,5 +225,65 @@ exports.editPosition = async (req, res, next) => {
 
 
 exports.deleteTrack = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Must Authenticate user', 500));
+  }
 
+  let {
+    queueIndex,
+    trackIndex,
+    trackId
+  } = req.query;
+
+  const id = req.user._id;
+
+  const [player, queues] = await Promise.all([
+    playerService.getPlayer(id, { populate: false }),
+    userService.getUserQueues(req.user._id)
+  ]);
+
+  if (!player) {
+    return next(new AppError('Player is not found', 404));
+  }
+
+  if (!queues || !queues.length) {
+    return next(new AppError('Queue is not found', 404));
+  }
+
+  if (queueIndex) {
+    if (queues.length < 2) {
+      return next(new AppError('No queue with queueIndex=1', 400));
+    }
+
+    queues.reverse();
+  }
+
+  if ((trackIndex === null && trackId === null) || (trackIndex !== null && trackId !== null)) {
+    return next(new AppError('You must only pass trackIndex or trackId', 400));
+  }
+
+  const queue = await queueService.getQueueById(id);
+
+  if (!queue || !queue.tracks) {
+    return next(new AppError('Queue is not found', 404));
+  }
+
+  if (trackIndex !== null) {
+    if (queue.tracks.length <= trackIndex) {
+      return next(new AppError(`Track with trackIndex=${trackIndex} is not found`, 404));
+    }
+  }
+  else {
+    trackIndex = queue.tracks.indexOf(trackId);
+
+    if (trackIndex === -1) {
+      return next(new AppError(`Track with trackId=${trackId} is not found`, 404));
+    }
+  }
+
+  queue.tracks.splice(trackIndex, 1);
+
+  await queue.save();
+
+  res.status(204).end();
 };
