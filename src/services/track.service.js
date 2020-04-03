@@ -51,7 +51,6 @@ exports.deleteTracks = async ids => {
       this.deleteTrack(id);
     })
   );
-  // await Track.deleteMany({ _id: ids });
 };
 
 /**
