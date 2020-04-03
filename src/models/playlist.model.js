@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const playlistSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -31,13 +30,9 @@ const playlistSchema = new mongoose.Schema({
   public:{
     type: Boolean,
     default:false,
-  },
-  image: { 
-      type: String,
-      match: /.(png|jpg|jpeg)$/,
-      default: 'uploads\\default.jpg'
   }
   });
+
 playlistSchema.virtual('type').get(function(){
   return 'playlist';
 });
