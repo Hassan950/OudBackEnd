@@ -19,6 +19,15 @@ exports.repeat = {
   })
 };
 
+exports.shuffle = {
+  query: Joi.object().keys({
+    state: Joi.boolean()
+      .required(),
+    deviceId: Joi.string()
+      .custom(idCheck)
+  })
+};
+
 exports.editPosition = {
   query: Joi.object().keys({
     queueIndex: Joi.number()

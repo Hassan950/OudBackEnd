@@ -114,15 +114,16 @@ exports.resumePlayer = async (req, res, next) => {
 
   const deviceId = req.query.deviceId;
   // TODO
-  // get player
-  const player = await playerService.getPlayer(id, { populate: false });
+  // get player and queues
+  const [player, queues] = await Promise.all([
+    playerService.getPlayer(id, { populate: false }),
+    userService.getUserQueues(req.user._id)
+  ]);
 
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
 
-  // Get queues
-  let queues = await userService.getUserQueues(req.user._id);
   // Change player state
   player.isPlaying = true;
   // handle deviceId
@@ -164,10 +165,6 @@ exports.resumePlayer = async (req, res, next) => {
   }
   // add current track
   if (uris && uris.length) {
-    if (!queues) {
-      queues = await userService.getUserQueues(req.user._id);
-    }
-
     // fill tracks array
     let tracks = [];
     uris.forEach(async uri => {

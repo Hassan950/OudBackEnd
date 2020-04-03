@@ -64,4 +64,11 @@ router
     catchAsync(queueController.repeatQueue)
   )
 
+router
+  .route('/shuffle')
+  .put(
+    validate(queueValidation.shuffle),
+    catchAsync(queueController.shuffleQueue)
+  );
+
 module.exports = router;

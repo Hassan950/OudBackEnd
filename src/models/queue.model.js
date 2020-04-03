@@ -14,6 +14,21 @@ const queueSchema = mongoose.Schema({
     id: {
       type: mongoose.Types.ObjectId
     }
+  },
+  currentIndex: {
+    type: Number,
+    minimum: 0,
+    default: 0,
+    select: false
+  },
+  shuffleList: {
+    type: [Number],
+    select: false
+  },
+  shuffleIndex: {
+    type: Number,
+    minimum: 0,
+    select: false
   }
 }, {
   toJSON: {
