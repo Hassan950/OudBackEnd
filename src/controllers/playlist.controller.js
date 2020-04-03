@@ -42,6 +42,13 @@ exports.getPlaylist = async (req, res, next) => {
   res.status(200).json(playlist);
 }
 
+exports.getImage = async (req, res, next) => {
+  const playlist = await playlistService.getPlaylist(req.params);
+  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  res.status(200).json(playlist.image);
+}
+
+
 /**
  * @version 1.0.0
  * @throws AppError 400 status
@@ -102,7 +109,14 @@ exports.getTracks  = async (req , res , next)=>{
  */
 
 exports.getUserPlaylists = async(req , res , next)=>{
-  const user = await playlistService.checkUser(req.params);
+  let params;
+  if((req.baseUrl).match(/.*users.*/) ){
+    params = req.params; 
+  }
+  else {
+    params = req.user;
+  }
+  const user = await playlistService.checkUser(params);
   if(!user) return next(new AppError('no user with this id', 404));
   const playlists = await playlistService.getUserPlaylists(req.params , req.query);
   res.status(200).json({

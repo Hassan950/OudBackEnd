@@ -11,8 +11,6 @@ router
   .route('/')
   .get(catchAsync(authMiddleware.authenticate) ,validate(PlaylistValidation.getUserPlaylists), catchAsync(playlistController.getUserPlaylists))
   .post(catchAsync(authMiddleware.authenticate) ,playlistController.uploadImage,validate(PlaylistValidation.createUserPlaylist), catchAsync(playlistController.createUserPlaylist));
-
-
 router
   .route('/:id')
   .get(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.getPlaylist), catchAsync(playlistController.getPlaylist))
@@ -25,6 +23,7 @@ router
   .delete(catchAsync(authMiddleware.authenticate), validate(PlaylistValidation.deleteTracks), catchAsync(playlistController.deleteTracks));
 router
   .route('/:id/images')
+  .get(catchAsync(authMiddleware.authenticate),validate(PlaylistValidation.getImage), catchAsync(playlistController.getImageRoute))
   .put(catchAsync(authMiddleware.authenticate), playlistController.uploadImage ,validate(PlaylistValidation.uploadImage), catchAsync(playlistController.uploadImageRoute));
 router
   .route('/:id/tracks/Replace')

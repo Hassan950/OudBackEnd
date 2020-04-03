@@ -9,7 +9,7 @@ const playlistRoute = require('./playlist.route');
 
 const router = express.Router();
 
-router.use('/:id/playlists',playlistRoute );
+router.use('/:id/playlists', playlistRoute);
 
 router
   .route('/signup')

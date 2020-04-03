@@ -3,7 +3,7 @@ const fs  = require('fs');
 
 
 const getPlaylist =  async (params) => {
-  const playlist = await Playlist.findById(params.id).select('-tracks');
+  const playlist = await Playlist.findById(params.id);
   return playlist ;
 }
 
@@ -22,7 +22,7 @@ const changePlaylist = async (params , body, image) =>{
   playlist = await Playlist.findByIdAndUpdate(params.id,{
     image: image
   },
-  { new: true }).select('-tracks');
+  { new: true });
   
   return playlist; 
 }
@@ -39,7 +39,7 @@ const uploadImage = async(params, image)=>{
   playlist = await Playlist.findByIdAndUpdate(params.id,{
     image: image
   },
-  { new: true }).select('-tracks');
+  { new: true });
   return playlist ;
 }
 
@@ -55,16 +55,15 @@ const getTracks = async(params , query)=>{
 }
 
 const getUserPlaylists = async(params , query)=>{
-  const playlists = await Playlist.find({owner: params.id}).select('-owner').skip(query.offset).limit(query.limit).select('-tracks');
+  const playlists = await Playlist.find({owner: params.id}).select('-owner').skip(query.offset).limit(query.limit);
   const total = (await Playlist.find({owner: params.id})).length;
   return {  playlists , total };
 }
 
 const getTracksID =async(uris)=>{
-  const tracks = await Track.find({audioUrl :{$in: uris} }).select("_id");
+  const tracks = await Track.find({audioUrl :{$in: uris} });
   return tracks;
 }
-
 
 const checkUser = async(params)=>
 {

@@ -23,6 +23,13 @@ exports.uploadImage = {
   })
 };
 
+exports.getImage = {
+  params: Joi.object().keys({
+    id: Joi.objectID()
+  })
+};
+
+
 exports.reorderTracks = {
   params: Joi.object().keys({
     id: Joi.objectID()
