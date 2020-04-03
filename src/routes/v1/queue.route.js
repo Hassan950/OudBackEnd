@@ -9,7 +9,8 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(validate(queueValidation), catchAsync(queueController.getQueue));
+  .get(validate(queueValidation.getQueue), catchAsync(queueController.getQueue))
+  .patch(validate(queueValidation.editPosition), catchAsync(queueController.editPosition));
 
 
 module.exports = router;

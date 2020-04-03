@@ -58,11 +58,15 @@ exports.deleteQueueById = async (id) => {
 exports.appendToQueue = async (id, tracks) => {
   const queue = await Queue.findById(id);
 
+  if (!queue) return null;
+
   if (!queue.tracks) queue.tracks = [];
 
   queue.tracks.push(...tracks);
 
   await queue.save();
+
+  return queue;
 };
 
 
@@ -77,7 +81,7 @@ exports.createQueueFromTracks = async (tracks) => {
 exports.getTrackPosition = async (id, trackId) => {
   const queue = await Queue.findById(id);
 
-  if (!queue.tracks) return -1;
+  if (!queue || !queue.tracks) return -1;
 
   const pos = queue.tracks.indexOf(trackId);
 
