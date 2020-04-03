@@ -145,6 +145,15 @@ exports.addToQueue = async (req, res, next) => {
 };
 
 
+/**
+ * @version 1.0.0
+ * @throws AppError 500 status
+ * @throws AppError 404 status
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @description Edit track position
+ * @summary Edit track position
+ */
 exports.editPosition = async (req, res, next) => {
   if (!req.user) {
     return next(new AppError('Must Authenticate user', 500));
@@ -212,4 +221,9 @@ exports.editPosition = async (req, res, next) => {
   await queue.save();
 
   res.status(204).end();
+};
+
+
+exports.deleteTrack = async (req, res, next) => {
+
 };
