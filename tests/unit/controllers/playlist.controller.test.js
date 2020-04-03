@@ -62,7 +62,7 @@ describe('playlist controllers', () => {
       }
     );
     playlists = [playlist, playlist];
-    req = { params: {}, query: {}, body: {}, file: {} };
+    req = { params: {}, query: {}, body: {}, file: {}, baseUrl: "", user: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
   });

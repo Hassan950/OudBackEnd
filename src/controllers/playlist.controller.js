@@ -65,7 +65,7 @@ exports.getImage = async (req, res, next) => {
 
 
 exports.changePlaylist = async(req,res,next) => {
-  if(req.baseUrl == '/api/v1/playlists' || (req.baseUrl).match(/.*me.*/) ){
+  if((req.baseUrl).match(/.*users.*/) || (req.baseUrl).match(/.*me.*/) ){
     return next(new AppError('not found', 404));
   }
   let image;
@@ -129,10 +129,10 @@ exports.getUserPlaylists = async(req , res , next)=>{
   }
   let params;
   if((req.baseUrl).match(/.*users.*/) ){
-    params = req.params; 
+    params = req.params.id; 
   }
   else {
-    params = req.user;
+    params = req.user.id;
   }
   const user = await playlistService.checkUser(params);
   if(!user) return next(new AppError('no user with this id', 404));
@@ -154,6 +154,9 @@ exports.getUserPlaylists = async(req , res , next)=>{
  */
 
 exports.createUserPlaylist = async(req , res , next)=>{
+  if(req.baseUrl == '/api/v1/playlists' || (req.baseUrl).match(/.*users.*/) ){
+    return next(new AppError('not found', 404));
+  }
   let image;
   if(!req.file) image = 'uploads\\default.jpg';
   else  image = req.file.path;

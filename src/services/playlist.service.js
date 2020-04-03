@@ -65,9 +65,9 @@ const getTracksID =async(uris)=>{
   return tracks;
 }
 
-const checkUser = async(params)=>
+const checkUser = async(id)=>
 {
-  const user = await  User.findById(params.id);
+  const user = await  User.findById(id);
   return user;
 }
 
