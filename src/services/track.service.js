@@ -95,9 +95,9 @@ exports.findTrackUtil = async id => {
  * @returns Updated track
  */
 exports.update = async (id, newTrack) => {
-  const track = await Track.findByIdAndUpdate(id, newTrack, { new: true })
-    .populate('artists album')
-    .select('-audioUrl');
+  const track = await Track.findByIdAndUpdate(id, newTrack, {
+    new: true
+  }).populate('artists album');
   return track;
 };
 
@@ -147,7 +147,5 @@ exports.checkFile = async id => {
 };
 
 exports.findArtistTracks = async artistId => {
-  return await Track.find({ artists: artistId }).populate(
-    'artist album'
-  );
+  return await Track.find({ artists: artistId }).populate('artist album');
 };
