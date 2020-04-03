@@ -531,4 +531,98 @@ describe('Queue controller', () => {
       expect(res.status.mock.calls[0][0]).toBe(204);
     });
   });
+
+  describe('Shuffle Queue', () => {
+    beforeEach(() => {
+      player.save = jest.fn().mockResolvedValue(player);
+      device = deviceMocks.createFakeDevice();
+      mockingoose(Device).toReturn(device, 'findOne');
+      req.query.state = true;
+      req.query.deviceId = device._id;
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+      ));
+    });
+
+    it('it should return 500 status code if not authenticated', async () => {
+      req.user = null;
+      await queueController.shuffleQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(500);
+    });
+
+    it('should return 404 status if player is not found', async () => {
+      mockingoose(Player).toReturn(null, 'findOne');
+      await queueController.shuffleQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is null', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(null) }
+      ));
+      await queueController.shuffleQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is empty', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([]) }
+      ));
+      await queueController.shuffleQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 status if device is not found', async () => {
+      mockingoose(Device).toReturn(null, 'findOne');
+      await queueController.shuffleQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queue is null', async () => {
+      mockingoose(Queue).toReturn(null, 'findOne');
+      await queueController.shuffleQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queue.tracks is null', async () => {
+      queue.tracks = null;
+      await queueController.shuffleQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should change shuffleState to given state', async () => {
+      player.shuffleState = true;
+      req.query.state = false;
+      await queueController.shuffleQueue(req, res, next);
+      expect(player.shuffleState).toBe(req.query.state);
+    });
+
+    it('should make shuffleList and shuffleIndex undefined is state is false', async () => {
+      queue.shuffleList = [];
+      queue.shuffleIndex = 0;
+      req.query.state = false;
+      await queueController.shuffleQueue(req, res, next);
+      expect(queue.shuffleList).toBeUndefined();
+      expect(queue.shuffleIndex).toBeUndefined();
+    });
+
+    it('should add shuffleList and suffleIndex to queue if state is true', async () => {
+      req.query.state = true;
+      await queueController.shuffleQueue(req, res, next);
+      expect(queue.shuffleList).toBeDefined();
+      expect(queue.shuffleIndex).toBeDefined();
+      expect(queue.shuffleList.length).toBe(queue.tracks.length);
+      expect(queue.shuffleIndex).toBe(queue.shuffleList.indexOf(queue.currentIndex));
+    });
+
+    it('should save the player', async () => {
+      await queueController.shuffleQueue(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
+    });
+
+    it('should save the queue', async () => {
+      await queueController.shuffleQueue(req, res, next);
+      expect(queue.save.mock.calls.length).toBe(1);
+    });
+  });
 });

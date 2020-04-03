@@ -337,7 +337,7 @@ exports.shuffleQueue = async (req, res, next) => {
     player.device = deviceId;
   }
 
-  const queue = await queueService.getQueueById(id, { selectDetails: true });
+  let queue = await queueService.getQueueById(id, { selectDetails: true });
 
   if (!queue || !queue.tracks) {
     return next(new AppError('Queue is not found', 404));
