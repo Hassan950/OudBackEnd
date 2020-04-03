@@ -1,5 +1,5 @@
 const express = require('express');
-const { authController } = require('../../controllers');
+const { authController , libraryController } = require('../../controllers');
 const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation } = require('../../validations');
@@ -7,6 +7,8 @@ const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router();
 
+router.use('/tracks', libraryController);
+router.use('/albums', libraryController);
 
 router
   .route('/updatePassword')
