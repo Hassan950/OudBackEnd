@@ -3,9 +3,22 @@ const playerMocks = require('../../utils/models/player.model.mocks');
 const queueMocks = require('../../utils/models/queue.model.mocks');
 const deviceMocks = require('../../utils/models/device.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
-const { Queue, User, Player, Device } = require('../../../src/models');
+const { Queue, User, Player, Device, Track } = require('../../../src/models');
 const { queueController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
+const faker = require('faker');
+
+function randomArray(min, max) {
+  const len = faker.random.number({ min, max });
+  const array = []
+
+  for (let i = 0; i < len; ++i) {
+    array[i] = faker.random.number();
+  }
+
+  return array;
+};
+
 
 describe('Queue controller', () => {
   let user;
@@ -123,6 +136,112 @@ describe('Queue controller', () => {
       player.positionMs = 0;
       await queueController.repeatQueue(req, res, next);
       expect(player.repeatState).toBe(req.query.state);
+    });
+  });
+
+  describe('Add to queue', () => {
+    beforeEach(() => {
+      player.save = jest.fn().mockResolvedValue(player);
+      device = deviceMocks.createFakeDevice();
+      mockingoose(Device).toReturn(device, 'findOne');
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+      ));
+      track = new Track({
+        name: 'song',
+        audioUrl: 'song.mp3',
+        artists: [
+          '5e6c8ebb8b40fc5508fe8b32',
+          '5e6c8ebb8b40fc6608fe8b32',
+          '5e6c8ebb8b40fc7708fe8b32'
+        ],
+        album: '5e6c8ebb8b40fc7708fe8b32',
+        duration: 21000
+      });
+      req.query.queueIndex = 0;
+      req.query.deviceId = device._id;
+      req.query.trackId = track._id;
+      mockingoose(Track)
+        .toReturn(track, 'findOne');
+    });
+
+    it('it should return 500 status code if not authenticated', async () => {
+      req.user = null;
+      await queueController.addToQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(500);
+    });
+
+    it('should return 404 status if player is not found', async () => {
+      mockingoose(Player).toReturn(null, 'findOne');
+      await queueController.addToQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 status if device is not found', async () => {
+      mockingoose(Device).toReturn(null, 'findOne');
+      await queueController.addToQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is null', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(null) }
+      ));
+      await queueController.addToQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is empty', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([]) }
+      ));
+      await queueController.addToQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 400 if queueIndex=1 and queues.length<2', async () => {
+      req.query.queueIndex = 1;
+      await queueController.addToQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+
+    it('should revese queues if queues.length>1 and queueIndex=1', async () => {
+      req.query.queueIndex = 1;
+      const queues = randomArray(2, 10);
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(queues) }
+      ));
+      await queueController.addToQueue(req, res, next);
+      expect(queues).toEqual(queues.reverse());
+    });
+
+    it('should save player if deviceId is valid and passed', async () => {
+      await queueController.addToQueue(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
+    });
+
+    it('should assign deviceId to player.device if deviceId is valid and passed', async () => {
+      await queueController.addToQueue(req, res, next);
+      expect(player.device).toBe(req.query.deviceId);
+    });
+
+    it('should return 404 if track is not found', async () => {
+      mockingoose(Track)
+        .toReturn(null, 'findOne');
+      await queueController.addToQueue(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should append track to queue', async () => {
+      const oldLength = queue.tracks.length;
+      await queueController.addToQueue(req, res, next);
+      expect(queue.tracks.length).toBe(oldLength + 1);
+      expect(queue.tracks[oldLength]).toBe(track._id);
+    });
+
+    it('should return 204 if valid', async () => {
+      await queueController.addToQueue(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(204);
     });
   });
 });

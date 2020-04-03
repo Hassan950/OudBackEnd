@@ -1,4 +1,4 @@
-const { queueService, userService, playerService, deviceService } = require('../services');
+const { queueService, userService, playerService, deviceService, trackService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
 
@@ -101,12 +101,8 @@ exports.addToQueue = async (req, res, next) => {
     if (queues.length < 2) {
       return next(new AppError('No queue with queueIndex=1', 400));
     }
-    const queues = await userService.getUserQueues(req.user._id);
-    queues.reverse();
 
-    // save user
-    req.user.queues = queues;
-    req.user.save();
+    queues.reverse();
   }
 
   if (deviceId) {
@@ -125,5 +121,7 @@ exports.addToQueue = async (req, res, next) => {
     return next(new AppError('Track is not found', 404));
   }
 
-  await queueService.appendToQueue(queues[0], [track]);
+  await queueService.appendToQueue(queues[0], [trackId]);
+
+  res.status(204).end();
 };
