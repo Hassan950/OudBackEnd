@@ -788,4 +788,167 @@ describe('Queue controller', () => {
       expect(res.status.mock.calls[0][0]).toBe(204);
     });
   });
+
+  describe('Previous track', () => {
+    beforeEach(() => {
+      player.repeatState = 'track';
+      player.save = jest.fn().mockResolvedValue(player);
+      device = deviceMocks.createFakeDevice();
+      mockingoose(Device).toReturn(device, 'findOne');
+      req.query.deviceId = device._id;
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+      ));
+      queue.tracks = [req.user._id, player._id, queue._id];
+    });
+
+    it('it should return 500 status code if not authenticated', async () => {
+      req.user = null;
+      await queueController.previousTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(500);
+    });
+
+    it('should return 404 status if player is not found', async () => {
+      mockingoose(Player).toReturn(null, 'findOne');
+      await queueController.previousTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is null', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(null) }
+      ));
+      await queueController.previousTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is empty', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([]) }
+      ));
+      await queueController.previousTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 status if device is not found', async () => {
+      mockingoose(Device).toReturn(null, 'findOne');
+      await queueController.previousTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    describe('Repeat state = track', () => {
+      beforeEach(() => {
+        player.repeatState = 'track';
+      });
+
+      it('should not change the player item', async () => {
+        const lastItem = player.item;
+        await queueController.previousTrack(req, res, next);
+        expect(player.item).toBe(lastItem);
+      });
+
+      it('should not change the queue index', async () => {
+        const lastIndex = queue.currentIndex;
+        await queueController.previousTrack(req, res, next);
+        expect(queue.currentIndex).toBe(lastIndex);
+      });
+    });
+
+    describe('Reapeat state != track', () => {
+      beforeEach(() => {
+        player.repeatState = 'off';
+      });
+
+      it('should return 404 if queue is null', async () => {
+        mockingoose(Queue).toReturn(null, 'findOne');
+        await queueController.previousTrack(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
+      });
+
+      it('should return 404 if queue.tracks is null', async () => {
+        queue.tracks = null;
+        await queueController.previousTrack(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
+      });
+
+      describe('shuffle state = true', () => {
+        beforeEach(() => {
+          player.shuffleState = true;
+          queue.shuffleList = [1, 2, 0];
+          queue.shuffleIndex = 0;
+          queue.currentIndex = 0;
+        });
+        it('should return to the last track if the first track is playing and repeatState is context', async () => {
+          queue.shuffleIndex = 0;
+          player.repeatState = 'context';
+          await queueController.previousTrack(req, res, next);
+          expect(queue.currentIndex).toBe(0);
+          expect(queue.shuffleIndex).toBe(queue.tracks.length - 1);
+        });
+        it('should go to the previous track if the playing track is not the first one', async () => {
+          queue.shuffleIndex = 1;
+          await queueController.previousTrack(req, res, next);
+          expect(queue.currentIndex).toBe(1);
+          expect(queue.shuffleIndex).toBe(0);
+        });
+        // TODO
+        // add test to repeatState= off
+      });
+
+      describe('shuffle state = false', () => {
+        beforeEach(() => {
+          player.shuffleState = false;
+          queue.currentIndex = 0;
+        });
+        it('should return to the last track if the first track is playing and repeatState is context', async () => {
+          queue.currentIndex = 0;
+          player.repeatState = 'context';
+          await queueController.previousTrack(req, res, next);
+          expect(queue.currentIndex).toBe(queue.tracks.length - 1);
+        });
+        it('should go to the previous track if the playing track is not the first one', async () => {
+          queue.currentIndex = 1;
+          await queueController.previousTrack(req, res, next);
+          expect(queue.currentIndex).toBe(0);
+        });
+        // TODO
+        // add test to repeatState= off
+      });
+
+      it('should chnage the player item to the previous track', async () => {
+        queue.currentIndex = 1;
+        await queueController.previousTrack(req, res, next);
+        expect(player.item).toBe(queue.tracks[0]);
+      });
+
+      // TODO 
+      // add test to addToHistory
+
+      it('should save the queue', async () => {
+        await queueController.previousTrack(req, res, next);
+        expect(queue.save.mock.calls.length).toBe(1);
+      });
+    });
+    it('should play the track', async () => {
+      player.isPlaying = false;
+      await queueController.previousTrack(req, res, next);
+      expect(player.isPlaying).toBe(true);
+    });
+
+    it('should make the progreeMs=0', async () => {
+      player.progressMs = 200;
+      await queueController.previousTrack(req, res, next);
+      expect(player.progressMs).toBe(0);
+    });
+
+    it('should save the player', async () => {
+      await queueController.previousTrack(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
+    });
+
+    it('should return 204 if valid', async () => {
+      await queueController.previousTrack(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(204);
+    });
+  });
 });

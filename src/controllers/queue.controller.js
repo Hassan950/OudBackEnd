@@ -497,22 +497,22 @@ exports.previousTrack = async (req, res, next) => {
           // TODO 
           // add 10 tracks to queue realted to the last track
         }
-      } else { // Go to the next track
+      } else { // Go to the previous track
         queue.shuffleIndex--;
         queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
       }
     } else {
       if (queue.currentIndex === 0) { // first track in the queue
         if (player.repeatState === 'context') {
-          queue.currentIndex = queue.tracks.length; // return to the last track
+          queue.currentIndex = queue.tracks.length - 1; // return to the last track
         } else if (player.repeatState === 'off') {
           // TODO 
           // add 10 tracks to queue realted to the last track
         }
-      } else queue.currentIndex--; // Go to the next track
+      } else queue.currentIndex--; // Go to the previous track
     }
 
-    player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
+    player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
     playHistoryService.addToHistory(id, player.item, queue.context); // add to history
     queue.save(); // save the queue
   }
