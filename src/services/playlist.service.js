@@ -1,128 +1,149 @@
-const { Playlist ,Track, User } = require('../models');
-const fs  = require('fs');
+const { Playlist, Track, User } = require('../models');
+const fs = require('fs');
 
-
-const getPlaylist =  async (params) => {
+const getPlaylist = async params => {
   const playlist = await Playlist.findById(params.id);
-  return playlist ;
-}
+  return playlist;
+};
 
-const changePlaylist = async (params , body, image) =>{
-  let playlist = await Playlist.findByIdAndUpdate(params.id,{ $set:  {'name':  body.name,'collabrative':  body.collabrative,
-    'description':  body.description,
-    'public': body.public}},{new: true});
-  if(!playlist) return playlist;
-  if(!image)return playlist;
+const changePlaylist = async (params, body, image) => {
+  let playlist = await Playlist.findByIdAndUpdate(
+    params.id,
+    {
+      $set: {
+        name: body.name,
+        collabrative: body.collabrative,
+        description: body.description,
+        public: body.public
+      }
+    },
+    { new: true }
+  );
+  if (!playlist) return playlist;
+  if (!image) return playlist;
   const path = playlist.image;
-  if(path != image  && path != 'uploads\\default.jpg'){
+  if (path != image && path != 'uploads\\default.jpg') {
     fs.unlink(`${path}`, err => {
       if (err) throw err;
-    })
+    });
   }
-  playlist = await Playlist.findByIdAndUpdate(params.id,{
-    image: image
-  },
-  { new: true });
-  
-  return playlist; 
-}
+  playlist = await Playlist.findByIdAndUpdate(
+    params.id,
+    {
+      image: image
+    },
+    { new: true }
+  );
 
-const uploadImage = async(params, image)=>{
+  return playlist;
+};
+
+const uploadImage = async (params, image) => {
   let playlist = await Playlist.findById(params.id);
-  if(!playlist) return playlist;
-  const path = playlist.image
-  if(path != image && path != 'uploads\\default.jpg'){
+  if (!playlist) return playlist;
+  const path = playlist.image;
+  if (path != image && path != 'uploads\\default.jpg') {
     fs.unlink(`${path}`, err => {
       if (err) throw err;
-    })
+    });
   }
-  playlist = await Playlist.findByIdAndUpdate(params.id,{
-    image: image
-  },
-  { new: true });
-  return playlist ;
-}
+  playlist = await Playlist.findByIdAndUpdate(
+    params.id,
+    {
+      image: image
+    },
+    { new: true }
+  );
+  return playlist;
+};
 
-const getTracks = async(params , query)=>{
+const getTracks = async (params, query) => {
   const playlist = await Playlist.findById(params.id);
-  if(!playlist){const total = 0 ;
-    const tracks = null ;
-    return{ tracks , total };
+  if (!playlist) {
+    const total = 0;
+    const tracks = null;
+    return { tracks, total };
   }
-  const tracks = await Track.find({_id: {$in: playlist.tracks}}).skip(query.offset).limit(query.limit);
-  const total = tracks.length; 
-  return {  tracks , total  };
-}
+  const tracks = await Track.find({ _id: { $in: playlist.tracks } })
+    .skip(query.offset)
+    .limit(query.limit);
+  const total = tracks.length;
+  return { tracks, total };
+};
 
-const getUserPlaylists = async(params , query)=>{
-  const playlists = await Playlist.find({owner: params.id}).select('-owner').skip(query.offset).limit(query.limit);
-  const total = (await Playlist.find({owner: params.id})).length;
-  return {  playlists , total };
-}
+const getUserPlaylists = async (params, query) => {
+  const playlists = await Playlist.find({ owner: params.id })
+    .select('-owner')
+    .skip(query.offset)
+    .limit(query.limit);
+  const total = (await Playlist.find({ owner: params.id })).length;
+  return { playlists, total };
+};
 
-const getTracksID =async(uris)=>{
-  const tracks = await Track.find({audioUrl :{$in: uris} });
+const getTracksID = async uris => {
+  const tracks = await Track.find({ audioUrl: { $in: uris } });
   return tracks;
-}
+};
 
-const checkUser = async(id)=>
-{
-  const user = await  User.findById(id);
+const checkUser = async id => {
+  const user = await User.findById(id);
   return user;
-}
+};
 
-const createUserPlaylist = async(params , body, image)=>{
+const createUserPlaylist = async (params, body, image) => {
   const playlist = new Playlist({
-    name : body.name ,
-    public :  body.public ,
-    collabrative : body.collabrative,
-    description : body.description,
-    owner : params.id,
+    name: body.name,
+    public: body.public,
+    collabrative: body.collabrative,
+    description: body.description,
+    owner: params.id,
     image: image
   });
   playlist.save();
   return playlist;
-}
+};
 
-const deleteTracks = async(params , body)=>{
+const deleteTracks = async (params, body) => {
   let playlist = await Playlist.findById(params.id);
-  if(!playlist)return playlist;
+  if (!playlist) return playlist;
   const tracks = playlist.tracks;
-  playlist = await Playlist.findByIdAndUpdate(params.id, {  $pull: {  'tracks': { $in: tracks }}});
+  playlist = await Playlist.findByIdAndUpdate(params.id, {
+    $pull: { tracks: { $in: tracks } }
+  });
   playlist.save();
   return playlist;
-}
+};
 
-const addTracks = async(params , tracks , position)=>{
+const addTracks = async (params, tracks, position) => {
   let playlist = await Playlist.findById(params.id);
-  if(!playlist)return playlist;
+  if (!playlist) return playlist;
   const notFound = [];
   tracks.forEach(element => {
-    if(!playlist.tracks.includes(element.id)){
+    if (!playlist.tracks.includes(element.id)) {
       notFound.push(element);
     }
   });
-  playlist = await Playlist.findByIdAndUpdate(params.id, 
-    {  $push: 
-      {
-        'tracks': {
-          $each: notFound,
-          $position: position
-        }
+  playlist = await Playlist.findByIdAndUpdate(params.id, {
+    $push: {
+      tracks: {
+        $each: notFound,
+        $position: position
       }
-    });
+    }
+  });
   playlist.save();
-  return playlist
-}
+  return playlist;
+};
 
-const reorderTracks = async(params, body)=>{
-  await Playlist.findOne({ _id: params.id  }, {'tracks': 1})
-  .then(async function(track) {
+const reorderTracks = async (params, body) => {
+  await Playlist.findOne({ _id: params.id }, { tracks: 1 }).then(async function(
+    track
+  ) {
     let begin = body.range_start;
-    let before = body.insert_before ;
+    let before = body.insert_before;
     let temp;
-    let i =0;
-    while(i<body.range_length){
+    let i = 0;
+    while (i < body.range_length) {
       temp = track.tracks[begin];
       track.tracks[begin] = track.tracks[before];
       track.tracks[before] = temp;
@@ -130,9 +151,12 @@ const reorderTracks = async(params, body)=>{
       before++;
       begin++;
     }
-    await Playlist.updateOne({ _id: track._id }, { $set: { tracks: track.tracks } });
+    await Playlist.updateOne(
+      { _id: track._id },
+      { $set: { tracks: track.tracks } }
+    );
   });
-}
+};
 
 module.exports = {
   getPlaylist,
@@ -146,4 +170,4 @@ module.exports = {
   addTracks,
   checkUser,
   reorderTracks
-}
+};
