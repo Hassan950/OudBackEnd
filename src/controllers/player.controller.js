@@ -162,6 +162,7 @@ exports.resumePlayer = async (req, res, next) => {
       type: uri[1],
       id: uri[2]
     }
+    player.context = context;
   }
   // add current track
   if (uris && uris.length) {
@@ -180,6 +181,7 @@ exports.resumePlayer = async (req, res, next) => {
       queue = await queueService.createQueueFromTracks(tracks);
       queues = [queue._id];
       player.item = queue.tracks[0];
+      player.context = null;
       player.positionMs = 0;
     }
   }
