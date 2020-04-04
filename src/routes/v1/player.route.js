@@ -78,4 +78,11 @@ router
     catchAsync(queueController.nextTrack)
   );
 
+router
+  .route('/previous')
+  .post(
+    validate(queueValidation.deviceId),
+    catchAsync(queueController.previousTrack)
+  );
+
 module.exports = router;
