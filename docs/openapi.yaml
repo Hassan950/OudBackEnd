@@ -3592,14 +3592,6 @@ paths:
         - Queue
       description: Start/Resume a User's Playback
       parameters:
-        - name: Range
-          in: header
-          description: >-
-            Optional. the start and the end of the track want to play. if not
-            passed send all the track
-          schema:
-            type: string
-            nullable: true
         - name: deviceId
           in: query
           description: >-
@@ -3754,6 +3746,14 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    UserWithToken:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserPrivate'
+            
     TransferPlayback:
       type: object
       description: TransferPlayback body request
@@ -4647,7 +4647,7 @@ components:
         application/json:
           schema:
             oneOf:
-              - $ref: '#/components/schemas/UserPrivate'
+              - $ref: '#/components/schemas/UserWithToken'
               - $ref: '#/components/schemas/UserDataForFacebook'
     GoogleAuth:
       description: >-
@@ -4662,7 +4662,7 @@ components:
         application/json:
           schema:
             oneOf:
-              - $ref: '#/components/schemas/UserPrivate'
+              - $ref: '#/components/schemas/UserWithToken'
               - $ref: '#/components/schemas/UserDataForGoogle'
     InvalidId:
       description: Invalid ID
