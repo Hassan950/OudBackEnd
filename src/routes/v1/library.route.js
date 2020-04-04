@@ -15,6 +15,6 @@ router('/')
 .delete();
 
 router('/contains')
-.get();
+.get(validate(libraryValidation.check), catchAsync(libraryController.check));
 
 module.exports = router;
