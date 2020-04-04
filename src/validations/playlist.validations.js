@@ -65,9 +65,6 @@ exports.getTracks = {
 };
 
 exports.getUserPlaylists = {
-  params: Joi.object().keys({
-    id: Joi.objectId()
-  }),
   query: Joi.object().keys({
     offset: Joi.number().default(0),
     limit: Joi.number()
@@ -82,7 +79,7 @@ exports.deleteTracks = {
     id: Joi.objectId()
   }),
   body: Joi.object().keys({
-    uris: Joi.array().items(Joi.string())
+    uris: Joi.array().items(Joi.string()).required()
   })
 };
 
@@ -111,7 +108,7 @@ exports.replaceTracks = {
     id: Joi.objectId()
   }),
   body: Joi.object().keys({
-    uris: Joi.array().items(Joi.string())
+    uris: Joi.array().items(Joi.string()).required()
   })
 };
 
