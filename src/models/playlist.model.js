@@ -12,7 +12,7 @@ const playlistSchema = new mongoose.Schema({
     type: String,
     trim: true,
     minlength: 10,
-    maxlength: 25
+    maxlength: 280
   },
   tracks: [
     {

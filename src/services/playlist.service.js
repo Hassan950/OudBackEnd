@@ -36,7 +36,6 @@ const changePlaylist = async (params, body, image) => {
     },
     { new: true }
   );
-
   return playlist;
 };
 
@@ -69,7 +68,7 @@ const getTracks = async (params, query) => {
   const tracks = await Track.find({ _id: { $in: playlist.tracks } })
     .skip(query.offset)
     .limit(query.limit);
-  const total = tracks.length;
+  const total = await Track.find({ _id: { $in: playlist.tracks } }).countDocuments();
   return { tracks, total };
 };
 
@@ -78,16 +77,16 @@ const getUserPlaylists = async (params, query) => {
     .select('-owner')
     .skip(query.offset)
     .limit(query.limit);
-  const total = (await Playlist.find({ owner: params.id })).length;
+  const total = await Playlist.find({ owner: params.id }).countDocuments();
   return { playlists, total };
 };
 
-const getTracksID = async uris => {
+const getTracksId = async uris => {
   const tracks = await Track.find({ audioUrl: { $in: uris } });
   return tracks;
 };
 
-const checkUser = async id => {
+const checkUser = async (id) => {
   const user = await User.findById(id);
   return user;
 };
@@ -105,12 +104,10 @@ const createUserPlaylist = async (params, body, image) => {
   return playlist;
 };
 
-const deleteTracks = async (params, body) => {
+const deleteTracks = async (params, tracks) => {
   let playlist = await Playlist.findById(params.id);
   if (!playlist) return playlist;
-  const tracks = playlist.tracks;
-  playlist = await Playlist.findByIdAndUpdate(params.id, {  $pull: {  'tracks': { $in: tracks }}});
-  await playlist.save();
+  playlist = await Playlist.findByIdAndUpdate(params.id, {  $pull: {  'tracks': { $in: tracks }}}, {new: true});
   return playlist;
 };
 
@@ -123,14 +120,16 @@ const addTracks = async (params, tracks, position) => {
       notFound.push(element);
     }
   });
+  console.log(position);
   playlist = await Playlist.findByIdAndUpdate(params.id, {
     $push: {
       tracks: {
         $each: notFound,
         $position: position
       }
-    }});
-  await playlist.save();
+    }},{
+      new: true
+    });
   return playlist
 }
 
@@ -147,7 +146,10 @@ const reorderTracks = async (params, body) => {
     });
     await Playlist.updateOne(
       { _id: track._id },
-      { $set: { tracks: track.tracks } }
+      { $set: { tracks: track.tracks } },
+      {
+        new: true
+      }
     );
   });
 };
@@ -160,7 +162,7 @@ module.exports = {
   getUserPlaylists,
   createUserPlaylist,
   deleteTracks,
-  getTracksID,
+  getTracksId,
   addTracks,
   checkUser,
   reorderTracks

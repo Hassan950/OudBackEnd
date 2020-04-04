@@ -22,6 +22,7 @@ exports.changePlaylist = {
       .trim()
       .min(10)
       .max(25)
+      .default('no description for this playlist')
   })
 };
 exports.uploadImage = {
@@ -65,6 +66,9 @@ exports.getTracks = {
 };
 
 exports.getUserPlaylists = {
+  params: Joi.object().keys({
+    id: Joi.objectId()
+  }),
   query: Joi.object().keys({
     offset: Joi.number().default(0),
     limit: Joi.number()
@@ -98,7 +102,8 @@ exports.createUserPlaylist = {
     description: Joi.string()
       .trim()
       .min(10)
-      .max(25),
+      .max(25)
+      .default("no description for this playlist"),
     images: Joi.string()
   })
 };
@@ -117,7 +122,7 @@ exports.addTracks = {
     id: Joi.objectId()
   }),
   body: Joi.object().keys({
-    uris: Joi.array().items(Joi.string()),
-    position: Joi.number()
+    uris: Joi.array().items(Joi.string()).required(),
+    position: Joi.number().default(0)
   })
 };

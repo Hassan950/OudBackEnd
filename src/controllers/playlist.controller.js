@@ -154,14 +154,15 @@ exports.getUserPlaylists = async (req, res, next) => {
  */
 
 exports.createUserPlaylist = async (req, res, next) => {
-  if (req.baseUrl == '/api/v1/playlists' || req.baseUrl.match(/.*users.*/)) {
+  if (req.baseUrl == '/api/v1/playlists' || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('not found', 404));
   }
   let image;
   if (!req.file) image = 'uploads\\default.jpg';
   else image = req.file.path;
-  const user = await playlistService.checkUser(req.params);
+  const user = await playlistService.checkUser(req.params.id);
   if (!user) return next(new AppError('no user with this id', 404));
+  console.log("nice");
   const playlist = await playlistService.createUserPlaylist(
     req.params,
     req.body,
@@ -182,7 +183,7 @@ exports.deleteTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const tracks = await playlistService.getTracksID(req.body.uris);
+  const tracks = await playlistService.getTracksId(req.body.uris);
   if(!tracks) return next(new AppError('no tracks with these uris', 404));
   const playlist = await playlistService.deleteTracks(req.params ,tracks);
   if(!playlist) return next(new AppError('no playlist with this id', 404));
@@ -194,9 +195,9 @@ exports.addTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const tracks = await playlistService.getTracksID(req.body.uris);
+  const tracks = await playlistService.getTracksId(req.body.uris);
   if(!tracks) return next(new AppError('no tracks with these uris', 404));
-  const playlist = await playlistService.addTracks(req.params , tracks ,req.body.postion);
+  const playlist = await playlistService.addTracks(req.params , tracks ,req.body.position);
   if(!playlist) return next(new AppError('no playlist with this id', 404));
   res.sendStatus(204);
 }
@@ -205,11 +206,11 @@ exports.replaceTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const tracks = await playlistService.getTracksID(req.body.uris);
+  const tracks = await playlistService.getTracksId(req.body.uris);
   if (!tracks) return next(new AppError('no tracks with these uris', 404));
   let playlist = await playlistService.getPlaylist(req.params);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
-  playlist = await playlistService.deleteTracks(playlist ,tracks);
+  playlist = await playlistService.deleteTracks(playlist ,playlist.tracks);
   playlist = await playlistService.addTracks(req.params , tracks ,0 );
   res.sendStatus(204);
 }
