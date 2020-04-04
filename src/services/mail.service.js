@@ -1,25 +1,17 @@
-const nodemailer = require('nodemailer');
 const config = require('config');
 
 const sendEmail = async (options) => {
-  // create a transporter
-  const transporter = nodemailer.createTransport({
-    host: config.get('EMAIL_HOST'),
-    port: config.get('EMAIL_PORT'),
-    auth: {
-      user: config.get('EMAIL_USERNAME'),
-      pass: config.get('EMAIL_PASSWORD')
-    }
-  });
-  // define the email options
-  const mailOptions = {
-    from: 'Oud oud@comp.io',
+  const sgMail = require('@sendgrid/mail');
+  sgMail.setApiKey(config.get('SENDGRID_API_KEY'));
+  const msg = {
     to: options.email,
+    from: 'support@oud-zerobase.me',
     subject: options.subject,
-    text: options.message
+    text: options.message,
+    html: '<strong>السلام علي من أتبع الهدي</strong>',
   }
-  // send the email
-  await transporter.sendMail(mailOptions);
+
+  await sgMail.send(msg);
 };
 
 module.exports = {
