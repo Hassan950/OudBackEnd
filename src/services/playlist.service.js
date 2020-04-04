@@ -1,4 +1,6 @@
 const { Playlist, Track, User } = require('../models');
+const _ = require('lodash');
+const move = require('lodash-move');
 const fs = require('fs');
 
 const getPlaylist = async params => {
@@ -136,18 +138,13 @@ const reorderTracks = async (params, body) => {
   await Playlist.findOne({ _id: params.id }, { tracks: 1 }).then(async function(
     track
   ) {
-    let begin = body.range_start;
-    let before = body.insert_before;
-    let temp;
-    let i = 0;
-    while (i < body.range_length) {
-      temp = track.tracks[begin];
-      track.tracks[begin] = track.tracks[before];
-      track.tracks[before] = temp;
-      i++;
+    let begin = body.rangeStart;
+    let before = body.insertBefore;
+    _.times(body.rangeLength, ()=> {
+      track.tracks = move.default(track.tracks, begin , before);
       before++;
       begin++;
-    }
+    });
     await Playlist.updateOne(
       { _id: track._id },
       { $set: { tracks: track.tracks } }

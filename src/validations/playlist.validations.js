@@ -1,14 +1,14 @@
 const Joi = require('@hapi/joi');
-Joi.objectID = require('joi-objectid')(Joi);
+Joi.objectId = require("joi-objectid")(Joi);
 
 exports.getPlaylist = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   })
 };
 exports.changePlaylist = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   body: Joi.object().keys({
     name: Joi.string()
@@ -26,26 +26,26 @@ exports.changePlaylist = {
 };
 exports.uploadImage = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   })
 };
 
 exports.getImage = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   })
 };
 
 exports.reorderTracks = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   body: Joi.object().keys({
-    range_start: Joi.number()
+    rangeStart: Joi.number()
       .required()
       .min(0),
-    range_length: Joi.number().default(1),
-    insert_before: Joi.number()
+    rangeLength: Joi.number().default(1),
+    insertBefore: Joi.number()
       .required()
       .min(0)
   })
@@ -53,7 +53,7 @@ exports.reorderTracks = {
 
 exports.getTracks = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   query: Joi.object().keys({
     offset: Joi.number().default(0),
@@ -66,7 +66,7 @@ exports.getTracks = {
 
 exports.getUserPlaylists = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   query: Joi.object().keys({
     offset: Joi.number().default(0),
@@ -79,7 +79,7 @@ exports.getUserPlaylists = {
 
 exports.deleteTracks = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   body: Joi.object().keys({
     uris: Joi.array().items(Joi.string())
@@ -88,7 +88,7 @@ exports.deleteTracks = {
 
 exports.createUserPlaylist = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   body: Joi.object().keys({
     name: Joi.string()
@@ -108,7 +108,7 @@ exports.createUserPlaylist = {
 
 exports.replaceTracks = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   body: Joi.object().keys({
     uris: Joi.array().items(Joi.string())
@@ -117,7 +117,7 @@ exports.replaceTracks = {
 
 exports.addTracks = {
   params: Joi.object().keys({
-    id: Joi.objectID()
+    id: Joi.objectId()
   }),
   body: Joi.object().keys({
     uris: Joi.array().items(Joi.string()),
