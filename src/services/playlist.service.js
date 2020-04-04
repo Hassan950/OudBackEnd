@@ -80,7 +80,7 @@ const createUserPlaylist = async(params , body, image)=>{
     owner : params.id,
     image: image
   });
-  playlist.save();
+  await playlist.save();
   return playlist;
 }
 
@@ -89,7 +89,7 @@ const deleteTracks = async(params , body)=>{
   if(!playlist)return playlist;
   const tracks = playlist.tracks;
   playlist = await Playlist.findByIdAndUpdate(params.id, {  $pull: {  'tracks': { $in: tracks }}});
-  playlist.save();
+  await playlist.save();
   return playlist;
 }
 
@@ -111,7 +111,7 @@ const addTracks = async(params , tracks , position)=>{
         }
       }
     });
-  playlist.save();
+  await playlist.save();
   return playlist
 }
 

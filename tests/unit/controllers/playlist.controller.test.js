@@ -147,7 +147,7 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOne');
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.uploadImageRoute(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
   });
   describe('getTracks - test', () => {
@@ -273,7 +273,7 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOne');
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.deleteTracks(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
   });
   describe('addTracks - test', () => {
@@ -310,7 +310,7 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOne');
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.addTracks(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
   });
   describe('replaceTracks - test', () => {
@@ -347,7 +347,7 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOne');
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.replaceTracks(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
   });
   describe('reorderTracks - test', () => {
@@ -373,7 +373,7 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOne');
       mockingoose(Playlist).toReturn(playlist, 'updateOne');
       await playlistController.reorderTracks(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
   });
 });
