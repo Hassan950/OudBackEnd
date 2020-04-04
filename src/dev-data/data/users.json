@@ -1,5 +1,8 @@
 [
   {
+    "_id": {
+      "$oid": "5e88ba4f286f2d242257ba9f"
+    },
     "images": [],
     "role": "free",
     "verified": false,
@@ -11,6 +14,9 @@
     "username": "admin"
   },
   {
+    "_id": {
+      "$oid": "5e88ba4f286f2d242257baa0"
+    },
     "images": [],
     "role": "premium",
     "verified": false,
@@ -22,6 +28,9 @@
     "username": "admin1"
   },
   {
+    "_id": {
+      "$oid": "5e88ba4f286f2d242257baa1"
+    },
     "images": [],
     "role": "free",
     "verified": false,
@@ -33,6 +42,9 @@
     "username": "admin2"
   },
   {
+    "_id": {
+      "$oid": "5e88ba4f286f2d242257baa2"
+    },
     "images": [],
     "role": "free",
     "verified": false,
