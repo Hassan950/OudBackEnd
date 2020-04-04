@@ -13,15 +13,15 @@ const mongoose = require('mongoose');
  */
 exports.findAlbum = async id => {
   let album = Album.findById(id)
-    .populate('artists', '_id name images')
+    .populate('artists', 'name images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
-      populate: { path: 'artists' }
+      populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
-  
+
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
     { $project: { tracks: { $size: '$tracks' } } }
@@ -51,12 +51,12 @@ exports.findAlbum = async id => {
  */
 exports.findAlbumUtil = async id => {
   let album = await Album.findById(id)
-    .populate('artists', '_id name images')
+    .populate('artists', 'name images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
-      populate: { path: 'artists' }
+      populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
   return album;
@@ -73,15 +73,15 @@ exports.findAlbumUtil = async id => {
  */
 exports.findAlbums = async ids => {
   const result = await Album.find({ _id: ids })
-    .populate('artists', '_id name images')
+    .populate('artists', 'name images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
-      populate: { path: 'artists' }
+      populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
-    
+
   let lengthArray = await Album.aggregate([
     { $match: { _id: { $in: ids.map(id => mongoose.Types.ObjectId(id)) } } },
     { $project: { tracks: { $size: '$tracks' } } }
@@ -117,12 +117,12 @@ exports.findAlbums = async ids => {
  */
 exports.deleteAlbum = async id => {
   let album = Album.findByIdAndDelete(id)
-    .populate('artists', '_id name images')
+    .populate('artists', 'name images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
-      populate: { path: 'artists' }
+      populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
 
@@ -160,7 +160,7 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
     .populate({
       path: 'tracks',
       select: '-album',
-      populate: { path: 'artists' },
+      populate: { path: 'artists', select: 'name images' },
       options: { limit: limit, skip: offset }
     })
     .select('tracks');
@@ -187,12 +187,12 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
  */
 exports.update = async (id, newAlbum) => {
   let album = Album.findByIdAndUpdate(id, newAlbum, { new: true })
-    .populate('artists', '_id name images')
+    .populate('artists', 'name images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
-      populate: { path: 'artists' }
+      populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
 
@@ -231,7 +231,7 @@ exports.setImage = async (album, path) => {
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
 
-  [, lengthObj] = await Promise.all([album.save, lengthObj]);
+  [, lengthObj] = await Promise.all([album.save(), lengthObj]);
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -253,7 +253,7 @@ exports.setImage = async (album, path) => {
  */
 exports.createAlbum = async newAlbum => {
   return await (await Album.create(newAlbum))
-    .populate('artists', '_id name images')
+    .populate('artists', 'name images')
     .populate('genres')
     .execPopulate();
 };
@@ -279,12 +279,12 @@ exports.addTrack = async (album, track) => {
 
   [album, lengthObj] = await Promise.all([
     album
-      .populate('artists', '_id name images')
+      .populate('artists', 'name images')
       .populate('genres')
       .populate({
         path: 'tracks',
         options: { limit: 50, offset: 0 },
-        populate: { path: 'artists' }
+        populate: { path: 'artists', select: 'name images' }
       })
       .execPopulate(),
     lengthObj

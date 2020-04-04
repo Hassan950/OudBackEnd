@@ -12,12 +12,25 @@ const fs = require('fs').promises;
  * @returns {Array} An array containing the tracks with nulls against unmatched ID's
  */
 exports.findTracks = async ids => {
-  const result = await Track.find({ _id: ids }).populate('artists album');
+  const result = await Track.find({ _id: ids })
+    .lean()
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
   if (result.length == ids.length) return result;
   const tracks = [];
   for (let i = 0, n = ids.length; i < n; i++) {
     const val = result.find(track => String(track._id) === ids[i]);
-    tracks[i] = val == undefined ? null : val;
+    if (val) {
+      tracks[i] = val;
+      tracks[i].albumId = tracks[i].album._id;
+    } else tracks[i] = null;
   }
   return tracks;
 };
@@ -64,7 +77,18 @@ exports.deleteTracks = async ids => {
  * @returns null the track was not found
  */
 exports.findTrack = async id => {
-  const track = await Track.findById(id).populate('artists album');
+  const track = await Track.findById(id)
+    .lean()
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
+  if (track) track.albumId = track.album._id;
   return track;
 };
 
@@ -79,7 +103,16 @@ exports.findTrack = async id => {
  * @returns null the track was not found
  */
 exports.findTrackUtil = async id => {
-  const track = await Track.findById(id).populate('artists album');
+  const track = await Track.findById(id)
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
   return track;
 };
 
@@ -96,7 +129,19 @@ exports.findTrackUtil = async id => {
 exports.update = async (id, newTrack) => {
   const track = await Track.findByIdAndUpdate(id, newTrack, {
     new: true
-  }).populate('artists album');
+  })
+    .lean()
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
+  track.albumId = track.album._id;
+
   return track;
 };
 
@@ -110,7 +155,17 @@ exports.update = async (id, newTrack) => {
  * @returns the new track
  */
 exports.createTrack = async (albumId, newTrack) => {
-  return await Track.create({ ...newTrack, album: albumId });
+  return await (await Track.create({ ...newTrack, album: albumId }))
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    })
+    .execPopulate();
 };
 
 /**
@@ -126,8 +181,19 @@ exports.createTrack = async (albumId, newTrack) => {
 exports.setTrack = async (track, url, duration) => {
   track.audioUrl = url;
   track.duration = duration;
-  await track.save();
+  await (await track.save())
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    })
+    .execPopulate();
   track = track.toJSON();
+  track.albumId = track.album._id;
   return _.omit(track, 'audioUrl');
 };
 
@@ -146,5 +212,14 @@ exports.checkFile = async id => {
 };
 
 exports.findArtistTracks = async artistId => {
-  return await Track.find({ artists: artistId }).populate('artist album');
+  return await Track.find({ artists: artistId })
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
 };
