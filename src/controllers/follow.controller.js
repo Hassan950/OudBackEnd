@@ -42,13 +42,24 @@ exports.checkFollowingsPlaylist = async (req, res, next) => {
   res.status(httpStatus.OK).send(checks);
 };
 
+/**
+ * A middleware to Assign the req.params.userId to the current userId
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Assign req.params.userId to current userId
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
 exports.setUserId = async (req, res, next) => {
   req.params.userId = String(req.user._id);
   next();
 };
 
 /**
- * A middleware to Get the current user’s followed artists/users.
+ * A middleware to Get the user’s followed artists/users.
  *
  * @function
  * @author Hassan Mohamed
@@ -77,6 +88,17 @@ exports.getUserFollowed = async (req, res, next) => {
   });
 };
 
+/**
+ * A middleware to Get the  user’s followers.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get User’s followers.
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
 exports.getUserFollowers = async (req, res, next) => {
   const list = await followService.getUserFollowers(
     req.query,
@@ -89,6 +111,17 @@ exports.getUserFollowers = async (req, res, next) => {
     total: list.total
   });
 };
+
+/**
+ * A middleware to Add the current user as a follower of one or more artists or other users.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Follow Artists or Users.
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 
 exports.followUser = async (req, res, next) => {
   const ids = req.body.ids ? req.body.ids : req.query.ids;
@@ -105,6 +138,17 @@ exports.followUser = async (req, res, next) => {
   }
   res.status(httpStatus.NO_CONTENT).end();
 };
+
+/**
+ * A middleware to Remove the current user as a follower of one or more artists or other users.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Unfollow Artists or Users
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 
 exports.unfollowUser = async (req, res, next) => {
   const ids = req.body.ids ? req.body.ids : req.query.ids;
@@ -126,6 +170,17 @@ exports.unfollowUser = async (req, res, next) => {
   res.status(httpStatus.NO_CONTENT).end();
 };
 
+/**
+ * A middleware to Add the current user as a follower of a playlist.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Follow a Playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
 exports.followPlaylist = async (req, res, next) => {
   const result = await followService.followPlaylist(
     req.params.playlistId,
@@ -137,6 +192,17 @@ exports.followPlaylist = async (req, res, next) => {
   }
   res.status(httpStatus.NO_CONTENT).end();
 };
+
+/**
+ * A middleware to Remove the current user as a follower of a playlist.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Unfollow a Playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 
 exports.unfollowPlaylist = async (req, res, next) => {
   const result = await followService.unfollowPlaylist(

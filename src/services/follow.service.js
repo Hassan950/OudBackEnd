@@ -7,9 +7,30 @@ const {
 } = require('../models');
 const _ = require('lodash');
 
-exports.checkUser = async (id) => {
-  return await User.findById(id)
+/**
+ * A function that finds the user by id
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Find user by Id
+ * @param {String} id - The id of the user
+ * @returns {Object|undefined} The user or undefined incase of there's no user
+ */
+
+exports.checkUser = async id => {
+  return await User.findById(id);
 };
+
+/**
+ * A utility function that get followed users for the passed user id
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get Followed User for the id passed
+ * @param {String} id - The id of the user
+ * @param {object} query - the query parameters
+ * @returns {Array} Array of users followed
+ */
 
 const getFollowedUsers = async (query, id) => {
   const followings = await Followings.find({
@@ -25,6 +46,17 @@ const getFollowedUsers = async (query, id) => {
     return following.followedId;
   });
 };
+
+/**
+ * A utility function that get followed artists for the passed user id
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get Followed User for the id passed
+ * @param {String} id - The id of the user
+ * @param {object} query - the query parameters
+ * @returns {Array} Array of artists followed
+ */
 
 const getFollowedArtists = async (query, id) => {
   const followings = await Followings.find({
@@ -114,13 +146,13 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
 };
 
 /**
- * A function to Get the current user’s followed artists/users.
+ * A function to Get the passed user’s id followed artists/users.
  *
  * @function
  * @author Hassan Mohamed
  * @summary Get the current user’s followed artists/users.
  * @param {Object} query - The query parameters of the request
- * @param {Object} user - The user object.
+ * @param {String} id - The id of the user
  * @returns {Object} Contains the resultant list and the total count of the documents
  */
 
@@ -137,6 +169,17 @@ exports.getUserFollowed = async (query, id) => {
   const [result, total] = await Promise.all([resultPromise, totalPromise]);
   return { result, total };
 };
+
+/**
+ * A function to Get the passed user’s id followers.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get the current user’s followers.
+ * @param {Object} query - The query parameters of the request
+ * @param {String} id - The id of the user
+ * @returns {Object} Contains the resultant list and the total count of the documents
+ */
 
 exports.getUserFollowers = async (query, id) => {
   const followings = await Followings.find({
@@ -156,8 +199,21 @@ exports.getUserFollowers = async (query, id) => {
   return { result, total };
 };
 
+/**
+ * A function to Add the current user as a follower of one or more artists or other users
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Follow Artists or Users.
+ * @param {Array} ids - Array of objectIds to follow
+ * @param {String} type - The type of the ids Artist/User
+ * @param {Object} user - The user object
+ * @returns {Boolean|null} True if done successfully or null if one of the ids is not associated by artist/user
+ */
+
 exports.followUser = async (ids, type, user) => {
   let users;
+  ids = _.uniq(ids);
   if (type === 'Artist') {
     users = await Artist.find({ _id: ids });
   } else {
@@ -176,8 +232,21 @@ exports.followUser = async (ids, type, user) => {
   return true;
 };
 
+/**
+ * A function to Add the current user as a follower of one or more artists or other users
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Follow Artists or Users.
+ * @param {Array} ids - Array of objectIds to follow
+ * @param {String} type - The type of the ids Artist/User
+ * @param {Object} user - The user object
+ * @returns {Boolean|null} True if done successfully or null if one of the ids is not associated by artist/user
+ */
+
 exports.unfollowUser = async (ids, type, user) => {
   let users;
+  ids = _.uniq(ids);
   if (type === 'Artist') {
     users = await Artist.find({ _id: ids });
   } else {
@@ -186,19 +255,25 @@ exports.unfollowUser = async (ids, type, user) => {
   if (users.length < ids.length) {
     return null;
   }
-  const promises = [];
-  _.map(users, followed => {
-    promises.push(
-      Followings.deleteOne({
-        userId: user._id,
-        followedId: followed,
-        type: type
-      }).exec()
-    );
+  await Followings.deleteMany({
+    userId: user._id,
+    followedId: users,
+    type: type
   });
-  await Promise.all(promises);
   return true;
 };
+
+/**
+ * A function to Add the current user as a follower of a playlist
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Follow a Playlist
+ * @param {String} playlistId - The ID of the playlist.
+ * @param {Boolean} publicity - If true the playlist will be included in user’s public playlists, if false it will remain private.
+ * @param {Object} user - The user object
+ * @returns {Boolean|null} True if done successfully or null if the id is not associated by playlist
+ */
 
 exports.followPlaylist = async (playlistId, publicity, user) => {
   playlist = await Playlist.findById(playlistId).select('id');
@@ -210,6 +285,17 @@ exports.followPlaylist = async (playlistId, publicity, user) => {
   });
   return true;
 };
+
+/**
+ * A function to Remove the current user as a follower of a playlist.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Unfollow a Playlist
+ * @param {String} playlistId - The ID of the playlist.
+ * @param {Object} user - The user object
+ * @returns {Boolean|null} True if done successfully or null if the id is not associated by playlist
+ */
 
 exports.unfollowPlaylist = async (playlistId, user) => {
   playlist = await Playlist.findById(playlistId).select('id');
