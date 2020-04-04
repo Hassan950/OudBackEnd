@@ -22,11 +22,12 @@ const players = JSON.parse(
   fs.readFileSync(`${__dirname}/players.json`, 'utf-8')
 );
 
+
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
-    await User.create(users, { validateBeforeSave: false });
-    await Player.create(players, { validateBeforeSave: false });
+    await User.create(users);
+    await Player.create(players);
     console.log('Data successfully loaded!');
   } catch (err) {
     console.log(err);
