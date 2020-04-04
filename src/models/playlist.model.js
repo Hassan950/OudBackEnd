@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const playlistSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -13,34 +12,37 @@ const playlistSchema = new mongoose.Schema({
     type: String,
     trim: true,
     minlength: 10,
-    maxlength: 25 
+    maxlength: 25
   },
-  tracks: [{
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Track',
-  }],
-  owner : {
+  tracks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Track'
+    }
+  ],
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
-    required:true, 
-    ref: 'User',
+    required: true,
+    ref: 'User'
   },
   collabrative: {
     type: Boolean,
-    default:false
+    default: false
   },
-  public:{
+  public: {
     type: Boolean,
-    default:false,
+    default: false
   },
-  image: { 
-      type: String,
-      match: /.(png|jpg|jpeg)$/,
-      default: 'uploads\\default.jpg'
+  image: {
+    type: String,
+    match: /.(png|jpg|jpeg)$/,
+    default: 'uploads\\default.jpg'
   }
-  });
-playlistSchema.virtual('type').get(function(){
+});
+
+playlistSchema.virtual('type').get(function() {
   return 'playlist';
 });
 
-  const Playlist = mongoose.model('Playlist', playlistSchema);
-  module.exports = { Playlist, playlistSchema };
+const Playlist = mongoose.model('Playlist', playlistSchema);
+module.exports = { Playlist, playlistSchema };

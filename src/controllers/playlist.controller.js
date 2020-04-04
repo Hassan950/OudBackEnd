@@ -14,12 +14,7 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.match(/(png|jpg|jpeg)/)) {
     cb(null, true);
   } else {
-    cb(
-      new AppError(
-        'Not an image! Please upload only images.',400
-      ),
-      false
-    );
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
   }
 };
 const upload = multer({
@@ -37,23 +32,22 @@ exports.uploadImage = upload.single('image');
  */
 
 exports.getPlaylist = async (req, res, next) => {
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   const playlist = await playlistService.getPlaylist(req.params);
-  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  if (!playlist) return next(new AppError('no playlist with such id', 404));
   res.status(200).json(playlist);
-}
+};
 
 exports.getImage = async (req, res, next) => {
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   const playlist = await playlistService.getPlaylist(req.params);
-  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  if (!playlist) return next(new AppError('no playlist with such id', 404));
   res.status(200).json(playlist.image);
-}
-
+};
 
 /**
  * @version 1.0.0
@@ -63,18 +57,21 @@ exports.getImage = async (req, res, next) => {
  * @summary change Playlist Details
  */
 
-
-exports.changePlaylist = async(req,res,next) => {
-  if((req.baseUrl).match(/.*users.*/) || (req.baseUrl).match(/.*me.*/) ){
+exports.changePlaylist = async (req, res, next) => {
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('not found', 404));
   }
   let image;
-  if(!req.file) image = 'uploads\\default.jpg';
-  else  image = req.file.path;
-  const playlist = await playlistService.changePlaylist(req.params ,req.body, image);
-  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  if (!req.file) image = 'uploads\\default.jpg';
+  else image = req.file.path;
+  const playlist = await playlistService.changePlaylist(
+    req.params,
+    req.body,
+    image
+  );
+  if (!playlist) return next(new AppError('no playlist with such id', 404));
   res.status(200).json(playlist);
-}
+};
 
 /**
  * @version 1.0.0
@@ -84,8 +81,8 @@ exports.changePlaylist = async(req,res,next) => {
  * @summary Upload Image
  */
 
-exports.uploadImageRoute  = async (req , res , next)=>{
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+exports.uploadImageRoute = async (req, res, next) => {
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   const playlist = await playlistService.uploadImage(req.params ,req.file.path);
@@ -101,70 +98,77 @@ exports.uploadImageRoute  = async (req , res , next)=>{
  * @summary Get tracks
  */
 
-exports.getTracks  = async (req , res , next)=>{
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+exports.getTracks = async (req, res, next) => {
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const playlist = await playlistService.getTracks(req.params , req.query);
-  if(!playlist.tracks) return next(new AppError('no playlist with such id', 404));
+  const playlist = await playlistService.getTracks(req.params, req.query);
+  if (!playlist.tracks)
+    return next(new AppError('no playlist with such id', 404));
   res.status(200).json({
-    items:  playlist.tracks,
+    items: playlist.tracks,
     offset: req.query.offset,
     limit: req.query.limit,
     total: playlist.total
   });
-}
+};
 
 /**
  * @version 1.0.0
  * @throws AppError 400 status
  * @author Ahmed Magdy
- * @description get playlists of a specific id 
+ * @description get playlists of a specific id
  * @summary get playlists
  */
 
-exports.getUserPlaylists = async(req , res , next)=>{
-  if(req.baseUrl == '/api/v1/playlists'){
+exports.getUserPlaylists = async (req, res, next) => {
+  if (req.baseUrl == '/api/v1/playlists') {
     return next(new AppError('not found', 404));
   }
   let params;
-  if((req.baseUrl).match(/.*users.*/) ){
-    params = req.params.id; 
-  }
-  else {
+  if (req.baseUrl.match(/.*users.*/)) {
+    params = req.params.id;
+  } else {
     params = req.user.id;
   }
   const user = await playlistService.checkUser(params);
-  if(!user) return next(new AppError('no user with this id', 404));
-  const playlists = await playlistService.getUserPlaylists(req.params , req.query);
+  if (!user) return next(new AppError('no user with this id', 404));
+  const playlists = await playlistService.getUserPlaylists(
+    req.params,
+    req.query
+  );
   res.status(200).json({
-    items:  playlists.playlists,
+    items: playlists.playlists,
     offset: req.query.offset,
     limit: req.query.limit,
     total: playlists.total
   });
-}
+};
 
 /**
  * @version 1.0.0
  * @throws AppError 400 status
  * @author Ahmed Magdy
- * @description create a playlist 
+ * @description create a playlist
  * @summary create a playlist
  */
 
-exports.createUserPlaylist = async(req , res , next)=>{
-  if(req.baseUrl == '/api/v1/playlists' || (req.baseUrl).match(/.*users.*/) ){
+exports.createUserPlaylist = async (req, res, next) => {
+  if (req.baseUrl == '/api/v1/playlists' || req.baseUrl.match(/.*users.*/)) {
     return next(new AppError('not found', 404));
   }
   let image;
-  if(!req.file) image = 'uploads\\default.jpg';
-  else  image = req.file.path;
+  if (!req.file) image = 'uploads\\default.jpg';
+  else image = req.file.path;
   const user = await playlistService.checkUser(req.params);
-  if(!user) return next(new AppError('no user with this id', 404));
-  const playlist = await playlistService.createUserPlaylist(req.params , req.body, image);
+  if (!user) return next(new AppError('no user with this id', 404));
+  const playlist = await playlistService.createUserPlaylist(
+    req.params,
+    req.body,
+    image
+  );
   res.status(200).send(playlist);
-}
+};
 
 /**
  * @version 1.0.0
@@ -174,8 +178,8 @@ exports.createUserPlaylist = async(req , res , next)=>{
  * @summary delete tracks
  */
 
-exports.deleteTracks = async(req , res , next)=>{
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+exports.deleteTracks = async (req, res, next) => {
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   const tracks = await playlistService.getTracksID(req.body.uris);
@@ -186,8 +190,8 @@ exports.deleteTracks = async(req , res , next)=>{
 }
 
 
-exports.addTracks =async(req , res , next)=>{
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+exports.addTracks = async (req, res, next) => {
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   const tracks = await playlistService.getTracksID(req.body.uris);
@@ -197,12 +201,12 @@ exports.addTracks =async(req , res , next)=>{
   res.sendStatus(204);
 }
 
-exports.replaceTracks = async(req , res , next)=>{
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+exports.replaceTracks = async (req, res, next) => {
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   const tracks = await playlistService.getTracksID(req.body.uris);
-  if(!tracks) return next(new AppError('no tracks with these uris', 404));
+  if (!tracks) return next(new AppError('no tracks with these uris', 404));
   let playlist = await playlistService.getPlaylist(req.params);
   if(!playlist) return next(new AppError('no playlist with such id', 404));
   playlist = await playlistService.deleteTracks(playlist ,tracks);
@@ -210,12 +214,12 @@ exports.replaceTracks = async(req , res , next)=>{
   res.sendStatus(204);
 }
 
-exports.reorderTracks = async(req ,res ,next)=>{
-  if((req.baseUrl).match(/.*users.*/)|| (req.baseUrl).match(/.*me.*/)){
+exports.reorderTracks = async (req, res, next) => {
+  if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   let playlist = await playlistService.getPlaylist(req.params);
-  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  if (!playlist) return next(new AppError('no playlist with such id', 404));
   await playlistService.reorderTracks(playlist, req.body);
   res.sendStatus(204);
 }
