@@ -627,12 +627,165 @@ describe('Queue controller', () => {
   });
 
   describe('Next track', () => {
-    player.save = jest.fn().mockResolvedValue(player);
-    device = deviceMocks.createFakeDevice();
-    mockingoose(Device).toReturn(device, 'findOne');
-    req.query.deviceId = device._id;
-    User.findById = jest.fn().mockImplementationOnce(() => (
-      { select: jest.fn().mockResolvedValueOnce([queue._id]) }
-    ));
+    beforeEach(() => {
+      player.repeatState = 'track';
+      player.save = jest.fn().mockResolvedValue(player);
+      device = deviceMocks.createFakeDevice();
+      mockingoose(Device).toReturn(device, 'findOne');
+      req.query.deviceId = device._id;
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+      ));
+      queue.tracks = [req.user._id, player._id, queue._id];
+    });
+
+    it('it should return 500 status code if not authenticated', async () => {
+      req.user = null;
+      await queueController.nextTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(500);
+    });
+
+    it('should return 404 status if player is not found', async () => {
+      mockingoose(Player).toReturn(null, 'findOne');
+      await queueController.nextTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is null', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(null) }
+      ));
+      await queueController.nextTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 if queues is empty', async () => {
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce([]) }
+      ));
+      await queueController.nextTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should return 404 status if device is not found', async () => {
+      mockingoose(Device).toReturn(null, 'findOne');
+      await queueController.nextTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    describe('Repeat state = track', () => {
+      beforeEach(() => {
+        player.repeatState = 'track';
+      });
+
+      it('should not change the player item', async () => {
+        const lastItem = player.item;
+        await queueController.nextTrack(req, res, next);
+        expect(player.item).toBe(lastItem);
+      });
+
+      it('should not change the queue index', async () => {
+        const lastIndex = queue.currentIndex;
+        await queueController.nextTrack(req, res, next);
+        expect(queue.currentIndex).toBe(lastIndex);
+      });
+    });
+
+    describe('Reapeat state != track', () => {
+      beforeEach(() => {
+        player.repeatState = 'off';
+      });
+
+      it('should return 404 if queue is null', async () => {
+        mockingoose(Queue).toReturn(null, 'findOne');
+        await queueController.nextTrack(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
+      });
+
+      it('should return 404 if queue.tracks is null', async () => {
+        queue.tracks = null;
+        await queueController.nextTrack(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
+      });
+
+      describe('shuffle state = true', () => {
+        beforeEach(() => {
+          player.shuffleState = true;
+          queue.shuffleList = [1, 2, 0];
+          queue.shuffleIndex = 0;
+          queue.currentIndex = 0;
+        });
+        it('should return to the first track if the last track is playing and repeatState is context', async () => {
+          queue.shuffleIndex = queue.tracks.length - 1;
+          player.repeatState = 'context';
+          await queueController.nextTrack(req, res, next);
+          expect(queue.currentIndex).toBe(1);
+          expect(queue.shuffleIndex).toBe(0);
+        });
+        it('should go to the next track if the playing track is not the last one', async () => {
+          queue.shuffleIndex = 0;
+          await queueController.nextTrack(req, res, next);
+          expect(queue.currentIndex).toBe(2);
+          expect(queue.shuffleIndex).toBe(1);
+        });
+        // TODO
+        // add test to repeatState= off
+      });
+
+      describe('shuffle state = false', () => {
+        beforeEach(() => {
+          player.shuffleState = false;
+          queue.currentIndex = 0;
+        });
+        it('should return to the first track if the last track is playing and repeatState is context', async () => {
+          queue.currentIndex = queue.tracks.length - 1;
+          player.repeatState = 'context';
+          await queueController.nextTrack(req, res, next);
+          expect(queue.currentIndex).toBe(0);
+        });
+        it('should go to the next track if the playing track is not the last one', async () => {
+          queue.currentIndex = 0;
+          await queueController.nextTrack(req, res, next);
+          expect(queue.currentIndex).toBe(1);
+        });
+        // TODO
+        // add test to repeatState= off
+      });
+
+      it('should chnage the player item to the next track', async () => {
+        queue.currentIndex = 0;
+        await queueController.nextTrack(req, res, next);
+        expect(player.item).toBe(queue.tracks[1]);
+      });
+
+      // TODO 
+      // add test to addToHistory
+
+      it('should save the queue', async () => {
+        await queueController.nextTrack(req, res, next);
+        expect(queue.save.mock.calls.length).toBe(1);
+      });
+    });
+    it('should play the track', async () => {
+      player.isPlaying = false;
+      await queueController.nextTrack(req, res, next);
+      expect(player.isPlaying).toBe(true);
+    });
+
+    it('should make the progreeMs=0', async () => {
+      player.progressMs = 200;
+      await queueController.nextTrack(req, res, next);
+      expect(player.progressMs).toBe(0);
+    });
+
+    it('should save the player', async () => {
+      await queueController.nextTrack(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
+    });
+
+    it('should return 204 if valid', async () => {
+      await queueController.nextTrack(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(204);
+    });
   });
 });

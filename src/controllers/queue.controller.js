@@ -430,11 +430,11 @@ exports.nextTrack = async (req, res, next) => {
     }
 
     player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
-    player.isPlaying = true; // play the track
     playHistoryService.addToHistory(id, player.item, queue.context); // add to history
     queue.save(); // save the queue
   }
 
+  player.isPlaying = true; // play the track
   player.progressMs = 0;
 
   await player.save();
