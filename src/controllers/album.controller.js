@@ -50,9 +50,8 @@ exports.findAndDeleteAlbum = async (req, res, next) => {
   }
   let trackIds = album.tracks.map(track => track._id);
   album = await albumService.deleteAlbum(req.params.id);
-  if (album.image !== 'default.jpg') {
-    await fs.unlink(album.image);
-  }
+
+  await albumService.deleteImage(album.image);
   await trackService.deleteTracks(trackIds);
   res.status(200).json(album);
 };
@@ -118,9 +117,7 @@ exports.setImage = async (req, res, next) => {
       )
     );
   }
-  if (album.image !== 'default.jpg') {
-    await fs.unlink(album.image);
-  }
+  await albumService.deleteImage(album.image);
   album = await albumService.setImage(album, req.file.path);
   res.status(200).json(album);
 };

@@ -1,5 +1,6 @@
 const { Album } = require('../models/album.model');
 const mongoose = require('mongoose');
+const fs = require('fs').promises;
 
 /**
  * A method that gets an album by it's ID
@@ -297,4 +298,14 @@ exports.addTrack = async (album, track) => {
     items: album.tracks
   };
   return album;
+};
+
+exports.deleteImage = async image => {
+  if (image !== 'default.jpg') {
+    try {
+      await fs.unlink(image);
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 };
