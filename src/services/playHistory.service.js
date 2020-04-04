@@ -55,11 +55,14 @@ const addToHistory = async (userId, trackId, context = {
   type: 'unknown',
   id: undefined
 }) => {
-  const history = await PlayHistory.create({
+  const query = {
     user: userId,
     track: trackId,
     context: context
-  });
+  };
+  const update = { playedAt: Date.now() };
+  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+  const history = await PlayHistory.findOneAndUpdate(query, update, options);
 
   return history;
 };

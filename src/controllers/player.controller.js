@@ -203,6 +203,8 @@ exports.resumePlayer = async (req, res, next) => {
       }
     }
   }
+  // add to history
+  playHistoryService.addToHistory(id, player.item, player.context);
   // change position
   if (positionMs) player.positionMs = positionMs;
   // if position > track duration go to next
