@@ -1,5 +1,51 @@
-const { Followings, PlaylistFollowings, User, Artist, Playlist } = require('../models');
+const {
+  Followings,
+  PlaylistFollowings,
+  User,
+  Artist,
+  Playlist
+} = require('../models');
 const AppError = require('../utils/AppError');
+const _ = require('lodash');
+
+const getFollowedUsers = async (query, user) => {
+  const followings = await Followings.find({
+    userId: user._id,
+    type: query.type
+  })
+    .select('-_id')
+    .populate({ path: 'followedId', select: 'displayName images verified' })
+    .skip(query.offset)
+    .limit(query.limit);
+
+  return _.map(followings, following => {
+    return following.followedId;
+  });
+};
+
+const getFollowedArtists = async (query, user) => {
+  const followings = await Followings.find({
+    userId: user._id,
+    type: query.type
+  })
+    .select('-_id')
+    .populate({
+      path: 'followedId',
+      populate: { path: 'user', select: 'displayName images' },
+      select: 'user'
+    })
+    .skip(query.offset)
+    .limit(query.limit);
+  return _.map(followings, following => {
+    const followedId = following.followedId;
+    return {
+      _id: followedId._id,
+      displayName: followedId.user.displayName,
+      type: followedId.type,
+      images: followedId.user.images
+    };
+  });
+};
 
 /**
  * A function that checks if the user follows either this list of users or artists
@@ -40,12 +86,17 @@ exports.checkFollowings = async (ids, type, userId) => {
  */
 
 exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
-  const playlistPromise = Playlist.findById(playlistId).select('public').exec();
+  const playlistPromise = Playlist.findById(playlistId)
+    .select('public')
+    .exec();
   const resultPromise = PlaylistFollowings.find({
     userId: ids,
     playlistId: playlistId
   }).exec();
-  const [playlist, result] = await Promise.all([playlistPromise, resultPromise])
+  const [playlist, result] = await Promise.all([
+    playlistPromise,
+    resultPromise
+  ]);
   const checks = ids.map(id => {
     val = result.find(follow => String(follow.userId) === id);
     if (val === undefined) {
@@ -71,66 +122,35 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
  */
 
 exports.getUserFollowed = async (query, user) => {
-  let result;
-  if (query.type === 'User') {
-    result = await Followings.aggregate()
-      .match({ userId: user._id, type: 'User' })
-      .lookup({
-        from: 'users',
-        localField: 'followedId',
-        foreignField: '_id',
-        as: 'user'
-      })
-      .project({ user: { $arrayElemAt: ['$user', 0] }, _id: 0 })
-      .project({
-        displayName: '$user.displayName',
-        followersCount: '$user.followersCount',
-        images: '$user.images',
-        verified: '$user.verified',
-        _id: '$user._id'
-      })
-      .skip(query.offset)
-      .limit(query.limit);
-  } else {
-    result = await Followings.aggregate()
-      .match({ userId: user._id, type: 'Artist' }) //TODO: change user._id to user.artist._id
-      .lookup({
-        from: 'artists',
-        localField: 'followedId',
-        foreignField: '_id',
-        as: 'artist'
-      })
-      .replaceRoot({ $arrayElemAt: ['$artist', 0] })
-      .lookup({
-        from: 'users',
-        localField: 'userId',
-        foreignField: '_id',
-        as: 'user'
-      })
-      .project({ user: { $arrayElemAt: ['$user', 0] } })
-      .project({
-        displayName: '$user.displayName',
-        followersCount: '$user.followersCount',
-        images: '$user.images'
-      })
-      .skip(query.offset)
-      .limit(query.limit);
-  }
-  const total = await Followings.countDocuments({
+  const resultPromise =
+    query.type === 'Artist'
+      ? getFollowedArtists(query, user)
+      : getFollowedUsers(query, user);
+
+  const totalPromise = Followings.countDocuments({
     userId: user._id,
     type: query.type
-  });
+  }).exec();
+  const [result, total] = await Promise.all([resultPromise, totalPromise]);
   return { result, total };
 };
 
-const asyncCreate = async (users, id, type) => {
-  users.forEach(followed => {
-    Followings.create({
-      userId: id,
-      followedId: followed,
-      type: type
-    }).catch(() => {});
+exports.getUserFollowers = async (query, user) => {
+  const followings = await Followings.find({
+    followedId: user._id
+  })
+    .select('-_id')
+    .populate({ path: 'userId', select: 'displayName images verified' })
+    .skip(query.offset)
+    .limit(query.limit);
+  const resultPromise = _.map(followings, following => {
+    return following.userId;
   });
+  const totalPromise = Followings.countDocuments({
+    followedId: user._id
+  }).exec();
+  const [result, total] = await Promise.all([resultPromise, totalPromise]);
+  return { result, total };
 };
 
 exports.followUser = async (ids, type, user) => {
@@ -143,8 +163,57 @@ exports.followUser = async (ids, type, user) => {
   if (users.length < ids.length) {
     return null;
   }
-  await asyncCreate(users, user._id, type);
+  const promises = [];
+  _.map(users, followed => {
+    promises.push(
+      Followings.create({ userId: user._id, followedId: followed, type: type })
+    );
+  });
+  await Promise.all(promises);
   return true;
 };
 
-// exports.followPlaylist = async (playlistId, public) => {};
+exports.unfollowUser = async (ids, type, user) => {
+  let users;
+  if (type === 'Artist') {
+    users = await Artist.find({ _id: ids });
+  } else {
+    users = await User.find({ _id: ids });
+  }
+  if (users.length < ids.length) {
+    return null;
+  }
+  const promises = [];
+  _.map(users, followed => {
+    promises.push(
+      Followings.deleteOne({
+        userId: user._id,
+        followedId: followed,
+        type: type
+      }).exec()
+    );
+  });
+  await Promise.all(promises);
+  return true;
+};
+
+exports.followPlaylist = async (playlistId, publicity, user) => {
+  playlist = await Playlist.findById(playlistId).select('id');
+  if (!playlist) return null;
+  await PlaylistFollowings.create({
+    playlistId: playlistId,
+    userId: user._id,
+    public: publicity
+  });
+  return true;
+};
+
+exports.unfollowPlaylist = async (playlistId, user) => {
+  playlist = await Playlist.findById(playlistId).select('id');
+  if (!playlist) return null;
+  await PlaylistFollowings.deleteOne({
+    playlistId: playlistId,
+    userId: user._id
+  });
+  return true;
+};

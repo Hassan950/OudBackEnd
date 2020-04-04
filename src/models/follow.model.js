@@ -18,7 +18,7 @@ const followingsSchema = mongoose.Schema({
   }
 });
 
-followingsSchema.index({ type: 1, userId: 1 });
+followingsSchema.index({ type: 1, userId: 1, followedId: 1 }, { unique: true });
 
 const Followings = mongoose.model('Followings', followingsSchema);
 
@@ -30,13 +30,21 @@ const playlistFollowingsSchema = mongoose.Schema({
   },
   playlistId: {
     type: mongoose.Types.ObjectId,
+    ref: 'Playlist',
     required: true
+  },
+  public: {
+    type: Boolean,
+    default: true
   }
 });
 
-playlistFollowingsSchema.index({ playlistId: 1 });
+playlistFollowingsSchema.index({ playlistId: 1, userId: 1 }, { unique: true });
 
-const PlaylistFollowings = mongoose.model('PlaylistFollowings', playlistFollowingsSchema);
+const PlaylistFollowings = mongoose.model(
+  'PlaylistFollowings',
+  playlistFollowingsSchema
+);
 
 module.exports = {
   followingsSchema,

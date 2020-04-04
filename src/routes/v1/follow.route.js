@@ -34,6 +34,19 @@ router
     catchAsync(authMiddleware.authenticate),
     validate(followValidation.followUser),
     catchAsync(followController.followUser)
+  )
+  .delete(
+    catchAsync(authMiddleware.authenticate),
+    validate(followValidation.followUser),
+    catchAsync(followController.unfollowUser)
+  );
+
+router
+  .route('/me/followers')
+  .get(
+    catchAsync(authMiddleware.authenticate),
+    validate(followValidation.getUserFollowers),
+    catchAsync(followController.getUserFollowers)
   );
 
 router
@@ -42,6 +55,11 @@ router
     catchAsync(authMiddleware.authenticate),
     validate(followValidation.followPlaylist),
     catchAsync(followController.followPlaylist)
+  )
+  .delete(
+    catchAsync(authMiddleware.authenticate),
+    validate(followValidation.followPlaylist),
+    catchAsync(followController.unfollowPlaylist)
   );
 
 module.exports = router;

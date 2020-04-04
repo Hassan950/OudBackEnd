@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
-// const { Followings, PlaylistFollowings } = require('./');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -73,10 +72,6 @@ const userSchema = mongoose.Schema(
         },
         message: 'You must be at least 10 years old'
       }
-    },
-    followersCount: {
-      type: Number,
-      default: 0
     },
     credit: {
       type: Number,

@@ -45,7 +45,19 @@ exports.getUserFollowed = {
   })
 };
 
-exports.followUser= {
+exports.getUserFollowers = {
+  query: Joi.object().keys({
+    limit: Joi.number()
+      .min(1)
+      .max(50)
+      .default(50),
+    offset: Joi.number()
+      .min(0)
+      .default(0)
+  })
+};
+
+exports.followUser = {
   query: Joi.object().keys({
     type: Joi.string()
       .insensitive()
@@ -57,9 +69,11 @@ exports.followUser= {
     ids: Joi.custom(idsArray(50))
   }),
   body: Joi.object().keys({
-    ids: Joi.array().items(Joi.objectId()).max(50)
+    ids: Joi.array()
+      .items(Joi.objectId())
+      .max(50)
   })
-}
+};
 
 exports.followPlaylist = {
   params: Joi.object().keys({
@@ -68,4 +82,4 @@ exports.followPlaylist = {
   body: Joi.object().keys({
     public: Joi.boolean().default(true)
   })
-}
+};

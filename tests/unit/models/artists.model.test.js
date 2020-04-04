@@ -39,10 +39,6 @@ describe('Artist model', () => {
     artist.genres = [];
     expect(artist.validateSync().errors['genres']).toBeDefined();
   });
-  it("Should throw an error if images contains any images that doesn't match image format files", () => {
-    artist.images = ['not png', 'png.jgp'];
-    expect(artist.validateSync().errors['images.0']).toBeDefined();
-  });
   it('Should throw an error if bio is longer than 255 characters', () => {
     artist.bio =
       'A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, which was created for the bliss of souls like mine. I am so happy,';

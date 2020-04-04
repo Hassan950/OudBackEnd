@@ -63,6 +63,16 @@ exports.getUserFollowed = async (req, res, next) => {
   });
 };
 
+exports.getUserFollowers = async (req, res, next) => {
+  const list = await followService.getUserFollowers(req.query, req.user);
+  res.status(httpStatus.OK).json({
+    items: list.result,
+    limit: req.query.limit,
+    offset: req.query.offset,
+    total: list.total
+  });
+};
+
 exports.followUser = async (req, res, next) => {
   const ids = req.body.ids ? req.body.ids : req.query.ids;
   if (!ids) {
@@ -71,12 +81,53 @@ exports.followUser = async (req, res, next) => {
     );
   }
   const result = await followService.followUser(ids, req.query.type, req.user);
-  if(!result) {
-    return next(new AppError('At least one of the ids is not found', httpStatus.NOT_FOUND))
+  if (!result) {
+    return next(
+      new AppError('At least one of the ids is not found', httpStatus.NOT_FOUND)
+    );
+  }
+  res.status(httpStatus.NO_CONTENT).end();
+};
+
+exports.unfollowUser = async (req, res, next) => {
+  const ids = req.body.ids ? req.body.ids : req.query.ids;
+  if (!ids) {
+    return next(
+      new AppError('ids should be in query or body', httpStatus.BAD_REQUEST)
+    );
+  }
+  const result = await followService.unfollowUser(
+    ids,
+    req.query.type,
+    req.user
+  );
+  if (!result) {
+    return next(
+      new AppError('At least one of the ids is not found', httpStatus.NOT_FOUND)
+    );
   }
   res.status(httpStatus.NO_CONTENT).end();
 };
 
 exports.followPlaylist = async (req, res, next) => {
-  // await followService.followPlaylist(req.params.playlistId, req.body.public)
+  const result = await followService.followPlaylist(
+    req.params.playlistId,
+    req.body.public,
+    req.user
+  );
+  if (!result) {
+    return next(new AppError('Playlist is not found', httpStatus.NOT_FOUND));
+  }
+  res.status(httpStatus.NO_CONTENT).end();
+};
+
+exports.unfollowPlaylist = async (req, res, next) => {
+  const result = await followService.unfollowPlaylist(
+    req.params.playlistId,
+    req.user
+  );
+  if (!result) {
+    return next(new AppError('Playlist is not found', httpStatus.NOT_FOUND));
+  }
+  res.status(httpStatus.NO_CONTENT).end();
 };
