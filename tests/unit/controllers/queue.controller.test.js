@@ -400,7 +400,6 @@ describe('Queue controller', () => {
       req.query.queueIndex = 0;
       req.query.trackIndex = 0;
       req.query.trackId = null;
-      req.query.newIndex = 1;
       User.findById = jest.fn().mockImplementationOnce(() => (
         { select: jest.fn().mockResolvedValueOnce([queue._id]) }
       ));
@@ -518,17 +517,77 @@ describe('Queue controller', () => {
     it('should save the queue', async () => {
       queue.tracks = [req.user._id, player._id, req.user._id];
       req.query.trackIndex = 0;
-      req.query.newIndex = 1;
       await queueController.deleteTrack(req, res, next);
       expect(queue.save.mock.calls.length).toBe(1);
+    });
+
+    it('should save the player', async () => {
+      queue.tracks = [req.user._id, player._id, req.user._id];
+      req.query.trackIndex = 0;
+      await queueController.deleteTrack(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
     });
 
     it('should return 204 if valid', async () => {
       queue.tracks = [req.user._id, player._id, req.user._id];
       req.query.trackIndex = 0;
-      req.query.newIndex = 1;
       await queueController.deleteTrack(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(204);
+    });
+
+    it('should set player and queue to default if trackIndex=queue.currentINdex', async () => {
+      queue.tracks = [req.user._id, player._id, req.user._id];
+      queue.currentIndex = 1;
+      queue.shuffleIndex = 1;
+      queue.shuffleList = queue.tracks;
+      req.query.trackIndex = 1;
+      player.item = queue.tracks[queue.currentIndex];
+      player.progressMs = 0;
+      player.shuffleState = true;
+      player.currentlyPlayingType = 'track';
+      await queueController.deleteTrack(req, res, next);
+      expect(player.item).toBe(null);
+      expect(player.context.type).toBe('unkown');
+      expect(player.progressMs).toBe(null);
+      expect(player.shuffleState).toBe(false);
+      expect(player.repeatState).toBe('off');
+      expect(player.isPlaying).toBe(false);
+      expect(player.currentlyPlayingType).toBe('unknown');
+      expect(queue.currentIndex).toBe(0);
+      expect(queue.shuffleIndex).toBe(undefined);
+      expect(queue.shuffleList).toBe(undefined);
+    });
+
+    it('should delete queue if queue length is 1', async () => {
+      queues = [0, 1];
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(queues) }
+      ));
+      let cnt = 0;
+      mockingoose(Queue).toReturn(cnt++, 'deleteOne');
+      queue.tracks = [req.user._id];
+      queue.currentIndex = 0;
+      req.query.trackIndex = 0;
+      await queueController.deleteTrack(req, res, next);
+      expect(queues.length).toBe(1);
+      expect(cnt).toBe(1);
+    });
+
+    it('should save the player and user with queues', async () => {
+      req.user.save = jest.fn();
+      queues = [0, 1];
+      User.findById = jest.fn().mockImplementationOnce(() => (
+        { select: jest.fn().mockResolvedValueOnce(queues) }
+      ));
+      let cnt = 0;
+      mockingoose(Queue).toReturn(cnt++, 'deleteOne');
+      queue.tracks = [req.user._id];
+      queue.currentIndex = 0;
+      req.query.trackIndex = 0;
+      await queueController.deleteTrack(req, res, next);
+      expect(player.save.mock.calls.length).toBe(1);
+      expect(req.user.save.mock.calls.length).toBe(1);
+      expect(req.user.queues).toBeDefined();
     });
   });
 

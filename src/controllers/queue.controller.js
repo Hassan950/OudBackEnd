@@ -271,7 +271,7 @@ exports.deleteTrack = async (req, res, next) => {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
-  const queue = await queueService.getQueueById(queues[0]);
+  const queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
   if (!queue || !queue.tracks) {
     return next(new AppError('Queue is not found', 404));
@@ -292,7 +292,37 @@ exports.deleteTrack = async (req, res, next) => {
 
   queue.tracks.splice(trackIndex, 1);
 
-  await queue.save();
+  if (trackIndex === queue.currentIndex) {
+    // set all to default
+    player.item = null;
+    player.context = { type: 'unkown' };
+    player.progressMs = null;
+    player.shuffleState = false;
+    player.repeatState = 'off';
+    player.isPlaying = false;
+    player.currentlyPlayingType = 'unknown';
+    queue.currentIndex = 0;
+    queue.shuffleIndex = undefined;
+    queue.shuffleList = undefined;
+  }
+
+  if (!queue.tracks.length) {
+    // delete the queue
+    queues.splice(0, 1);
+    queueService.deleteQueueById(queue._id);
+
+    req.user.queues = queues;
+
+    await Promise.all([
+      player.save(),
+      req.user.save({ validateBeforeSave: true })
+    ]);
+  } else {
+    await Promise.all([
+      player.save(),
+      queue.save({ validateBeforeSave: true })
+    ]);
+  }
 
   res.status(204).end();
 };
