@@ -966,7 +966,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Track'
+                      $ref: '#/components/schemas/TrackSimple'
                   limit:
                     type: integer
                     description: >-
@@ -3895,6 +3895,34 @@ components:
         views:
           type: integer
           description: The number of times someone listened to this track
+    TrackSimple:
+      type: object
+      description: Simple Track Object
+      properties:
+        _id:
+          type: string
+          description: The unique Id of the track
+        name:
+          type: string
+          description: The name of the Track.
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistSimple'
+          description: The artists who performed the track.
+        albumId:
+          type: string
+          description: The id of the album of the track.
+        type:
+          type: string
+          description: The object type i.e “track”
+        duartion: 
+          type: integer
+          description: The duartion of the song in ms
+        views:
+          type: integer
+          description: The number of times someone listened to this track
+
     Paging:
       description: >-
         The offset-based paging object is a container for a set of objects. It
@@ -4095,7 +4123,7 @@ components:
             items:
               type: array
               items:
-                $ref: '#/components/schemas/Track'
+                $ref: '#/components/schemas/TrackSimple'
             limit:
               type: integer
               description: >-
