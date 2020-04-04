@@ -5,12 +5,15 @@ const {
   Artist,
   Playlist
 } = require('../models');
-const AppError = require('../utils/AppError');
 const _ = require('lodash');
 
-const getFollowedUsers = async (query, user) => {
+exports.checkUser = async (id) => {
+  return await User.findById(id)
+};
+
+const getFollowedUsers = async (query, id) => {
   const followings = await Followings.find({
-    userId: user._id,
+    userId: id,
     type: query.type
   })
     .select('-_id')
@@ -23,9 +26,9 @@ const getFollowedUsers = async (query, user) => {
   });
 };
 
-const getFollowedArtists = async (query, user) => {
+const getFollowedArtists = async (query, id) => {
   const followings = await Followings.find({
-    userId: user._id,
+    userId: id,
     type: query.type
   })
     .select('-_id')
@@ -121,23 +124,23 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
  * @returns {Object} Contains the resultant list and the total count of the documents
  */
 
-exports.getUserFollowed = async (query, user) => {
+exports.getUserFollowed = async (query, id) => {
   const resultPromise =
     query.type === 'Artist'
-      ? getFollowedArtists(query, user)
-      : getFollowedUsers(query, user);
+      ? getFollowedArtists(query, id)
+      : getFollowedUsers(query, id);
 
   const totalPromise = Followings.countDocuments({
-    userId: user._id,
+    userId: id,
     type: query.type
   }).exec();
   const [result, total] = await Promise.all([resultPromise, totalPromise]);
   return { result, total };
 };
 
-exports.getUserFollowers = async (query, user) => {
+exports.getUserFollowers = async (query, id) => {
   const followings = await Followings.find({
-    followedId: user._id
+    followedId: id
   })
     .select('-_id')
     .populate({ path: 'userId', select: 'displayName images verified' })
@@ -147,7 +150,7 @@ exports.getUserFollowers = async (query, user) => {
     return following.userId;
   });
   const totalPromise = Followings.countDocuments({
-    followedId: user._id
+    followedId: id
   }).exec();
   const [result, total] = await Promise.all([resultPromise, totalPromise]);
   return { result, total };

@@ -27,6 +27,7 @@ router
   .route('/me/following')
   .get(
     catchAsync(authMiddleware.authenticate),
+    catchAsync(followController.setUserId),
     validate(followValidation.getUserFollowed),
     catchAsync(followController.getUserFollowed)
   )
@@ -45,9 +46,27 @@ router
   .route('/me/followers')
   .get(
     catchAsync(authMiddleware.authenticate),
+    catchAsync(followController.setUserId),
     validate(followValidation.getUserFollowers),
     catchAsync(followController.getUserFollowers)
   );
+
+  router
+  .route('/users/:userId/following')
+  .get(
+    catchAsync(authMiddleware.authenticate),
+    validate(followValidation.getUserFollowed),
+    catchAsync(followController.getUserFollowed)
+  );
+
+router
+  .route('/users/:userId/followers')
+  .get(
+    catchAsync(authMiddleware.authenticate),
+    validate(followValidation.getUserFollowers),
+    catchAsync(followController.getUserFollowers)
+  );
+
 
 router
   .route('/playlists/:playlistId/followers')

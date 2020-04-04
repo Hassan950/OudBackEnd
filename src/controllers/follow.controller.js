@@ -42,6 +42,11 @@ exports.checkFollowingsPlaylist = async (req, res, next) => {
   res.status(httpStatus.OK).send(checks);
 };
 
+exports.setUserId = async (req, res, next) => {
+  req.params.userId = String(req.user._id);
+  next();
+};
+
 /**
  * A middleware to Get the current user’s followed artists/users.
  *
@@ -54,7 +59,16 @@ exports.checkFollowingsPlaylist = async (req, res, next) => {
  */
 
 exports.getUserFollowed = async (req, res, next) => {
-  const list = await followService.getUserFollowed(req.query, req.user);
+  if (req.url.match(/.*users.*/)) {
+    const user = await followService.checkUser(req.params.userId);
+    if (!user) {
+      return next(new AppError('User is not found', httpStatus.NOT_FOUND));
+    }
+  }
+  const list = await followService.getUserFollowed(
+    req.query,
+    req.params.userId
+  );
   res.status(httpStatus.OK).json({
     items: list.result,
     limit: req.query.limit,
@@ -64,7 +78,10 @@ exports.getUserFollowed = async (req, res, next) => {
 };
 
 exports.getUserFollowers = async (req, res, next) => {
-  const list = await followService.getUserFollowers(req.query, req.user);
+  const list = await followService.getUserFollowers(
+    req.query,
+    req.params.userId
+  );
   res.status(httpStatus.OK).json({
     items: list.result,
     limit: req.query.limit,

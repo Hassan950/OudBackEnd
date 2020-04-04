@@ -1,7 +1,5 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
-const AppError = require('../utils/AppError');
-const httpStatus = require('http-status');
 const { idsArray, capitalize } = require('./custom.validation');
 
 exports.checkFollowings = {
@@ -26,6 +24,7 @@ exports.checkFollowingsPlaylist = {
   })
 };
 
+
 exports.getUserFollowed = {
   query: Joi.object().keys({
     type: Joi.string()
@@ -42,6 +41,9 @@ exports.getUserFollowed = {
     offset: Joi.number()
       .min(0)
       .default(0)
+  }),
+  params: Joi.object().keys({
+    userId: Joi.objectId().required()
   })
 };
 
@@ -54,6 +56,9 @@ exports.getUserFollowers = {
     offset: Joi.number()
       .min(0)
       .default(0)
+  }),
+  params: Joi.object().keys({
+    userId: Joi.objectId().required()
   })
 };
 
