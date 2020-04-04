@@ -2630,7 +2630,119 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  '/me/playlits':
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Playlists
+      summary: Get a List of current User's Playlists
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of playlists to return.
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 50
+        - name: offset
+          in: query
+          description: The index of the first playlist to return.
+          schema:
+            type: integer
+            default: 0
+            maximum: 100000
+      responses:
+        '200':
+          description: list of playlist of the user
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  previous, next and limit that can be useful in future calls.
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlaylistSimple'
+                    description: the Requested releases
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The total number of items available to return
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   '/playlists/{playlist_id}/images':
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Playlists
+      summary: Get Playlist Cover Image
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id of the playlist
+      responses:
+        '200':
+          description: the cover image of the playlist 
+          content:
+            application/json:
+              schema:
+                properties:
+                  image:
+                    type: string
+        '400':
+          description: Invalid ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: The specified resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'    
     put:
       security:
         - bearerAuth: []
@@ -4082,6 +4194,11 @@ components:
         owner:
           type: string
           description: the user ID who owns the Playlist
+        tracks:
+          type: array
+          description: tracks ids in the playlist
+          items:
+            type: string
         collaborative:
           type: boolean
           description: true if user allows other users to modify the Playlist
