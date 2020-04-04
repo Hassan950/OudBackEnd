@@ -72,12 +72,12 @@ const getTracks = async (params, query) => {
   return { tracks, total };
 };
 
-const getUserPlaylists = async (params, query) => {
-  const playlists = await Playlist.find({ owner: params.id })
+const getUserPlaylists = async (id, query) => {
+  const playlists = await Playlist.find({ owner: id })
     .select('-owner')
     .skip(query.offset)
     .limit(query.limit);
-  const total = await Playlist.find({ owner: params.id }).countDocuments();
+  const total = await Playlist.find({ owner: id }).countDocuments();
   return { playlists, total };
 };
 

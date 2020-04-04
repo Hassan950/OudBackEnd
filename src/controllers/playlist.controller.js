@@ -128,13 +128,13 @@ exports.getUserPlaylists = async (req, res, next) => {
   let params;
   if (req.baseUrl.match(/.*users.*/)) {
     params = req.params.id;
+    const user = await playlistService.checkUser(params);
+    if (!user) return next(new AppError('no user with this id', 404));
   } else {
     params = req.user.id;
   }
-  const user = await playlistService.checkUser(params);
-  if (!user) return next(new AppError('no user with this id', 404));
   const playlists = await playlistService.getUserPlaylists(
-    req.params,
+    params,
     req.query
   );
   res.status(200).json({
