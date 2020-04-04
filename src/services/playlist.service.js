@@ -120,7 +120,6 @@ const addTracks = async (params, tracks, position) => {
       notFound.push(element);
     }
   });
-  console.log(position);
   playlist = await Playlist.findByIdAndUpdate(params.id, {
     $push: {
       tracks: {

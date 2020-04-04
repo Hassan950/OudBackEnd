@@ -162,7 +162,6 @@ exports.createUserPlaylist = async (req, res, next) => {
   else image = req.file.path;
   const user = await playlistService.checkUser(req.params.id);
   if (!user) return next(new AppError('no user with this id', 404));
-  console.log("nice");
   const playlist = await playlistService.createUserPlaylist(
     req.params,
     req.body,
