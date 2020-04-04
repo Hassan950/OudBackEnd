@@ -71,4 +71,11 @@ router
     catchAsync(queueController.shuffleQueue)
   );
 
+router
+  .route('/next')
+  .post(
+    validate(queueValidation.deviceId),
+    catchAsync(queueController.nextTrack)
+  );
+
 module.exports = router;

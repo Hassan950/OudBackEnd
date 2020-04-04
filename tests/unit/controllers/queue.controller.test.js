@@ -625,4 +625,14 @@ describe('Queue controller', () => {
       expect(queue.save.mock.calls.length).toBe(1);
     });
   });
+
+  describe('Next track', () => {
+    player.save = jest.fn().mockResolvedValue(player);
+    device = deviceMocks.createFakeDevice();
+    mockingoose(Device).toReturn(device, 'findOne');
+    req.query.deviceId = device._id;
+    User.findById = jest.fn().mockImplementationOnce(() => (
+      { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+    ));
+  });
 });

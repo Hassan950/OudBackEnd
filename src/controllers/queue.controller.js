@@ -1,4 +1,4 @@
-const { queueService, userService, playerService, deviceService, trackService } = require('../services');
+const { queueService, userService, playerService, deviceService, trackService, playHistoryService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
 /*
@@ -33,7 +33,7 @@ exports.getQueue = async (req, res, next) => {
 
   const id = queues[queueIndex];
 
-  const queue = await queueService.getQueueById(id);
+  const queue = await queueService.getQueueById(queues[0]);
 
   if (!queue || !queue.tracks || !queue.tracks.length) {
     return res.status(204).end();
@@ -193,7 +193,7 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
-  const queue = await queueService.getQueueById(id);
+  const queue = await queueService.getQueueById(queues[0]);
 
   if (!queue || !queue.tracks) {
     return next(new AppError('Queue is not found', 404));
@@ -271,7 +271,7 @@ exports.deleteTrack = async (req, res, next) => {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
-  const queue = await queueService.getQueueById(id);
+  const queue = await queueService.getQueueById(queues[0]);
 
   if (!queue || !queue.tracks) {
     return next(new AppError('Queue is not found', 404));
@@ -337,7 +337,7 @@ exports.shuffleQueue = async (req, res, next) => {
     player.device = deviceId;
   }
 
-  let queue = await queueService.getQueueById(id, { selectDetails: true });
+  let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
   if (!queue || !queue.tracks) {
     return next(new AppError('Queue is not found', 404));
@@ -356,4 +356,87 @@ exports.shuffleQueue = async (req, res, next) => {
     player.save(),
     queue.save()
   ]);
+};
+
+
+/**
+ * @version 1.0.0
+ * @throws AppError 500 status
+ * @throws AppError 404 status
+ * @author Abdelrahman Tarek
+ * @description Play the next track
+ * @summary Play the next track
+ */
+exports.nextTrack = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Must Authenticate user', 500));
+  }
+
+  const { deviceId } = req.query;
+
+  const id = req.user._id;
+
+  const [player, queues] = await Promise.all([
+    playerService.getPlayer(id, { populate: false }),
+    userService.getUserQueues(req.user._id)
+  ]);
+
+  if (!player) {
+    return next(new AppError('Player is not found', 404));
+  }
+
+  if (!queues || !queues.length) {
+    return next(new AppError('Queue is not found', 404));
+  }
+
+  if (deviceId) {
+    const device = await deviceService.getDevice(deviceId);
+    if (!device) {
+      return next(new AppError('Device is not found', 404));
+    }
+    player.device = deviceId;
+  }
+
+  if (player.repeatState !== 'track') {
+    let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+
+    if (!queue || !queue.tracks) {
+      return next(new AppError('Queue is not found', 404));
+    }
+
+    // Shuffle state
+    if (player.shuffleState) {
+      if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
+        if (player.repeatState === 'context') {
+          queue.shuffleIndex = 0; // return to the first track
+          queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
+        } else if (player.repeatState === 'off') {
+          // TODO 
+          // add 10 tracks to queue realted to the last track
+        }
+      } else { // Go to the next track
+        queue.shuffleIndex++;
+        queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
+      }
+    } else {
+      if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
+        if (player.repeatState === 'context') {
+          queue.currentIndex = 0; // return to the first track
+        } else if (player.repeatState === 'off') {
+          // TODO 
+          // add 10 tracks to queue realted to the last track
+        }
+      } else queue.currentIndex++; // Go to the next track
+    }
+
+    player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
+    player.isPlaying = true; // play the track
+    playHistoryService.addToHistory(id, player.item, queue.context); // add to history
+    queue.save(); // save the queue
+  }
+
+  player.progressMs = 0;
+
+  await player.save();
+  res.status(204).end();
 };

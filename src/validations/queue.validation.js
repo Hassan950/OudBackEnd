@@ -28,6 +28,13 @@ exports.shuffle = {
   })
 };
 
+exports.deviceId = {
+  query: Joi.object().keys({
+    deviceId: Joi.string()
+      .custom(idCheck)
+  })
+}
+
 exports.editPosition = {
   query: Joi.object().keys({
     queueIndex: Joi.number()
