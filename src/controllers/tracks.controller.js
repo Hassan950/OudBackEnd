@@ -90,7 +90,7 @@ exports.updateTrack = async (req, res, next) => {
   let track = await trackService.findTrack(req.params.id);
   if (!track)
     return next(new AppError('The requested resource is not found', 404));
-  if (String(track.artists[0]._id) !== String(req.user.artist))
+    if (String(track.artists[0]._id) !== String(req.user.artist))
     return next(
       new AppError(
         'You do not have the permission to perform this action.',
