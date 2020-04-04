@@ -7,10 +7,6 @@ info:
     data. The endpoints are arranged in a structure defined by an object model.
 
 
-    # Authentication
-
-
-    <!-- ReDoc-Inject: <security-definitions> -->
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
@@ -3888,6 +3884,8 @@ components:
         albumId:
           type: string
           description: The id of the album of the track.
+        album:
+            $ref: '#/components/schemas/AlbumSimple'
         type:
           type: string
           description: The object type i.e “track”
