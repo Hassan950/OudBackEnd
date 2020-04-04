@@ -32,6 +32,10 @@ app.use(
   })
 );
 
+// set uploads folder as static
+const path = require('path');
+app.use('/api/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 // sanitize request data
 app.use(xss());
 app.use(mongoSanitize());
