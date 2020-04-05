@@ -126,20 +126,20 @@ exports.getUserPlaylists = async (req, res, next) => {
     return next(new AppError('not found', 404));
   }
   let params;
-  let self;
+  let publicity;
   if (req.baseUrl.match(/.*users.*/)) {
     params = req.params.id;
     const user = await playlistService.checkUser(params);
     if (!user) return next(new AppError('no user with this id', 404));
-    self = false;
+    publicity = { public: true };
   } else {
     params = req.user.id;
-    self = true;
+    publicity = {};
   }
   const playlists = await playlistService.getUserPlaylists(
     params,
     req.query,
-    self
+    publicity
   );
   res.status(200).json({
     items: playlists.playlists,

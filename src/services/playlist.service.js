@@ -71,52 +71,32 @@ const getTracks = async (params, query) => {
   return { tracks, total };
 };
 
-const getUserPlaylists = async (id, query, self) => {
-  if (!self) {
+const getUserPlaylists = async (id, query, publicity) => {
     const playlistPromise = PlaylistFollowings.find({ userId: id })
-      .where({ public: true })
+      .where(publicity)
       .populate('playlistId')
       .select('playlistId')
       .select('-_id')
       .skip(query.offset)
       .limit(query.limit)
       .exec();
-    const totalPromise = PlaylistFollowings.find({ userId: id })
-      .where({ public: true })
-      .countDocuments()
+      let totalPromise;
+    if(publicity.public){
+    totalPromise = PlaylistFollowings.countDocuments({ userId: id , public: true })
       .exec();
-    const [playlists, total] = await Promise.all([
+    } 
+    else{
+    totalPromise = PlaylistFollowings.countDocuments({ userId: id })
+      .exec();
+    } 
+    let [playlists, total] = await Promise.all([
       playlistPromise,
       totalPromise
     ]);
-    let i = 0;
-    _.times(total, () => {
-      playlists[i] = playlists[i].playlistId;
-      i++;
-    });
+    playlists = _.map(playlists ,playlist => {
+      return playlist.playlistId
+    })
     return { playlists, total };
-  } else {
-    const playlistPromise = PlaylistFollowings.find({ userId: id })
-      .populate('playlistId')
-      .select('playlistId')
-      .select('-_id')
-      .skip(query.offset)
-      .limit(query.limit)
-      .exec();
-    const totalPromise = PlaylistFollowings.find({ userId: id })
-      .countDocuments()
-      .exec();
-    const [playlists, total] = await Promise.all([
-      playlistPromise,
-      totalPromise
-    ]);
-    let i = 0;
-    _.times(total, () => {
-      playlists[i] = playlists[i].playlistId;
-      i++;
-    });
-    return { playlists, total };
-  }
 };
 
 const getTracksId = async uris => {
