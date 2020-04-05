@@ -4114,9 +4114,6 @@ components:
           items:
             $ref: '#/components/schemas/ArtistSimple'
           description: The artists who performed the track.
-        albumId:
-          type: string
-          description: The id of the album of the track.
         type:
           type: string
           description: The object type i.e “track”
