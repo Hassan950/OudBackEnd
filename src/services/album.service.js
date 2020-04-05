@@ -19,6 +19,7 @@ exports.findAlbum = async id => {
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
+      select: '-album',
       populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
@@ -57,6 +58,7 @@ exports.findAlbumUtil = async id => {
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
+      select: '-album',
       populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
@@ -73,20 +75,22 @@ exports.findAlbumUtil = async id => {
  * @returns {Array} An array containing the albums with nulls against unmatched ID's
  */
 exports.findAlbums = async ids => {
-  const result = await Album.find({ _id: ids })
+  let result = Album.find({ _id: ids })
     .populate('artists', 'name images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
+      select: '-album',
       populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
 
-  let lengthArray = await Album.aggregate([
+  let lengthArray = Album.aggregate([
     { $match: { _id: { $in: ids.map(id => mongoose.Types.ObjectId(id)) } } },
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
+  [result, lengthArray] = await Promise.all([result, lengthArray]);
   let length;
 
   const albums = [];
@@ -123,6 +127,7 @@ exports.deleteAlbum = async id => {
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
+      select: '-album',
       populate: { path: 'artists', select: 'name images' }
     })
     .select('-album_group');
@@ -192,6 +197,7 @@ exports.update = async (id, newAlbum) => {
     .populate('genres')
     .populate({
       path: 'tracks',
+      select: '-album',
       options: { limit: 50, offset: 0 },
       populate: { path: 'artists', select: 'name images' }
     })
@@ -284,6 +290,7 @@ exports.addTrack = async (album, track) => {
       .populate('genres')
       .populate({
         path: 'tracks',
+        select: '-album',
         options: { limit: 50, offset: 0 },
         populate: { path: 'artists', select: 'name images' }
       })
