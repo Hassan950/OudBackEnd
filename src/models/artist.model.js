@@ -3,43 +3,41 @@ const mongoose = require('mongoose');
 const artistSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    followersCount: { type: Number, default: 0 },
     genres: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Genre' }],
       validate: {
-        validator: function(v) {
+        validator: function (v) {
           return v && v.length > 0;
         },
-        message: 'An artist should have at least one genre'
-      }
+        message: 'An artist should have at least one genre',
+      },
     },
-    images: [{ type: String, match: /\.(png|jpg|jpeg)$/ }],
     name: {
       type: String,
       minlength: 3,
       maxlength: 30,
       required: true,
       trim: true,
-      unique: true
+      unique: true,
     },
     bio: {
       type: String,
       maxlength: 255,
-      default: ''
+      default: '',
     },
-    popularSongs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Track' }]
+    popularSongs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Track' }],
   },
   {
     toJSON: {
-      virtuals: true
+      virtuals: true,
     },
     toObject: {
-      virtuals: true
-    }
+      virtuals: true,
+    },
   }
 );
 
-artistSchema.virtual('type').get(function() {
+artistSchema.virtual('type').get(function () {
   return 'artist';
 });
 

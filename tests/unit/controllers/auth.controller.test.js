@@ -152,12 +152,6 @@ describe('Auth controllers', () => {
         await authController.requestVerify(req, res, next);
         expect(next.mock.calls[0][0].statusCode).toBe(400);
       });
-
-      it('should return 500 if email is failed', async () => {
-        emailService.sendEmail = jest.fn().mockRejectedValue(user);
-        await authController.requestVerify(req, res, next);
-        expect(next.mock.calls[0][0].statusCode).toBe(500);
-      });
     });
 
 
@@ -301,28 +295,6 @@ describe('Auth controllers', () => {
       it('should return status 200 if valid', async () => {
         await authController.forgotPassword(req, res, next);
         expect(res.status.mock.calls[0][0]).toBe(200);
-      });
-      it('should save the user if valid with token and expire date is undefined', async () => {
-        emailService.sendEmail = jest.fn().mockImplementation((Options) => {
-          return new Promise((resolve, reject) => {
-            reject(Options);
-          })
-        });
-        user = await userService.getUser(user);
-        expect(user.passwordResetToken).toBeUndefined();
-        expect(user.passwordResetExpires).toBeUndefined();
-        await authController.forgotPassword(req, res, next);
-        expect(userMocks.save.mock.calls).toBeDefined();
-        expect(userMocks.save.mock.calls.length).toBeGreaterThan(2);
-      });
-      it('should return status 500 if falid', async () => {
-        emailService.sendEmail = jest.fn().mockImplementation((Options) => {
-          return new Promise((resolve, reject) => {
-            reject(Options);
-          })
-        });
-        await authController.forgotPassword(req, res, next);
-        expect(next.mock.calls[0][0].statusCode).toBe(500);
       });
     });
     describe('Update Password test', () => {

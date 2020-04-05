@@ -1,5 +1,6 @@
 const { userService, authService, emailService } = require('../services');
 const AppError = require('../utils/AppError');
+const httpStatus = require('http-status');
 
 /**
  * 
@@ -13,7 +14,7 @@ const createTokenAndSend = (user, res) => {
   user.__v = undefined;
   const token = authService.generateAuthToken(user._id);
   res.setHeader('x-auth-token', token);
-  return res.status(200).json({
+  return res.status(httpStatus.OK).json({
     token: token,
     user: user
   });
@@ -32,7 +33,7 @@ exports.verify = async (req, res, next) => {
   const user = await userService.getUser({
     verifyToken: hashedToken
   });
-  if (!user) return next(new AppError('Token is invalid', 400));
+  if (!user) return next(new AppError('Token is invalid', httpStatus.BAD_REQUEST));
 
   user.verified = true;
   user.verifyToken = undefined;
@@ -49,12 +50,12 @@ exports.verify = async (req, res, next) => {
  */
 exports.requestVerify = async (req, res, next) => {
   if (!req.user) {
-    return next(new AppError('PLease Authentcate first', 500));
+    return next(new AppError('PLease Authentcate first', httpStatus.INTERNAL_SERVER_ERROR));
   }
   const user = req.user;
 
   if (user.verified) {
-    return next(new AppError('User is Already verified!', 400));
+    return next(new AppError('User is Already verified!', httpStatus.BAD_REQUEST));
   }
 
   const verifyToken = authService.createVerifyToken(user);
@@ -62,23 +63,20 @@ exports.requestVerify = async (req, res, next) => {
 
   const verifyURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/users/verify/${verifyToken}`;
+  )}/verify/${verifyToken}`;
 
-  const message = `Hello ${user.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+  const message = `Hello ${user.username}<br>
+  CONFIRM ACCOUNT You are almost done<br>Confirm your account below to finish creating your Oud account`;
 
-  try {
-    await emailService.sendEmail({
-      email: user.email,
-      subject: 'Verify your Oud user',
-      message
-    });
-    user.verifyToken = undefined;
-    createTokenAndSend(user, res);
-  } catch (error) {
-    user.verifyToken = undefined;
-    user.save({ validateBeforeSave: false });
-    return next(new AppError('There was an error sending the email. Try again later!', 500));
-  }
+  emailService.sendEmail({
+    email: user.email,
+    subject: 'Verify your Oud account',
+    message,
+    button: 'CONFIRM ACCOUNT',
+    link: verifyURL
+  }).then().catch();
+  user.verifyToken = undefined;
+  createTokenAndSend(user, res);
 };
 
 /**
@@ -92,7 +90,7 @@ exports.requestVerify = async (req, res, next) => {
  */
 exports.signup = async (req, res, next) => {
   if (req.body.password != req.body.passwordConfirm) {
-    return next(new AppError('Please confirm your password', 400));
+    return next(new AppError('Please confirm your password', httpStatus.BAD_REQUEST));
   }
   const newUser = await userService.createUser(req.body);
   // TODO
@@ -107,20 +105,18 @@ exports.signup = async (req, res, next) => {
   // use mail to verify user
   const verifyURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/users/verify/${verifyToken}`;
+  )}/verify/${verifyToken}`;
 
-  const message = `Hello ${newUser.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+  const message = `Hello ${newUser.username}<br>
+  CONFIRM ACCOUNT You are almost done<br>Confirm your account below to finish creating your Oud account`;
 
-  try {
-    await emailService.sendEmail({
-      email: newUser.email,
-      subject: 'Verify your Oud user',
-      message
-    });
-  } catch (error) {
-    newUser.verifyToken = undefined;
-    newUser.save({ validateBeforeSave: false });
-  }
+  emailService.sendEmail({
+    email: newUser.email,
+    subject: 'Verify your Oud account',
+    message,
+    button: 'CONFIRM ACCOUNT',
+    link: verifyURL
+  }).then().catch();
   newUser.verifyToken = undefined;
   createTokenAndSend(newUser, res);
 };
@@ -141,7 +137,7 @@ exports.login = async (req, res, next) => {
     password
   );
   if (!user) {
-    return next(new AppError('Incorrect email or password!', 401));
+    return next(new AppError('Incorrect email or password!', httpStatus.UNAUTHORIZED));
   }
 
   // TODO
@@ -163,11 +159,11 @@ exports.updatePassword = async (req, res, next) => {
   const { currentPassword, password, passwordConfirm } = req.body;
 
   if (!req.user) {
-    return next(new AppError('PLease Authentcate first', 500));
+    return next(new AppError('PLease Authentcate first', httpStatus.INTERNAL_SERVER_ERROR));
   }
   // get user with a password
   if (password != passwordConfirm) {
-    return next(new AppError('Please confirm your password', 400));
+    return next(new AppError('Please confirm your password', httpStatus.BAD_REQUEST));
   }
 
   const user = await userService.findUserByIdAndCheckPassword(
@@ -175,7 +171,7 @@ exports.updatePassword = async (req, res, next) => {
     currentPassword
   );
   if (!user) {
-    return next(new AppError('Incorrect password!', 401));
+    return next(new AppError('Incorrect password!', httpStatus.UNAUTHORIZED));
   }
 
   user.password = password;
@@ -194,7 +190,7 @@ exports.updatePassword = async (req, res, next) => {
 exports.forgotPassword = async (req, res, next) => {
   const user = await userService.getUser({ email: req.body.email });
   if (!user) {
-    return next(new AppError('No user with the given email!', 404));
+    return next(new AppError('No user with the given email!', httpStatus.NOT_FOUND));
   }
   // TODOS
   // generate reset token and save user
@@ -205,36 +201,21 @@ exports.forgotPassword = async (req, res, next) => {
   // send reset token via email
   const resetURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
+  )}/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Submit a PATCH request with your new password and
-   passwordConfirm to: ${resetURL}.`;
+  const message = `Forgot your password?<br>Reset your password below`;
 
-  try {
-    await emailService.sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 mins)',
-      message
-    });
-    res.status(200).json({
-      status: 'success',
-      message: 'Token sent to email!'
-    });
-  } catch (error) {
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-
-    await user.save({
-      validateBeforeSave: false
-    });
-
-    return next(
-      new AppError(
-        'There was an error sending the email. Try again later!',
-        500
-      )
-    );
-  }
+  emailService.sendEmail({
+    email: user.email,
+    subject: 'Reset your password',
+    message,
+    button: 'RESET PASSWORD',
+    link: resetURL
+  }).then().catch();
+  res.status(httpStatus.OK).json({
+    status: 'success',
+    message: 'Token sent to email!'
+  });
 };
 
 
@@ -255,7 +236,7 @@ exports.resetPassword = async (req, res, next) => {
     }
   });
   // if token has not expired, and there is user, set the new password
-  if (!user) return next(new AppError('Token is invalid or has expired', 400));
+  if (!user) return next(new AppError('Token is invalid or has expired', httpStatus.BAD_REQUEST));
 
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
@@ -274,12 +255,12 @@ exports.resetPassword = async (req, res, next) => {
  */
 exports.facebookAuth = async (req, res, next) => {
   if (!req.user) {
-    return next(new AppError('Invalid Token', 400));
+    return next(new AppError('Invalid Token', httpStatus.BAD_REQUEST));
   }
   if (req.user._id) {
     createTokenAndSend(req.user, res);
   } else {
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       user: req.user
     });
   }
@@ -298,7 +279,7 @@ exports.facebookConnect = async (req, res, next) => {
   } else {
     // disconnect case
     if (!req.user) {
-      return next(new AppError('Must Authenticate user', 500));
+      return next(new AppError('Must Authenticate user', httpStatus.INTERNAL_SERVER_ERROR));
     }
     // set facebook account to null
     req.user.facebook_id = undefined;
@@ -314,12 +295,12 @@ exports.facebookConnect = async (req, res, next) => {
  */
 exports.googleAuth = async (req, res, next) => {
   if (!req.user) {
-    return next(new AppError('Invalid Token', 400));
+    return next(new AppError('Invalid Token', httpStatus.BAD_REQUEST));
   }
   if (req.user._id) {
     createTokenAndSend(req.user, res);
   } else {
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       user: req.user
     });
   }
@@ -338,7 +319,7 @@ exports.googleConnect = async (req, res, next) => {
   } else {
     // disconnect case
     if (!req.user) {
-      return next(new AppError('Must Authenticate user', 500));
+      return next(new AppError('Must Authenticate user', httpStatus.INTERNAL_SERVER_ERROR));
     }
     // set google account to null
     req.user.google_id = undefined;
