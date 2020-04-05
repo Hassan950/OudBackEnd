@@ -21,6 +21,7 @@ describe('Auth controllers', () => {
     res = requestMocks.mockResponse();
     next = jest.fn();
     userService.getUser = getUser;
+    emailService.sendEmail = jest.fn().mockResolvedValue(user);
   });
 
   describe('signup - test', () => {
