@@ -212,7 +212,7 @@ exports.resumePlayer = async (req, res, next) => {
 
   if (player.item) {
     // add to history
-    playHistoryService.addToHistory(id, player.item, player.context);
+    playHistoryService.addToHistory(id, player.context);
     // change position
     if (positionMs) player.positionMs = positionMs;
     // if position > track duration go to next

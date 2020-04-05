@@ -16,18 +16,6 @@ describe('PlayHistory model', () => {
     });
   });
 
-  describe('PlayHistory model - track', () => {
-    it('should be required', () => {
-      const args = [null, undefined];
-      args.forEach(a => {
-        playHistory.track = a;
-        const error = playHistory.validateSync();
-        expect(error.errors['track']).toBeDefined();
-      });
-    });
-  });
-
-
   describe('PlayHistory model - context.type', () => {
     it('should be [album, artist, playlist, unknown] only', () => {
       const args = ['album', 'artist', 'playlist', 'unknown'];

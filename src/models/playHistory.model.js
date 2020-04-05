@@ -7,11 +7,6 @@ const playHistorySchema = mongoose.Schema({
     required: true,
     select: false,
   },
-  track: {
-    type: mongoose.Types.ObjectId,
-    required: true,
-    ref: 'Track'
-  },
   context: {
     type: {
       type: String,

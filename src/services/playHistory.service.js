@@ -21,7 +21,6 @@ const getHistory = async (userId, ops = {
   before: undefined
 }) => {
   const history = PlayHistory.find({ user: userId })
-    .populate('track')
     .limit(ops.limit);
 
   if (ops.after)
@@ -42,7 +41,6 @@ const getHistory = async (userId, ops = {
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID
- * @param {String} trackId Track ID
  * @param {Object} [context] context Object
  * @param {String} [context.type] context type enum = ['album', 'artist', 'playlist', 'unknown'] 
  * (default = 'unknown')
@@ -51,13 +49,12 @@ const getHistory = async (userId, ops = {
  * @returns {Document} history
  * @summary Add Track to history
  */
-const addToHistory = async (userId, trackId, context = {
+const addToHistory = async (userId, context = {
   type: 'unknown',
   id: undefined
 }) => {
   const query = {
     user: userId,
-    track: trackId,
     context: context
   };
   const update = { playedAt: Date.now() };
