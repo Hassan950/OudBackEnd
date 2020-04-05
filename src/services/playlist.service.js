@@ -49,7 +49,7 @@ const uploadImage = async (params, image) => {
     });
   }
   playlist.image = image;
-  await playlist.save(); 
+  await playlist.save();
   return playlist;
 };
 
@@ -61,34 +61,60 @@ const getTracks = async (params, query) => {
     return { tracks, total };
   }
   const trackPromise = Track.find({ _id: { $in: playlist.tracks } })
-  .skip(query.offset)
-  .limit(query.limit).exec();
-  const totalPromise = Track.countDocuments({ _id: { $in: playlist.tracks } }).exec();
-  const [tracks,total] = await Promise.all([trackPromise,totalPromise]);
+    .skip(query.offset)
+    .limit(query.limit)
+    .exec();
+  const totalPromise = Track.countDocuments({
+    _id: { $in: playlist.tracks }
+  }).exec();
+  const [tracks, total] = await Promise.all([trackPromise, totalPromise]);
   return { tracks, total };
 };
 
-const getUserPlaylists = async (id, query , self) => {
-  if(!self){
-    const playlistPromise = PlaylistFollowings.find({ userId: id }).where({'public' : true}).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit).exec();
-    const totalPromise = PlaylistFollowings.find({userId: id}).where({'public' : true}).countDocuments().exec();
-    const [playlists,total] = await Promise.all([playlistPromise,totalPromise]);
-    let i =0;
-    _.times(total,()=>{
+const getUserPlaylists = async (id, query, self) => {
+  if (!self) {
+    const playlistPromise = PlaylistFollowings.find({ userId: id })
+      .where({ public: true })
+      .populate('playlistId')
+      .select('playlistId')
+      .select('-_id')
+      .skip(query.offset)
+      .limit(query.limit)
+      .exec();
+    const totalPromise = PlaylistFollowings.find({ userId: id })
+      .where({ public: true })
+      .countDocuments()
+      .exec();
+    const [playlists, total] = await Promise.all([
+      playlistPromise,
+      totalPromise
+    ]);
+    let i = 0;
+    _.times(total, () => {
       playlists[i] = playlists[i].playlistId;
       i++;
-    })
+    });
     return { playlists, total };
-  }
-  else{
-    const playlistPromise = PlaylistFollowings.find({ userId: id }).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit).exec();
-    const totalPromise = PlaylistFollowings.find({userId: id}).countDocuments().exec();
-    const [playlists,total] = await Promise.all([playlistPromise,totalPromise]);
-    let i =0;
-    _.times(total,()=>{
+  } else {
+    const playlistPromise = PlaylistFollowings.find({ userId: id })
+      .populate('playlistId')
+      .select('playlistId')
+      .select('-_id')
+      .skip(query.offset)
+      .limit(query.limit)
+      .exec();
+    const totalPromise = PlaylistFollowings.find({ userId: id })
+      .countDocuments()
+      .exec();
+    const [playlists, total] = await Promise.all([
+      playlistPromise,
+      totalPromise
+    ]);
+    let i = 0;
+    _.times(total, () => {
       playlists[i] = playlists[i].playlistId;
       i++;
-    })
+    });
     return { playlists, total };
   }
 };
@@ -98,7 +124,7 @@ const getTracksId = async uris => {
   return tracks;
 };
 
-const checkUser = async (id) => {
+const checkUser = async id => {
   const user = await User.findById(id);
   return user;
 };
@@ -117,7 +143,11 @@ const createUserPlaylist = async (params, body, image) => {
 };
 
 const deleteTracks = async (params, tracks) => {
-  playlist = await Playlist.findByIdAndUpdate(params.id, {  $pull: {  'tracks': { $in: tracks }}}, {new: true});
+  playlist = await Playlist.findByIdAndUpdate(
+    params.id,
+    { $pull: { tracks: { $in: tracks } } },
+    { new: true }
+  );
   return playlist;
 };
 
@@ -130,28 +160,33 @@ const addTracks = async (params, tracks, position) => {
       notFound.push(element);
     }
   });
-  playlist = await Playlist.findByIdAndUpdate(params.id, {
-    $push: {
-      tracks: {
-        $each: notFound,
-        $position: position
+  playlist = await Playlist.findByIdAndUpdate(
+    params.id,
+    {
+      $push: {
+        tracks: {
+          $each: notFound,
+          $position: position
+        }
       }
-    }},{
+    },
+    {
       new: true
-    });
-  return playlist
-}
+    }
+  );
+  return playlist;
+};
 
 const reorderTracks = async (params, body) => {
   const playlist = await Playlist.findOne({ _id: params.id });
   let begin = body.rangeStart;
   let before = body.insertBefore;
-    _.times(body.rangeLength, ()=> {
-      playlist.tracks = move.default(playlist.tracks, begin , before);
-      before++;
-      begin++;
-    });
-  await playlist.save();  
+  _.times(body.rangeLength, () => {
+    playlist.tracks = move.default(playlist.tracks, begin, before);
+    before++;
+    begin++;
+  });
+  await playlist.save();
 };
 
 module.exports = {

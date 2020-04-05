@@ -85,10 +85,10 @@ exports.uploadImageRoute = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const playlist = await playlistService.uploadImage(req.params ,req.file.path);
-  if(!playlist) return next(new AppError('no playlist with such id', 404));
+  const playlist = await playlistService.uploadImage(req.params, req.file.path);
+  if (!playlist) return next(new AppError('no playlist with such id', 404));
   res.sendStatus(204);
-}
+};
 
 /**
  * @version 1.0.0
@@ -136,7 +136,11 @@ exports.getUserPlaylists = async (req, res, next) => {
     params = req.user.id;
     self = true;
   }
-  const playlists = await playlistService.getUserPlaylists(params,req.query, self);
+  const playlists = await playlistService.getUserPlaylists(
+    params,
+    req.query,
+    self
+  );
   res.status(200).json({
     items: playlists.playlists,
     offset: req.query.offset,
@@ -183,23 +187,26 @@ exports.deleteTracks = async (req, res, next) => {
     return next(new AppError('endpoint not found', 404));
   }
   const tracks = await playlistService.getTracksId(req.body.uris);
-  if(!tracks) return next(new AppError('no tracks with these uris', 404));
-  const playlist = await playlistService.deleteTracks(req.params ,tracks);
-  if(!playlist) return next(new AppError('no playlist with this id', 404));
+  if (!tracks) return next(new AppError('no tracks with these uris', 404));
+  const playlist = await playlistService.deleteTracks(req.params, tracks);
+  if (!playlist) return next(new AppError('no playlist with this id', 404));
   res.sendStatus(204);
-}
-
+};
 
 exports.addTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
   const tracks = await playlistService.getTracksId(req.body.uris);
-  if(!tracks) return next(new AppError('no tracks with these uris', 404));
-  const playlist = await playlistService.addTracks(req.params , tracks ,req.body.position);
-  if(!playlist) return next(new AppError('no playlist with this id', 404));
+  if (!tracks) return next(new AppError('no tracks with these uris', 404));
+  const playlist = await playlistService.addTracks(
+    req.params,
+    tracks,
+    req.body.position
+  );
+  if (!playlist) return next(new AppError('no playlist with this id', 404));
   res.sendStatus(204);
-}
+};
 
 exports.replaceTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
@@ -208,11 +215,11 @@ exports.replaceTracks = async (req, res, next) => {
   const tracks = await playlistService.getTracksId(req.body.uris);
   if (!tracks) return next(new AppError('no tracks with these uris', 404));
   let playlist = await playlistService.getPlaylist(req.params);
-  if(!playlist) return next(new AppError('no playlist with such id', 404));
-  playlist = await playlistService.deleteTracks(playlist ,playlist.tracks);
-  playlist = await playlistService.addTracks(req.params , tracks ,0 );
+  if (!playlist) return next(new AppError('no playlist with such id', 404));
+  playlist = await playlistService.deleteTracks(playlist, playlist.tracks);
+  playlist = await playlistService.addTracks(req.params, tracks, 0);
   res.sendStatus(204);
-}
+};
 
 exports.reorderTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
@@ -222,4 +229,4 @@ exports.reorderTracks = async (req, res, next) => {
   if (!playlist) return next(new AppError('no playlist with such id', 404));
   await playlistService.reorderTracks(playlist, req.body);
   res.sendStatus(204);
-}
+};

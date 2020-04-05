@@ -1,6 +1,11 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { playlistController } = require('../../../src/controllers');
-let { Track, Playlist, User , PlaylistFollowings } = require('../../../src/models');
+let {
+  Track,
+  Playlist,
+  User,
+  PlaylistFollowings
+} = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 
 const playlistsIds = ['5e6dea511e17a305285ba614', '5e6dea511e17a305285ba615'];
