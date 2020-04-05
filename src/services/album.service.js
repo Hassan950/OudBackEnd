@@ -1,6 +1,7 @@
 const { Album } = require('../models/album.model');
 const mongoose = require('mongoose');
 const fs = require('fs').promises;
+const _ = require('lodash');
 
 /**
  * A method that gets an album by it's ID
@@ -259,10 +260,12 @@ exports.setImage = async (album, path) => {
  * @returns Created album
  */
 exports.createAlbum = async newAlbum => {
-  return await (await Album.create(newAlbum))
+  let album = await (await Album.create(newAlbum))
     .populate('artists', 'name images')
     .populate('genres')
     .execPopulate();
+  album.album_group = undefined;
+  return album;
 };
 
 /**
@@ -324,4 +327,18 @@ exports.deleteImage = async image => {
       console.log(err.message);
     }
   }
+};
+
+/**
+ * A method that removes a track from the album tracks list
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Removes a track from tracks list
+ * @param {String} albumId ID of the album
+ * @param {String} trackId ID of the track
+ */
+
+exports.removeTrack = async (albumId, trackId) => {
+  await Album.findByIdAndUpdate(albumId, { $pull: { tracks: trackId } });
 };
