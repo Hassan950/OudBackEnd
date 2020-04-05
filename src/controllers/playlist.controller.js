@@ -126,17 +126,17 @@ exports.getUserPlaylists = async (req, res, next) => {
     return next(new AppError('not found', 404));
   }
   let params;
+  let self;
   if (req.baseUrl.match(/.*users.*/)) {
     params = req.params.id;
     const user = await playlistService.checkUser(params);
     if (!user) return next(new AppError('no user with this id', 404));
+    self = false;
   } else {
     params = req.user.id;
+    self = true;
   }
-  const playlists = await playlistService.getUserPlaylists(
-    params,
-    req.query
-  );
+  const playlists = await playlistService.getUserPlaylists(params,req.query, self);
   res.status(200).json({
     items: playlists.playlists,
     offset: req.query.offset,

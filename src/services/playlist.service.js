@@ -1,4 +1,4 @@
-const { Playlist, Track, User } = require('../models');
+const { Playlist, Track, User, PlaylistFollowings } = require('../models');
 const _ = require('lodash');
 const move = require('lodash-move');
 const fs = require('fs');
@@ -72,13 +72,27 @@ const getTracks = async (params, query) => {
   return { tracks, total };
 };
 
-const getUserPlaylists = async (id, query) => {
-  const playlists = await Playlist.find({ owner: id })
-    .select('-owner')
-    .skip(query.offset)
-    .limit(query.limit);
-  const total = await Playlist.find({ owner: id }).countDocuments();
-  return { playlists, total };
+const getUserPlaylists = async (id, query , self) => {
+  if(!self){
+    const playlists = await PlaylistFollowings.find({ userId: id }).where({'public' : true}).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit);
+    const total = await PlaylistFollowings.find({userId: id}).where({'public' : true}).countDocuments();
+    let i =0;
+    _.times(total,()=>{
+      playlists[i] = playlists[i].playlistId;
+      i++;
+    })
+    return { playlists, total };
+  }
+  else{
+    const playlists = await PlaylistFollowings.find({ userId: id }).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit);
+    const total = await PlaylistFollowings.find({userId: id}).countDocuments();
+    let i =0;
+    _.times(total,()=>{
+      playlists[i] = playlists[i].playlistId;
+      i++;
+    })
+    return { playlists, total };
+  }
 };
 
 const getTracksId = async uris => {
