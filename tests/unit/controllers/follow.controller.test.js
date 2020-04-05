@@ -33,7 +33,7 @@ describe('Following controller', () => {
         followedId: '5e6ba6917fb1cf2ad80b4fb2',
         type: 'User'
       });
-      req.user = following.userId;
+      req.user = { _id: following.userId };
       next = jest.fn();
     });
     it('Should return list of boolean that indicates the following for each user/artist with status code 200', async () => {
@@ -130,6 +130,7 @@ describe('Following controller', () => {
       Followings.schema.path('followedId', Object);
       User.schema.path('artist', Object);
       Artist.schema.path('user', Object);
+
       user = new User({
         displayName: 'test',
         verified: true,
@@ -138,6 +139,7 @@ describe('Following controller', () => {
       artist = new Artist({
         user: user._id
       });
+
       userFollowing = new Followings({
         userId: '5e6ba8747d3eda317003c976',
         followedId: {
@@ -148,6 +150,7 @@ describe('Following controller', () => {
         },
         type: 'User'
       });
+
       artistFollowing = new Followings({
         userId: '5e6ba8747d3eda317003c976',
         followedId: {
@@ -160,12 +163,14 @@ describe('Following controller', () => {
         },
         type: 'Artist'
       });
+
       mockingoose(Artist).toReturn(artist);
       mockingoose(User).toReturn(user);
-      req.user = following.userId;
+      req.user = { _id: following.userId };
       next = jest.fn();
     });
-    it('Should return a list of followed users wrapped in paging object', async () => {
+    it('Should return a list of followed users of the logged in user wrapped in paging object', async () => {
+      req.url = 'me';
       const doc = userFollowing.followedId;
       mockingoose(Followings).toReturn([userFollowing], 'find');
       mockingoose(Followings).toReturn(1, 'countDocuments');
@@ -184,7 +189,8 @@ describe('Following controller', () => {
       expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
     });
 
-    it('Should return a list of followed artists wrapped in paging object', async () => {
+    it('Should return a list of followed artists of the logged in user wrapped in paging object', async () => {
+      req.url = 'me';
       const doc = {
         _id: artistFollowing.followedId._id,
         displayName: artistFollowing.followedId.user.displayName,
@@ -192,6 +198,54 @@ describe('Following controller', () => {
         images: artistFollowing.followedId.user.images
       };
       mockingoose(Followings).toReturn([artistFollowing], 'find');
+      mockingoose(Followings).toReturn(2, 'countDocuments');
+      req.query = {
+        type: 'Artist',
+        limit: 2,
+        offset: 1
+      };
+      await followController.getUserFollowed(req, res, next);
+      expect(res.json.mock.calls[0][0]).toEqual({
+        items: [doc],
+        limit: req.query.limit,
+        offset: req.query.offset,
+        total: 2
+      });
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+    it('Should return a list of followed users of the passed user wrapped in paging object', async () => {
+      req.url = 'users';
+      req.params.userId = req.user._id;
+      const doc = userFollowing.followedId;
+      mockingoose(Followings).toReturn([userFollowing], 'find');
+      mockingoose(User).toReturn(req.user, 'findOne');
+      mockingoose(Followings).toReturn(1, 'countDocuments');
+      req.query = {
+        type: 'User',
+        limit: 2,
+        offset: 0
+      };
+      await followController.getUserFollowed(req, res, next);
+      expect(res.json.mock.calls[0][0]).toEqual({
+        items: [doc],
+        limit: req.query.limit,
+        offset: req.query.offset,
+        total: 1
+      });
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+    });
+
+    it('Should return a list of followed artists of of the passed user wrapped in paging object', async () => {
+      req.url = 'users';
+      req.params.userId = req.user._id;
+      const doc = {
+        _id: artistFollowing.followedId._id,
+        displayName: artistFollowing.followedId.user.displayName,
+        type: artistFollowing.followedId.type,
+        images: artistFollowing.followedId.user.images
+      };
+      mockingoose(Followings).toReturn([artistFollowing], 'find');
+      mockingoose(User).toReturn(req.user, 'findOne');
       mockingoose(Followings).toReturn(2, 'countDocuments');
       req.query = {
         type: 'Artist',
