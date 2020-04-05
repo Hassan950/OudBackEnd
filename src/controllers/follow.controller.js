@@ -53,7 +53,7 @@ exports.checkFollowingsPlaylist = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 
-exports.setUserId = async (req, res, next) => {
+exports.setUserId = (req, res, next) => {
   req.params.userId = String(req.user._id);
   next();
 };
