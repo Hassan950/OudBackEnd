@@ -1,0 +1,12 @@
+{
+  "JWT_KEY": "1234",
+  "JWT_EXPIRES_IN": "30s",
+  "db": "mongodb://localhost:27017/oud_test",
+  "PORT": "3000",
+  "NODE_ENV": "test",
+  "FBClientID": "1",
+  "FBClientSecret": "1",
+  "GoogleClientID": "1",
+  "GoogleClientSecret": "1",
+  "SENDGRID_API_KEY": "SG.1"
+}

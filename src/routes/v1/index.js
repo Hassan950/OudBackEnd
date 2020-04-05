@@ -6,7 +6,7 @@ const browseRoute = require('./browse.route');
 const trackRoute = require('./tracks.route');
 const authRoute = require('./auth.route');
 const albumRoute = require('./album.route');
-const followRouter = require('./follow.route');
+const followRoute = require('./follow.route');
 
 const router = express.Router();
 
@@ -17,6 +17,6 @@ router.use('/browse', browseRoute);
 router.use('/tracks', trackRoute);
 router.use('/auth', authRoute);
 router.use('/albums', albumRoute);
-router.use('/', followRouter);
+router.use('/', followRoute);
 
 module.exports = router;
