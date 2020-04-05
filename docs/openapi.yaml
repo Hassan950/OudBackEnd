@@ -4795,9 +4795,6 @@ components:
           items:
             type: object
             properties:
-              track:
-                description: The track the user listened to.
-                $ref: '#/components/schemas/Track'
               playedAt:
                 description: The date and time the track was played.
                 type: string
