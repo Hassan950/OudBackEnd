@@ -48,13 +48,8 @@ const uploadImage = async (params, image) => {
       if (err) throw err;
     });
   }
-  playlist = await Playlist.findByIdAndUpdate(
-    params.id,
-    {
-      image: image
-    },
-    { new: true }
-  );
+  playlist.image = image;
+  await playlist.save(); 
   return playlist;
 };
 
