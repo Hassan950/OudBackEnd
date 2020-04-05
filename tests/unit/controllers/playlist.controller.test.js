@@ -60,6 +60,18 @@ describe('playlist controllers', () => {
   });
 
   describe('getPlaylist - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.getPlaylist(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.getPlaylist(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when invalid id is passed', async () => {
       req.params.id = 'invalid';
       Playlist.select = jest.fn().mockReturnThis();
@@ -85,6 +97,18 @@ describe('playlist controllers', () => {
     });
   });
   describe('changePlaylist - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.changePlaylist(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.changePlaylist(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when invalid id is passed', async () => {
       req.params.id = 'invalid';
       req.body = {
@@ -125,6 +149,18 @@ describe('playlist controllers', () => {
     });
   });
   describe('uploadImage - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.uploadImageRoute(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.uploadImageRoute(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when invalid id is passed', async () => {
       req.params.id = 'invalid';
       req.file.path = 'uploads\\default.jpg';
@@ -143,6 +179,18 @@ describe('playlist controllers', () => {
     });
   });
   describe('getTracks - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.getTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.getTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when invalid id is passed', async () => {
       req.params.id = 'invalid';
       req.query = {
@@ -181,14 +229,22 @@ describe('playlist controllers', () => {
     });
   });
   describe('getUserPlaylist - test', () => {
-    it('should throw error 404 when invalid id is passed', async () => {
+    it('should throw error 404 when url is /api/v1/playlists', async () => {
+      req.baseUrl = '/api/v1/playlists';
+      await playlistController.getUserPlaylists(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when invalid id is passed for users url', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
       req.params.id = 'invalid';
       mockingoose(User).toReturn(null, 'findOne');
       await playlistController.getUserPlaylists(req, res, next);
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
-    it('should return 200 if user with the passed id exists', async () => {
+    it('should return 200 if user with the passed id exists for users url', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
       req.params.id = usersIds[0];
       Playlist.select = jest.fn().mockReturnThis();
       mockingoose(User).toReturn(user, 'findOne');
@@ -196,7 +252,8 @@ describe('playlist controllers', () => {
       await playlistController.getUserPlaylists(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
-    it('should return Playlist with the passed id exists', async () => {
+    it('should return Playlist with the passed id exists for users url', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
       req.params.id = usersIds[0];
       Playlist.select = jest.fn().mockReturnThis();
       mockingoose(User).toReturn(user, 'findOne');
@@ -207,8 +264,39 @@ describe('playlist controllers', () => {
         JSON.parse(JSON.stringify(playlists.slice(0, 1)))
       );
     });
+    it('should return 200 if user with the passed id exists for me url', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      req.user.id = usersIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlist, 'find');
+      await playlistController.getUserPlaylists(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('should return Playlist with the passed id exists for me url', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      req.user.id = usersIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlists.slice(0, 1), 'find');
+      await playlistController.getUserPlaylists(req, res, next);
+      const foundPlaylists = res.json.mock.calls[0][0].items;
+      expect(JSON.parse(JSON.stringify(foundPlaylists))).toStrictEqual(
+        JSON.parse(JSON.stringify(playlists.slice(0, 1)))
+      );
+    });
   });
   describe('createPlaylist - test', () => {
+    it('should throw error 404 when url is /api/v1/playlists', async () => {
+      req.baseUrl = '/api/v1/playlists';
+      await playlistController.createUserPlaylist(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.createUserPlaylist(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when invalid id is passed', async () => {
       req.params.id = 'invalid';
       req.body = {
@@ -236,6 +324,18 @@ describe('playlist controllers', () => {
     });
   });
   describe('deleteTracks - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.deleteTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.deleteTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when no tracks with passed uris', async () => {
       req.params.id = playlistsIds[0];
       req.body = {
@@ -273,6 +373,18 @@ describe('playlist controllers', () => {
     });
   });
   describe('addTracks - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.addTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.addTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when no tracks with passed uris', async () => {
       req.params.id = playlistsIds[0];
       req.body = {
@@ -310,6 +422,18 @@ describe('playlist controllers', () => {
     });
   });
   describe('replaceTracks - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.replaceTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.replaceTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when no tracks with passed uris', async () => {
       req.params.id = playlistsIds[0];
       req.body = {
@@ -347,6 +471,18 @@ describe('playlist controllers', () => {
     });
   });
   describe('reorderTracks - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.reorderTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.reorderTracks(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
     it('should throw error 404 when invalid id is passed', async () => {
       req.params.id = 'invalid';
       req.body = {
