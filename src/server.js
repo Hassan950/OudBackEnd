@@ -6,7 +6,12 @@ const logger = require('./config/logger');
 let server;
 const port = config.get('PORT') || 3000;
 logger.info(config.get('db'));
-mongoose.connect(config.get('db')).then(() => {
+mongoose.connect(config.get('db'), {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true
+}).then(() => {
   logger.info('Connected to MongoDB');
   server = app.listen(port, () => {
     logger.info(`Listening to port ${port}`);

@@ -13,3 +13,6 @@ yarn-error.log
 
 # Code coverage
 coverage
+
+# Config
+config/production.json
