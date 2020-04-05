@@ -119,8 +119,6 @@ const createUserPlaylist = async (params, body, image) => {
 };
 
 const deleteTracks = async (params, tracks) => {
-  let playlist = await Playlist.findById(params.id);
-  if (!playlist) return playlist;
   playlist = await Playlist.findByIdAndUpdate(params.id, {  $pull: {  'tracks': { $in: tracks }}}, {new: true});
   return playlist;
 };
