@@ -39,7 +39,7 @@ const playlistFollowingsSchema = mongoose.Schema({
   }
 });
 
-playlistFollowingsSchema.index({ playlistId: 1, userId: 1 }, { unique: true });
+playlistFollowingsSchema.index({ userId: 1, playlistId: 1 }, { unique: true });
 
 const PlaylistFollowings = mongoose.model(
   'PlaylistFollowings',
