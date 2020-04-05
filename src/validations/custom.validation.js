@@ -19,10 +19,26 @@ exports.countryCheck = (value, helpers) => {
 
 exports.tracksIds = (value, helper) => {
   const values = value.split(',');
-  if (values.length > 50) return helper.message('too many ids requested')
+  if (values.length > 50) return helper.message('too many ids requested');
   values.forEach(v => {
     if (!mongoose.Types.ObjectId.isValid(v))
       return helper.message(v + ' is not a valid Id');
   });
   return value;
+};
+
+exports.idsArray = maxNum => {
+  return function(value, helper) {
+    const values = value.split(',');
+    if (values.length > maxNum) return helper.message('too many ids requested');
+    values.forEach(v => {
+      if (!mongoose.Types.ObjectId.isValid(v))
+        return helper.message(v + ' is not a valid Id');
+    });
+    return values;
+  };
+};
+
+exports.capitalize = (value, helper) => {
+  return value.replace(/^./, value[0].toUpperCase());
 };
