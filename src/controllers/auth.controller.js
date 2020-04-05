@@ -62,15 +62,18 @@ exports.requestVerify = async (req, res, next) => {
 
   const verifyURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/users/verify/${verifyToken}`;
+  )}/verify/${verifyToken}`;
 
-  const message = `Hello ${user.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+  const message = `Hello ${user.username}<br>
+  CONFIRM ACCOUNT You are almost done<br>Confirm your account below to finish creating your Oud account`;
 
   try {
     await emailService.sendEmail({
       email: user.email,
-      subject: 'Verify your Oud user',
-      message
+      subject: 'Verify your Oud account',
+      message,
+      button: 'CONFIRM ACCOUNT',
+      link: verifyURL
     });
     user.verifyToken = undefined;
     createTokenAndSend(user, res);
@@ -107,15 +110,18 @@ exports.signup = async (req, res, next) => {
   // use mail to verify user
   const verifyURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/users/verify/${verifyToken}`;
+  )}/verify/${verifyToken}`;
 
-  const message = `Hello ${newUser.displayName}. Please verify your account. Submit a PATCH request to: ${verifyURL}.`;
+  const message = `Hello ${newUser.username}<br>
+  CONFIRM ACCOUNT You are almost done<br>Confirm your account below to finish creating your Oud account`;
 
   try {
     await emailService.sendEmail({
       email: newUser.email,
-      subject: 'Verify your Oud user',
-      message
+      subject: 'Verify your Oud account',
+      message,
+      button: 'CONFIRM ACCOUNT',
+      link: verifyURL
     });
   } catch (error) {
     newUser.verifyToken = undefined;
@@ -205,16 +211,17 @@ exports.forgotPassword = async (req, res, next) => {
   // send reset token via email
   const resetURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
+  )}/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Submit a PATCH request with your new password and
-   passwordConfirm to: ${resetURL}.`;
+  const message = `Forgot your password?<br>Reset your password below`;
 
   try {
     await emailService.sendEmail({
       email: user.email,
-      subject: 'Your password reset token (valid for 10 mins)',
-      message
+      subject: 'Reset your password',
+      message,
+      button: 'RESET PASSWORD',
+      link: resetURL
     });
     res.status(200).json({
       status: 'success',
