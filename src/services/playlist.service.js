@@ -143,24 +143,15 @@ const addTracks = async (params, tracks, position) => {
 }
 
 const reorderTracks = async (params, body) => {
-  await Playlist.findOne({ _id: params.id }, { tracks: 1 }).then(async function(
-    track
-  ) {
-    let begin = body.rangeStart;
-    let before = body.insertBefore;
+  const playlist = await Playlist.findOne({ _id: params.id });
+  let begin = body.rangeStart;
+  let before = body.insertBefore;
     _.times(body.rangeLength, ()=> {
-      track.tracks = move.default(track.tracks, begin , before);
+      playlist.tracks = move.default(playlist.tracks, begin , before);
       before++;
       begin++;
     });
-    await Playlist.updateOne(
-      { _id: track._id },
-      { $set: { tracks: track.tracks } },
-      {
-        new: true
-      }
-    );
-  });
+  await playlist.save();  
 };
 
 module.exports = {
