@@ -15,7 +15,10 @@ exports.getPlayer = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const player = await playerService.getPlayer(id);
+  const link = `${req.protocol}://${req.get(
+    'host'
+  )}/api/uploads/tracks/`;
+  const player = await playerService.getPlayer(id, { link: link });
 
   if (!player) {
     res.status(204);
@@ -42,7 +45,10 @@ exports.getCurrentlyPlaying = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const currentlyPlaying = await playerService.getCurrentlyPlaying(id);
+  const link = `${req.protocol}://${req.get(
+    'host'
+  )}/api/uploads/tracks/`;
+  const currentlyPlaying = await playerService.getCurrentlyPlaying(id, { link: link });
 
   if (!currentlyPlaying) {
     res.status(204);

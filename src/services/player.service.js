@@ -26,7 +26,7 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
     if (player && player.item) {
       if (ops.link) {
         // Add host link
-        const audio = player.item.audioUrl;
+        const audio = player.item.audioUrl.split('/')[2];
         player.item.audioUrl = ops.link + audio;
       } else
         player.item.audioUrl = undefined;
