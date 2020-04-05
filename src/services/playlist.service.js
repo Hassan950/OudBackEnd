@@ -60,17 +60,19 @@ const getTracks = async (params, query) => {
     const tracks = null;
     return { tracks, total };
   }
-  const tracks = await Track.find({ _id: { $in: playlist.tracks } })
-    .skip(query.offset)
-    .limit(query.limit);
-  const total = await Track.find({ _id: { $in: playlist.tracks } }).countDocuments();
+  const trackPromise = Track.find({ _id: { $in: playlist.tracks } })
+  .skip(query.offset)
+  .limit(query.limit).exec();
+  const totalPromise = Track.countDocuments({ _id: { $in: playlist.tracks } }).exec();
+  const [tracks,total] = await Promise.all([trackPromise,totalPromise]);
   return { tracks, total };
 };
 
 const getUserPlaylists = async (id, query , self) => {
   if(!self){
-    const playlists = await PlaylistFollowings.find({ userId: id }).where({'public' : true}).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit);
-    const total = await PlaylistFollowings.find({userId: id}).where({'public' : true}).countDocuments();
+    const playlistPromise = PlaylistFollowings.find({ userId: id }).where({'public' : true}).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit).exec();
+    const totalPromise = PlaylistFollowings.find({userId: id}).where({'public' : true}).countDocuments().exec();
+    const [playlists,total] = await Promise.all([playlistPromise,totalPromise]);
     let i =0;
     _.times(total,()=>{
       playlists[i] = playlists[i].playlistId;
@@ -79,8 +81,9 @@ const getUserPlaylists = async (id, query , self) => {
     return { playlists, total };
   }
   else{
-    const playlists = await PlaylistFollowings.find({ userId: id }).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit);
-    const total = await PlaylistFollowings.find({userId: id}).countDocuments();
+    const playlistPromise = PlaylistFollowings.find({ userId: id }).populate('playlistId').select('playlistId').select('-_id').skip(query.offset).limit(query.limit).exec();
+    const totalPromise = PlaylistFollowings.find({userId: id}).countDocuments().exec();
+    const [playlists,total] = await Promise.all([playlistPromise,totalPromise]);
     let i =0;
     _.times(total,()=>{
       playlists[i] = playlists[i].playlistId;
@@ -101,7 +104,7 @@ const checkUser = async (id) => {
 };
 
 const createUserPlaylist = async (params, body, image) => {
-  const playlist = new Playlist({
+  const playlist = await Playlist.create({
     name: body.name,
     public: body.public,
     collabrative: body.collabrative,
