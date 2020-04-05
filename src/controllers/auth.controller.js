@@ -67,21 +67,15 @@ exports.requestVerify = async (req, res, next) => {
   const message = `Hello ${user.username}<br>
   CONFIRM ACCOUNT You are almost done<br>Confirm your account below to finish creating your Oud account`;
 
-  try {
-    await emailService.sendEmail({
-      email: user.email,
-      subject: 'Verify your Oud account',
-      message,
-      button: 'CONFIRM ACCOUNT',
-      link: verifyURL
-    });
-    user.verifyToken = undefined;
-    createTokenAndSend(user, res);
-  } catch (error) {
-    user.verifyToken = undefined;
-    user.save({ validateBeforeSave: false });
-    return next(new AppError('There was an error sending the email. Try again later!', 500));
-  }
+  emailService.sendEmail({
+    email: user.email,
+    subject: 'Verify your Oud account',
+    message,
+    button: 'CONFIRM ACCOUNT',
+    link: verifyURL
+  }).then().catch();
+  user.verifyToken = undefined;
+  createTokenAndSend(user, res);
 };
 
 /**
@@ -115,18 +109,13 @@ exports.signup = async (req, res, next) => {
   const message = `Hello ${newUser.username}<br>
   CONFIRM ACCOUNT You are almost done<br>Confirm your account below to finish creating your Oud account`;
 
-  try {
-    await emailService.sendEmail({
-      email: newUser.email,
-      subject: 'Verify your Oud account',
-      message,
-      button: 'CONFIRM ACCOUNT',
-      link: verifyURL
-    });
-  } catch (error) {
-    newUser.verifyToken = undefined;
-    newUser.save({ validateBeforeSave: false });
-  }
+  emailService.sendEmail({
+    email: newUser.email,
+    subject: 'Verify your Oud account',
+    message,
+    button: 'CONFIRM ACCOUNT',
+    link: verifyURL
+  }).then().catch();
   newUser.verifyToken = undefined;
   createTokenAndSend(newUser, res);
 };
@@ -215,33 +204,17 @@ exports.forgotPassword = async (req, res, next) => {
 
   const message = `Forgot your password?<br>Reset your password below`;
 
-  try {
-    await emailService.sendEmail({
-      email: user.email,
-      subject: 'Reset your password',
-      message,
-      button: 'RESET PASSWORD',
-      link: resetURL
-    });
-    res.status(200).json({
-      status: 'success',
-      message: 'Token sent to email!'
-    });
-  } catch (error) {
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-
-    await user.save({
-      validateBeforeSave: false
-    });
-
-    return next(
-      new AppError(
-        'There was an error sending the email. Try again later!',
-        500
-      )
-    );
-  }
+  emailService.sendEmail({
+    email: user.email,
+    subject: 'Reset your password',
+    message,
+    button: 'RESET PASSWORD',
+    link: resetURL
+  }).then().catch();
+  res.status(200).json({
+    status: 'success',
+    message: 'Token sent to email!'
+  });
 };
 
 
