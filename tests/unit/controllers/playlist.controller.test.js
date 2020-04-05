@@ -1,6 +1,6 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { playlistController } = require('../../../src/controllers');
-let { Track, Playlist, User } = require('../../../src/models');
+let { Track, Playlist, User , PlaylistFollowings } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 
 const playlistsIds = ['5e6dea511e17a305285ba614', '5e6dea511e17a305285ba615'];
@@ -31,8 +31,14 @@ describe('playlist controllers', () => {
   let track;
   let tracks;
   let playlist;
+  let playlistfollowing;
   let playlists;
   beforeEach(() => {
+    playlistfollowing = new PlaylistFollowings({
+      userId: usersIds[0],
+      playlistId: playlistsIds[0],
+      public: true
+    });
     user = new User({
       name: 'Ahmed'
     });
@@ -246,41 +252,57 @@ describe('playlist controllers', () => {
     it('should return 200 if user with the passed id exists for users url', async () => {
       req.baseUrl = 'api/v1/users/userid/playlists';
       req.params.id = usersIds[0];
-      Playlist.select = jest.fn().mockReturnThis();
+      PlaylistFollowings.select = jest.fn().mockReturnThis();
+      PlaylistFollowings.populate = jest.fn().mockReturnThis();
+      PlaylistFollowings.skip = jest.fn().mockReturnThis();
+      PlaylistFollowings.limit = jest.fn().mockReturnThis();
+      PlaylistFollowings.where = jest.fn().mockReturnThis();
       mockingoose(User).toReturn(user, 'findOne');
-      mockingoose(Playlist).toReturn(playlist, 'find');
+      mockingoose(PlaylistFollowings).toReturn(playlistfollowing, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('should return Playlist with the passed id exists for users url', async () => {
       req.baseUrl = 'api/v1/users/userid/playlists';
       req.params.id = usersIds[0];
-      Playlist.select = jest.fn().mockReturnThis();
+      PlaylistFollowings.select = jest.fn().mockReturnThis();
+      PlaylistFollowings.populate = jest.fn().mockReturnThis();
+      PlaylistFollowings.skip = jest.fn().mockReturnThis();
+      PlaylistFollowings.limit = jest.fn().mockReturnThis();
+      PlaylistFollowings.where = jest.fn().mockReturnThis();
       mockingoose(User).toReturn(user, 'findOne');
-      mockingoose(Playlist).toReturn(playlists.slice(0, 1), 'find');
+      mockingoose(PlaylistFollowings).toReturn(playlistfollowing, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       const foundPlaylists = res.json.mock.calls[0][0].items;
       expect(JSON.parse(JSON.stringify(foundPlaylists))).toStrictEqual(
-        JSON.parse(JSON.stringify(playlists.slice(0, 1)))
+        JSON.parse(JSON.stringify(playlistfollowing))
       );
     });
     it('should return 200 if user with the passed id exists for me url', async () => {
       req.baseUrl = 'api/v1/me/playlists';
       req.user.id = usersIds[0];
-      Playlist.select = jest.fn().mockReturnThis();
-      mockingoose(Playlist).toReturn(playlist, 'find');
+      PlaylistFollowings.select = jest.fn().mockReturnThis();
+      PlaylistFollowings.populate = jest.fn().mockReturnThis();
+      PlaylistFollowings.skip = jest.fn().mockReturnThis();
+      PlaylistFollowings.limit = jest.fn().mockReturnThis();
+      PlaylistFollowings.where = jest.fn().mockReturnThis();
+      mockingoose(PlaylistFollowings).toReturn(playlistfollowing, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('should return Playlist with the passed id exists for me url', async () => {
       req.baseUrl = 'api/v1/me/playlists';
       req.user.id = usersIds[0];
-      Playlist.select = jest.fn().mockReturnThis();
-      mockingoose(Playlist).toReturn(playlists.slice(0, 1), 'find');
+      PlaylistFollowings.select = jest.fn().mockReturnThis();
+      PlaylistFollowings.populate = jest.fn().mockReturnThis();
+      PlaylistFollowings.skip = jest.fn().mockReturnThis();
+      PlaylistFollowings.limit = jest.fn().mockReturnThis();
+      PlaylistFollowings.where = jest.fn().mockReturnThis();
+      mockingoose(PlaylistFollowings).toReturn(playlistfollowing, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       const foundPlaylists = res.json.mock.calls[0][0].items;
       expect(JSON.parse(JSON.stringify(foundPlaylists))).toStrictEqual(
-        JSON.parse(JSON.stringify(playlists.slice(0, 1)))
+        JSON.parse(JSON.stringify(playlistfollowing))
       );
     });
   });
