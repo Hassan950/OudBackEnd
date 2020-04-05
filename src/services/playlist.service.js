@@ -138,7 +138,6 @@ const createUserPlaylist = async (params, body, image) => {
     owner: params.id,
     image: image
   });
-  await playlist.save();
   return playlist;
 };
 
