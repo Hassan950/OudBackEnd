@@ -62,7 +62,7 @@ const userSchema = mongoose.Schema(
     artist: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Artist',
-      default: null
+      default: undefined
     },
     birthDate: {
       type: Date,
@@ -72,10 +72,6 @@ const userSchema = mongoose.Schema(
         },
         message: 'You must be at least 10 years old'
       }
-    },
-    followersCount: {
-      type: Number,
-      default: 0
     },
     credit: {
       type: Number,
@@ -192,6 +188,12 @@ userSchema.pre('save', function (next) {
   this.passwordChangedAt = Date.now();
   next();
 });
+
+// userSchema.pre('remove', function(next) {
+//   PlaylistFollowings.remove({ userId: this._id }).exec();
+//   Followings.remove({ userId: this._id }).exec();
+//   next();
+// });
 
 userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
   if (this.passwordChangedAt) {

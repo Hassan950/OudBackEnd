@@ -8,3 +8,4 @@ exports.deviceController = require('./device.controller');
 exports.playerController = require('./player.controller');
 exports.playHistoryController = require('./playHistory.controller');
 exports.queueController = require('./queue.controller');
+exports.followController = require('./follow.controller');

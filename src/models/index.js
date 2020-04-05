@@ -9,6 +9,12 @@ const { Device, deviceSchema } = require('./device.model');
 const { Player, playerSchema } = require('./player.model');
 const { PlayHistory, playHistorySchema } = require('./playHistory.model');
 const { Queue, queueSchema } = require('./queue.model');
+const {
+  Followings,
+  followingsSchema,
+  playlistFollowingsSchema,
+  PlaylistFollowings
+} = require('./follow.model');
 
 module.exports = {
   User,
@@ -32,5 +38,11 @@ module.exports = {
   PlayHistory,
   playHistorySchema,
   Queue,
-  queueSchema
+  queueSchema,
+  Followings,
+  followingsSchema,
+  playlistFollowingsSchema,
+  PlaylistFollowings,
+  playlistSchema,
+  Playlist
 };

@@ -21,17 +21,14 @@ router.use('/queue', queueRouter);
 
 router
   .route('/updatePassword')
-  .patch(validate(authValidation.updatePassword), catchAsync(authController.updatePassword));
-
-router
-  .route('/verify')
-  .post(catchAsync(authController.requestVerify));
-
-router
-  .route('/')
-  .get(
-    catchAsync(userController.getProfile)
+  .patch(
+    validate(authValidation.updatePassword),
+    catchAsync(authController.updatePassword)
   );
+
+router.route('/verify').post(catchAsync(authController.requestVerify));
+
+router.route('/').get(catchAsync(userController.getProfile));
 
 router
   .route('/profile')
@@ -42,9 +39,6 @@ router
 
 router
   .route('/profilePicture')
-  .patch(
-    userController.uploadImages,
-    catchAsync(userController.updateImages)
-  );
+  .patch(userController.uploadImages, catchAsync(userController.updateImages));
 
 module.exports = router;
