@@ -1,12 +1,10 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
+  version: "1.0.1"
   title: Oud API Documentation
   description: >-
     Web API endpoints enable application to access the Oud catalog and user
     data. The endpoints are arranged in a structure defined by an object model.
-
-
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
@@ -222,7 +220,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  tracks:  
+                  tracks:
                     type: array
                     items:
                       $ref: '#/components/schemas/Track'
@@ -259,7 +257,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  artists:  
+                  artists:
                     type: array
                     items:
                       $ref: '#/components/schemas/Artist'
@@ -295,7 +293,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  artists:  
+                  artists:
                     type: array
                     items:
                       $ref: '#/components/schemas/Artist'
@@ -345,7 +343,7 @@ paths:
           $ref: '#/components/responses/InvalidId'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  '/playlists/{playlist_id}/followers/contains':
+  '/playlists/{playlistId}/followers/contains':
     get:
       tags:
         - Follow
@@ -354,7 +352,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: playlist_id
+        - name: playlistId
           in: path
           description: The ID of the playlist.
           required: true
@@ -383,6 +381,212 @@ paths:
           $ref: '#/components/responses/InvalidId'
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /users/{userId}/following:
+    get:
+      tags:
+        - Follow
+      summary: Get a User's Followed Artists or Users
+      description: Get a user’s followed artists/users.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: 'The user id requested to view his followings'
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: 'The ID type: `artist` or `user`'
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: 'The maximum number of items to return. Minimum: 1. Maximum: 50.'
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: >-
+            The index of the first track to return. Default: 0 (the first
+            object). Use with limit to get the next set of followings.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: >-
+            the response body contains an artists object or user object wrapped
+            in paging object.
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  total, offset and limit that can be useful in future calls.
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/ArtistSimple'
+                        - $ref: '#/components/schemas/UserPublic'
+                      description: The requested data.
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The maximum number of items available to return
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /users/{userId}/followers:
+    get:
+      tags:
+        - Follow
+      summary: Get a User's Followers
+      description: Get a user’s followers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: 'The user id requested to view his followers'
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: 'The maximum number of items to return. Minimum: 1. Maximum: 50.'
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: >-
+            The index of the first track to return. Default: 0 (the first
+            object). Use with limit to get the next set of followers.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: >-
+            the response body contains a user object wrapped
+            in paging object.
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  total, offset and limit that can be useful in future calls.
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserPublic'
+                    description: The requested data.
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The maximum number of items available to return
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /me/followers:
+    get:
+      tags:
+        - Follow
+      summary: Get Current User's Followers
+      description: Get Current User’s followers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: 'The maximum number of items to return. Minimum: 1. Maximum: 50.'
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: >-
+            The index of the first track to return. Default: 0 (the first
+            object). Use with limit to get the next set of followers.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: >-
+            the response body contains a user object wrapped
+            in paging object.
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  total, offset and limit that can be useful in future calls.
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserPublic'
+                    description: The requested data.
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The maximum number of items available to return
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /me/following:
     put:
       tags:
@@ -458,12 +662,13 @@ paths:
           schema:
             type: integer
             default: 20
-        - name: after
+        - name: offset
           in: query
-          description: The last artist ID retrieved from the previous request.
-          required: false
+          description: >-
+            The index of the first track to return. Default: 0 (the first
+            object). Use with limit to get the next set of followings.
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: >-
@@ -541,7 +746,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/playlists/{playlist_id}/followers':
+  '/playlists/{playlistId}/followers':
     put:
       tags:
         - Follow
@@ -550,7 +755,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: playlist_id
+        - name: playlistId
           in: path
           description: >-
             The ID of the playlist. Any playlist can be followed, regardless of
@@ -588,7 +793,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: playlist_id
+        - name: playlistId
           in: path
           description: The ID of the playlist that is to be no longer followed.
           required: true
@@ -707,7 +912,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  '/users/{user_id}':
+  '/users/{userId}':
     get:
       tags:
         - Users Profile
@@ -716,7 +921,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: user_id
+        - name: userId
           required: true
           in: path
           schema:
@@ -1152,13 +1357,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  tracks:  
+                  tracks:
                     type: array
                     items:
                       $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/InvalidId'
-  '/me/artists/albums':
+  /me/artists/albums:
     post:
       tags:
         - Albums
@@ -1220,7 +1425,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   '/me/artists/albums/{id}/images':
     post:
       tags:
@@ -1402,7 +1606,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'  
+                $ref: '#/components/schemas/Error'
   '/me/artists/albums/{id}/release':
     patch:
       security:
@@ -1442,7 +1646,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/me/artists/images':
+  /me/artists/images:
     post:
       tags:
         - Artists
@@ -1539,7 +1743,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-          
   '/me/artists/albums/{id}/tracks':
     post:
       tags:
@@ -2389,7 +2592,9 @@ paths:
           description: Id of the Playlist
         - name: Tracks
           in: query
-          description: Tracks to be removed from playlist and should be sent in body api doesnot support that
+          description: >-
+            Tracks to be removed from playlist and should be sent in body api
+            doesnot support that
           schema:
             type: object
             properties:
@@ -2626,7 +2831,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/me/playlits':
+  /me/playlits:
     get:
       security:
         - bearerAuth: []
@@ -2708,7 +2913,7 @@ paths:
           description: Id of the playlist
       responses:
         '200':
-          description: the cover image of the playlist 
+          description: the cover image of the playlist
           content:
             application/json:
               schema:
@@ -2738,7 +2943,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'    
+                $ref: '#/components/schemas/Error'
     put:
       security:
         - bearerAuth: []
@@ -3753,7 +3958,6 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/UserPrivate'
-            
     TransferPlayback:
       type: object
       description: TransferPlayback body request
@@ -3885,11 +4089,11 @@ components:
           type: string
           description: The id of the album of the track.
         album:
-            $ref: '#/components/schemas/AlbumSimple'
+          $ref: '#/components/schemas/AlbumSimple'
         type:
           type: string
           description: The object type i.e “track”
-        duartion: 
+        duartion:
           type: integer
           description: The duartion of the song in ms
         views:
