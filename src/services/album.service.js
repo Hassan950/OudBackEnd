@@ -307,6 +307,15 @@ exports.addTrack = async (album, track) => {
   return album;
 };
 
+/**
+ * A method that deletes the image with the given path
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes the file of an image
+ * @param {String} image path of the file
+ */
+
 exports.deleteImage = async image => {
   if (image !== 'default.jpg') {
     try {
