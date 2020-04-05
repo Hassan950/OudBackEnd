@@ -374,9 +374,8 @@ describe('playlist controllers', () => {
       req.body = {
         uris: ['hbhjfds']
       };
-      playlist.save = jest.fn().mockReturnThis();
       mockingoose(Track).toReturn(tracks, 'find');
-      mockingoose(Playlist).toReturn(null, 'findOne');
+      mockingoose(Playlist).toReturn(null, 'findOneAndUpdate');
       await playlistController.deleteTracks(req, res, next);
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
