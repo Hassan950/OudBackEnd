@@ -1,4 +1,4 @@
-const { trackService, artistService } = require('../services');
+const { trackService, artistService, albumService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs').promises;
@@ -81,7 +81,7 @@ exports.deleteTrack = async (req, res, next) => {
         403
       )
     );
-
+  await albumService.removeTrack(track.album._id, req.params.id);
   await trackService.deleteTrack(req.params.id);
   res.status(200).json(track);
 };
@@ -90,17 +90,14 @@ exports.updateTrack = async (req, res, next) => {
   let track = await trackService.findTrack(req.params.id);
   if (!track)
     return next(new AppError('The requested resource is not found', 404));
-    if (String(track.artists[0]._id) !== String(req.user.artist))
+  if (String(track.artists[0]._id) !== String(req.user.artist))
     return next(
       new AppError(
         'You do not have the permission to perform this action.',
         403
       )
     );
-  if (
-    req.body.artists &&
-    !(await artistService.artistsExist(req.body.artists))
-  )
+  if (req.body.artists && !(await artistService.artistsExist(req.body.artists)))
     return next(
       new AppError("The artist ID's given are invalid or doesn't exist", 400)
     );

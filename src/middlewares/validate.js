@@ -20,6 +20,7 @@ const validate = schema => (req, res, next) => {
       .join(', ');
     return next(new AppError(errorMessage, httpStatus.BAD_REQUEST));
   }
+  
   Object.assign(req, value);
   return next();
 };

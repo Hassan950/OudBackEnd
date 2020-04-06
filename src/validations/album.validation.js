@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
-const { albumIds } = require('./custom.validation');
+const { idsArray } = require('./custom.validation');
 const { Artist, Genre } = require('../models');
 
 exports.oneAlbum = {
@@ -12,7 +12,7 @@ exports.oneAlbum = {
 exports.severalAlbums = {
   query: Joi.object().keys({
     ids: Joi.string()
-      .custom(albumIds)
+      .custom(idsArray(20))
       .required()
   })
 };

@@ -17,22 +17,23 @@ exports.countryCheck = (value, helpers) => {
   return value;
 };
 
-exports.tracksIds = (value, helper) => {
-  const values = value.split(',');
-  if (values.length > 50) return helper.message('too many ids requested');
-  values.forEach(v => {
-    if (!mongoose.Types.ObjectId.isValid(v))
-      return helper.message(v + ' is not a valid Id');
-  });
-  return values;
+exports.idsArray = maxNum => {
+  return function(value, helpers) {
+    const values = value.split(',');
+    if (values.length > maxNum)
+      return helpers.message('too many ids requested');
+    try {
+      values.forEach(v => {
+        if (!mongoose.Types.ObjectId.isValid(v))
+          throw helpers.message(v + ' is not a valid Id');
+      });
+    } catch (err) {
+      return err;
+    }
+    return values;
+  };
 };
 
-exports.albumIds = (value, helper) => {
-  const values = value.split(',');
-  if (values.length > 20) return helper.message('too many ids requested');
-  values.forEach(v => {
-    if (!mongoose.Types.ObjectId.isValid(v))
-      return helper.message(v + ' is not a valid Id');
-  });
-  return values;
+exports.capitalize = (value, helper) => {
+  return value.replace(/^./, value[0].toUpperCase());
 };

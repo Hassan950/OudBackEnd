@@ -8,7 +8,6 @@ const artistSchema = new mongoose.Schema(
       required: true,
       select: false
     },
-    followersCount: { type: Number, default: 0 },
     genres: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Genre' }],
       validate: {
@@ -18,7 +17,6 @@ const artistSchema = new mongoose.Schema(
         message: 'An artist should have at least one genre'
       }
     },
-    images: [{ type: String, match: /\.(png|jpg|jpeg)$/ }],
     name: {
       type: String,
       minlength: 3,

@@ -42,7 +42,56 @@ exports.authenticate = async (req, res, next) => {
         'The user belonging to this token does no longer exists.',
         401
       )
-    )
+    );
+  // check if user changed password
+  if (user.changedPasswordAfter(payload.iat)) {
+    return next(
+      new AppError('User recently changed password! Please log in again.', 401)
+    );
+  }
+  req.user = user;
+  next();
+};
+
+/**
+ * @version 1.0.0
+ * @author Hassan Mohamed
+ * @description takes user token to authenticate user
+ * @summary User Authentication
+ */
+
+exports.optionalAuth = async (req, res, next) => {
+  // getting token and check if it is there
+  let token;
+  if (
+    req.headers &&
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer ')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+  if (!token) return next();
+
+  // verification token
+  let payload;
+  try {
+    payload = await promisify(jwt.verify)(token, config.get('JWT_KEY'));
+  } catch (er) {
+    return next(new AppError('Invalid Token', 400));
+  }
+
+  // TODO
+  // Add checks if the user changed password after creating this token
+
+  // check if user still exists
+  const user = await User.findById(payload.id);
+  if (!user)
+    return next(
+      new AppError(
+        'The user belonging to this token does no longer exists.',
+        401
+      )
+    );
   // check if user changed password
   if (user.changedPasswordAfter(payload.iat)) {
     return next(
