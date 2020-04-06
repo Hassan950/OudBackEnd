@@ -2,7 +2,12 @@ const mongoose = require('mongoose');
 
 const artistSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      select: false
+    },
     followersCount: { type: Number, default: 0 },
     genres: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Genre' }],

@@ -15,9 +15,10 @@ exports.findArtist = async id => {
   const artist = await Artist.findById(id)
     .populate({
       path: 'popularSongs',
-      select: '-audioUrl'
+      populate: { path: 'album', select: '-tracks' }
     })
     .populate('genres');
+
   return artist;
 };
 
@@ -33,7 +34,7 @@ exports.findArtists = async ids => {
   const result = await Artist.find({ _id: ids })
     .populate({
       path: 'popularSongs',
-      select: '-audioUrl'
+      populate: { path: 'album', select: '-tracks' }
     })
     .populate('genres');
   const artists = ids.map(id => {
@@ -53,7 +54,10 @@ exports.findArtists = async ids => {
  */
 exports.getPopularSongs = async artistId => {
   const artist = await Artist.findById(artistId)
-    .populate('popularSongs')
+    .populate({
+      path: 'popularSongs',
+      populate: { path: 'album', select: '-tracks' }
+    })
     .select('popularSongs');
   if (!artist || artist.popularSongs.length === 0) return null;
   return artist.popularSongs;
@@ -68,7 +72,10 @@ exports.relatedArtists = async artistId => {
     genres: artist.genres
   })
     .limit(20)
-    .populate('popularSongs')
+    .populate({
+      path: 'popularSongs',
+      populate: { path: 'album', select: '-tracks' }
+    })
     .populate('genres');
   return artists;
 };
