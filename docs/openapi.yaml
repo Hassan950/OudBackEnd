@@ -37,7 +37,74 @@ tags:
     description: Endpoints for player
   - name: Queue
     description: Endpoints for queue
+  - name: Genres
+    description: Endpoints for genres
 paths:
+  /genres/{id}:
+    get:
+      tags:
+        - Genres
+      summary: Get a genre
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID for the genre.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: the response body contains a genre object in JSON format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /genres:
+    get:
+      tags:
+        - Genres
+      summary: Get all genres
+      description: Get all genres inside a paging object
+      parameters:
+        - name: limit
+          in: query
+          description: maximum number of genres to return (maximum 50, default 50)
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: number of genres to skip from beginning to return (starts from zero)
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: list of genres inside a paging object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Genre'
+                  limit: 
+                    type: integer
+                    description:  maximum number of genres to return as set in the query or by default
+                  offset:
+                    type: integer
+                    description: index of the first element in the array
+                  total:
+                    type: integer
+                    description: total number of documents available in the database
+        '400':
+          $ref: '#/components/responses/InvalidId'        
   /me/redeem:
     patch:
       tags:
@@ -4280,6 +4347,15 @@ components:
         type:
           description: 'The object type: “user”'
           type: string
+    Genre:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique ID of the genre
+        name:
+          type: string
+          description: name of the genre
     Album:
       type: object
       properties:
