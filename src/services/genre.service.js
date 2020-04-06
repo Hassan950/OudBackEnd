@@ -25,9 +25,11 @@ exports.findGenre = async id => {
  * @returns Array of genres inside a paging object
  */
 exports.findGenres = async (limit, offset) => {
-  return await Genre.find()
+  let genres = Genre.find()
     .limit(limit)
     .skip(offset);
+  let length = Genre.countDocuments();
+  return await Promise.all([genres, length]);
 };
 
 /**

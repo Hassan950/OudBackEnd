@@ -20,7 +20,7 @@ exports.getGenres = async (req, res, next) => {
   res.status(200).json({
     offset: req.query.offset,
     limit: req.query.limit,
-    total: genres.length,
-    items: genres
+    total: genres[1],
+    items: genres[0]
   });
 };
