@@ -96,15 +96,6 @@ exports.contextUriCheck = (value, helpers) => {
 
   return value;
 };
-exports.tracksIds = (value, helper) => {
-  const values = value.split(',');
-  if (values.length > 50) return helper.message('too many ids requested');
-  values.forEach(v => {
-    if (!mongoose.Types.ObjectId.isValid(v))
-      return helper.message(v + ' is not a valid Id');
-  });
-  return value;
-};
 
 exports.idsArray = maxNum => {
   return function (value, helpers) {
