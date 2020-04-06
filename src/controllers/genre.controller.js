@@ -6,9 +6,7 @@ exports.getGenre = async (req, res, next) => {
   if (!genre)
     return next(new AppError('The requested resource was not found', 404));
 
-  res.status(200).json({
-    genre: genre
-  });
+  res.status(200).json(genre);
 };
 
 exports.getGenres = async (req, res, next) => {
