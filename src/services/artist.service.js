@@ -1,4 +1,4 @@
-const { Artist, User } = require('../models');
+const { Artist, User, Track } = require('../models');
 const mongoose = require('mongoose');
 
 /**
@@ -59,7 +59,12 @@ exports.getPopularSongs = async artistId => {
       populate: { path: 'album', select: '-tracks' }
     })
     .select('popularSongs');
-  if (!artist || artist.popularSongs.length === 0) return null;
+  if (!artist) return null;
+  if (artist.popularSongs.length === 0) {
+    artist.popularSongs = await Track.find({ 'artists.0': artistId }).sort({
+      views: -1
+    }).populate({path: 'album', select: '-tracks'}).limit(10);
+  }
   return artist.popularSongs;
 };
 
