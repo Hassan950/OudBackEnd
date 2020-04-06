@@ -1,4 +1,5 @@
 const { Queue, Album, Playlist, Artist } = require('../models');
+const { trackService } = require('./');
 const _ = require('lodash');
 
 const randomize = (arr) => {
@@ -10,19 +11,17 @@ const randomize = (arr) => {
 };
 
 
-exports.getQueueById = async (id, ops = { selectDetails: false }) => {
+const getQueueById = async (id, ops = { selectDetails: false }) => {
   let queue = Queue.findById(id);
 
   if (ops && ops.selectDetails) {
     queue.select('+currentIndex +shuffleList +shuffleIndex');
   }
 
-  await queue;
-
-  return queue;
+  return await queue;
 };
 
-exports.createQueueWithContext = async (contextUri) => {
+const createQueueWithContext = async (contextUri) => {
   const uri = contextUri.split(':');
   const type = uri[1];
   const id = uri[2];
@@ -58,12 +57,12 @@ exports.createQueueWithContext = async (contextUri) => {
 };
 
 
-exports.deleteQueueById = async (id) => {
+const deleteQueueById = async (id) => {
   await Queue.deleteOne(id);
 };
 
 
-exports.appendToQueue = async (id, tracks) => {
+const appendToQueue = async (id, tracks) => {
   const queue = await Queue.findById(id);
 
   if (!queue) return null;
@@ -78,7 +77,7 @@ exports.appendToQueue = async (id, tracks) => {
 };
 
 
-exports.createQueueFromTracks = async (tracks) => {
+const createQueueFromTracks = async (tracks) => {
   const queue = await Queue.create({
     tracks: tracks
   });
@@ -86,7 +85,7 @@ exports.createQueueFromTracks = async (tracks) => {
   return queue;
 };
 
-exports.getTrackPosition = async (id, trackId) => {
+const getTrackPosition = async (id, trackId) => {
   const queue = await Queue.findById(id);
 
   if (!queue || !queue.tracks) return -1;
@@ -96,7 +95,7 @@ exports.getTrackPosition = async (id, trackId) => {
   return pos;
 };
 
-exports.shuffleQueue = (queue) => {
+const shuffleQueue = (queue) => {
   let shuffleList = _.range(0, queue.tracks.length);
 
   shuffleList = randomize(shuffleList);
@@ -107,4 +106,66 @@ exports.shuffleQueue = (queue) => {
   queue.shuffleList = shuffleList;
 
   return queue;
+};
+
+const goNextShuffle = (player, queue) => {
+  if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
+    if (player.repeatState === 'context') {
+      queue.shuffleIndex = 0; // return to the first track
+      queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
+    } else if (player.repeatState === 'off') {
+      // TODO 
+      // add 10 tracks to queue realted to the last track
+    }
+  } else { // Go to the next track
+    queue.shuffleIndex++;
+    queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
+  }
+};
+
+const goNextNormal = (player, queue) => {
+  if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
+    if (player.repeatState === 'context') {
+      queue.currentIndex = 0; // return to the first track
+    } else if (player.repeatState === 'off') {
+      // TODO 
+      // add 10 tracks to queue realted to the last track
+    }
+  } else queue.currentIndex++; // Go to the next track
+};
+
+const fillQueueFromTracksUris = async (uris, queues, player) => {
+  let tracks = [];
+  uris.forEach(async uri => {
+    const trackId = uri.split(':')[2];
+    const track = await trackService.findTrack(trackId);
+    if (track)
+      tracks.push(trackId);
+  });
+  let queue;
+  if (queues && queues.length) {
+    queue = await appendToQueue(queues[0], tracks);
+  } else {
+    queue = await createQueueFromTracks(tracks);
+    queues = [queue._id];
+    player.item = queue.tracks[0];
+    player.context = null;
+    player.positionMs = 0;
+  }
+
+  return queue;
+}
+
+
+module.exports = {
+  fillQueueFromTracksUris,
+  goNextNormal,
+  goNextShuffle,
+  shuffleQueue,
+  getTrackPosition,
+  createQueueFromTracks,
+  appendToQueue,
+  deleteQueueById,
+  getQueueById,
+  createQueueWithContext
 };

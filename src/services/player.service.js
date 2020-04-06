@@ -1,4 +1,5 @@
 const { Player } = require('../models');
+const { queueService } = require('./');
 
 /**
  * Get player with the given userId
@@ -91,8 +92,44 @@ const createPlayer = async (userId) => {
 };
 
 
+const addTrackToPlayer = (player, track, contextUri = null) => {
+  player.item = track;
+  player.positionMs = 0;
+  // get context from context uri
+  if (contextUri) {
+    const uri = contextUri.split(':');
+    const context = {
+      type: uri[1],
+      id: uri[2]
+    }
+    player.context = context;
+  }
+};
+
+const startPlayingFromOffset = async (player, queue, offset) => {
+  if (offset.position) {
+    if (queues[0].tracks.length > offset.position) {
+      player.item = queue.tracks[0];
+    } else {
+      player.item = queue.tracks[offset.position];
+    }
+  } else if (offset.uri) {
+    const trackId = offset.uri.split(':')[2];
+    const pos = await queueService.getTrackPosition(queues[0], trackId);
+    if (pos === -1) {
+      player.item = queue.tracks[0];
+    } else {
+      player.item = queue.tracks[pos];
+    }
+  }
+
+  return player;
+};
+
 module.exports = {
   getPlayer,
   getCurrentlyPlaying,
-  createPlayer
+  createPlayer,
+  addTrackToPlayer,
+  startPlayingFromOffset
 }

@@ -1,5 +1,5 @@
 const { User } = require('../models');
-const { authService } = require('./');
+const { authService, queueService } = require('./');
 const fs = require('fs');
 
 /**
@@ -171,6 +171,20 @@ const getUserQueues = async (userId) => {
   return queues;
 };
 
+const addQueue = (queue, queues) => {
+  if (queues && queues.length) {
+    if (queues.length > 1) {
+      const queueId = queues[1];
+      queues.pop();
+      queueService.deleteQueueById(queueId);
+    }
+
+    queues.unshift(queue._id);
+  } else {
+    queues = [queue._id];
+  }
+};
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
@@ -180,5 +194,6 @@ module.exports = {
   deleteUserById,
   editProfile,
   updateImages,
-  getUserQueues
+  getUserQueues,
+  addQueue
 };

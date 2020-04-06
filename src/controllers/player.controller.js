@@ -121,7 +121,7 @@ exports.resumePlayer = async (req, res, next) => {
   const deviceId = req.query.deviceId;
   // TODO
   // get player and queues
-  const [player, queues] = await Promise.all([
+  let [player, queues] = await Promise.all([
     playerService.getPlayer(id, { populate: false }),
     userService.getUserQueues(req.user._id)
   ]);
@@ -129,6 +129,8 @@ exports.resumePlayer = async (req, res, next) => {
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
+
+  let queue;
 
   // Change player state
   player.isPlaying = true;
@@ -142,72 +144,24 @@ exports.resumePlayer = async (req, res, next) => {
   }
   // handle Queue
   if (contextUri) {
-    const queue = await queueService.createQueueWithContext(contextUri);
+    queue = await queueService.createQueueWithContext(contextUri);
 
     if (!queue) {
       return next(new AppError('Context is not found', 404));
     }
 
-    if (queues && queues.length) {
-      if (queues.length > 1) {
-        const queueId = queues[1];
-        queues.pop();
-        queueService.deleteQueueById(queueId);
-      }
+    userService.addQueue(queue, queues);
 
-      queues.unshift(queue._id);
-    } else {
-      queues = [queue._id];
-    }
-
-    player.item = queue.tracks[0];
-    player.positionMs = 0;
-    // get context from context uri
-    const uri = contextUri.split(':');
-    const context = {
-      type: uri[1],
-      id: uri[2]
-    }
-    player.context = context;
+    playerService.addTrackToPlayer(player, queue.tracks[0]);
   }
   // add current track
   if (uris && uris.length) {
     // fill tracks array
-    let tracks = [];
-    uris.forEach(async uri => {
-      const trackId = uri.split(':')[2];
-      const track = await trackService.findTrack(trackId);
-      if (track)
-        tracks.push(trackId);
-    });
-    let queue;
-    if (queues && queues.length) {
-      queue = await queueService.appendToQueue(queues[0], tracks);
-    } else {
-      queue = await queueService.createQueueFromTracks(tracks);
-      queues = [queue._id];
-      player.item = queue.tracks[0];
-      player.context = null;
-      player.positionMs = 0;
-    }
+    queue = await queueService.fillQueueFromTracksUris(uris, queues, player);
   }
 
   if (offset && ((uris && uris.length) || (contextUri))) {
-    if (offset.position) {
-      if (queues[0].tracks.length > offset.position) {
-        player.item = queue.tracks[0];
-      } else {
-        player.item = queue.tracks[offset.position];
-      }
-    } else if (offset.uri) {
-      const trackId = offset.uri.split(':')[2];
-      const pos = await queueService.getTrackPosition(queues[0], trackId);
-      if (pos === -1) {
-        player.item = queue.tracks[0];
-      } else {
-        player.item = queue.tracks[pos];
-      }
-    }
+    player = await playerService.startPlayingFromOffset(player, queue, offset, queues);
   }
 
   if (player.item) {
@@ -226,31 +180,13 @@ exports.resumePlayer = async (req, res, next) => {
 
           // Shuffle state
           if (player.shuffleState) {
-            if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
-              if (player.repeatState === 'context') {
-                queue.shuffleIndex = 0; // return to the first track
-                queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-              } else if (player.repeatState === 'off') {
-                // TODO 
-                // add 10 tracks to queue realted to the last track
-              }
-            } else { // Go to the next track
-              queue.shuffleIndex++;
-              queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-            }
+            queueService.goNextShuffle(player, queue);
           } else {
-            if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
-              if (player.repeatState === 'context') {
-                queue.currentIndex = 0; // return to the first track
-              } else if (player.repeatState === 'off') {
-                // TODO 
-                // add 10 tracks to queue realted to the last track
-              }
-            } else queue.currentIndex++; // Go to the next track
+            queueService.goNextNormal(player, queue);
           }
 
-          player.progressMs = 0;
-          player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
+          // add next track to player
+          playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex]);
           queue.save(); // save the queue
         }
       }
