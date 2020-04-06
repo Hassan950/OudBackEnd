@@ -53,7 +53,7 @@ const corsOptions = {
   origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT']
-}
+};
 
 app.use(cors(corsOptions));
 // app.options('*', cors());

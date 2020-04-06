@@ -4,9 +4,12 @@ const validate = require('../../middlewares/validate');
 const authMiddleware = require('../../middlewares/auth')
 const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
+const playlistRoute = require('./playlist.route');
 
 
 const router = express.Router();
+
+router.use('/:id/playlists', playlistRoute);
 
 router
   .route('/signup')

@@ -23,6 +23,13 @@ router
     authMiddleware.authorize('artist'),
     validate(trackValidation.update),
     catchAsync(tracksController.updateTrack)
+  )
+  .post(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(trackValidation.oneTrack),
+    tracksController.uploadTrack,
+    catchAsync(tracksController.setTrack)
   );
 
 router

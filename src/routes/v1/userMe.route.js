@@ -6,6 +6,8 @@ const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 const playerRouter = require('./player.route');
 const queueRouter = require('./queue.route');
+const artistRoute = require('./artist.route');
+const playlistRouter = require('./playlist.route');
 
 const router = express.Router();
 
@@ -14,6 +16,11 @@ router.use(catchAsync(authMiddleware.authenticate));
 
 // /me/player router
 router.use('/player', playerRouter);
+// /me/playlists router
+router.use('/playlists', playlistRouter);
+
+// /me/artist router
+router.use('/artists', artistRoute);
 
 // /me/queue
 router.use('/queue', queueRouter);
