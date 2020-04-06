@@ -62,18 +62,16 @@ exports.repeatQueue = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const player = await playerService.getPlayer(id, { populate: false });
+  let player = await playerService.getPlayer(id, { populate: false });
 
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
 
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
   }
 
   player.repeatState = state;
@@ -102,7 +100,7 @@ exports.addToQueue = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const [player, queues] = await Promise.all([
+  let [player, queues] = await Promise.all([
     playerService.getPlayer(id, { populate: false }),
     userService.getUserQueues(req.user._id)
   ]);
@@ -124,12 +122,10 @@ exports.addToQueue = async (req, res, next) => {
   }
 
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
-    // save device
+    // save player
     player.save();
   }
 
@@ -168,7 +164,7 @@ exports.editPosition = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const [player, queues] = await Promise.all([
+  let [player, queues] = await Promise.all([
     playerService.getPlayer(id, { populate: false }),
     userService.getUserQueues(req.user._id)
   ]);
@@ -346,7 +342,7 @@ exports.shuffleQueue = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const [player, queues] = await Promise.all([
+  let [player, queues] = await Promise.all([
     playerService.getPlayer(id, { populate: false }),
     userService.getUserQueues(req.user._id)
   ]);
@@ -360,11 +356,9 @@ exports.shuffleQueue = async (req, res, next) => {
   }
 
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
   }
 
   let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
@@ -406,7 +400,7 @@ exports.nextTrack = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const [player, queues] = await Promise.all([
+  let [player, queues] = await Promise.all([
     playerService.getPlayer(id, { populate: false }),
     userService.getUserQueues(req.user._id)
   ]);
@@ -420,11 +414,9 @@ exports.nextTrack = async (req, res, next) => {
   }
 
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
   }
 
   if (player.repeatState !== 'track') {
@@ -493,7 +485,7 @@ exports.previousTrack = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const [player, queues] = await Promise.all([
+  let [player, queues] = await Promise.all([
     playerService.getPlayer(id, { populate: false }),
     userService.getUserQueues(req.user._id)
   ]);
@@ -507,11 +499,9 @@ exports.previousTrack = async (req, res, next) => {
   }
 
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
   }
 
   if (player.repeatState !== 'track') {

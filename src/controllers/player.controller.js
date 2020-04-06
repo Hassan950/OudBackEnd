@@ -1,6 +1,7 @@
 const { playerService, deviceService, userService, trackService, playHistoryService, queueService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
+
 /**
  * @version 1.0.0
  * @throws AppError 500 status
@@ -78,7 +79,7 @@ exports.pausePlayer = async (req, res, next) => {
 
   const deviceId = req.query.deviceId;
 
-  const player = await playerService.getPlayer(id, { populate: false });
+  let player = await playerService.getPlayer(id, { populate: false });
 
   if (!player) {
     return next(new AppError('Player is not found', 404));
@@ -87,11 +88,9 @@ exports.pausePlayer = async (req, res, next) => {
   player.isPlaying = false;
 
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
   }
 
   await player.save();
@@ -136,11 +135,9 @@ exports.resumePlayer = async (req, res, next) => {
   player.isPlaying = true;
   // handle deviceId
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
   }
   // handle Queue
   if (contextUri) {
@@ -164,32 +161,17 @@ exports.resumePlayer = async (req, res, next) => {
     player = await playerService.startPlayingFromOffset(player, queue, offset, queues);
   }
 
-  if (player.item) {
-    // change position
-    if (positionMs) {
-      player.positionMs = positionMs;
-      const track = await trackService.findTrack(player.item);
-      // if position >= track duration go to next
-      if (track && positionMs >= track.duration) {
-        if (player.repeatState !== 'track') {
-          let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+  // change position
+  if (player.item && positionMs) {
+    player.positionMs = positionMs;
+    const track = await trackService.findTrack(player.item);
+    // if position >= track duration go to next
+    if (track && positionMs >= track.duration) {
 
-          if (!queue || !queue.tracks) {
-            return next(new AppError('Queue is not found', 404));
-          }
+      player = await playerService.changePlayerProgress(player, prgoressMs);
 
-          // Shuffle state
-          if (player.shuffleState) {
-            queueService.goNextShuffle(player, queue);
-          } else {
-            queueService.goNextNormal(player, queue);
-          }
-
-          // add next track to player
-          playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex]);
-          queue.save(); // save the queue
-        }
-      }
+      if (!player)
+        next(new AppError('Queue is not found', 404));
     }
 
     if (player.context && player.context.type !== 'unknown')
@@ -222,18 +204,16 @@ exports.seekPlayer = async (req, res, next) => {
 
   const id = req.user._id;
 
-  const player = await playerService.getPlayer(id, { populate: false });
+  let player = await playerService.getPlayer(id, { populate: false });
 
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
 
   if (deviceId) {
-    const device = await deviceService.getDevice(deviceId);
-    if (!device) {
+    player = await playerService.addDeviceToPlayer(player, deviceId);
+    if (!player)
       return next(new AppError('Device is not found', 404));
-    }
-    player.device = deviceId;
   }
 
   player.positionMs = positionMs;

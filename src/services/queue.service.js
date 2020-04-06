@@ -108,7 +108,7 @@ const shuffleQueue = (queue) => {
   return queue;
 };
 
-const goNextShuffle = (player, queue) => {
+const goNextShuffle = (queue, player) => {
   if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.shuffleIndex = 0; // return to the first track
@@ -123,7 +123,7 @@ const goNextShuffle = (player, queue) => {
   }
 };
 
-const goNextNormal = (player, queue) => {
+const goNextNormal = (queue, player) => {
   if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = 0; // return to the first track
@@ -132,6 +132,15 @@ const goNextNormal = (player, queue) => {
       // add 10 tracks to queue realted to the last track
     }
   } else queue.currentIndex++; // Go to the next track
+};
+
+const goNext = (queue, player) => {
+  // Shuffle state
+  if (player.shuffleState) {
+    goNextShuffle(queue, player);
+  } else {
+    goNextNormal(queue, player);
+  }
 };
 
 const fillQueueFromTracksUris = async (uris, queues, player) => {
@@ -167,5 +176,6 @@ module.exports = {
   appendToQueue,
   deleteQueueById,
   getQueueById,
-  createQueueWithContext
+  createQueueWithContext,
+  goNext
 };

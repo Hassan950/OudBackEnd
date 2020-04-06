@@ -1,5 +1,5 @@
 const { Player } = require('../models');
-const { queueService } = require('./');
+const { queueService, trackService, deviceService } = require('./');
 
 /**
  * Get player with the given userId
@@ -106,7 +106,7 @@ const addTrackToPlayer = (player, track, contextUri = null) => {
   }
 };
 
-const startPlayingFromOffset = async (player, queue, offset) => {
+const startPlayingFromOffset = async (player, queue, offset, queues) => {
   if (offset.position) {
     if (queues[0].tracks.length > offset.position) {
       player.item = queue.tracks[0];
@@ -126,10 +126,47 @@ const startPlayingFromOffset = async (player, queue, offset) => {
   return player;
 };
 
+const changePlayerProgress = async (player, progressMs, track = null) => {
+  player.positionMs = positionMs;
+
+  if (!track)
+    track = await trackService.findTrack(player.item);
+
+  // if position >= track duration go to next
+  if (track && positionMs >= track.duration) {
+    if (player.repeatState !== 'track') {
+      let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+
+      if (!queue || !queue.tracks) {
+        return null;
+      }
+      // go next
+      queueService.goNext(queue, player);
+      // add next track to player
+      playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex]);
+      queue.save(); // save the queue
+    } else player.positionMs = 0;
+  }
+
+  return player;
+};
+
+const addDeviceToPlayer = async (player, deviceId) => {
+  const device = await deviceService.getDevice(deviceId);
+  if (!device) {
+    return null;
+  }
+  player.device = deviceId;
+
+  return player;
+};
+
 module.exports = {
   getPlayer,
   getCurrentlyPlaying,
   createPlayer,
   addTrackToPlayer,
-  startPlayingFromOffset
+  startPlayingFromOffset,
+  changePlayerProgress,
+  addDeviceToPlayer
 }
