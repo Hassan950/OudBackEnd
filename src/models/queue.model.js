@@ -15,9 +15,6 @@ const queueSchema = mongoose.Schema({
       type: mongoose.Types.ObjectId
     }
   },
-  contextArray: [{
-
-  }],
   currentIndex: {
     type: Number,
     minimum: 0,
