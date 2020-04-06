@@ -161,7 +161,6 @@ const addDeviceToPlayer = async (player, deviceId) => {
   return player;
 };
 
-
 const setPlayerToDefault = (player) => {
   player.item = null;
   player.context = { type: 'unkown' };
@@ -180,5 +179,6 @@ module.exports = {
   startPlayingFromOffset,
   changePlayerProgress,
   addDeviceToPlayer,
-  setPlayerToDefault
+  setPlayerToDefault,
+  addDeviceToPlayer
 }

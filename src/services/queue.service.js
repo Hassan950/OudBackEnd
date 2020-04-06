@@ -223,5 +223,6 @@ module.exports = {
   goPreviousNormal,
   goPreviousShuffle,
   goPrevious,
-  setQueueToDefault
+  setQueueToDefault,
+  goPrevious
 };
