@@ -49,7 +49,7 @@ const corsOptions = {
   origin: 'http:\\localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT']
-}
+};
 
 app.use(cors(corsOptions));
 // app.options('*', cors());

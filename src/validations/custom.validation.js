@@ -17,24 +17,19 @@ exports.countryCheck = (value, helpers) => {
   return value;
 };
 
-exports.tracksIds = (value, helper) => {
-  const values = value.split(',');
-  if (values.length > 50) return helper.message('too many ids requested');
-  values.forEach(v => {
-    if (!mongoose.Types.ObjectId.isValid(v))
-      return helper.message(v + ' is not a valid Id');
-  });
-  return value;
-};
-
 exports.idsArray = maxNum => {
-  return function(value, helper) {
+  return function(value, helpers) {
     const values = value.split(',');
-    if (values.length > maxNum) return helper.message('too many ids requested');
-    values.forEach(v => {
-      if (!mongoose.Types.ObjectId.isValid(v))
-        return helper.message(v + ' is not a valid Id');
-    });
+    if (values.length > maxNum)
+      return helpers.message('too many ids requested');
+    try {
+      values.forEach(v => {
+        if (!mongoose.Types.ObjectId.isValid(v))
+          throw helpers.message(v + ' is not a valid Id');
+      });
+    } catch (err) {
+      return err;
+    }
     return values;
   };
 };
