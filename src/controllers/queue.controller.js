@@ -290,16 +290,8 @@ exports.deleteTrack = async (req, res, next) => {
 
   if (trackIndex === queue.currentIndex) {
     // set all to default
-    player.item = null;
-    player.context = { type: 'unkown' };
-    player.progressMs = null;
-    player.shuffleState = false;
-    player.repeatState = 'off';
-    player.isPlaying = false;
-    player.currentlyPlayingType = 'unknown';
-    queue.currentIndex = 0;
-    queue.shuffleIndex = undefined;
-    queue.shuffleList = undefined;
+    playerService.setPlayerToDefault(player);
+    queueService.setQueueToDefault(queue);
   }
 
   if (!queue.tracks.length) {
