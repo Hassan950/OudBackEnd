@@ -3,11 +3,11 @@ const requestMocks = require('../../utils/request.mock.js');
 const { authController } = require('../../../src/controllers');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-let { User } = require('../../../src/models/user.model.js');
+let { User, Player } = require('../../../src/models');
 const _ = require('lodash');
 const { getUser } = require('../../utils/services/user.services.mock.js');
-let { emailService, userService, authService } = require('../../../src/services');
-let emailServiceMocks = require('../../utils/services/email.services.mock.js');
+let { emailService, userService, authService, playerService } = require('../../../src/services');
+
 
 describe('Auth controllers', () => {
   let user;
@@ -21,6 +21,7 @@ describe('Auth controllers', () => {
     res = requestMocks.mockResponse();
     next = jest.fn();
     userService.getUser = getUser;
+    playerService.createPlayer = jest.fn().mockResolvedValue(null);
     emailService.sendEmail = jest.fn().mockResolvedValue(user);
   });
 
@@ -61,6 +62,11 @@ describe('Auth controllers', () => {
       const token = res.setHeader.mock.calls[0][1];
       expect(headerName).toBe('x-auth-token');
       expect(token).toBe(res.json.mock.calls[0][0].token);
+    });
+
+    it('should create new player', async () => {
+      await authController.signup(req, res, next);
+      expect(playerService.createPlayer.mock.calls.length).toBe(1);
     });
   });
 
