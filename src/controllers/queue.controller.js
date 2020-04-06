@@ -460,7 +460,11 @@ exports.nextTrack = async (req, res, next) => {
     }
 
     player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
-    playHistoryService.addToHistory(id, player.item, queue.context); // add to history
+    player.context = queue.context;
+
+    if (player.context && player.context.type !== 'unknown')
+      playHistoryService.addToHistory(id, player.context); // add to history
+
     queue.save(); // save the queue
   }
 
@@ -543,7 +547,11 @@ exports.previousTrack = async (req, res, next) => {
     }
 
     player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
-    playHistoryService.addToHistory(id, player.item, queue.context); // add to history
+    player.context = queue.context;
+
+    if (player.context && player.context.type !== 'unknown')
+      playHistoryService.addToHistory(id, player.context); // add to history
+
     queue.save(); // save the queue
   }
 
