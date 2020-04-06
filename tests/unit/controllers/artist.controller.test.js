@@ -62,19 +62,20 @@ describe('Artists Controller', () => {
           }
         ],
         'find'
-      );
+      ).toReturn(1,'countDocuments');
       req.params = { id: String(artist._id) };
       req.query = { offset: 0, limit: 20 };
       await artistController.getAlbums(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0].total).toBe(1);
     });
-    it('Should throw an error with status code 404 if no tracks are found', async () => {
-      mockingoose(Album).toReturn(null, 'find');
+    it('Should return an empty array if no tracks are found', async () => {
+      mockingoose(Album).toReturn([], 'find');
       req.params = { id: String(artist._id) };
       req.query = { offset: 0, limit: 20 };
       await artistController.getAlbums(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].items).toEqual([]);
     });
   });
   describe('getPopularSongs', () => {
@@ -129,6 +130,6 @@ describe('Artists Controller', () => {
       req.params = { id: artist._id };
       await artistController.relatedArtists(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-    })
+    });
   });
 });

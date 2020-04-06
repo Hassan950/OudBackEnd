@@ -323,15 +323,14 @@ exports.addTrack = async (album, track) => {
  * @returns null if the artist has no albums or the ID doesn't belong to any artist
  */
 exports.findArtistAlbums = async (artistId, limit, offset) => {
-  const result = await Album.find({ artists: { $in: artistId } })
+  let result = Album.find({ 'artists.0': artistId })
     .populate('artists', '_id name images')
     .populate('genres')
-    .select('-tracks');
-  if (!result) return null;
-  const albums = result.filter(
-    album => String(album.artists[0]._id) === artistId
-  );
-  return [albums.slice(offset, offset + limit), albums.length];
+    .select('-tracks')
+    .limit(limit)
+    .skip(offset);
+  let length = Album.countDocuments({ 'artists.0': artistId });
+  return await Promise.all([result, length]);
 };
 
 /**

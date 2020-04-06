@@ -21,8 +21,7 @@ exports.getAlbums = async (req, res, next) => {
     req.query.limit,
     req.query.offset
   );
-  if (!albums)
-    return next(new AppError('The requested resource was not found', 404));
+
   res.status(200).json({
     limit: req.query.limit,
     offset: req.query.offset,
