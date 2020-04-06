@@ -33,20 +33,24 @@ exports.idCheck = (value, helpers) => {
 };
 
 exports.urisCheck = (value, helpers) => {
-  value.forEach(uri => {
-    const arr = uri.split(':');
-    if (arr.length != 3) {
-      return helpers.message('Invalid uri');
-    }
+  try {
+    value.forEach(uri => {
+      const arr = uri.split(':');
+      if (arr.length != 3) {
+        throw helpers.message('Invalid uri');
+      }
 
-    if (arr[0] != 'oud') {
-      return helpers.message('Invalid uri');
-    }
+      if (arr[0] != 'oud') {
+        throw helpers.message('Invalid uri');
+      }
 
-    if (arr[1] != 'track') {
-      return helpers.message('Invalid uri');
-    }
-  });
+      if (arr[1] != 'track') {
+        throw helpers.message('Invalid uri');
+      }
+    });
+  } catch (err) {
+    return err;
+  }
 
   return value;
 };
