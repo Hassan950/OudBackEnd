@@ -14,7 +14,7 @@ exports.getGenres = async (req, res, next) => {
     req.query.limit,
     req.query.offset
   );
-  if (!genres) return next(new AppError('There are no genres', 500));
+  if (!genres[0]) return next(new AppError('There are no genres', 500));
   res.status(200).json({
     offset: req.query.offset,
     limit: req.query.limit,

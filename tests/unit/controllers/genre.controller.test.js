@@ -23,7 +23,7 @@ describe('Genre Controller', () => {
       mockingoose(Genre).toReturn(genre, 'findOne');
       await genreController.getGenre(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toHaveProperty('genre');
+      expect(res.json.mock.calls[0][0]).toHaveProperty('name');
     });
     it('Should throw an error with status code 404 if the genre was not found', async () => {
       mockingoose(Genre).toReturn(null, 'findOne');
