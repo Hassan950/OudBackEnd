@@ -199,7 +199,13 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
   }
 
   return queue;
-}
+};
+
+const setQueueToDefault = (queue) => {
+  queue.currentIndex = 0;
+  queue.shuffleIndex = undefined;
+  queue.shuffleList = undefined;
+};
 
 
 module.exports = {
@@ -216,5 +222,6 @@ module.exports = {
   goNext,
   goPreviousNormal,
   goPreviousShuffle,
-  goPrevious
+  goPrevious,
+  setQueueToDefault
 };

@@ -161,6 +161,17 @@ const addDeviceToPlayer = async (player, deviceId) => {
   return player;
 };
 
+
+const setPlayerToDefault = (player) => {
+  player.item = null;
+  player.context = { type: 'unkown' };
+  player.progressMs = null;
+  player.shuffleState = false;
+  player.repeatState = 'off';
+  player.isPlaying = false;
+  player.currentlyPlayingType = 'unknown';
+};
+
 module.exports = {
   getPlayer,
   getCurrentlyPlaying,
@@ -168,5 +179,6 @@ module.exports = {
   addTrackToPlayer,
   startPlayingFromOffset,
   changePlayerProgress,
-  addDeviceToPlayer
+  addDeviceToPlayer,
+  setPlayerToDefault
 }
