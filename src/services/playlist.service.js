@@ -3,12 +3,12 @@ const _ = require('lodash');
 const move = require('lodash-move');
 const fs = require('fs');
 
-const getPlaylist = async params => {
+exports.getPlaylist = async params => {
   const playlist = await Playlist.findById(params.id);
   return playlist;
 };
 
-const changePlaylist = async (params, body, image) => {
+exports.changePlaylist = async (params, body, image) => {
   let playlist = await Playlist.findByIdAndUpdate(
     params.id,
     {
@@ -39,7 +39,7 @@ const changePlaylist = async (params, body, image) => {
   return playlist;
 };
 
-const uploadImage = async (params, image) => {
+exports.uploadImage = async (params, image) => {
   let playlist = await Playlist.findById(params.id);
   if (!playlist) return playlist;
   const path = playlist.image;
@@ -53,7 +53,7 @@ const uploadImage = async (params, image) => {
   return playlist;
 };
 
-const getTracks = async (params, query) => {
+exports.getTracks = async (params, query) => {
   const playlist = await Playlist.findById(params.id);
   if (!playlist) {
     const total = 0;
@@ -71,7 +71,7 @@ const getTracks = async (params, query) => {
   return { tracks, total };
 };
 
-const getUserPlaylists = async (id, query, publicity) => {
+exports.getUserPlaylists = async (id, query, publicity) => {
     const playlistPromise = PlaylistFollowings.find({ userId: id })
       .where(publicity)
       .populate('playlistId')
@@ -99,17 +99,17 @@ const getUserPlaylists = async (id, query, publicity) => {
     return { playlists, total };
 };
 
-const getTracksId = async uris => {
+exports.getTracksId = async uris => {
   const tracks = await Track.find({ audioUrl: { $in: uris } });
   return tracks;
 };
 
-const checkUser = async id => {
+exports.checkUser = async id => {
   const user = await User.findById(id);
   return user;
 };
 
-const createUserPlaylist = async (params, body, image) => {
+exports.createUserPlaylist = async (params, body, image) => {
   const playlist = await Playlist.create({
     name: body.name,
     public: body.public,
@@ -121,7 +121,7 @@ const createUserPlaylist = async (params, body, image) => {
   return playlist;
 };
 
-const deleteTracks = async (params, tracks) => {
+exports.deleteTracks = async (params, tracks) => {
   playlist = await Playlist.findByIdAndUpdate(
     params.id,
     { $pull: { tracks: { $in: tracks } } },
@@ -130,7 +130,7 @@ const deleteTracks = async (params, tracks) => {
   return playlist;
 };
 
-const addTracks = async (params, tracks, position) => {
+exports.addTracks = async (params, tracks, position) => {
   let playlist = await Playlist.findById(params.id);
   if (!playlist) return playlist;
   const notFound = [];
@@ -156,7 +156,7 @@ const addTracks = async (params, tracks, position) => {
   return playlist;
 };
 
-const reorderTracks = async (params, body) => {
+exports.reorderTracks = async (params, body) => {
   const playlist = await Playlist.findOne({ _id: params.id });
   let begin = body.rangeStart;
   let before = body.insertBefore;
@@ -168,16 +168,3 @@ const reorderTracks = async (params, body) => {
   await playlist.save();
 };
 
-module.exports = {
-  getPlaylist,
-  changePlaylist,
-  uploadImage,
-  getTracks,
-  getUserPlaylists,
-  createUserPlaylist,
-  deleteTracks,
-  getTracksId,
-  addTracks,
-  checkUser,
-  reorderTracks
-};
