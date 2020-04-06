@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "5e7c2b0fd6331843a7b30ac7",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e88ba4f286f2d242257ba9f"
+  },
+  {
+    "_id": "5e7f9f68f3d3e836fde12cf5",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e88ba4f286f2d242257baa0"
+  },
+  {
+    "_id": "5e7fb4b2f4d9a16b0d9f122c",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e88ba4f286f2d242257baa1"
+  },
+  {
+    "_id": "5e88d9603d740d6f4718f78c",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e88ba4f286f2d242257baa2"
+  }
+]

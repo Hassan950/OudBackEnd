@@ -6,6 +6,9 @@ const { Category, categorySchema } = require('./category.model');
 const { Playlist, playlistSchema } = require('./playlist.model');
 const { Genre, genreSchema } = require('./genre.model');
 const { Device, deviceSchema } = require('./device.model');
+const { Player, playerSchema } = require('./player.model');
+const { PlayHistory, playHistorySchema } = require('./playHistory.model');
+const { Queue, queueSchema } = require('./queue.model');
 const {
   Followings,
   followingsSchema,
@@ -30,6 +33,12 @@ module.exports = {
   genreSchema,
   Device,
   deviceSchema,
+  Player,
+  playerSchema,
+  PlayHistory,
+  playHistorySchema,
+  Queue,
+  queueSchema,
   Followings,
   followingsSchema,
   playlistFollowingsSchema,

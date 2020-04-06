@@ -1,10 +1,10 @@
 const { authController } = require('../../../src/controllers');
 const authMiddleware = require('../../../src/middlewares/auth.js');
-const { authService, emailService } = require('../../../src/services');
+const { authService, emailService, playerService } = require('../../../src/services');
 const requestMocks = require('../../../tests/utils/request.mock.js');
 const userMocks = require('../../utils/models/user.model.mocks.js');
 const emailServiceMocks = require('../../utils/services/email.services.mock');
-const _ = require('lodash')
+const _ = require('lodash');
 
 describe('Authenticate test', () => {
   let req;
@@ -17,6 +17,7 @@ describe('Authenticate test', () => {
     res = requestMocks.mockResponse();
     next = jest.fn();
     emailService.sendEmail = emailServiceMocks.sendEmail;
+    playerService.createPlayer = jest.fn().mockResolvedValue(null);
   });
 
   it('should return 401 if no token passed', async () => {

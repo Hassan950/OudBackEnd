@@ -28,7 +28,7 @@ const deviceSchema = mongoose.Schema({
     maximum: 100
   },
   userId: {
-    type: String,
+    type: mongoose.Types.ObjectId,
     ref: 'User',
     required: [true, 'Device must belong to a user'],
     select: false
