@@ -426,30 +426,7 @@ exports.nextTrack = async (req, res, next) => {
       return next(new AppError('Queue is not found', 404));
     }
 
-    // Shuffle state
-    if (player.shuffleState) {
-      if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
-        if (player.repeatState === 'context') {
-          queue.shuffleIndex = 0; // return to the first track
-          queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-        } else if (player.repeatState === 'off') {
-          // TODO 
-          // add 10 tracks to queue realted to the last track
-        }
-      } else { // Go to the next track
-        queue.shuffleIndex++;
-        queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-      }
-    } else {
-      if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
-        if (player.repeatState === 'context') {
-          queue.currentIndex = 0; // return to the first track
-        } else if (player.repeatState === 'off') {
-          // TODO 
-          // add 10 tracks to queue realted to the last track
-        }
-      } else queue.currentIndex++; // Go to the next track
-    }
+    queueService.goNext(queue, player);
 
     player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
     player.context = queue.context;
@@ -511,30 +488,7 @@ exports.previousTrack = async (req, res, next) => {
       return next(new AppError('Queue is not found', 404));
     }
 
-    // Shuffle state
-    if (player.shuffleState) {
-      if (queue.shuffleIndex === 0) { // first track in the queue
-        if (player.repeatState === 'context') {
-          queue.shuffleIndex = queue.tracks.length - 1; // return to the last track
-          queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-        } else if (player.repeatState === 'off') {
-          // TODO 
-          // add 10 tracks to queue realted to the last track
-        }
-      } else { // Go to the previous track
-        queue.shuffleIndex--;
-        queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-      }
-    } else {
-      if (queue.currentIndex === 0) { // first track in the queue
-        if (player.repeatState === 'context') {
-          queue.currentIndex = queue.tracks.length - 1; // return to the last track
-        } else if (player.repeatState === 'off') {
-          // TODO 
-          // add 10 tracks to queue realted to the last track
-        }
-      } else queue.currentIndex--; // Go to the previous track
-    }
+    queueService.goPrevious(queue, player);
 
     player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
     player.context = queue.context;

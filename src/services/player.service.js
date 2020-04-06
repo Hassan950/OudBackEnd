@@ -126,8 +126,8 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
   return player;
 };
 
-const changePlayerProgress = async (player, progressMs, track = null) => {
-  player.positionMs = positionMs;
+const changePlayerProgress = async (player, progressMs, queues, track = null) => {
+  player.progressMs = progressMs;
 
   if (!track)
     track = await trackService.findTrack(player.item);

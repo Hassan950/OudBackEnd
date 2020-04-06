@@ -143,6 +143,42 @@ const goNext = (queue, player) => {
   }
 };
 
+const goPreviousShuffle = (queue, player) => {
+  if (queue.shuffleIndex === 0) { // first track in the queue
+    if (player.repeatState === 'context') {
+      queue.shuffleIndex = queue.tracks.length - 1; // return to the last track
+      queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
+    } else if (player.repeatState === 'off') {
+      // TODO 
+      // add 10 tracks to queue realted to the last track
+    }
+  } else { // Go to the previous track
+    queue.shuffleIndex--;
+    queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
+  }
+};
+
+const goPreviousNormal = (queue, player) => {
+  if (queue.currentIndex === 0) { // first track in the queue
+    if (player.repeatState === 'context') {
+      queue.currentIndex = queue.tracks.length - 1; // return to the last track
+    } else if (player.repeatState === 'off') {
+      // TODO 
+      // add 10 tracks to queue realted to the last track
+    }
+  } else queue.currentIndex--; // Go to the previous track
+};
+
+const goPrevious = (queue, player) => {
+  // Shuffle state
+  if (player.shuffleState) {
+    goPreviousShuffle(queue, player);
+  } else {
+    goPreviousNormal(queue, player);
+  }
+
+};
+
 const fillQueueFromTracksUris = async (uris, queues, player) => {
   let tracks = [];
   uris.forEach(async uri => {
@@ -177,5 +213,8 @@ module.exports = {
   deleteQueueById,
   getQueueById,
   createQueueWithContext,
-  goNext
+  goNext,
+  goPreviousNormal,
+  goPreviousShuffle,
+  goPrevious
 };
