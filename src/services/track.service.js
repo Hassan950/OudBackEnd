@@ -1,5 +1,6 @@
 const { Track } = require('../models/track.model');
-const AppError = require('../utils/AppError');
+const _ = require('lodash');
+const fs = require('fs').promises;
 
 /**
  * A method that gets array of tracks By their ID's
@@ -12,13 +13,24 @@ const AppError = require('../utils/AppError');
  */
 exports.findTracks = async ids => {
   const result = await Track.find({ _id: ids })
-    .populate('artists album')
-    .select('-audioUrl');
+    .lean()
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
   if (result.length == ids.length) return result;
   const tracks = [];
   for (let i = 0, n = ids.length; i < n; i++) {
     const val = result.find(track => String(track._id) === ids[i]);
-    tracks[i] = val == undefined ? null : val;
+    if (val) {
+      tracks[i] = val;
+      tracks[i].albumId = tracks[i].album._id;
+    } else tracks[i] = null;
   }
   return tracks;
 };
@@ -30,23 +42,32 @@ exports.findTracks = async ids => {
  * @author Mohamed Abo-Bakr
  * @summary Deletes a track
  * @param {String} id ID of the track to be deleted
- * @param {String} artistId ID of the artist of the current user
- * @returns Deleted track if the track was found
- * @throws AppError with status code 404 if the track was not found
- * @throws AppError with status code 403 if artist is not the track's main artist
  */
-exports.deleteTrack = async (id, artistId) => {
-  const track = await Track.findById(id)
-    .populate('artists album')
-    .select('-audioUrl');
-  if (!track) throw new AppError('The requested resource is not found', 404);
-  if (!(String(track.artists[0]) === String(artistId)))
-    throw new AppError(
-      'You do not have permission to perform this action.',
-      403
-    );
-  await Track.findByIdAndDelete(id);
-  return track;
+exports.deleteTrack = async id => {
+  const track = await Track.findByIdAndDelete(id);
+  if (track.audioUrl !== 'default.mp3') {
+    try {
+      await fs.unlink(track.audioUrl);
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+};
+
+/**
+ * A method that deletes tracks by their ID's
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes tracks
+ * @param {String} ids ID's of the tracks to be deleted
+ */
+exports.deleteTracks = async ids => {
+  await Promise.all(
+    ids.map(async id => {
+      this.deleteTrack(id);
+    })
+  );
 };
 
 /**
@@ -57,13 +78,45 @@ exports.deleteTrack = async (id, artistId) => {
  * @summary gets a track
  * @param {String} id ID of the track to be retrieved
  * @returns track if the track was found
- * @throws AppError with status code 404 if the track was not found
+ * @returns null the track was not found
  */
 exports.findTrack = async id => {
   const track = await Track.findById(id)
-    .populate('artists album')
-    .select('-audioUrl');
-  if (!track) throw new AppError('The requested resource is not found', 404);
+    .lean()
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
+  if (track) track.albumId = track.album._id;
+  return track;
+};
+
+/**
+ * A method that gets a track by it's ID with its audioUrl it (helper used in other services)
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets a track
+ * @param {String} id ID of the track to be retrieved
+ * @returns track if the track was found
+ * @returns null the track was not found
+ */
+exports.findTrackUtil = async id => {
+  const track = await Track.findById(id)
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
   return track;
 };
 
@@ -75,23 +128,106 @@ exports.findTrack = async id => {
  * @summary updates a track
  * @param {String} id ID of the track to be updated
  * @param {object} newTrack object containing the new values
- * @param {String} artistId ID of the artist of the current user
- * @returns Updated track if the track was found
- * @throws AppError with status code 404 if the track was not found
- * @throws AppError with status code 403 if artist is not the track's main artist
+ * @returns Updated track
  */
-exports.update = async (id, newTrack, artistId) => {
-  let track = await Track.findById(id)
-    .populate('artists album')
-    .select('-audioUrl');
-  if (!track) throw new AppError('The requested resource is not found', 404);
-  if (!(String(track.artists[0]) === String(artistId)))
-    throw new AppError(
-      'You do not have permission to perform this action.',
-      403
-    );
+exports.update = async (id, newTrack) => {
+  const track = await Track.findByIdAndUpdate(id, newTrack, {
+    new: true
+  })
+    .lean()
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
+  track.albumId = track.album._id;
 
-  track.set(newTrack);
-  await track.save();
   return track;
+};
+
+/**
+ * A method that creates a track
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary creates a track
+ * @param {object} newTrack object containing the new values
+ * @returns the new track
+ */
+exports.createTrack = async (albumId, newTrack) => {
+  return await (await Track.create({ ...newTrack, album: albumId }))
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    })
+    .execPopulate();
+};
+
+/**
+ * A method that updates the file of a track
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary updates the url of the given track
+ * @param {object} track track to be updated
+ * @param {string} url the url of the file of the track
+ * @returns Updated track
+ */
+exports.setTrack = async (track, url, duration) => {
+  track.audioUrl = url;
+  track.duration = duration;
+  await (await track.save())
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    })
+    .execPopulate();
+  track = track.toJSON();
+  track.albumId = track.album._id;
+  return _.omit(track, 'audioUrl');
+};
+
+/**
+ * A method that checks if a track has an old file that is no longer needed
+ *
+ * @function
+ * @author Mohamed Abo-Bakr@summary Deletes old file of a track
+ * @param {ObjectId} id id of the track
+ */
+exports.checkFile = async id => {
+  const track = await Track.findById(id).select('audioUrl');
+  if (track.audioUrl !== 'default.mp3') {
+    try {
+      await fs.unlink(track.audioUrl);
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+};
+
+exports.findArtistTracks = async artistId => {
+  return await Track.find({ artists: artistId })
+    .populate({
+      path: 'artists',
+      select: 'name images'
+    })
+    .populate({
+      path: 'album',
+      select: '-tracks -genres -released -release_date',
+      populate: { path: 'artists', select: 'name images' }
+    });
 };
