@@ -72,31 +72,28 @@ exports.getTracks = async (params, query) => {
 };
 
 exports.getUserPlaylists = async (id, query, publicity) => {
-    const playlistPromise = PlaylistFollowings.find({ userId: id })
-      .where(publicity)
-      .populate('playlistId')
-      .select('playlistId')
-      .select('-_id')
-      .skip(query.offset)
-      .limit(query.limit)
-      .exec();
-      let totalPromise;
-    if(publicity.public){
-    totalPromise = PlaylistFollowings.countDocuments({ userId: id , public: true })
-      .exec();
-    } 
-    else{
-    totalPromise = PlaylistFollowings.countDocuments({ userId: id })
-      .exec();
-    } 
-    let [playlists, total] = await Promise.all([
-      playlistPromise,
-      totalPromise
-    ]);
-    playlists = _.map(playlists ,playlist => {
-      return playlist.playlistId
-    })
-    return { playlists, total };
+  const playlistPromise = PlaylistFollowings.find({ userId: id })
+    .where(publicity)
+    .populate('playlistId')
+    .select('playlistId')
+    .select('-_id')
+    .skip(query.offset)
+    .limit(query.limit)
+    .exec();
+  let totalPromise;
+  if (publicity.public) {
+    totalPromise = PlaylistFollowings.countDocuments({
+      userId: id,
+      public: true
+    }).exec();
+  } else {
+    totalPromise = PlaylistFollowings.countDocuments({ userId: id }).exec();
+  }
+  let [playlists, total] = await Promise.all([playlistPromise, totalPromise]);
+  playlists = _.map(playlists, playlist => {
+    return playlist.playlistId;
+  });
+  return { playlists, total };
 };
 
 exports.getTracksId = async uris => {
@@ -167,4 +164,3 @@ exports.reorderTracks = async (params, body) => {
   });
   await playlist.save();
 };
-

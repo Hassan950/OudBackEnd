@@ -1,6 +1,11 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { playlistController } = require('../../../src/controllers');
-let { Track, Playlist, User , PlaylistFollowings } = require('../../../src/models');
+let {
+  Track,
+  Playlist,
+  User,
+  PlaylistFollowings
+} = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 
 const playlistsIds = ['5e6dea511e17a305285ba614', '5e6dea511e17a305285ba615'];
@@ -50,7 +55,7 @@ describe('playlist controllers', () => {
       album: '5e6c8ebb8b40fc7708fe8b32',
       duration: 21000
     });
-    playlistFollowings = [playlistFollowing,playlistFollowing];
+    playlistFollowings = [playlistFollowing, playlistFollowing];
     tracks = [track, track];
     playlist = new Playlist({
       name: 'playlist1',
@@ -276,9 +281,10 @@ describe('playlist controllers', () => {
       mockingoose(PlaylistFollowings).toReturn(playlistFollowings, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       const foundPlaylists = res.json.mock.calls[0][0].items;
-      expect((foundPlaylists)).toEqual(
-        ([playlistFollowings[0].playlistId, playlistFollowings[1].playlistId])
-      );
+      expect(foundPlaylists).toEqual([
+        playlistFollowings[0].playlistId,
+        playlistFollowings[1].playlistId
+      ]);
     });
     it('should return 200 if user with the passed id exists for me url', async () => {
       req.baseUrl = 'api/v1/me/playlists';
@@ -303,9 +309,10 @@ describe('playlist controllers', () => {
       mockingoose(PlaylistFollowings).toReturn(playlistFollowings, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       const foundPlaylists = res.json.mock.calls[0][0].items;
-      expect((foundPlaylists)).toEqual(
-        ([playlistFollowings[0].playlistId, playlistFollowings[1].playlistId])
-      );
+      expect(foundPlaylists).toEqual([
+        playlistFollowings[0].playlistId,
+        playlistFollowings[1].playlistId
+      ]);
     });
   });
   describe('createPlaylist - test', () => {
