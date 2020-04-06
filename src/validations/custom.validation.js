@@ -82,7 +82,7 @@ exports.contextUriCheck = (value, helpers) => {
     return helpers.message('Invalid contextUri');
   }
 
-  if (arr[1] != 'albums' && arr[1] != 'artists' && arr[1] != 'playlists') {
+  if (arr[1] != 'album' && arr[1] != 'artist' && arr[1] != 'playlist') {
     return helpers.message('Invalid contextUri');
   }
 

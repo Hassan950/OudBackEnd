@@ -3,7 +3,7 @@ const queueMocks = require('../../utils/models/queue.model.mocks');
 const deviceMocks = require('../../utils/models/device.model.mocks');
 const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
-const { Player, Device, User, Queue } = require('../../../src/models');
+const { Player, Device, User, Queue, Album, Artist, Playlist } = require('../../../src/models');
 const { playerController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 
@@ -140,6 +140,9 @@ describe('Player controller', () => {
       req.body.offset = {};
       req.body.positionMs = 1;
       req.body.contextUri = `oud:playlist:${dummyId}`;
+      mockingoose(Album).toReturn([dummyId], 'findOne');
+      mockingoose(Playlist).toReturn([dummyId], 'findOne');
+      mockingoose(Artist).toReturn([dummyId], 'findOne');
     });
 
     it('it should return 500 status code if not authenticated', async () => {

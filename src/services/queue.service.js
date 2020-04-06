@@ -29,29 +29,20 @@ exports.createQueueWithContext = async (contextUri) => {
 
   let tracks = [] // fill this array
 
-  if (type == 'albums') {
-    const album = await Album.findById(id);
+  if (type == 'album') {
+    tracks = await Album.findById(id, 'tracks');
 
-    if (!album) return null;
+    if (!tracks || !tracks.length) return null;
 
-    // TODO
-    // get album tracks
+  } else if (type == 'playlist') {
+    tracks = await Playlist.findById(id, 'tracks');
 
-  } else if (type == 'playlists') {
-    const playlist = await Playlist.findById(id);
+    if (!tracks || !tracks.length) return null;
 
-    if (!playlist) return null;
+  } else if (type == 'artist') {
+    tracks = await Artist.findById(id, 'popularSongs');
 
-    // TODO
-    // get playlist tracks
-
-  } else if (type == 'artists') {
-    const artist = await Artist.findById(id);
-
-    if (!artist) return null;
-
-    // TODO
-    // get artist tracks
+    if (!tracks || !tracks.length) return null;
 
   }
 
