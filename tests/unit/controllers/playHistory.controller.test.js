@@ -40,10 +40,10 @@ describe('PlayHistory controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
 
-    it('should return 200 with items and limit if history length > 0', async () => {
+    it('should return 200 with items and limit if passed else 20', async () => {
       await playHistoryController.recentlyPlayed(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0].limit).toBe(1);
+      expect(res.json.mock.calls[0][0].limit).toBe(req.query.limit || 20);
       expect(res.json.mock.calls[0][0].items).toEqual([playHistory]);
     });
 

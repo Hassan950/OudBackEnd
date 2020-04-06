@@ -19,7 +19,7 @@ exports.recentlyPlayed = async (req, res, next) => {
   if (history && history.length) {
     res.status(200).json({
       items: history,
-      limit: history.length
+      limit: limit || 20
     });
   } else {
     res.status(204).end();
