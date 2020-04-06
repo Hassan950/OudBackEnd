@@ -10,7 +10,8 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "start": "nodemon ./src/server.js",
+    "start": "export NODE_ENV=development && nodemon ./src/server.js",
+    "start-prod": "export NODE_ENV=production && node ./src/server.js",
     "test": "jest --watchAll --verbose --coverage"
   },
   "keywords": [
