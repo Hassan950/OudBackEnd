@@ -288,9 +288,8 @@ exports.deleteTrack = async (req, res, next) => {
 
   queue.tracks.splice(trackIndex, 1);
 
-  if (trackIndex === queue.currentIndex && (!queues || !queues.length || !queues[0].length)) {
+  if (trackIndex === queue.currentIndex) {
     // set all to default
-    playerService.setPlayerToDefault(player);
     queueService.setQueueToDefault(queue);
   }
 
@@ -300,6 +299,17 @@ exports.deleteTrack = async (req, res, next) => {
     queueService.deleteQueueById(queue._id);
 
     req.user.queues = queues;
+
+    if (!queues || !queues.length) {
+      playerService.setPlayerToDefault(player);
+    } else {
+      const queue = await queueService.getQueueById(queues[0]);
+      if (queue && queue.tracks.length) {
+        playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
+      } else
+        playerService.setPlayerToDefault(player);
+
+    }
 
     await Promise.all([
       player.save(),
