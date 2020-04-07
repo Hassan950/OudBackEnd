@@ -147,9 +147,9 @@ exports.resumePlayer = async (req, res, next) => {
       return next(new AppError('Context is not found', 404));
     }
 
-    userService.addQueue(queue, queues);
+    queues = userService.addQueue(queue, queues);
 
-    playerService.addTrackToPlayer(player, queue.tracks[0]);
+    playerService.addTrackToPlayer(player, queue.tracks[0], contextUri);
   }
   // add current track
   if (uris && uris.length) {

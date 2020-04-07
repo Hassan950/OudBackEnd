@@ -167,7 +167,12 @@ const deleteUserById = async (userId) => {
  * @returns queues
  */
 const getUserQueues = async (userId) => {
-  const queues = await User.findById(userId).select('queues');
+  const user = await User.findById(userId).select('queues');
+
+  if (!user) return user;
+
+  const queues = user.queues;
+
   return queues;
 };
 
@@ -183,6 +188,8 @@ const addQueue = (queue, queues) => {
   } else {
     queues = [queue._id];
   }
+
+  return queues;
 };
 
 module.exports = {
