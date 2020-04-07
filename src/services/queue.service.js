@@ -1,6 +1,21 @@
 const { Queue, Album, Playlist, Artist } = require('../models');
-const { trackService } = require('./');
+const trackService = require('./track.service');
 const _ = require('lodash');
+
+const reorder = (arr, indexes) => {
+  let temp = _.range(0, arr.length);
+
+  for (let i = 0; i < arr.length; i++) {
+    temp[i] = arr[indexes[i]];
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = temp[i];
+  }
+
+  return arr;
+}
+
 
 const randomize = (arr) => {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -11,11 +26,28 @@ const randomize = (arr) => {
 };
 
 
-const getQueueById = async (id, ops = { selectDetails: false }) => {
+const getQueueById = async (id, ops = { selectDetails: false, sort: false }) => {
   let queue = Queue.findById(id);
 
   if (ops && ops.selectDetails) {
     queue.select('+currentIndex +shuffleList +shuffleIndex');
+  }
+  else if (ops && ops.sort) {
+
+    queue.select('+shuffleList');
+    queue = await queue;
+
+    if (queue && queue.tracks &&
+      queue.tracks.length && queue.shuffleList &&
+      queue.shuffleList.length) {
+      // reorder
+      queue.tracks = reorder(queue.tracks, queue.shuffleList);
+    }
+
+    if (queue)
+      queue.shuffleList = undefined;
+
+    return queue;
   }
 
   return await queue;
@@ -28,21 +60,26 @@ const createQueueWithContext = async (contextUri) => {
 
   let tracks = [] // fill this array
 
-  if (type == 'album') {
-    tracks = await Album.findById(id, 'tracks');
+  if (type === 'album') {
+    const album = await Album.findById(id);
 
-    if (!tracks || !tracks.length) return null;
+    if (!album || !album.tracks || !album.tracks.length) return null;
 
-  } else if (type == 'playlist') {
-    tracks = await Playlist.findById(id, 'tracks');
+    tracks = album.tracks;
 
-    if (!tracks || !tracks.length) return null;
+  } else if (type === 'playlist') {
+    const playlist = await Playlist.findById(id);
 
-  } else if (type == 'artist') {
-    tracks = await Artist.findById(id, 'popularSongs');
+    if (!playlist || !playlist.tracks || !playlist.tracks.length) return null;
 
-    if (!tracks || !tracks.length) return null;
+    tracks = playlist.tracks;
 
+  } else if (type === 'artist') {
+    const artist = await Artist.findById(id);
+
+    if (!artist || !artist.popularSongs || !artist.popularSongs.length) return null;
+
+    tracks = artist.popularSongs;
   }
 
   const queue = await Queue.create({
@@ -58,7 +95,7 @@ const createQueueWithContext = async (contextUri) => {
 
 
 const deleteQueueById = async (id) => {
-  await Queue.deleteOne(id);
+  await Queue.deleteOne({ _id: id });
 };
 
 
@@ -69,7 +106,13 @@ const appendToQueue = async (id, tracks) => {
 
   if (!queue.tracks) queue.tracks = [];
 
-  queue.tracks.push(...tracks);
+  // unique only
+  tracks.forEach(track => {
+    const pos = queue.tracks.indexOf(track);
+    if (pos === -1)
+      queue.tracks.push(track);
+  });
+
 
   await queue.save();
 
@@ -113,7 +156,7 @@ const goNextShuffle = (queue, player) => {
     if (player.repeatState === 'context') {
       queue.shuffleIndex = 0; // return to the first track
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
@@ -127,7 +170,7 @@ const goNextNormal = (queue, player) => {
   if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = 0; // return to the first track
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
@@ -148,7 +191,7 @@ const goPreviousShuffle = (queue, player) => {
     if (player.repeatState === 'context') {
       queue.shuffleIndex = queue.tracks.length - 1; // return to the last track
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
@@ -162,7 +205,7 @@ const goPreviousNormal = (queue, player) => {
   if (queue.currentIndex === 0) { // first track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = queue.tracks.length - 1; // return to the last track
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
@@ -195,7 +238,7 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
     queues = [queue._id];
     player.item = queue.tracks[0];
     player.context = null;
-    player.positionMs = 0;
+    player.progressMs = 0;
   }
 
   return queue;

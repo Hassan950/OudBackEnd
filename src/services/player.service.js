@@ -1,5 +1,7 @@
 const { Player } = require('../models');
-const { queueService, trackService, deviceService } = require('./');
+const queueService = require('./queue.service');
+const trackService = require('./track.service');
+const deviceService = require('./device.service');
 
 /**
  * Get player with the given userId
@@ -20,15 +22,21 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
 
   if (ops.populate) {
     player = await Player.findOne({ userId: userId })
-      .populate('item')
+      .populate({
+        path: 'item',
+        select: '+audioUrl',
+        populate: {
+          path: 'artists album',
+        }
+      })
       .populate('device')
       ;
 
     if (player && player.item) {
       if (ops.link) {
         // Add host link
-        const audio = player.item.audioUrl.split('/')[2];
-        player.item.audioUrl = ops.link + audio;
+        const audio = player.item.audioUrl.split('/');
+        player.item.audioUrl = ops.link + audio[audio.length - 1];
       } else
         player.item.audioUrl = undefined;
     }
@@ -53,8 +61,14 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
  * @summary Get Currently Playing
  */
 const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
-  const currentlyPlaying = await Player.findOne({ userId: userId })
-    .populate('item')
+  let currentlyPlaying = await Player.findOne({ userId: userId })
+    .populate({
+      path: 'item',
+      select: '+audioUrl',
+      populate: {
+        path: 'artists album',
+      }
+    })
     .select('item context')
     ;
 
@@ -63,8 +77,8 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   if (currentlyPlaying) {
     if (ops.link) {
       // Add host link
-      const audio = currentlyPlaying.item.audioUrl;
-      currentlyPlaying.item.audioUrl = ops.link + audio;
+      const audio = currentlyPlaying.item.audioUrl.split('/');
+      currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
     } else
       currentlyPlaying.item.audioUrl = undefined;
   }
@@ -92,16 +106,12 @@ const createPlayer = async (userId) => {
 };
 
 
-const addTrackToPlayer = (player, track, contextUri = null) => {
+const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   player.item = track;
-  player.positionMs = 0;
+  player.progressMs = 0;
+  player.currentlyPlayingType = 'track';
   // get context from context uri
-  if (contextUri) {
-    const uri = contextUri.split(':');
-    const context = {
-      type: uri[1],
-      id: uri[2]
-    }
+  if (context && context.type) {
     player.context = context;
   }
 };
@@ -143,9 +153,9 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
       // go next
       queueService.goNext(queue, player);
       // add next track to player
-      playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex]);
+      playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
       queue.save(); // save the queue
-    } else player.positionMs = 0;
+    } else player.progressMs = 0;
   }
 
   return player;
@@ -163,7 +173,7 @@ const addDeviceToPlayer = async (player, deviceId) => {
 
 const setPlayerToDefault = (player) => {
   player.item = null;
-  player.context = { type: 'unkown' };
+  player.context = { type: 'unknown' };
   player.progressMs = null;
   player.shuffleState = false;
   player.repeatState = 'off';

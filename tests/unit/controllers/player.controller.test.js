@@ -15,7 +15,7 @@ describe('Player controller', () => {
   let next;
   beforeEach(() => {
     player = playerMocks.createFakePlayer();
-    player.audioUrl = undefined;
+    player.item.audioUrl = 'default.mp3';
     user = userMocks.createFakeUser();
     req = requestMocks.mockRequest(player);
     req.user = user;
@@ -49,6 +49,9 @@ describe('Player controller', () => {
   });
 
   describe('Get currently playing', () => {
+    beforeEach(() => {
+      player.item.audioUrl = 'default.mp3';
+    });
     it('it should return 500 status code if not authenticated', async () => {
       req.user = null;
       await playerController.getCurrentlyPlaying(req, res, next);
@@ -140,9 +143,10 @@ describe('Player controller', () => {
       req.body.offset = {};
       req.body.positionMs = 1;
       req.body.contextUri = `oud:playlist:${dummyId}`;
-      mockingoose(Album).toReturn([dummyId], 'findOne');
-      mockingoose(Playlist).toReturn([dummyId], 'findOne');
-      mockingoose(Artist).toReturn([dummyId], 'findOne');
+      mockingoose(Album).toReturn({ tracks: [dummyId] }, 'findOne');
+      mockingoose(Playlist).toReturn({ tracks: [dummyId] }, 'findOne');
+      mockingoose(Artist).toReturn({ popularSongs: [dummyId] }, 'findOne');
+      player.item = dummyId;
     });
 
     it('it should return 500 status code if not authenticated', async () => {
@@ -224,9 +228,9 @@ describe('Player controller', () => {
     });
 
     it('should change player positionMs', async () => {
-      player.positionMs = 0;
+      player.progressMs = 0;
       await playerController.seekPlayer(req, res, next);
-      expect(player.positionMs).toBe(req.query.positionMs);
+      expect(player.progressMs).toBe(req.query.positionMs);
     });
   });
 });

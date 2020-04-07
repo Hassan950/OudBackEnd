@@ -21,16 +21,15 @@ const getHistory = async (userId, ops = {
   before: undefined
 }) => {
   const history = PlayHistory.find({ user: userId })
-    .limit(ops.limit);
+    .limit(ops.limit)
+    .sort({ playedAt: -1 });
 
   if (ops.after)
     history.gt('playedAt', new Date(ops.after));
   else if (ops.before)
     history.lt('playedAt', new Date(ops.before));
 
-  await history;
-
-  return history;
+  return await history;
 };
 
 
@@ -57,9 +56,16 @@ const addToHistory = async (userId, context = {
     user: userId,
     context: context
   };
-  const update = { playedAt: Date.now() };
-  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-  const history = await PlayHistory.findOneAndUpdate(query, update, options);
+
+  let history = await PlayHistory.findOne(query);
+
+  if (!history) {
+    history = await PlayHistory.create(query);
+  } else {
+    history.playedAt = Date.now();
+    await history.save();
+  }
+
 
   return history;
 };
