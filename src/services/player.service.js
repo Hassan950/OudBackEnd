@@ -35,10 +35,10 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
     if (player && player.item) {
       if (ops.link) {
         // Add host link
-        const audio = currentlyPlaying.item.audioUrl.split('/');
-        currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
+        const audio = player.item.audioUrl.split('/');
+        player.item.audioUrl = ops.link + audio[audio.length - 1];
       } else
-        currentlyPlaying.item.audioUrl = undefined;
+        player.item.audioUrl = undefined;
     }
 
   } else player = await Player.findOne({ userId: userId });
