@@ -21,7 +21,8 @@ const getHistory = async (userId, ops = {
   before: undefined
 }) => {
   const history = PlayHistory.find({ user: userId })
-    .limit(ops.limit);
+    .limit(ops.limit)
+    .sort({ playedAt: -1 });
 
   if (ops.after)
     history.gt('playedAt', new Date(ops.after));
