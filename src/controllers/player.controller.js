@@ -178,14 +178,15 @@ exports.resumePlayer = async (req, res, next) => {
       if (!player)
         next(new AppError('Queue is not found', 404));
     }
-
-    if (player.context && player.context.type !== 'unknown')
-      playHistoryService.addToHistory(id, player.context); // add to history
-
   }
   if (!player.item) {
     return next(new AppError('Nothing to be played', 404));
   }
+
+  if (player.context && player.context.type !== 'unknown')
+    playHistoryService.addToHistory(id, player.context); // add to history
+
+
   // add queues to user
   req.user.queues = queues;
   // save

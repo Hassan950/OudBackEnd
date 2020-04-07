@@ -57,9 +57,16 @@ const addToHistory = async (userId, context = {
     user: userId,
     context: context
   };
-  const update = { playedAt: Date.now() };
-  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-  const history = await PlayHistory.findOneAndUpdate(query, update, options);
+
+  let history = await PlayHistory.findOne(query);
+
+  if (!history) {
+    history = await PlayHistory.create(query);
+  } else {
+    history.playedAt = Date.now();
+    await history.save();
+  }
+
 
   return history;
 };
