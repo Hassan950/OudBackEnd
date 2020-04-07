@@ -388,7 +388,7 @@ describe('Queue controller', () => {
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.queueIndex = 0;
       req.query.trackIndex = 0;
-      req.query.trackId = null;
+      req.query.trackId = undefined;
       user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
         { select: jest.fn().mockResolvedValueOnce(user) }
@@ -473,7 +473,7 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if trackId is passed and no track found with the given id', async () => {
-      req.query.trackIndex = null;
+      req.query.trackIndex = undefined;
       req.query.trackId = req.user._id;
       await queueController.deleteTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
@@ -490,7 +490,7 @@ describe('Queue controller', () => {
 
     it('should delete track from queue with the given trackId', async () => {
       queue.tracks = [req.user._id, player._id, req.user._id];
-      req.query.trackIndex = null;
+      req.query.trackIndex = undefined;
       req.query.trackId = queue.tracks[0];
       await queueController.deleteTrack(req, res, next);
       expect(queue.tracks.length).toBe(2);
@@ -531,7 +531,7 @@ describe('Queue controller', () => {
       player.currentlyPlayingType = 'track';
       await queueController.deleteTrack(req, res, next);
       expect(player.item).toBe(null);
-      expect(player.context.type).toBe('unkown');
+      expect(player.context.type).toBe('unknown');
       expect(player.progressMs).toBe(null);
       expect(player.shuffleState).toBe(false);
       expect(player.repeatState).toBe('off');

@@ -263,7 +263,7 @@ exports.deleteTrack = async (req, res, next) => {
     queues.reverse();
   }
 
-  if ((trackIndex === null && trackId === null) || (trackIndex !== null && trackId !== null)) {
+  if ((trackIndex === undefined && trackId === undefined) || (trackIndex !== undefined && trackId !== undefined)) {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
@@ -273,7 +273,7 @@ exports.deleteTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  if (trackIndex !== null) {
+  if (trackIndex !== undefined) {
     if (queue.tracks.length <= trackIndex) {
       return next(new AppError(`Track with trackIndex=${trackIndex} is not found`, 404));
     }
@@ -296,8 +296,10 @@ exports.deleteTrack = async (req, res, next) => {
 
   if (!queue.tracks.length) {
     // delete the queue
+    console.log(queues);
     queues.splice(0, 1);
     queueService.deleteQueueById(queue._id);
+    console.log(queues);
 
     req.user.queues = queues;
 

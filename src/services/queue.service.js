@@ -63,7 +63,7 @@ const createQueueWithContext = async (contextUri) => {
 
 
 const deleteQueueById = async (id) => {
-  await Queue.deleteOne(id);
+  await Queue.deleteOne({ _id: id });
 };
 
 

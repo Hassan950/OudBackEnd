@@ -175,7 +175,7 @@ const addDeviceToPlayer = async (player, deviceId) => {
 
 const setPlayerToDefault = (player) => {
   player.item = null;
-  player.context = { type: 'unkown' };
+  player.context = { type: 'unknown' };
   player.progressMs = null;
   player.shuffleState = false;
   player.repeatState = 'off';
