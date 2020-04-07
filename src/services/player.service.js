@@ -109,6 +109,7 @@ const createPlayer = async (userId) => {
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   player.item = track;
   player.progressMs = 0;
+  player.currentlyPlayingType = 'track';
   // get context from context uri
   if (context && context.type) {
     player.context = context;
