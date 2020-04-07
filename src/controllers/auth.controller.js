@@ -1,6 +1,7 @@
 const { userService, authService, emailService, playerService } = require('../services');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
+const logger = require('../config/logger');
 
 /**
  * 
@@ -74,7 +75,11 @@ exports.requestVerify = async (req, res, next) => {
     message,
     button: 'CONFIRM ACCOUNT',
     link: verifyURL
-  }).then().catch();
+  }).then().catch(error => {
+    const { message, code, response } = error;
+    logger.error(`${error.code} :${error.message}`);
+  });
+
   user.verifyToken = undefined;
   createTokenAndSend(user, res);
 };
@@ -93,16 +98,19 @@ exports.signup = async (req, res, next) => {
     return next(new AppError('Please confirm your password', httpStatus.BAD_REQUEST));
   }
   const newUser = await userService.createUser(req.body);
-  // Create Player
-  playerService.createPlayer(newUser._id);
   // TODO
   // Return 401 if role is premium without credit
   // Return 401 if role is artist without request
   // generate verify token
   const verifyToken = authService.createVerifyToken(newUser);
-  await newUser.save({
-    validateBeforeSave: false
-  });
+
+  // Create Player and save user
+  await Promise.all([
+    newUser.save({
+      validateBeforeSave: false
+    }),
+    playerService.createPlayer(newUser._id)
+  ]);
   // use mail to verify user
   const verifyURL = `${req.protocol}://${req.get(
     'host'
@@ -117,7 +125,11 @@ exports.signup = async (req, res, next) => {
     message,
     button: 'CONFIRM ACCOUNT',
     link: verifyURL
-  }).then().catch();
+  }).then().catch(error => {
+    const { message, code, response } = error;
+    logger.error(`${error.code} :${error.message}`);
+  });
+
   newUser.verifyToken = undefined;
   createTokenAndSend(newUser, res);
 };
@@ -209,7 +221,11 @@ exports.forgotPassword = async (req, res, next) => {
     message,
     button: 'RESET PASSWORD',
     link: resetURL
-  }).then().catch();
+  }).then().catch(error => {
+    const { message, code, response } = error;
+    logger.error(`${error.code} :${error.message}`);
+  });
+
   res.status(httpStatus.OK).json({
     status: 'success',
     message: 'Token sent to email!'
