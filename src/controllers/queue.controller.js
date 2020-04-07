@@ -413,23 +413,21 @@ exports.nextTrack = async (req, res, next) => {
       return next(new AppError('Device is not found', 404));
   }
 
-  if (player.repeatState !== 'track') {
-    let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+  let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
-    if (!queue || !queue.tracks) {
-      return next(new AppError('Queue is not found', 404));
-    }
-
-    queueService.goNext(queue, player);
-
-    player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
-    player.context = queue.context;
-
-    if (player.context && player.context.type !== 'unknown')
-      playHistoryService.addToHistory(id, player.context); // add to history
-
-    queue.save(); // save the queue
+  if (!queue || !queue.tracks) {
+    return next(new AppError('Queue is not found', 404));
   }
+
+  queueService.goNext(queue, player);
+
+  player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
+  player.context = queue.context;
+
+  if (player.context && player.context.type !== 'unknown')
+    playHistoryService.addToHistory(id, player.context); // add to history
+
+  queue.save(); // save the queue
 
   player.isPlaying = true; // play the track
   player.progressMs = 0;
@@ -475,23 +473,21 @@ exports.previousTrack = async (req, res, next) => {
       return next(new AppError('Device is not found', 404));
   }
 
-  if (player.repeatState !== 'track') {
-    let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+  let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
-    if (!queue || !queue.tracks) {
-      return next(new AppError('Queue is not found', 404));
-    }
-
-    queueService.goPrevious(queue, player);
-
-    player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
-    player.context = queue.context;
-
-    if (player.context && player.context.type !== 'unknown')
-      playHistoryService.addToHistory(id, player.context); // add to history
-
-    queue.save(); // save the queue
+  if (!queue || !queue.tracks) {
+    return next(new AppError('Queue is not found', 404));
   }
+
+  queueService.goPrevious(queue, player);
+
+  player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
+  player.context = queue.context;
+
+  if (player.context && player.context.type !== 'unknown')
+    playHistoryService.addToHistory(id, player.context); // add to history
+
+  queue.save(); // save the queue
 
   player.isPlaying = true; // play the track
   player.progressMs = 0;

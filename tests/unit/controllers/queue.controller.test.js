@@ -699,24 +699,6 @@ describe('Queue controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
-    describe('Repeat state = track', () => {
-      beforeEach(() => {
-        player.repeatState = 'track';
-      });
-
-      it('should not change the player item', async () => {
-        const lastItem = player.item;
-        await queueController.nextTrack(req, res, next);
-        expect(player.item).toBe(lastItem);
-      });
-
-      it('should not change the queue index', async () => {
-        const lastIndex = queue.currentIndex;
-        await queueController.nextTrack(req, res, next);
-        expect(queue.currentIndex).toBe(lastIndex);
-      });
-    });
-
     describe('Reapeat state != track', () => {
       beforeEach(() => {
         player.repeatState = 'off';
@@ -857,24 +839,6 @@ describe('Queue controller', () => {
       mockingoose(Device).toReturn(null, 'findOne');
       await queueController.previousTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    describe('Repeat state = track', () => {
-      beforeEach(() => {
-        player.repeatState = 'track';
-      });
-
-      it('should not change the player item', async () => {
-        const lastItem = player.item;
-        await queueController.previousTrack(req, res, next);
-        expect(player.item).toBe(lastItem);
-      });
-
-      it('should not change the queue index', async () => {
-        const lastIndex = queue.currentIndex;
-        await queueController.previousTrack(req, res, next);
-        expect(queue.currentIndex).toBe(lastIndex);
-      });
     });
 
     describe('Reapeat state != track', () => {
