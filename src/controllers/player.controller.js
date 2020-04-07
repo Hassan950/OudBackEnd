@@ -19,7 +19,7 @@ exports.getPlayer = async (req, res, next) => {
   const link = `${req.protocol}://${req.get(
     'host'
   )}/api/uploads/tracks/`;
-  const player = await playerService.getPlayer(id, { link: link });
+  const player = await playerService.getPlayer(id, { link: link, populate: true });
 
   if (!player) {
     res.status(204);

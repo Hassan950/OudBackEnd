@@ -20,14 +20,20 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
 
   if (ops.populate) {
     player = await Player.findOne({ userId: userId })
-      .populate('item')
+      .populate({
+        path: 'item',
+        select: '+audioUrl',
+        populate: {
+          path: 'artists'
+        }
+      })
       .populate('device')
       ;
 
     if (player && player.item) {
       if (ops.link) {
         // Add host link
-        const audio = player.item.audioUrl.split('/')[2];
+        const audio = player.item.audioUrl;
         player.item.audioUrl = ops.link + audio;
       } else
         player.item.audioUrl = undefined;
