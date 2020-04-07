@@ -10,4 +10,6 @@ exports.playerController = require('./player.controller');
 exports.playHistoryController = require('./playHistory.controller');
 exports.queueController = require('./queue.controller');
 exports.albumsController = require('./album.controller');
+exports.artistController = require('./artist.controller');
+exports.genreController = require('./genre.controller');
 exports.followController = require('./follow.controller');

@@ -54,6 +54,10 @@ trackSchema.virtual('type').get(function() {
   return 'track';
 });
 
+trackSchema.virtual('albumId').get(function() {
+  return (this.album && this.album._id) ? this.album._id : undefined;
+});
+
 const Track = mongoose.model('Track', trackSchema);
 
 module.exports = { Track, trackSchema };
