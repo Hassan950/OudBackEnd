@@ -247,7 +247,7 @@ describe('Queue controller', () => {
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.queueIndex = 0;
       req.query.trackIndex = 0;
-      req.query.trackId = null;
+      req.query.trackId = undefined;
       req.query.newIndex = 1;
       user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
@@ -293,16 +293,9 @@ describe('Queue controller', () => {
       expect(queues).toEqual(queues.reverse());
     });
 
-    it('should return 400 if trackIndex and trackId is passed', async () => {
-      req.query.trackIndex = null;
-      req.query.trackId = null;
-      await queueController.editPosition(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(400);
-    });
-
     it('should return 400 if trackIndex and trackId is not passed', async () => {
-      req.query.trackIndex = null;
-      req.query.trackId = null;
+      req.query.trackIndex = undefined;
+      req.query.trackId = undefined;
       await queueController.editPosition(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
@@ -333,7 +326,7 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if trackId is passed and no track found with the given id', async () => {
-      req.query.trackIndex = null;
+      req.query.trackIndex = undefined;
       req.query.trackId = req.user._id;
       await queueController.editPosition(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
@@ -356,7 +349,7 @@ describe('Queue controller', () => {
 
     it('should move the track from the given index of the trackId to newIndex', async () => {
       queue.tracks = [req.user._id, player._id, req.user._id];
-      req.query.trackIndex = null;
+      req.query.trackIndex = undefined;
       req.query.trackId = queue.tracks[0];
       req.query.newIndex = 1;
       await queueController.editPosition(req, res, next);
