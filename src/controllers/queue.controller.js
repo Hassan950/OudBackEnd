@@ -372,6 +372,8 @@ exports.shuffleQueue = async (req, res, next) => {
     player.save(),
     queue.save()
   ]);
+
+  res.status(204).end();
 };
 
 

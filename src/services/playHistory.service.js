@@ -29,9 +29,7 @@ const getHistory = async (userId, ops = {
   else if (ops.before)
     history.lt('playedAt', new Date(ops.before));
 
-  await history;
-
-  return history;
+  return await history;
 };
 
 
