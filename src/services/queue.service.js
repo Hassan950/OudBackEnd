@@ -156,7 +156,7 @@ const goNextShuffle = (queue, player) => {
     if (player.repeatState === 'context') {
       queue.shuffleIndex = 0; // return to the first track
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
@@ -170,7 +170,7 @@ const goNextNormal = (queue, player) => {
   if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = 0; // return to the first track
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
@@ -191,7 +191,7 @@ const goPreviousShuffle = (queue, player) => {
     if (player.repeatState === 'context') {
       queue.shuffleIndex = queue.tracks.length - 1; // return to the last track
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
@@ -205,7 +205,7 @@ const goPreviousNormal = (queue, player) => {
   if (queue.currentIndex === 0) { // first track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = queue.tracks.length - 1; // return to the last track
-    } else if (player.repeatState === 'off') {
+    } else {
       // TODO 
       // add 10 tracks to queue realted to the last track
     }
