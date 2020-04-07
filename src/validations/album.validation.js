@@ -120,14 +120,3 @@ exports.createTrack = {
   })
 };
 
-exports.artistsExist = async artistIds => {
-  const artists = await Artist.find({ _id: artistIds });
-  if (artistIds.length !== artists.length) return false;
-  return true;
-};
-
-exports.genresExist = async genreIds => {
-  const genres = await Genre.find({ _id: genreIds });
-  if (genreIds.length !== genres.length) return false;
-  return true;
-};

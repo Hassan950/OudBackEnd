@@ -311,7 +311,30 @@ exports.addTrack = async (album, track) => {
 };
 
 /**
- * A method that deletes the image with the given path
+ * A method that returns albums of a specific artist
+ *
+ * @function
+ * @summary Gets albums of an artist
+ * @param {String} artistId Id of the artist
+ * @param {Number} limit Maximum number of albums to be retrieved
+ * @param {Number} offset index of the first album (starting from 0)
+ * @returns {Array<Object>} array of albums of the artist
+ * @returns {Number} the length of the array
+ * @returns null if the artist has no albums or the ID doesn't belong to any artist
+ */
+exports.findArtistAlbums = async (artistId, limit, offset) => {
+  let result = Album.find({ 'artists.0': artistId })
+    .populate('artists', '_id name images')
+    .populate('genres')
+    .select('-tracks')
+    .limit(limit)
+    .skip(offset);
+  let length = Album.countDocuments({ 'artists.0': artistId });
+  return await Promise.all([result, length]);
+};
+
+/**
+ *  A method that deletes the image with the given path
  *
  * @function
  * @author Mohamed Abo-Bakr

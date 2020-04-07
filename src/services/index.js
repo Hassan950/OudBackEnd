@@ -10,4 +10,6 @@ exports.playHistoryService = require('./playHistory.service');
 exports.queueService = require('./queue.service');
 exports.followService = require('./follow.service');
 exports.albumService = require('./album.service');
+exports.artistService = require('./artist.service');
+exports.genreService = require('.//genre.service');
 
