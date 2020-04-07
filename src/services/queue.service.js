@@ -2,6 +2,21 @@ const { Queue, Album, Playlist, Artist } = require('../models');
 const trackService = require('./track.service');
 const _ = require('lodash');
 
+const reorder = (arr, indexes) => {
+  let temp = _.range(0, arr.length);
+
+  for (let i = 0; i < arr.length; i++) {
+    temp[indexes[i]] = arr[i];
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = temp[i];
+  }
+
+  return arr;
+}
+
+
 const randomize = (arr) => {
   for (let i = arr.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * i);
@@ -11,11 +26,28 @@ const randomize = (arr) => {
 };
 
 
-const getQueueById = async (id, ops = { selectDetails: false }) => {
+const getQueueById = async (id, ops = { selectDetails: false, sort: false }) => {
   let queue = Queue.findById(id);
 
   if (ops && ops.selectDetails) {
     queue.select('+currentIndex +shuffleList +shuffleIndex');
+  }
+  else if (ops && ops.sort) {
+
+    queue.select('+shuffleList');
+    queue = await queue;
+
+    if (queue && queue.tracks &&
+      queue.tracks.length && queue.shuffleList &&
+      queue.shuffleList.length) {
+      // reorder
+      queue.tracks = reorder(queue.tracks, queue.shuffleList);
+    }
+
+    if (queue)
+      queue.shuffleList = undefined;
+
+    return queue;
   }
 
   return await queue;
