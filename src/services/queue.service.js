@@ -74,7 +74,13 @@ const appendToQueue = async (id, tracks) => {
 
   if (!queue.tracks) queue.tracks = [];
 
-  queue.tracks.push(...tracks);
+  // unique only
+  tracks.forEach(track => {
+    const pos = queue.tracks.indexOf(track);
+    if (pos === -1)
+      queue.tracks.push(track);
+  });
+
 
   await queue.save();
 
