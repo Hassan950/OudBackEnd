@@ -33,7 +33,7 @@ exports.getQueue = async (req, res, next) => {
 
   const id = queues[queueIndex];
 
-  const queue = await queueService.getQueueById(queues[0]);
+  const queue = await queueService.getQueueById(id);
 
   if (!queue || !queue.tracks || !queue.tracks.length) {
     return res.status(204).end();

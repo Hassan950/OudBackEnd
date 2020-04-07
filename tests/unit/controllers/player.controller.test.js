@@ -228,9 +228,9 @@ describe('Player controller', () => {
     });
 
     it('should change player positionMs', async () => {
-      player.positionMs = 0;
+      player.progressMs = 0;
       await playerController.seekPlayer(req, res, next);
-      expect(player.positionMs).toBe(req.query.positionMs);
+      expect(player.progressMs).toBe(req.query.positionMs);
     });
   });
 });

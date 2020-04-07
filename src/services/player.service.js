@@ -108,7 +108,7 @@ const createPlayer = async (userId) => {
 
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   player.item = track;
-  player.positionMs = 0;
+  player.progressMs = 0;
   // get context from context uri
   if (context && context.type) {
     player.context = context;
@@ -154,7 +154,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
       // add next track to player
       playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
       queue.save(); // save the queue
-    } else player.positionMs = 0;
+    } else player.progressMs = 0;
   }
 
   return player;

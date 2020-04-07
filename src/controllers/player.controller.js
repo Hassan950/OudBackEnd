@@ -225,7 +225,7 @@ exports.seekPlayer = async (req, res, next) => {
       return next(new AppError('Device is not found', 404));
   }
 
-  player.positionMs = positionMs;
+  player.progressMs = positionMs;
 
   await player.save();
 

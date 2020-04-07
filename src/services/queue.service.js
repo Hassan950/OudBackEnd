@@ -206,7 +206,7 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
     queues = [queue._id];
     player.item = queue.tracks[0];
     player.context = null;
-    player.positionMs = 0;
+    player.progressMs = 0;
   }
 
   return queue;
