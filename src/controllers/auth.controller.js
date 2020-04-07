@@ -98,6 +98,8 @@ exports.signup = async (req, res, next) => {
     return next(new AppError('Please confirm your password', httpStatus.BAD_REQUEST));
   }
   const newUser = await userService.createUser(req.body);
+  // Create Player
+  playerService.createPlayer(newUser._id);
   // TODO
   // Return 401 if role is premium without credit
   // Return 401 if role is artist without request
