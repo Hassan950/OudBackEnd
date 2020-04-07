@@ -6,7 +6,7 @@ const reorder = (arr, indexes) => {
   let temp = _.range(0, arr.length);
 
   for (let i = 0; i < arr.length; i++) {
-    temp[indexes[i]] = arr[i];
+    temp[i] = arr[indexes[i]];
   }
 
   for (let i = 0; i < arr.length; i++) {
