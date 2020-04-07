@@ -288,7 +288,7 @@ exports.deleteTrack = async (req, res, next) => {
 
   queue.tracks.splice(trackIndex, 1);
 
-  if (trackIndex === queue.currentIndex) {
+  if (trackIndex === queue.currentIndex && (!queues || !queues.length || !queues[0].length)) {
     // set all to default
     playerService.setPlayerToDefault(player);
     queueService.setQueueToDefault(queue);
