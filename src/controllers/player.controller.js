@@ -160,7 +160,6 @@ exports.resumePlayer = async (req, res, next) => {
   if (offset && ((uris && uris.length) || (contextUri))) {
     player = await playerService.startPlayingFromOffset(player, queue, offset, queues);
   }
-
   // change position
   if (player.item && positionMs) {
     player.progressMs = positionMs;
@@ -178,7 +177,6 @@ exports.resumePlayer = async (req, res, next) => {
       playHistoryService.addToHistory(id, player.context); // add to history
 
   }
-
   if (!player.item) {
     return next(new AppError('Nothing to be played', 404));
   }

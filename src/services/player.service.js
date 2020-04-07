@@ -75,8 +75,8 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   if (currentlyPlaying) {
     if (ops.link) {
       // Add host link
-      const audio = currentlyPlaying.item.audioUrl;
-      currentlyPlaying.item.audioUrl = ops.link + audio;
+      const audio = currentlyPlaying.item.audioUrl.split('/');
+      currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
     } else
       currentlyPlaying.item.audioUrl = undefined;
   }

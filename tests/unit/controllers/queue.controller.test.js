@@ -45,8 +45,9 @@ describe('Queue controller', () => {
   describe('Get user queue', () => {
     beforeEach(() => {
       req.query.queueIndex = 0;
+      user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+        { select: jest.fn().mockResolvedValueOnce(user) }
       ));
     });
 
@@ -57,9 +58,7 @@ describe('Queue controller', () => {
     });
 
     it('should return 400 if queues is null', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
+      user.queues = null;
       await queueController.getQueue(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
@@ -145,8 +144,9 @@ describe('Queue controller', () => {
       player.save = jest.fn().mockResolvedValue(player);
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
+      user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+        { select: jest.fn().mockResolvedValueOnce(user) }
       ));
       track = new Track({
         name: 'song',
@@ -185,17 +185,13 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if queues is null', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
+      user.queues = null;
       await queueController.addToQueue(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
     it('should return 404 if queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([]) }
-      ));
+      user.queues = [];
       await queueController.addToQueue(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -209,9 +205,7 @@ describe('Queue controller', () => {
     it('should revese queues if queues.length>1 and queueIndex=1', async () => {
       req.query.queueIndex = 1;
       const queues = randomArray(2, 10);
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(queues) }
-      ));
+      user.queues = queues;
       await queueController.addToQueue(req, res, next);
       expect(queues).toEqual(queues.reverse());
     });
@@ -255,8 +249,9 @@ describe('Queue controller', () => {
       req.query.trackIndex = 0;
       req.query.trackId = null;
       req.query.newIndex = 1;
+      user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+        { select: jest.fn().mockResolvedValueOnce(user) }
       ));
     });
 
@@ -273,17 +268,13 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if queues is null', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
+      user.queues = null;
       await queueController.editPosition(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
     it('should return 404 if queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([]) }
-      ));
+      user.queues = [];
       await queueController.editPosition(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -297,9 +288,7 @@ describe('Queue controller', () => {
     it('should revese queues if queues.length>1 and queueIndex=1', async () => {
       req.query.queueIndex = 1;
       const queues = randomArray(2, 10);
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(queues) }
-      ));
+      user.queues = queues;
       await queueController.editPosition(req, res, next);
       expect(queues).toEqual(queues.reverse());
     });
@@ -400,8 +389,9 @@ describe('Queue controller', () => {
       req.query.queueIndex = 0;
       req.query.trackIndex = 0;
       req.query.trackId = null;
+      user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+        { select: jest.fn().mockResolvedValueOnce(user) }
       ));
     });
 
@@ -418,17 +408,13 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if queues is null', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
+      user.queues = null;
       await queueController.deleteTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
     it('should return 404 if queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([]) }
-      ));
+      user.queues = [];
       await queueController.deleteTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -442,9 +428,7 @@ describe('Queue controller', () => {
     it('should revese queues if queues.length>1 and queueIndex=1', async () => {
       req.query.queueIndex = 1;
       const queues = randomArray(2, 10);
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(queues) }
-      ));
+      user.queues = queues;
       await queueController.deleteTrack(req, res, next);
       expect(queues).toEqual(queues.reverse());
     });
@@ -560,25 +544,21 @@ describe('Queue controller', () => {
 
     it('should delete queue if queue length is 1', async () => {
       queues = [0, 1];
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(queues) }
-      ));
+      user.queues = queues;
       let cnt = 0;
       mockingoose(Queue).toReturn(cnt++, 'deleteOne');
       queue.tracks = [req.user._id];
       queue.currentIndex = 0;
       req.query.trackIndex = 0;
       await queueController.deleteTrack(req, res, next);
-      expect(queues.length).toBe(1);
+      expect(queue.tracks.length).toBe(0);
       expect(cnt).toBe(1);
     });
 
     it('should save the player and user with queues', async () => {
       req.user.save = jest.fn();
       queues = [0, 1];
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(queues) }
-      ));
+      user.queues = queues;
       let cnt = 0;
       mockingoose(Queue).toReturn(cnt++, 'deleteOne');
       queue.tracks = [req.user._id];
@@ -598,8 +578,9 @@ describe('Queue controller', () => {
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.state = true;
       req.query.deviceId = device._id;
+      user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+        { select: jest.fn().mockResolvedValueOnce(user) }
       ));
     });
 
@@ -616,17 +597,13 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if queues is null', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
+      user.queues = null;
       await queueController.shuffleQueue(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
     it('should return 404 if queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([]) }
-      ));
+      user.queues = [];
       await queueController.shuffleQueue(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -692,8 +669,9 @@ describe('Queue controller', () => {
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.deviceId = device._id;
+      user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+        { select: jest.fn().mockResolvedValueOnce(user) }
       ));
       queue.tracks = [req.user._id, player._id, queue._id];
     });
@@ -711,17 +689,13 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if queues is null', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
+      user.queues = null;
       await queueController.nextTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
     it('should return 404 if queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([]) }
-      ));
+      user.queues = [];
       await queueController.nextTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -855,8 +829,9 @@ describe('Queue controller', () => {
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.deviceId = device._id;
+      user.queues = [queue._id]
       User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([queue._id]) }
+        { select: jest.fn().mockResolvedValueOnce(user) }
       ));
       queue.tracks = [req.user._id, player._id, queue._id];
     });
@@ -874,17 +849,13 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if queues is null', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
+      user.queues = null;
       await queueController.previousTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
     it('should return 404 if queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce([]) }
-      ));
+      user.queues = [];
       await queueController.previousTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
