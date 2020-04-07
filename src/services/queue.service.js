@@ -28,17 +28,17 @@ const createQueueWithContext = async (contextUri) => {
 
   let tracks = [] // fill this array
 
-  if (type == 'album') {
+  if (type === 'album') {
     tracks = await Album.findById(id, 'tracks');
 
     if (!tracks || !tracks.length) return null;
 
-  } else if (type == 'playlist') {
+  } else if (type === 'playlist') {
     tracks = await Playlist.findById(id, 'tracks');
 
     if (!tracks || !tracks.length) return null;
 
-  } else if (type == 'artist') {
+  } else if (type === 'artist') {
     tracks = await Artist.findById(id, 'popularSongs');
 
     if (!tracks || !tracks.length) return null;

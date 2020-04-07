@@ -53,7 +53,7 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
  * @summary Get Currently Playing
  */
 const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
-  const currentlyPlaying = await Player.findOne({ userId: userId })
+  let currentlyPlaying = await Player.findOne({ userId: userId })
     .populate('item')
     .select('item context')
     ;
