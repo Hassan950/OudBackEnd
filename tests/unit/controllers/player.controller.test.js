@@ -15,7 +15,7 @@ describe('Player controller', () => {
   let next;
   beforeEach(() => {
     player = playerMocks.createFakePlayer();
-    player.item.audioUrl = undefined;
+    player.item.audioUrl = 'default.mp3';
     user = userMocks.createFakeUser();
     req = requestMocks.mockRequest(player);
     req.user = user;
