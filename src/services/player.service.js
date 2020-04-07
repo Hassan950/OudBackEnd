@@ -24,7 +24,7 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
         path: 'item',
         select: '+audioUrl',
         populate: {
-          path: 'artists'
+          path: 'artists album',
         }
       })
       .populate('device')
@@ -60,7 +60,13 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
  */
 const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   let currentlyPlaying = await Player.findOne({ userId: userId })
-    .populate('item')
+    .populate({
+      path: 'item',
+      select: '+audioUrl',
+      populate: {
+        path: 'artists album',
+      }
+    })
     .select('item context')
     ;
 
