@@ -62,3 +62,16 @@ exports.deleteTrack = {
       .custom(idCheck)
   })
 };
+
+exports.addToQueue = {
+  query: Joi.object().keys({
+    queueIndex: Joi.number()
+      .min(0)
+      .max(1),
+    trackIndex: Joi.number()
+      .min(0),
+    trackId: Joi.string()
+      .custom(idCheck)
+      .required()
+  })
+}

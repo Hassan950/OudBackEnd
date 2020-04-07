@@ -33,7 +33,7 @@ exports.getQueue = async (req, res, next) => {
 
   const id = queues[queueIndex];
 
-  const queue = await queueService.getQueueById(queues[0]);
+  const queue = await queueService.getQueueById(id, { sort: true });
 
   if (!queue || !queue.tracks || !queue.tracks.length) {
     return res.status(204).end();
@@ -185,7 +185,7 @@ exports.editPosition = async (req, res, next) => {
     queues.reverse();
   }
 
-  if ((trackIndex === null && trackId === null) || (trackIndex !== null && trackId !== null)) {
+  if ((trackIndex === undefined && trackId === undefined) || (trackIndex !== undefined && trackId !== undefined)) {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
@@ -195,7 +195,7 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  if (trackIndex !== null) {
+  if (trackIndex !== undefined) {
     if (queue.tracks.length <= trackIndex) {
       return next(new AppError(`Track with trackIndex=${trackIndex} is not found`, 404));
     }
@@ -263,7 +263,7 @@ exports.deleteTrack = async (req, res, next) => {
     queues.reverse();
   }
 
-  if ((trackIndex === null && trackId === null) || (trackIndex !== null && trackId !== null)) {
+  if ((trackIndex === undefined && trackId === undefined) || (trackIndex !== undefined && trackId !== undefined)) {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
@@ -273,7 +273,7 @@ exports.deleteTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  if (trackIndex !== null) {
+  if (trackIndex !== undefined) {
     if (queue.tracks.length <= trackIndex) {
       return next(new AppError(`Track with trackIndex=${trackIndex} is not found`, 404));
     }
@@ -290,7 +290,9 @@ exports.deleteTrack = async (req, res, next) => {
 
   if (trackIndex === queue.currentIndex) {
     // set all to default
-    playerService.setPlayerToDefault(player);
+    if (queue && queue.tracks.length)
+      player.item = queue.tracks[0];
+
     queueService.setQueueToDefault(queue);
   }
 
@@ -300,6 +302,17 @@ exports.deleteTrack = async (req, res, next) => {
     queueService.deleteQueueById(queue._id);
 
     req.user.queues = queues;
+
+    if (!queues || !queues.length) {
+      playerService.setPlayerToDefault(player);
+    } else {
+      const queue = await queueService.getQueueById(queues[0]);
+      if (queue && queue.tracks.length) {
+        playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
+      } else
+        playerService.setPlayerToDefault(player);
+
+    }
 
     await Promise.all([
       player.save(),
@@ -372,6 +385,8 @@ exports.shuffleQueue = async (req, res, next) => {
     player.save(),
     queue.save()
   ]);
+
+  res.status(204).end();
 };
 
 
@@ -411,23 +426,21 @@ exports.nextTrack = async (req, res, next) => {
       return next(new AppError('Device is not found', 404));
   }
 
-  if (player.repeatState !== 'track') {
-    let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+  let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
-    if (!queue || !queue.tracks) {
-      return next(new AppError('Queue is not found', 404));
-    }
-
-    queueService.goNext(queue, player);
-
-    player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
-    player.context = queue.context;
-
-    if (player.context && player.context.type !== 'unknown')
-      playHistoryService.addToHistory(id, player.context); // add to history
-
-    queue.save(); // save the queue
+  if (!queue || !queue.tracks) {
+    return next(new AppError('Queue is not found', 404));
   }
+
+  queueService.goNext(queue, player);
+
+  player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
+  player.context = queue.context;
+
+  if (player.context && player.context.type !== 'unknown')
+    playHistoryService.addToHistory(id, player.context); // add to history
+
+  queue.save(); // save the queue
 
   player.isPlaying = true; // play the track
   player.progressMs = 0;
@@ -473,23 +486,21 @@ exports.previousTrack = async (req, res, next) => {
       return next(new AppError('Device is not found', 404));
   }
 
-  if (player.repeatState !== 'track') {
-    let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+  let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
-    if (!queue || !queue.tracks) {
-      return next(new AppError('Queue is not found', 404));
-    }
-
-    queueService.goPrevious(queue, player);
-
-    player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
-    player.context = queue.context;
-
-    if (player.context && player.context.type !== 'unknown')
-      playHistoryService.addToHistory(id, player.context); // add to history
-
-    queue.save(); // save the queue
+  if (!queue || !queue.tracks) {
+    return next(new AppError('Queue is not found', 404));
   }
+
+  queueService.goPrevious(queue, player);
+
+  player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
+  player.context = queue.context;
+
+  if (player.context && player.context.type !== 'unknown')
+    playHistoryService.addToHistory(id, player.context); // add to history
+
+  queue.save(); // save the queue
 
   player.isPlaying = true; // play the track
   player.progressMs = 0;
