@@ -296,10 +296,8 @@ exports.deleteTrack = async (req, res, next) => {
 
   if (!queue.tracks.length) {
     // delete the queue
-    console.log(queues);
     queues.splice(0, 1);
     queueService.deleteQueueById(queue._id);
-    console.log(queues);
 
     req.user.queues = queues;
 

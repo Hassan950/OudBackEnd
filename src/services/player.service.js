@@ -1,5 +1,7 @@
 const { Player } = require('../models');
-const { queueService, trackService, deviceService } = require('./');
+const queueService = require('./queue.service');
+const trackService = require('./track.service');
+const deviceService = require('./device.service');
 
 /**
  * Get player with the given userId
@@ -104,16 +106,11 @@ const createPlayer = async (userId) => {
 };
 
 
-const addTrackToPlayer = (player, track, contextUri = null) => {
+const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   player.item = track;
   player.positionMs = 0;
   // get context from context uri
-  if (contextUri) {
-    const uri = contextUri.split(':');
-    const context = {
-      type: uri[1],
-      id: uri[2]
-    }
+  if (context && context.type) {
     player.context = context;
   }
 };
@@ -155,7 +152,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
       // go next
       queueService.goNext(queue, player);
       // add next track to player
-      playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex]);
+      playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
       queue.save(); // save the queue
     } else player.positionMs = 0;
   }

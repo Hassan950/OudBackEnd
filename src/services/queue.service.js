@@ -1,5 +1,5 @@
 const { Queue, Album, Playlist, Artist } = require('../models');
-const { trackService } = require('./');
+const trackService = require('./track.service');
 const _ = require('lodash');
 
 const randomize = (arr) => {

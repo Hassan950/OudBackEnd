@@ -1,5 +1,6 @@
 const { User } = require('../models');
-const { authService, queueService } = require('./');
+const authService = require('./auth.service');
+const queueService = require('./queue.service')
 const fs = require('fs');
 
 /**
@@ -188,7 +189,6 @@ const addQueue = (queue, queues) => {
   } else {
     queues = [queue._id];
   }
-
   return queues;
 };
 

@@ -147,14 +147,20 @@ exports.resumePlayer = async (req, res, next) => {
       return next(new AppError('Context is not found', 404));
     }
 
-    queues = userService.addQueue(queue, queues);
+    queues = await userService.addQueue(queue, queues);
 
-    playerService.addTrackToPlayer(player, queue.tracks[0], contextUri);
+    const uri = contextUri.split(':');
+    const context = {
+      type: uri[1],
+      id: uri[2]
+    }
+
+    playerService.addTrackToPlayer(player, queue.tracks[0], context);
   }
   // add current track
   if (uris && uris.length) {
     // fill tracks array
-    queue = await queueService.fillQueueFromTracksUris(uris, queues, player);
+    queue = queueService.fillQueueFromTracksUris(uris, queues, player);
   }
 
   if (offset && ((uris && uris.length) || (contextUri))) {
