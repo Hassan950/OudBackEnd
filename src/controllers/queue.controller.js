@@ -290,7 +290,9 @@ exports.deleteTrack = async (req, res, next) => {
 
   if (trackIndex === queue.currentIndex) {
     // set all to default
-    player.item = queue.tracks[0];
+    if (queue && queue.tracks.length)
+      player.item = queue.tracks[0];
+
     queueService.setQueueToDefault(queue);
   }
 
