@@ -19,7 +19,7 @@ exports.getPlayer = async (req, res, next) => {
   const link = `${req.protocol}://${req.get(
     'host'
   )}/api/uploads/tracks/`;
-  const player = await playerService.getPlayer(id, { link: link });
+  const player = await playerService.getPlayer(id, { link: link, populate: true });
 
   if (!player) {
     res.status(204);
@@ -147,20 +147,25 @@ exports.resumePlayer = async (req, res, next) => {
       return next(new AppError('Context is not found', 404));
     }
 
-    userService.addQueue(queue, queues);
+    queues = await userService.addQueue(queue, queues);
 
-    playerService.addTrackToPlayer(player, queue.tracks[0]);
+    const uri = contextUri.split(':');
+    const context = {
+      type: uri[1],
+      id: uri[2]
+    }
+
+    playerService.addTrackToPlayer(player, queue.tracks[0], context);
   }
   // add current track
   if (uris && uris.length) {
     // fill tracks array
-    queue = await queueService.fillQueueFromTracksUris(uris, queues, player);
+    queue = queueService.fillQueueFromTracksUris(uris, queues, player);
   }
 
   if (offset && ((uris && uris.length) || (contextUri))) {
     player = await playerService.startPlayingFromOffset(player, queue, offset, queues);
   }
-
   // change position
   if (player.item && positionMs) {
     player.progressMs = positionMs;
@@ -173,15 +178,15 @@ exports.resumePlayer = async (req, res, next) => {
       if (!player)
         next(new AppError('Queue is not found', 404));
     }
-
-    if (player.context && player.context.type !== 'unknown')
-      playHistoryService.addToHistory(id, player.context); // add to history
-
   }
-
   if (!player.item) {
     return next(new AppError('Nothing to be played', 404));
   }
+
+  if (player.context && player.context.type !== 'unknown')
+    playHistoryService.addToHistory(id, player.context); // add to history
+
+
   // add queues to user
   req.user.queues = queues;
   // save
@@ -220,7 +225,7 @@ exports.seekPlayer = async (req, res, next) => {
       return next(new AppError('Device is not found', 404));
   }
 
-  player.positionMs = positionMs;
+  player.progressMs = positionMs;
 
   await player.save();
 

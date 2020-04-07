@@ -20,7 +20,11 @@ router
     auth.authorize('premium', 'artist'),
     validate(queueValidation.deleteTrack),
     catchAsync(queueController.deleteTrack)
-  );
+  )
+  .post(
+    validate(queueValidation.addToQueue),
+    catchAsync(queueController.addToQueue)
+  )
 
 
 module.exports = router;
