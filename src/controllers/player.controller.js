@@ -178,6 +178,10 @@ exports.resumePlayer = async (req, res, next) => {
       playHistoryService.addToHistory(id, player.context); // add to history
 
   }
+
+  if (!player.item) {
+    return next(new AppError('Nothing to be played', 404));
+  }
   // add queues to user
   req.user.queues = queues;
   // save
