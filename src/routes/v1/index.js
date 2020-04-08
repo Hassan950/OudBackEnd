@@ -9,7 +9,7 @@ const authRoute = require('./auth.route');
 const router = express.Router();
 
 router.use('/', homeRoute);
-router.use('/users', userRoute);;
+router.use('/users', userRoute);
 router.use('/browse',browseRoute);
 router.use('/me', userMeRoute)
 router.use('/tracks', trackRoute)

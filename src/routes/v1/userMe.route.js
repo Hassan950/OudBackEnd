@@ -1,21 +1,22 @@
 const express = require('express');
-const { authController , libraryController , userController } = require('../../controllers');
+const { authController , userController } = require('../../controllers');
 const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 const playerRouter = require('./player.route')
+const libraryRouter = require('./library.route');
 
 const router = express.Router();
 
-router.use('/tracks', libraryController);
-router.use('/albums', libraryController);
+
 // all routes need authentication
 router.use(catchAsync(authMiddleware.authenticate));
 
 // /me/player router
 router.use('/player', playerRouter);
-
+router.use('/tracks', libraryRouter);
+router.use('/albums', libraryRouter);
 
 router
   .route('/updatePassword')

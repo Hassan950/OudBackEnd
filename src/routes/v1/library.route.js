@@ -5,16 +5,16 @@ const validate = require('../../middlewares/validate');
 const { libraryValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
-const router = express.Router();
-const router = express.Router({mergeParams: true});
-router.use(catchAsync(authMiddleware.authenticate));
+const router = express.Router({ mergeParams: true });
+//router.use(catchAsync(authMiddleware.authenticate));
 
-router('/')
-.get()
-.put()
-.delete();
+// router('/')
+// .get()
+// .put()
+// .delete();
 
-router('/contains')
-.get(validate(libraryValidation.check), catchAsync(libraryController.check));
+router
+  .route('/contains')
+  .get(validate(libraryValidation.check), catchAsync(libraryController.check));
 
 module.exports = router;
