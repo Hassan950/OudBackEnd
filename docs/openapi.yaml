@@ -3244,7 +3244,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /users/signUp:
+  /users/signup:
     post:
       tags:
         - UsersAuth
