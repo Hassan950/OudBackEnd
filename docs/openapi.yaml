@@ -4584,8 +4584,7 @@ components:
         - passwordConfirm
         - displayName
         - role
-        - birthDate
-        - gender
+        - country
       properties:
         username:
           description: >-
@@ -4636,7 +4635,6 @@ components:
           minLength: 2
           maxLength: 2
           example: EG
-          nullable: true
         gender:
           type: string
           enum:
