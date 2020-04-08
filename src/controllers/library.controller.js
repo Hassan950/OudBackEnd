@@ -15,16 +15,16 @@ exports.check = async(req, res , next)=>{
 
 const checkSavedTracks = async(req ,res,next)=>{
   let ids = req.query.ids.split(',');
-  const tracks = await libraryService.findTracks(ids);
+  const check = await libraryService.checkTracks(ids);
   res.status(200).json({
-    tracks: tracks
+    IsFound: check
   });
 }
 
 const checkSavedAlbums = async(req ,res,next)=>{
   let ids = req.query.ids.split(',');
-  const albums = await libraryService.findAlbums(ids);
+  const check = await libraryService.checkAlbums(ids);
   res.status(200).json({
-    albums: albums
+    IsFound: check
   });
 } 

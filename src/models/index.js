@@ -6,6 +6,7 @@ const { Category , categorySchema} = require('./category.model');
 const { Playlist, playlistSchema} = require('./playlist.model');
 const { Genre, genreSchema } = require('./genre.model');
 const { Device, deviceSchema } = require('./device.model');
+const { likedTracks, likedTracksSchema , likedAlbums, likedAlbumsSchema} = require('./liked.model');
 
 module.exports = {
   User,
@@ -23,5 +24,9 @@ module.exports = {
   Genre,
   genreSchema,
   Device,
-  deviceSchema
+  deviceSchema,
+  likedTracks,
+  likedTracksSchema,
+  likedAlbums,
+  likedAlbumsSchema
 };
