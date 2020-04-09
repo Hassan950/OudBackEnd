@@ -7,6 +7,7 @@ const deviceService = require('./device.service');
  * Get player with the given userId
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
@@ -51,6 +52,7 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
  * Get currently playing track with its context
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
@@ -90,6 +92,7 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
  * Create player with the given userId
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
@@ -109,6 +112,7 @@ const createPlayer = async (userId) => {
  * Add track to player
  * 
  * @function
+ * @public
  * @author Abdelrahman Tarek
  * @param {Document} player player 
  * @param {String} track track ID 
@@ -134,6 +138,7 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
  * Start playing from given offset
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {Document} player Player 
@@ -141,7 +146,7 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
  * @param {Object} offset Offset object
  * @param {Number} [offset.position] Offset postiton
  * @param {String} [offset.uri] Offset track uri to start from (oud:track:{trackId})
- * @param {Array} queues User queues array
+ * @param {Array<String>} queues queues IDs array
  * @description if offset.position is passed \
  * assign player.item to track in the queue with the given position if the position is < queue length \
  * else assign player.item the first track in the queue \
@@ -174,11 +179,12 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
  * Chnage player progress
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {Document} player Player 
  * @param {Number} progressMs progress in m Second 
- * @param {Array} queues User queues array
+ * @param {Array<String>} queues queues IDs array
  * @param {Document} [track] Currently playing track
  * @description Set player.progressMs to the given progressMs and if progressMs >= track duration (go next if repeat state != track else start the track from zero second)
  * @summary Chnage player progress
@@ -213,6 +219,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
  * Add Device to player
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {Document} player PLayer
@@ -236,9 +243,10 @@ const addDeviceToPlayer = async (player, deviceId) => {
 };
 
 /**
- * Set player to Default
+ * Set `player` to Default
  * 
  * @function
+ * @public
  * @author Abdelrahman Tarek
  * @param {Document} player Player 
  * @description Set \
@@ -249,7 +257,7 @@ const addDeviceToPlayer = async (player, deviceId) => {
  * player.repeatState = 'off' \
  * player.isPlaying = false \
  * player.currentlyPlayingType = 'unknown' 
- * @summary Set player to Default
+ * @summary Set `player` to Default
  */
 const setPlayerToDefault = (player) => {
   player.item = null;
