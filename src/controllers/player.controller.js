@@ -4,6 +4,8 @@ const AppError = require('../utils/AppError.js');
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
  * @description get user`s player
@@ -34,6 +36,8 @@ exports.getPlayer = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
  * @description get user`s currently playing track
@@ -64,6 +68,8 @@ exports.getCurrentlyPlaying = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
@@ -101,6 +107,8 @@ exports.pausePlayer = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
@@ -198,6 +206,8 @@ exports.resumePlayer = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek

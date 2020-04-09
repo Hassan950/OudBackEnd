@@ -1,10 +1,17 @@
 const { queueService, userService, playerService, deviceService, trackService, playHistoryService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
-/*
-  From 
-  https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
-*/
+/**
+ * Move element in array from a position to another
+ * 
+ * @method
+ * @private
+ * @author Abdelrahman Tarek
+ * @param {Number} from from position
+ * @param {Number} to to position
+ * @summary Move element in array from a position to another
+ * @see https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-anothers
+ */
 Array.prototype.move = function (from, to) {
   this.splice(to, 0, this.splice(from, 1)[0]);
   return this;
@@ -13,6 +20,8 @@ Array.prototype.move = function (from, to) {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
@@ -47,6 +56,8 @@ exports.getQueue = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
@@ -84,6 +95,8 @@ exports.repeatQueue = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @throws AppError 400 status
@@ -143,6 +156,8 @@ exports.addToQueue = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @throws AppError 400 status
@@ -222,6 +237,8 @@ exports.editPosition = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @throws AppError 400 status
@@ -331,6 +348,8 @@ exports.deleteTrack = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @throws AppError 400 status
@@ -392,6 +411,8 @@ exports.shuffleQueue = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
@@ -452,6 +473,8 @@ exports.nextTrack = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
