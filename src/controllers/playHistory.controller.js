@@ -1,6 +1,16 @@
 const { playHistoryService } = require('../services');
 const AppError = require('../utils/AppError.js');
 
+/**
+ * @version 1.0.0
+ * @public
+ * @async
+ * @throws AppError 500 status
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @description Get recently played
+ * @summary Get recently played
+ */
 exports.recentlyPlayed = async (req, res, next) => {
   if (!req.user) {
     return next(new AppError('Must Authenticate user', 500));

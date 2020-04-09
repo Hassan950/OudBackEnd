@@ -3,6 +3,8 @@ const AppError = require('../utils/AppError.js');
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
  * @description get user`s available devices
@@ -25,6 +27,8 @@ exports.getUserDevices = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
@@ -65,6 +69,8 @@ exports.transferPlayback = async (req, res, next) => {
 
 /**
  * @version 1.0.0
+ * @public
+ * @async
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
