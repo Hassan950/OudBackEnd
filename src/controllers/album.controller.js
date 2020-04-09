@@ -30,8 +30,27 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
+/**
+ * calls multer to upload an image that is in req.body.image and put it in req.file
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @description 
+ * @summary A middleware that uses multer to upload an image
+ */
 exports.uploadImage = upload.single('image');
 
+/**
+ * A middleware that gets the album with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets an album
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the album doesn't exist
+ */
 exports.getAlbum = async (req, res, next) => {
   const album = await albumService.findAlbum(req.params.id);
   if (!album)
@@ -39,11 +58,33 @@ exports.getAlbum = async (req, res, next) => {
   res.status(200).json(album);
 };
 
+/**
+ * A middleware that gets the albums with the given ID's
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets several albums
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.getAlbums = async (req, res, next) => {
   const albums = await albumService.findAlbums(req.query.ids);
   res.status(200).json({ albums: albums });
 };
 
+/**
+ * A middleware that deletes the album with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes an album
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the album doesn't exist
+ * @throws AppError 403 forbidden if the artist is not the album's main artist
+ */
 exports.findAndDeleteAlbum = async (req, res, next) => {
   let album = await albumService.findAlbumUtil(req.params.id);
   if (!album)
@@ -61,6 +102,17 @@ exports.findAndDeleteAlbum = async (req, res, next) => {
   res.status(200).json(album);
 };
 
+/**
+ * A middleware that gets the tracks on the album with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets the tracks of an album
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the album doesn't exist
+ */
 exports.findAlbumTracks = async (req, res, next) => {
   const tracks = await albumService.findTracksOfAlbum(
     req.params.id,
@@ -78,6 +130,19 @@ exports.findAlbumTracks = async (req, res, next) => {
   });
 };
 
+/**
+ * A middleware that updates the album with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Updates an album
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the album doesn't exist
+ * @throws AppError 400 bad request if any of the new data is invalid
+ * @throws AppError 403 forbidden if the artist is not the album's main artist
+*/
 exports.updateAlbum = async (req, res, next) => {
   let album = await albumService.findAlbumUtil(req.params.id);
   if (!album)
@@ -103,6 +168,19 @@ exports.updateAlbum = async (req, res, next) => {
   res.status(200).json(album);
 };
 
+/**
+ * A middleware Sets the image of an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Sets the image of an album
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the album doesn't exist
+ * @throws AppError 403 Forbidden if the artist is not the album's main artist
+ * @throws AppError 400 Bad request if no files were uploaded
+ */
 exports.setImage = async (req, res, next) => {
   if (!req.file) return next(new AppError('No files were uploaded', 400));
   let album = await albumService.findAlbumUtil(req.params.id);
@@ -127,6 +205,17 @@ exports.setImage = async (req, res, next) => {
   res.status(200).json(album);
 };
 
+/**
+ * A middleware that creates an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Creates an album
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 400 Bad request if the ID's given doesn't exist
+ */
 exports.createAlbum = async (req, res, next) => {
   if (!(await artistService.artistsExist(req.body.artists)))
     return next(
@@ -142,6 +231,18 @@ exports.createAlbum = async (req, res, next) => {
   res.status(200).json(album);
 };
 
+/**
+ * A middleware that Adds a new track to an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Adds a track to an album
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the album doesn't exist
+ * @throws AppError 400 Bad request if the ID's given doesn't exist
+ */
 exports.newTrack = async (req, res, next) => {
   let album = await albumService.findAlbumUtil(req.params.id);
   if (!album)

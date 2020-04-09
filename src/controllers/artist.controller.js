@@ -1,6 +1,17 @@
 const { artistService, albumService } = require('../services');
 const AppError = require('../utils/AppError');
 
+/**
+ * A middleware that gets the Artist with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets an artist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the artist doesn't exist
+ */
 exports.getArtist = async (req, res, next) => {
   const artist = await artistService.findArtist(req.params.id);
   if (!artist)
@@ -8,6 +19,16 @@ exports.getArtist = async (req, res, next) => {
   res.status(200).json(artist);
 };
 
+/**
+ * A middleware that gets the artists with the given ID's
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets several artists
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.getArtists = async (req, res, next) => {
   const artists = await artistService.findArtists(req.query.ids);
   res.status(200).json({
@@ -15,6 +36,16 @@ exports.getArtists = async (req, res, next) => {
   });
 };
 
+/**
+ * A middleware that gets the albums of the artist with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets the albums of an artist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.getAlbums = async (req, res, next) => {
   const albums = await albumService.findArtistAlbums(
     req.params.id,
@@ -30,6 +61,16 @@ exports.getAlbums = async (req, res, next) => {
   });
 };
 
+/**
+ * A middleware that gets the popular tracks of the artist with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets the popular tracks of an artist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.getTracks = async (req, res, next) => {
   const tracks = await artistService.getPopularSongs(req.params.id);
   if (!tracks)
@@ -39,6 +80,17 @@ exports.getTracks = async (req, res, next) => {
   });
 };
 
+/**
+ * A middleware that gets the related artists of the artist with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets the related artists of an artist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the artist doesn't exist
+ */
 exports.relatedArtists = async (req, res, next) => {
   const artists = await artistService.relatedArtists(req.params.id);
   if (!artists)
