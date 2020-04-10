@@ -27,7 +27,6 @@ const upload = multer({
  *
  * @function
  * @author Ahmed Magdy
- * @description 
  * @summary A middleware that uses multer to upload an image
  */
 
