@@ -56,9 +56,4 @@ describe('Playlist model', () => {
       expect(error.errors['collabrative']).toBeDefined();
     });
   });
-  describe('Playlist model - Type', () => {
-    it('Should return undefined when validating a valid playlist', () => {
-      expect(playlist.type).toBe("playlist");
-    });
-  });
 });
