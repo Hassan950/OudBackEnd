@@ -1,0 +1,42 @@
+[
+  {
+    "name":"Rap",
+    "_id":"5e9083c24c798428f45b322c"
+  },
+  {
+    "name":"Pop",
+    "_id":"5e9083c24c798428f45b322d"
+  },
+  {
+    "name":"Rock",
+    "_id":"5e9083c24c798428f45b322e"
+  },
+  {
+    "name":"Hip-hop",
+    "_id":"5e9083c24c798428f45b322f"
+  },
+  {
+    "name":"Electronic/dance",
+    "_id":"5e9083c24c798428f45b3230"
+  },
+  {
+    "name":"Jazz",
+    "_id":"5e9083c24c798428f45b3231"
+  },
+  {
+    "name":"Blues",
+    "_id":"5e9083c24c798428f45b3232"
+  },
+  {
+    "name":"Reggae",
+    "_id":"5e9083c24c798428f45b3233"
+  },
+  {
+    "name":"Classical music",
+    "_id":"5e9083c24c798428f45b3234"
+  },
+  {
+    "name":"hollywood",
+    "_id":"5e9083c24c798428f45b3235"
+  }
+]

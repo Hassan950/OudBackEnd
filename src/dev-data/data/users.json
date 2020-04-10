@@ -14,7 +14,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin"
+    "username": "admin",
+    "artist":"5e908929dd1f762eccfa9136"
   },
   {
     "_id": "5e907dafa0645f4571607600",
@@ -31,7 +32,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin1"
+    "username": "admin1",
+    "artist":"5e908929dd1f762eccfa9137"
   },
   {
     "_id": "5e907dafa0645f4571607601",
@@ -48,7 +50,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin2"
+    "username": "admin2",
+    "artist":"5e908929dd1f762eccfa9138"
   },
   {
     "_id": "5e907dafa0645f4571607602",
@@ -65,7 +68,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin3"
+    "username": "admin3",
+    "artist":"5e908929dd1f762eccfa9139"
   },
   {
     "_id": "5e907dafa0645f4571607603",
@@ -82,7 +86,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin4"
+    "username": "admin4",
+    "artist":"5e908929dd1f762eccfa913a"
   },
   {
     "_id": "5e907db0a0645f4571607604",
@@ -99,7 +104,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin5"
+    "username": "admin5",
+    "artist":"5e908929dd1f762eccfa913b"
   },
   {
     "_id": "5e907db0a0645f4571607605",
@@ -116,7 +122,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin6"
+    "username": "admin6",
+    "artist":"5e908929dd1f762eccfa913c"
   },
   {
     "_id": "5e907db0a0645f4571607606",
@@ -133,7 +140,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin7"
+    "username": "admin7",
+    "artist":"5e908929dd1f762eccfa913d"
   },
   {
     "_id": "5e907db0a0645f4571607607",
@@ -150,7 +158,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin8"
+    "username": "admin8",
+    "artist":"5e908929dd1f762eccfa913e"
   },
   {
     "_id": "5e907db0a0645f4571607608",
@@ -167,7 +176,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin9"
+    "username": "admin9",
+    "artist":"5e908929dd1f762eccfa913f"
   },
   {
     "_id": "5e907db0a0645f4571607609",

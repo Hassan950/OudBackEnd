@@ -1,7 +1,7 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 const config = require('config');
-const { User, Player } = require('../../models');
+const { User, Player, Genre, Artist } = require('../../models');
 
 const DB = config.get('db');
 mongoose
@@ -14,20 +14,24 @@ mongoose
   .then(() => console.log('DB connection successful!'));
 
 // READ JSON FILE
-const users = JSON.parse(
-  fs.readFileSync(`${__dirname}/users.json`, 'utf-8')
-);
+const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
 
 const players = JSON.parse(
   fs.readFileSync(`${__dirname}/players.json`, 'utf-8')
 );
 
+const genres = JSON.parse(fs.readFileSync(`${__dirname}/genres.json`, 'utf-8'));
+const artists = JSON.parse(
+  fs.readFileSync(`${__dirname}/artists.json`, 'utf-8')
+);
 
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
     await User.create(users);
     //await Player.create(players);
+    await Genre.create(genres);
+    await Artist.create(artists);
     console.log('Data successfully loaded!');
   } catch (err) {
     console.log(err);
@@ -40,6 +44,8 @@ const deleteData = async () => {
   try {
     await User.deleteMany();
     await Player.deleteMany();
+    await Genre.deleteMany();
+    await Artist.deleteMany();
     console.log('Data successfully deleted!');
   } catch (err) {
     console.log(err);
