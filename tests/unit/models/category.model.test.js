@@ -35,4 +35,9 @@ describe('Category model', () => {
       });
     });
   });
+  describe('Category model - Type', () => {
+    it('Should return undefined when validating a valid category', () => {
+      expect(category.type).toBe("category");
+    });
+  });
 });

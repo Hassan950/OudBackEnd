@@ -42,4 +42,23 @@ describe('Playlist model', () => {
       });
     });
   });
+  describe('Playlist model - public', () => {
+    it('should throw error if a non boolean passed', () => {
+      playlist.public = 'a';
+      const error = playlist.validateSync();
+      expect(error.errors['public']).toBeDefined();
+    });
+  });
+  describe('Playlist model - public', () => {
+    it('should throw error if a non boolean passed', () => {
+      playlist.collabrative = 'a';
+      const error = playlist.validateSync();
+      expect(error.errors['collabrative']).toBeDefined();
+    });
+  });
+  describe('Playlist model - Type', () => {
+    it('Should return undefined when validating a valid playlist', () => {
+      expect(playlist.type).toBe("playlist");
+    });
+  });
 });
