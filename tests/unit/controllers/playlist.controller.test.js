@@ -1,6 +1,7 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { playlistController } = require('../../../src/controllers');
-
+const fs = require('fs');
+const move = require('lodash-move');
 
 let {
   Track,
@@ -139,6 +140,29 @@ describe('playlist controllers', () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it('should throw error if path not found', async () => {
+      req.params.id = usersIds[0];
+      req.body = {
+        name: 'MGZZZ',
+        public: true,
+        collabrative: true,
+        description: 'dfdgfsfdgasd'
+      };
+      playlist.image = 'bhjhvd.js';
+      req.file.path = 'hfjhgjh.jpg';
+      jest.mock('fs');
+      fs.unlink = jest.fn();
+      fs.unlink.mockImplementation(() => {
+        throw Error;
+      });
+      mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
+      try{
+        await playlistController.changePlaylist(req, res, next);
+      }
+      catch(e){
+        expect(e).toBe(Error);
+      }
+    });
     it('should return 200 if playlist with the passed id exists', async () => {
       req.params.id = playlistsIds[0];
       req.body = {
@@ -148,7 +172,7 @@ describe('playlist controllers', () => {
         description: 'dfdgfsfdgasd'
       };
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
-      await playlistController.changePlaylist(req, res, next);
+      (await playlistController.changePlaylist(req, res, next));
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('should return playlist with new details has the passed id exists', async () => {
@@ -218,6 +242,23 @@ describe('playlist controllers', () => {
       await playlistController.uploadImageRoute(req, res, next);
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error when path not found', async () => {
+      req.params.id = playlistsIds[0];
+      playlist.image = 'bhjhvd.js';
+      req.file.path = 'hfjhgjh.jpg';
+      jest.mock('fs');
+      fs.unlink = jest.fn();
+      fs.unlink.mockImplementation(() => {
+        throw Error;
+      });
+      mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
+      try{
+        await playlistController.changePlaylist(req, res, next);
+      }
+      catch(e){
+        expect(e).toBe(Error);
+      }
     });
     it('should return 200 if playlist with the passed id exists', async () => {
       req.params.id = playlistsIds[0];
@@ -621,6 +662,11 @@ describe('playlist controllers', () => {
       };
       playlist.save = jest.fn().mockReturnThis();
       mockingoose(Playlist).toReturn(playlist, 'findOne');
+      jest.mock('lodash-move');
+      move.default = jest.fn();
+      move.default.mockImplementation(()=>{
+        return playlist.tracks;
+      });
       await playlistController.reorderTracks(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
