@@ -1,6 +1,22 @@
 const config = require('config');
 const sgMail = require('@sendgrid/mail');
 
+/**
+ * Send email
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Object} options email options
+ * @param {String} options.email to email
+ * @param {String} options.subject email subject
+ * @param {String} options.message email message
+ * @param {String} options.link email redirect link
+ * @param {String} options.button email redirect button name
+ * @throws Error | ResponseError
+ * @summary Send email
+ */
 const sendEmail = async (options) => {
   sgMail.setApiKey(config.get('SENDGRID_API_KEY'));
   const msg = {
