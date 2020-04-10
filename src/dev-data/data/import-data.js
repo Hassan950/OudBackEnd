@@ -1,7 +1,11 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 const config = require('config');
+<<<<<<< HEAD
 const { User, Player, Genre, Artist, Album, Track } = require('../../models');
+=======
+const { User, Player, Category, Playlist } = require('../../models');
+>>>>>>> func-doc
 
 const DB = config.get('db');
 mongoose
@@ -28,6 +32,13 @@ const artists = JSON.parse(
 const albums = JSON.parse(fs.readFileSync(`${__dirname}/albums.json`, 'utf-8'));
 
 const tracks = JSON.parse(fs.readFileSync(`${__dirname}/tracks.json`), 'utf-8');
+const categories = JSON.parse(
+  fs.readFileSync(`${__dirname}/categories.json`, 'utf-8')
+);
+
+const playlists = JSON.parse(
+  fs.readFileSync(`${__dirname}/playlists.json`, 'utf-8')
+);
 
 // IMPORT DATA INTO DB
 const importData = async () => {
@@ -38,6 +49,9 @@ const importData = async () => {
     await Artist.create(artists);
     await Album.create(albums);
     await Track.create(tracks);
+    await Player.create(players);
+    await Category.create(categories);
+    await Playlist.create(playlists);
     console.log('Data successfully loaded!');
   } catch (err) {
     console.log(err);
@@ -54,6 +68,8 @@ const deleteData = async () => {
     await Artist.deleteMany();
     await Album.deleteMany();
     await Track.deleteMany();
+    await Category.deleteMany();
+    await Playlist.deleteMany();
     console.log('Data successfully deleted!');
   } catch (err) {
     console.log(err);
