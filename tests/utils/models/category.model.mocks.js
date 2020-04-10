@@ -6,7 +6,7 @@ const save = jest.fn();
 const createFakeStoredCategory = () => {
   const category = new Category({
     name: faker.name.title().slice(0, 4),
-    icon: "messi.jpg",
+    icon: faker.image.imageUrl(),
     playlists: [
       {
         _id: mongoose.Types.ObjectId()

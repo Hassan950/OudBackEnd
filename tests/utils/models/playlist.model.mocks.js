@@ -6,7 +6,7 @@ const save = jest.fn();
 const createFakePlaylist = () => {
   const playlist = new Playlist({
     name: faker.name.title().slice(0, 4),
-    description: "no description for this",
+    description: faker.name.jobDescriptor().slice(0,15),
     tracks: [
       {
         _id: mongoose.Types.ObjectId()
