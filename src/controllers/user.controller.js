@@ -36,7 +36,6 @@ const upload = multer({
  * @function
  * @throws AppError 500 Internal Server Error if not authenticated
  * @author Hassan Mohamed
- * @description 
  * @summary A middleware that uses multer to upload multiple images
  */
 
@@ -103,8 +102,8 @@ exports.editProfile = async (req, res, next) => {
     return next(new AppError(
       "The password you entered doesn't match your password. Please try again.",
       httpStatus.BAD_REQUEST
-      ));
-    }
+    ));
+  }
   const profile = await userService.editProfile(req.user, req.body);
   res.status(httpStatus.OK).send(profile);
 };

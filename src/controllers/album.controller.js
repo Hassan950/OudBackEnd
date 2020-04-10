@@ -35,7 +35,6 @@ const upload = multer({
  *
  * @function
  * @author Mohamed Abo-Bakr
- * @description 
  * @summary A middleware that uses multer to upload an image
  */
 exports.uploadImage = upload.single('image');
