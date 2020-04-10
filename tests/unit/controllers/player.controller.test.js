@@ -3,7 +3,7 @@ const queueMocks = require('../../utils/models/queue.model.mocks');
 const deviceMocks = require('../../utils/models/device.model.mocks');
 const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
-const { Player, Device, User, Queue, Album, Artist, Playlist } = require('../../../src/models');
+const { Player, Device, User, Queue, Album, Artist, Playlist, Track } = require('../../../src/models');
 const { playerController } = require('../../../src/controllers');
 const { trackService } = require('../../../src/services');
 const mockingoose = require('mockingoose').default;
@@ -149,6 +149,22 @@ describe('Player controller', () => {
       mockingoose(Playlist).toReturn({ tracks: [dummyId] }, 'findOne');
       mockingoose(Artist).toReturn({ popularSongs: [dummyId] }, 'findOne');
       player.item = dummyId;
+      track = new Track({
+        name: 'song',
+        audioUrl: 'song.mp3',
+        artists: [
+          '5e6c8ebb8b40fc5508fe8b32',
+          '5e6c8ebb8b40fc6608fe8b32',
+          '5e6c8ebb8b40fc7708fe8b32'
+        ],
+        album: '5e6c8ebb8b40fc7708fe8b32',
+        duration: 21000
+      });
+      req.query.queueIndex = 0;
+      req.query.deviceId = device._id;
+      req.query.trackId = track._id;
+      mockingoose(Track)
+        .toReturn(track, 'findOne');
     });
 
     it('it should return 500 status code if not authenticated', async () => {

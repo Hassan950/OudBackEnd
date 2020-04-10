@@ -93,6 +93,18 @@ describe('Queue controller', () => {
       expect(res.json.mock.calls[0][0].tracks).toBe(queue.tracks);
       expect(res.json.mock.calls[0][0].total).toBe(queue.tracks.length);
     });
+
+    it('should reorder the queue if it is in the shuffle mode', async () => {
+      queue.tracks = [user._id, player._id, queue._id];
+      queue.shuffleList = [0, 2, 1];
+      const newOrder = [user._id, queue._id, player._id];
+      await queueController.getQueue(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].tracks[0]).toEqual(newOrder[0]);
+      expect(res.json.mock.calls[0][0].tracks[1]).toEqual(newOrder[1]);
+      expect(res.json.mock.calls[0][0].tracks[2]).toEqual(newOrder[2]);
+      expect(res.json.mock.calls[0][0].total).toBe(queue.tracks.length);
+    });
   });
 
   describe('Repeat player', () => {
@@ -240,6 +252,13 @@ describe('Queue controller', () => {
       await queueController.addToQueue(req, res, next);
       expect(queue.tracks.length).toBe(oldLength + 1);
       expect(queue.tracks[oldLength]).toBe(track._id);
+    });
+
+    it('should append track to queue if no queue track make one', async () => {
+      queue.tracks = undefined;
+      await queueController.addToQueue(req, res, next);
+      expect(queue.tracks.length).toBe(1);
+      expect(queue.tracks[0]).toBe(track._id);
     });
 
     it('should return 204 if valid', async () => {
@@ -676,6 +695,7 @@ describe('Queue controller', () => {
     });
 
     it('should add shuffleList and suffleIndex to queue if state is true', async () => {
+      queue.tracks = [user._id, player._id, user._id];
       req.query.state = true;
       await queueController.shuffleQueue(req, res, next);
       expect(queue.shuffleList).toBeDefined();
