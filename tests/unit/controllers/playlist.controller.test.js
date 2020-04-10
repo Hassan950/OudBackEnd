@@ -40,6 +40,7 @@ describe('playlist controllers', () => {
   let playlistFollowings;
   let playlists;
   beforeEach(() => {
+    playlistController.uploadImage = jest.fn();
     playlistFollowing = new PlaylistFollowings({
       userId: usersIds[0],
       playlistId: playlistsIds[0],
@@ -162,6 +163,12 @@ describe('playlist controllers', () => {
     });
   });
   describe('uploadImage - test', () => {
+    beforeEach(async () => {
+      req.files = [{
+        path: `uploads\\default.jpg`
+      }]
+      playlistController.uploadImage = jest.fn();
+    });
     it('should throw error 404 when url is has users in it', async () => {
       req.baseUrl = 'api/v1/users/userid/playlists';
       await playlistController.uploadImageRoute(req, res, next);
@@ -189,6 +196,43 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.uploadImageRoute(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(204);
+    });
+  });
+  describe('getImage - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.getImage(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.getImage(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should return 404 when playlistId is not valid', async () => {
+      req.params.id = 'invalid';
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(null, 'findOne');
+      await playlistController.getImage(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should return 200 when playlistId is valid', async () => {
+      req.params.id = playlistsIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlists[0], 'findOne');
+      await playlistController.getImage(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('should return playlist image when playlistId is valid', async () => {
+      req.params.id = playlistsIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlists[0], 'findOne');
+      await playlistController.getImage(req, res, next);
+      const image = res.json.mock.calls[0][0];
+      expect(image).toBe(playlists[0].image);
     });
   });
   describe('getTracks - test', () => {
