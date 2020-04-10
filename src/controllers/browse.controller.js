@@ -2,12 +2,14 @@ const { browseService } = require('../services');
 const AppError = require('../utils/AppError');
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that gets list of Categories
+ *
+ * @function
  * @author Ahmed Magdy
- * @description returns list of categories with 200 status code
- *  if valid else return error with 400 status code
- * @summary Get categories
+ * @summary Gets list of categories
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
 exports.getCategories = async(req, res, next) => {
 	const categories = await browseService.findCategories(req.query);
@@ -20,12 +22,15 @@ res.status(200).json({
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that gets the category with the given ID
+ *
+ * @function
  * @author Ahmed Magdy
- * @description returns Category of a specific ID with 200 status code
- *  if valid else return error with 400 status code
- * @summary Get a category
+ * @summary Gets a category with a specific Id
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the category doesn't exist
  */
 
 exports.getCategory = async(req, res, next) => {
@@ -35,14 +40,16 @@ exports.getCategory = async(req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that gets the playlist of a category with the given ID
+ *
+ * @function
  * @author Ahmed Magdy
- * @description returns playlists of a Category of a specific ID with 200 status code
- *  if valid else return error with 400 status code
- * @summary Get a category playlists
+ * @summary Gets playlists within a category with a specific Id
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the category doesn't exist
  */
-
 exports.categoryPlaylists = async(req, res, next) => {
 	const categoryPlaylists = await browseService.getPlaylists(req.params, req.query);
 	if(!categoryPlaylists.playlists)return next(new AppError('The category with the given ID was not found.', 404));
@@ -55,12 +62,14 @@ exports.categoryPlaylists = async(req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that gets list of  albums that was recently released  
+ *
+ * @function
  * @author Ahmed Magdy
- * @description returns new albums with 200 status code
- *  if valid else return error with 400 status code
- * @summary new releases
+ * @summary Gets lists of albums that was recently released
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
 
 exports.newReleases = async(req, res, next) => {
