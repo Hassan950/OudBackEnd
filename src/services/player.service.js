@@ -4,18 +4,19 @@ const trackService = require('./track.service');
 const deviceService = require('./device.service');
 
 /**
- * Get player with the given userId
+ * Get `player` with the given `userId`
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
  * @param {Object} [ops] Options Object
- * @param {Boolean} [ops.populate=false] if true will populate (Default false)
- * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return audioUrl if populate is false nothing happens
- * @returns {Document} player
- * @returns {null} if player is not found
- * @summary Get player with the given userId
+ * @param {Boolean} [ops.populate=true] if true will populate (Default `true`)
+ * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return `audioUrl` if populate is false nothing happens
+ * @returns {Document} `player`
+ * @returns {null} if `player` is not found
+ * @summary Get `player` with the given `userId`
  */
 const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
   let player;
@@ -51,13 +52,16 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
  * Get currently playing track with its context
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
  * @param {Object} [ops] Options Object
- * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return audioUrl
- * @returns {Document} currentlyPlaying if player is found and item is not null 
- * @returns {null} if item is null or player is not found
+ * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return `audioUrl`
+ * @returns {Object} `currentlyPlaying` if `player` is found and `player.item` is not `null` \
+ * `currentlyPlaying.item` is the track \
+ * `currentlyPlaying.context` is the track `context` \
+ * @returns {null} `null` if item is null or player is not found
  * @summary Get Currently Playing
  */
 const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
@@ -90,11 +94,12 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
  * Create player with the given userId
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
- * @throws {MongooseError}
- * @returns {Document} newPlayer if player is created
+ * @throws `MongooseError`
+ * @returns {Document} `newPlayer` if player is created
  * @summary Create Player
  */
 const createPlayer = async (userId) => {
@@ -105,17 +110,53 @@ const createPlayer = async (userId) => {
   return newPlayer;
 };
 
-
+/**
+ * Add `track` to `player`
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} player player 
+ * @param {String} track track ID 
+ * @param {Object} [context] context object 
+ * @param {String} [context.type] context type  
+ * @param {String} [context.id] context id 
+ * @description assign player.item to track, player.progressMs to 0, player.currentlyPlayingType to track \
+ * and if context and context.type is defined \
+ * assign player.context to context 
+ * @summary Add track to player
+ */
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   player.item = track;
   player.progressMs = 0;
   player.currentlyPlayingType = 'track';
-  // get context from context uri
+  // add context to player
   if (context && context.type) {
     player.context = context;
   }
 };
 
+/**
+ * Start playing from given offset
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} player Player 
+ * @param {Document} queue Queue
+ * @param {Object} offset Offset object
+ * @param {Number} [offset.position] Offset postiton
+ * @param {String} [offset.uri] Offset track uri to start from (oud:track:{trackId})
+ * @param {Array<String>} queues queues IDs array
+ * @description if offset.position is passed \
+ * assign player.item to track in the queue with the given position if the position is < queue length \
+ * else assign player.item the first track in the queue \
+ * else if offset.uri is passed assign player.item to the passed track id if found \
+ * else assign player.item to the first track in the queue
+ * @summary Start playing from given offset
+ * @returns {Document} player
+ */
 const startPlayingFromOffset = async (player, queue, offset, queues) => {
   if (offset.position) {
     if (queues[0].tracks.length > offset.position) {
@@ -136,6 +177,21 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
   return player;
 };
 
+/**
+ * Chnage player progress
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} player Player 
+ * @param {Number} progressMs progress in m Second 
+ * @param {Array<String>} queues queues IDs array
+ * @param {Document} [track] Currently playing track
+ * @description Set player.progressMs to the given progressMs and if progressMs >= track duration (go next if repeat state != track else start the track from zero second)
+ * @summary Chnage player progress
+ * @returns {Document} player
+ */
 const changePlayerProgress = async (player, progressMs, queues, track = null) => {
   player.progressMs = progressMs;
 
@@ -161,6 +217,23 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
   return player;
 };
 
+/**
+ * Add Device to player
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} player PLayer
+ * @param {String} deviceId Device ID 
+ * @description if found a device with the given deviceId \
+ * assign player.device to deviceId and return player \
+ * else \
+ * return null
+ * @summary Add Device to player
+ * @returns {Document} player if found a device with deviceId
+ * @returns {Null} if not found a device with deviceId
+ */
 const addDeviceToPlayer = async (player, deviceId) => {
   const device = await deviceService.getDevice(deviceId);
   if (!device) {
@@ -171,6 +244,23 @@ const addDeviceToPlayer = async (player, deviceId) => {
   return player;
 };
 
+/**
+ * Set `player` to Default
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} player Player 
+ * @description Set \
+ * player.item = null \
+ * player.context = { type: 'unknown' } \
+ * player.progressMs = null \
+ * player.shuffleState = false \
+ * player.repeatState = 'off' \
+ * player.isPlaying = false \
+ * player.currentlyPlayingType = 'unknown' 
+ * @summary Set `player` to Default
+ */
 const setPlayerToDefault = (player) => {
   player.item = null;
   player.context = { type: 'unknown' };
