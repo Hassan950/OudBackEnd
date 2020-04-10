@@ -42,4 +42,7 @@ describe('Playlist model', () => {
       });
     });
   });
+  it('Should return undefined when validating a valid playlist', () => {
+    expect(playlist.type).toBe("playlist");
+  });
 });
