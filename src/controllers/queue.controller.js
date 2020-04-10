@@ -307,6 +307,7 @@ exports.deleteTrack = async (req, res, next) => {
       playerService.setPlayerToDefault(player);
     } else {
       const queue = await queueService.getQueueById(queues[0]);
+      console.log(`queue: ${queue}`);
       if (queue && queue.tracks.length) {
         playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
       } else
