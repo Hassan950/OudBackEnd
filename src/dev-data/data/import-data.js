@@ -27,7 +27,7 @@ const players = JSON.parse(
 const importData = async () => {
   try {
     await User.create(users);
-    //await Player.create(players);
+    await Player.create(players);
     console.log('Data successfully loaded!');
   } catch (err) {
     console.log(err);
