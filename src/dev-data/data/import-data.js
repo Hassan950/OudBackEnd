@@ -1,11 +1,16 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 const config = require('config');
-<<<<<<< HEAD
-const { User, Player, Genre, Artist, Album, Track } = require('../../models');
-=======
-const { User, Player, Category, Playlist } = require('../../models');
->>>>>>> func-doc
+const {
+  User,
+  Player,
+  Genre,
+  Artist,
+  Album,
+  Track,
+  Category,
+  Playlist
+} = require('../../models');
 
 const DB = config.get('db');
 mongoose
@@ -44,7 +49,6 @@ const playlists = JSON.parse(
 const importData = async () => {
   try {
     await User.create(users);
-    //await Player.create(players);
     await Genre.create(genres);
     await Artist.create(artists);
     await Album.create(albums);

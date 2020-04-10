@@ -1,42 +1,75 @@
 [
   {
-    "name":"Rap",
+    "name":"dance pop",
     "_id":"5e9083c24c798428f45b322c"
   },
   {
-    "name":"Pop",
+    "name":"edm",
     "_id":"5e9083c24c798428f45b322d"
   },
   {
-    "name":"Rock",
+    "name":"metropopolis",
     "_id":"5e9083c24c798428f45b322e"
   },
   {
-    "name":"Hip-hop",
+    "name":"pop",
     "_id":"5e9083c24c798428f45b322f"
   },
   {
-    "name":"Electronic/dance",
+    "name":"post-teen pop",
     "_id":"5e9083c24c798428f45b3230"
   },
   {
-    "name":"Jazz",
+    "name":"tropical house",
     "_id":"5e9083c24c798428f45b3231"
   },
   {
-    "name":"Blues",
+    "name":"uk pop",
     "_id":"5e9083c24c798428f45b3232"
   },
   {
-    "name":"Reggae",
+    "name":"big room",
     "_id":"5e9083c24c798428f45b3233"
   },
   {
-    "name":"Classical music",
+    "name":"canadian electronic",
     "_id":"5e9083c24c798428f45b3234"
   },
   {
-    "name":"hollywood",
+    "name":"electro house",
     "_id":"5e9083c24c798428f45b3235"
+  },
+  {
+    "name":"progressive house"
+  },
+  {
+    "name":"alternative dance"
+  },
+  {
+    "name":"dance-punk"
+  },
+  {
+    "name":"new rave"
+  },
+  {
+    "name":"egyptian hip-hop"
+  },
+  {
+    "name":"girl group"
+  },
+  {
+    "name":"detroit hip hop"
+  },
+  {
+    "name":"g funk"
+  },
+  {
+    "name":"melodic rap"
+  },
+  {
+    "name":"chicago rap"
+  },
+  {
+    "name":"electropop"
   }
 ]
