@@ -1,22 +1,5 @@
 [
   {
-    "_id": "5e907dafa0645f45716075ff",
-    "role": "artist",
-    "plan": null,
-    "images": [
-      "uploads\\users\\default-Profile.jpg",
-      "uploads\\users\\default-Cover.jpg"
-    ],
-    "verified": false,
-    "queues": [],
-    "displayName": "admin",
-    "email": "admin@gmail.com",
-    "password": "12341234",
-    "passwordConfirm": "12341234",
-    "country": "EG",
-    "username": "admin"
-  },
-  {
     "_id": "5e907dafa0645f4571607600",
     "role": "artist",
     "plan": null,
@@ -25,13 +8,36 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90f7fbdb91647a082fbd71"
+    ],
     "displayName": "admin1",
     "email": "admin1@gmail.com",
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin1"
+    "username": "admin1",
+    "artist": "5e908929dd1f762eccfa9137"
+  },
+  {
+    "_id": "5e907dafa0645f45716075ff",
+    "role": "artist",
+    "plan": null,
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": false,
+    "queues": [
+      "5e90f7b5db91647a082fbd6f"
+    ],
+    "displayName": "admin",
+    "email": "admin@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "admin",
+    "artist": "5e908929dd1f762eccfa9136"
   },
   {
     "_id": "5e907dafa0645f4571607601",
@@ -42,13 +48,16 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90f83ddb91647a082fbd73"
+    ],
     "displayName": "admin2",
     "email": "admin2@gmail.com",
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin2"
+    "username": "admin2",
+    "artist": "5e908929dd1f762eccfa9138"
   },
   {
     "_id": "5e907dafa0645f4571607602",
@@ -59,13 +68,16 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90f86ddb91647a082fbd75"
+    ],
     "displayName": "admin3",
     "email": "admin3@gmail.com",
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin3"
+    "username": "admin3",
+    "artist": "5e908929dd1f762eccfa9139"
   },
   {
     "_id": "5e907dafa0645f4571607603",
@@ -76,13 +88,16 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90f899db91647a082fbd77"
+    ],
     "displayName": "admin4",
     "email": "admin4@gmail.com",
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin4"
+    "username": "admin4",
+    "artist": "5e908929dd1f762eccfa913a"
   },
   {
     "_id": "5e907db0a0645f4571607604",
@@ -99,7 +114,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin5"
+    "username": "admin5",
+    "artist": "5e908929dd1f762eccfa913b"
   },
   {
     "_id": "5e907db0a0645f4571607605",
@@ -116,7 +132,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin6"
+    "username": "admin6",
+    "artist": "5e908929dd1f762eccfa913c"
   },
   {
     "_id": "5e907db0a0645f4571607606",
@@ -133,7 +150,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin7"
+    "username": "admin7",
+    "artist": "5e908929dd1f762eccfa913d"
   },
   {
     "_id": "5e907db0a0645f4571607607",
@@ -150,7 +168,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin8"
+    "username": "admin8",
+    "artist": "5e908929dd1f762eccfa913e"
   },
   {
     "_id": "5e907db0a0645f4571607608",
@@ -167,7 +186,8 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
-    "username": "admin9"
+    "username": "admin9",
+    "artist": "5e908929dd1f762eccfa913f"
   },
   {
     "_id": "5e907db0a0645f4571607609",
@@ -195,7 +215,9 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90fa66db91647a082fbd7d"
+    ],
     "displayName": "admin11",
     "email": "admin11@gmail.com",
     "password": "12341234",
@@ -212,7 +234,9 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90fa0fdb91647a082fbd7b"
+    ],
     "displayName": "admin12",
     "email": "admin12@gmail.com",
     "password": "12341234",
@@ -297,7 +321,9 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90f9b6db91647a082fbd79"
+    ],
     "displayName": "admin17",
     "email": "admin17@gmail.com",
     "password": "12341234",
@@ -314,7 +340,9 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90fad2db91647a082fbd7f"
+    ],
     "displayName": "admin18",
     "email": "admin18@gmail.com",
     "password": "12341234",
@@ -331,7 +359,9 @@
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
-    "queues": [],
+    "queues": [
+      "5e90faffdb91647a082fbd81"
+    ],
     "displayName": "admin19",
     "email": "admin19@gmail.com",
     "password": "12341234",

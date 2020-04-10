@@ -219,6 +219,15 @@ exports.checkFile = async id => {
   }
 };
 
+/**
+ * A method that gets array of tracks of a specific artist
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Get list of tracks of a specific artsit
+ * @param {String} artistId - ID of the artist
+ * @returns {Array} An array containing the tracks of the artist
+ */
 exports.findArtistTracks = async artistId => {
   return await Track.find({ artists: artistId })
     .populate({
