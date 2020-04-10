@@ -160,7 +160,7 @@ exports.resumePlayer = async (req, res, next) => {
   // add current track
   if (uris && uris.length) {
     // fill tracks array
-    queue = await queueService.fillQueueFromTracksUris(uris, queues, player);
+    queue = queueService.fillQueueFromTracksUris(uris, queues, player);
   }
 
   if (offset && ((uris && uris.length) || (contextUri))) {
