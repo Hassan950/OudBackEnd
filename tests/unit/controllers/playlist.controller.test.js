@@ -1,6 +1,7 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { playlistController } = require('../../../src/controllers');
 const fs = require('fs');
+const _ = require('lodash');
 const move = require('lodash-move');
 
 let {
@@ -152,8 +153,8 @@ describe('playlist controllers', () => {
       req.file.path = 'hfjhgjh.jpg';
       jest.mock('fs');
       fs.unlink = jest.fn();
-      fs.unlink.mockImplementation(() => {
-        throw Error;
+      fs.unlink.mockImplementationOnce((filename, callback) => {
+        callback(Error);
       });
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       try{
@@ -217,12 +218,6 @@ describe('playlist controllers', () => {
     });
   });
   describe('uploadImage - test', () => {
-    beforeEach(async () => {
-      req.files = [{
-        path: `uploads\\default.jpg`
-      }]
-      playlistController.uploadImage = jest.fn();
-    });
     it('should throw error 404 when url is has users in it', async () => {
       req.baseUrl = 'api/v1/users/userid/playlists';
       await playlistController.uploadImageRoute(req, res, next);
@@ -245,16 +240,17 @@ describe('playlist controllers', () => {
     });
     it('should throw error when path not found', async () => {
       req.params.id = playlistsIds[0];
-      playlist.image = 'bhjhvd.js';
+      playlist.image = 'Magdy.jpg';
       req.file.path = 'hfjhgjh.jpg';
+      playlist.save = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlist, 'findOne');
       jest.mock('fs');
       fs.unlink = jest.fn();
-      fs.unlink.mockImplementation(() => {
-        throw Error;
+      fs.unlink.mockImplementationOnce((filename, callback) => {
+        callback(Error);
       });
-      mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       try{
-        await playlistController.changePlaylist(req, res, next);
+        await playlistController.uploadImageRoute(req, res, next);
       }
       catch(e){
         expect(e).toBe(Error);
@@ -660,13 +656,11 @@ describe('playlist controllers', () => {
         range_length: 1,
         insert_before: 2
       };
-      playlist.save = jest.fn().mockReturnThis();
+      Playlist.save = jest.fn().mockReturnThis();
       mockingoose(Playlist).toReturn(playlist, 'findOne');
-      jest.mock('lodash-move');
-      move.default = jest.fn();
-      move.default.mockImplementation(()=>{
-        return playlist.tracks;
-      });
+      jest.mock('lodash');
+      _.times = jest.fn();
+      _.times.mockImplementationOnce();
       await playlistController.reorderTracks(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
