@@ -1,6 +1,7 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { playlistController } = require('../../../src/controllers');
-const fs = require('fs');
+
+
 let {
   Track,
   Playlist,
@@ -41,10 +42,6 @@ describe('playlist controllers', () => {
   let playlistFollowings;
   let playlists;
   beforeEach(() => {
-    jest.mock('fs',()=>{
-      const mFs = { unlink: jest.fn() };
-      return mFs;
-    });
     playlistFollowing = new PlaylistFollowings({
       userId: usersIds[0],
       playlistId: playlistsIds[0],
