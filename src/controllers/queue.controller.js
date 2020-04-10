@@ -25,6 +25,9 @@ Array.prototype.move = function (from, to) {
  * @throws AppError 500 status
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description get user queue
  * @summary Get user Queue
  */
@@ -61,6 +64,9 @@ exports.getQueue = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Change repeat mode
  * @summary Repeat the queue
  */
@@ -101,6 +107,9 @@ exports.repeatQueue = async (req, res, next) => {
  * @throws AppError 404 status
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Add a track to the queue
  * @summary Add to the queue
  */
@@ -162,6 +171,9 @@ exports.addToQueue = async (req, res, next) => {
  * @throws AppError 404 status
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Edit track position
  * @summary Edit track position
  */
@@ -243,6 +255,9 @@ exports.editPosition = async (req, res, next) => {
  * @throws AppError 404 status
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Delete track from queue
  * @summary Delete track
  */
@@ -354,6 +369,9 @@ exports.deleteTrack = async (req, res, next) => {
  * @throws AppError 404 status
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Change shuffle state of the queue
  * @summary Change shuffle state of the queue
  */
@@ -416,6 +434,9 @@ exports.shuffleQueue = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Play the next track
  * @summary Play the next track
  */
@@ -478,6 +499,9 @@ exports.nextTrack = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Play the Previous track
  * @summary Play the Previous track
  */

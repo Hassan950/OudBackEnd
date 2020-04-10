@@ -8,6 +8,9 @@ const AppError = require('../utils/AppError.js');
  * @async
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description get user`s player
  * @summary User player
  */
@@ -40,6 +43,9 @@ exports.getPlayer = async (req, res, next) => {
  * @async
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description get user`s currently playing track
  * @summary User Currently Playing track
  */
@@ -73,6 +79,9 @@ exports.getCurrentlyPlaying = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description change isPlaying to false
  * @summary Pause the player
  */
@@ -112,6 +121,9 @@ exports.pausePlayer = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description start or resume the player, change deviceId, change isPlaying state to true
  * add tracks to queue, change positionMs
  * @summary Resume the player
@@ -211,6 +223,9 @@ exports.resumePlayer = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Seek to positionMs
  * @summary Seek the player
  */

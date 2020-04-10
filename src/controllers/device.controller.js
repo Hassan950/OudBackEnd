@@ -7,6 +7,9 @@ const AppError = require('../utils/AppError.js');
  * @async
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description get user`s available devices
  * @summary User devices
  */
@@ -32,6 +35,9 @@ exports.getUserDevices = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description transfer playback to other device
  * @summary transfer playback to other device
  */
@@ -74,6 +80,9 @@ exports.transferPlayback = async (req, res, next) => {
  * @throws AppError 500 status
  * @throws AppError 404 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Set Device volume by volumePercent
  * @summary Set Device Volume
  */

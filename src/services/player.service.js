@@ -159,7 +159,7 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
  */
 const startPlayingFromOffset = async (player, queue, offset, queues) => {
   if (offset.position) {
-    if (queue.tracks.length <= offset.position) {
+    if (queues[0].tracks.length > offset.position) {
       player.item = queue.tracks[0];
     } else {
       player.item = queue.tracks[offset.position];
@@ -199,7 +199,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
     track = await trackService.findTrack(player.item);
 
   // if position >= track duration go to next
-  if (track && progressMs >= track.duration) {
+  if (track && positionMs >= track.duration) {
     if (player.repeatState !== 'track') {
       let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 

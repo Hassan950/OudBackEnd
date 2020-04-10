@@ -8,6 +8,9 @@ const AppError = require('../utils/AppError.js');
  * @throws AppError 500 status
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description Get recently played
  * @summary Get recently played
  */
