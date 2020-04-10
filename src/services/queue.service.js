@@ -2,6 +2,21 @@ const { Queue, Album, Playlist, Artist } = require('../models');
 const trackService = require('./track.service');
 const _ = require('lodash');
 
+/**
+ * reorder elements in `arr[]` according to given indexes array
+ * 
+ * @function
+ * @private
+ * @author Abdelrahman Tarek
+ * @param {Array} arr Array to be reordered
+ * @param {Array<Number>} indexes Indexes array to to order `arr` with
+ * @description Given two arrays of same size, \
+ * `arr[]` and `indexes[]`, \
+ * reorder elements in `arr[]` according to given indexes array.
+ * @summary reorder elements in `arr[]` according to given indexes array.
+ * @returns {Array} `arr` After reorder
+ * @see https://www.geeksforgeeks.org/reorder-a-array-according-to-given-indexes/
+ */
 const reorder = (arr, indexes) => {
   let temp = _.range(0, arr.length);
 
@@ -16,7 +31,18 @@ const reorder = (arr, indexes) => {
   return arr;
 }
 
-
+/**
+ * Shuffle `arr[]` using Fisher–Yates shuffle Algorithm
+ * 
+ * @function
+ * @private
+ * @author Abdelrahman Tarek
+ * @param {Array} arr Array to be shuffe
+ * @description Shuffle `arr[]` using Fisher–Yates shuffle Algorithm
+ * @summary Shuffle `arr[]` using Fisher–Yates shuffle Algorithm
+ * @returns {Array} `arr` After shuffle
+ * @see https://www.geeksforgeeks.org/shuffle-a-given-array-using-fisher-yates-shuffle-algorithm/
+ */
 const randomize = (arr) => {
   for (let i = arr.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * i);
@@ -25,7 +51,24 @@ const randomize = (arr) => {
   return arr;
 };
 
-
+/**
+ * Get queue By `id`
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} id Queue ID
+ * @param {Object} [ops] Options object
+ * @param {Boolean} [ops.selectDetails=false] if `true` select (+`currentIndex`, +`shuffleList`, +`shuffleIndex`) from `queue`
+ * @param {Boolean} [ops.sort=false] if `true` sort `queue.tracks` with `shuffleList` if found
+ * @description Get queue By `id` \
+ * if `ops.selectDetails` is `true` select (+`currentIndex`, +`shuffleList`, +`shuffleIndex`) from `queue` \
+ * else if `ops.sort` is `true` sort `queue.tracks` with `shuffleList` if found
+ * @summary Get queue By `id`
+ * @returns {Document} `queue` with the given `id`
+ * @returns {null} if `queue` is not found
+ */
 const getQueueById = async (id, ops = { selectDetails: false, sort: false }) => {
   let queue = Queue.findById(id);
 
@@ -53,6 +96,21 @@ const getQueueById = async (id, ops = { selectDetails: false, sort: false }) => 
   return await queue;
 };
 
+/**
+ * Create queue with the given `context`
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} contextUri Context Uri in the form `oud:{type}:{id}`
+ * @description Create queue with the given `context` \
+ * if something wrong return `null` \
+ * accepted `context` `type` is [`album`, `playlist`, `artist`]
+ * @summary Create queue with the given `context`
+ * @returns {Document} `queue`
+ * @returns {null} `null` if something wrong
+ */
 const createQueueWithContext = async (contextUri) => {
   const uri = contextUri.split(':');
   const type = uri[1];
@@ -93,12 +151,35 @@ const createQueueWithContext = async (contextUri) => {
   return queue;
 };
 
-
+/**
+ * Delete Queue with the given `id`
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} id
+ * @description Delete Queue with the given `id` 
+ * @summary Delete Queue with the given `id` 
+ */
 const deleteQueueById = async (id) => {
   await Queue.deleteOne({ _id: id });
 };
 
-
+/**
+ * Append `tracks[]` to `queue`
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} id Queue ID
+ * @param {Array<Document>} tracks Tracks Array 
+ * @description Append `tracks[]` to `queue` (only unique tracks)
+ * @summary Append `tracks[]` to `queue`
+ * @returns {Document} queue
+ * @returns {null} `null` if `queue` is not found 
+ */
 const appendToQueue = async (id, tracks) => {
   const queue = await Queue.findById(id);
 
@@ -119,7 +200,18 @@ const appendToQueue = async (id, tracks) => {
   return queue;
 };
 
-
+/**
+ * Create `queue` form `tracks[]`
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Array<Document>} tracks Tracks Array 
+ * @description Create `Queue` form 'tracks[]`
+ * @summary Create `Queue` form 'tracks[]`
+ * @returns {Document} `queue`
+ */
 const createQueueFromTracks = async (tracks) => {
   const queue = await Queue.create({
     tracks: tracks
@@ -128,6 +220,19 @@ const createQueueFromTracks = async (tracks) => {
   return queue;
 };
 
+/**
+ * Get `track` position in `queue`
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} id Queue ID 
+ * @param {String} trackId Track ID 
+ * @description Get `track` position in `queue` if not found return `-1`
+ * @summary Get `track` position in `queue`
+ * @returns {Number} `pos` track postion if `-1` track is not found
+ */
 const getTrackPosition = async (id, trackId) => {
   const queue = await Queue.findById(id);
 
@@ -138,6 +243,17 @@ const getTrackPosition = async (id, trackId) => {
   return pos;
 };
 
+/**
+ * Shuffle `queue`
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue
+ * @description Shuffle `queue` and set `shuffleIndex` and `shuffleList` 
+ * @summary Shuffle `queue`
+ * @returns {Document} `queue`
+ */
 const shuffleQueue = (queue) => {
   let shuffleList = _.range(0, queue.tracks.length);
 
@@ -151,6 +267,21 @@ const shuffleQueue = (queue) => {
   return queue;
 };
 
+/**
+ * Go Next if `player` in shuffle mode
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue 
+ * @param {Document} player Player 
+ * @description Go Next if `player` in shuffle mode \
+ * if the playing track is the last track in the `shuffleList` \
+ * play the first track if `player.repeatState` is `context` \
+ * else go to the next track 
+ * @summary Go Next if `player` in shuffle mode
+ * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ */
 const goNextShuffle = (queue, player) => {
   if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
@@ -166,6 +297,21 @@ const goNextShuffle = (queue, player) => {
   }
 };
 
+/**
+ * Go Next if `player` in Normal mode
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue 
+ * @param {Document} player Player 
+ * @description Go Next if `player` in Normal mode \
+ * if the playing track is the last track in the `queue` \
+ * play the first track if `player.repeatState` is `context` \
+ * else go to the next track 
+ * @summary Go Next if `player` in Normal mode
+ * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ */
 const goNextNormal = (queue, player) => {
   if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
@@ -177,6 +323,19 @@ const goNextNormal = (queue, player) => {
   } else queue.currentIndex++; // Go to the next track
 };
 
+/**
+ * Go Next
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue 
+ * @param {Document} player Player
+ * @description Go Next \
+ * if player is in shuffle mode call `goNextShuffle` \
+ * else call `goNextNormal`
+ * @summary Go Next
+ */
 const goNext = (queue, player) => {
   // Shuffle state
   if (player.shuffleState) {
@@ -186,6 +345,21 @@ const goNext = (queue, player) => {
   }
 };
 
+/**
+ * Go Previous if `player` in shuffle mode
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue 
+ * @param {Document} player Player 
+ * @description Go Previous if `player` in shuffle mode \
+ * if the playing track is the first track in the `shuffleList` \
+ * play the last track if `player.repeatState` is `context` \
+ * else go to the Previous track 
+ * @summary Go Previous if `player` in shuffle mode
+ * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ */
 const goPreviousShuffle = (queue, player) => {
   if (queue.shuffleIndex === 0) { // first track in the queue
     if (player.repeatState === 'context') {
@@ -201,6 +375,21 @@ const goPreviousShuffle = (queue, player) => {
   }
 };
 
+/**
+ * Go Previous if `player` in Normal mode
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue 
+ * @param {Document} player Player 
+ * @description Go Previous if `player` in Normal mode \
+ * if the playing track is the first track in the `queue` \
+ * play the last track if `player.repeatState` is `context` \
+ * else go to the Previous track 
+ * @summary Go Previous if `player` in Normal mode
+ * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ */
 const goPreviousNormal = (queue, player) => {
   if (queue.currentIndex === 0) { // first track in the queue
     if (player.repeatState === 'context') {
@@ -212,6 +401,19 @@ const goPreviousNormal = (queue, player) => {
   } else queue.currentIndex--; // Go to the previous track
 };
 
+/**
+ * Go Previous
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue 
+ * @param {Document} player Player
+ * @description Go Previous \
+ * if player is in shuffle mode call `goPreviousShuffle` \
+ * else call `goPreviousNormal`
+ * @summary Go Previous
+ */
 const goPrevious = (queue, player) => {
   // Shuffle state
   if (player.shuffleState) {
@@ -222,6 +424,23 @@ const goPrevious = (queue, player) => {
 
 };
 
+/**
+ * Fill `Queue` from track Uris
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Array<String>} uris Uris array in the form `oud:track:{id}`
+ * @param {Array<String>} queues queues IDs array
+ * @param {Document} player Player
+ * @description Fill `Queue` from track Uris \
+ * if `queues` is empty \
+ * append tracks to the the current `queue` \
+ * else create `queue` from tracks
+ * @summary Fill `Queue` from track Uris
+ * @returns {Document} `queue` 
+ */
 const fillQueueFromTracksUris = async (uris, queues, player) => {
   let tracks = [];
   uris.forEach(async uri => {
@@ -244,6 +463,19 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
   return queue;
 };
 
+/**
+ * Set `queue` to Default
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} queue Queue
+ * @description Set \
+ * `queue.currentIndex` to `0` \
+ * `queue.shuffleIndex` to `undefined` \
+ * `queue.shuffleList` to `undefined`
+ * @summary Set `queue` to Default
+ */
 const setQueueToDefault = (queue) => {
   queue.currentIndex = 0;
   queue.shuffleIndex = undefined;
