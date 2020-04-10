@@ -36,7 +36,6 @@ const upload = multer({
  * @function
  * @throws AppError 500 Internal Server Error if not authenticated
  * @author Hassan Mohamed
- * @description 
  * @summary A middleware that uses multer to upload multiple images
  */
 
