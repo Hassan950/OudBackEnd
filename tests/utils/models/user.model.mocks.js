@@ -30,7 +30,7 @@ const createFakeUser = () => {
   });
   user.save = jest.fn().mockImplementation(function (Options) {
     save();
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       resolve(this);
     });
   });
@@ -57,16 +57,16 @@ User.create = userData => {
         result => {
           newUser.password = result;
           newUser.passwordConfirm = undefined;
-          newUser.save = jest.fn().mockImplementation(function() {
+          newUser.save = jest.fn().mockImplementation(function () {
             save();
-            return new Promise(function(resolve, reject) {
+            return new Promise(function (resolve, reject) {
               resolve(this);
             });
           });
           users.push(newUser);
           resolve(newUser);
         },
-        err => {}
+        err => { }
       );
     }
   });
@@ -76,7 +76,7 @@ User.findOne = jest.fn().mockImplementation(userData => {
   return {
     select: jest.fn().mockResolvedValue(
       new Promise((resolve, reject) => {
-        const user = _.find(users, function(obj) {
+        const user = _.find(users, function (obj) {
           return obj.email == userData.email;
         });
         if (user) {
@@ -91,7 +91,7 @@ User.findOne = jest.fn().mockImplementation(userData => {
 
 User.findById = jest.fn().mockImplementation((id, options) => {
   return new Promise((resolve, reject) => {
-    const user = _.find(users, function(obj) {
+    const user = _.find(users, function (obj) {
       return obj._id == id;
     });
     if (user) {
@@ -104,7 +104,7 @@ User.findById = jest.fn().mockImplementation((id, options) => {
 
 User.findByIdAndUpdate = jest.fn().mockImplementation((id, options) => {
   return new Promise((resolve, reject) => {
-    const user = _.find(users, function(obj) {
+    const user = _.find(users, function (obj) {
       return obj._id == id;
     });
     if (options && options.images) {
@@ -122,7 +122,7 @@ findByIdWithPopulate = jest.fn().mockImplementation(id => {
   return {
     populate: jest.fn().mockResolvedValue(
       new Promise((resolve, reject) => {
-        const user = _.find(users, function(obj) {
+        const user = _.find(users, function (obj) {
           return obj._id == id;
         });
         if (user) {
@@ -154,7 +154,7 @@ findByIdWithSelect = jest.fn().mockImplementation((id) => {
   return {
     select: jest.fn().mockResolvedValue(
       new Promise((resolve, reject) => {
-        const user = _.find(users, function(obj) {
+        const user = _.find(users, function (obj) {
           return obj._id == id;
         });
         if (user) {
