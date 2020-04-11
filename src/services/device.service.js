@@ -2,13 +2,14 @@ const { Device } = require('../models');
 
 
 /**
- * Get Available Devices with the given userId
+ * Get Available Devices with the given `userId`
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
- * @returns {Array<Document>} devices
+ * @returns {Array<Document>} `devices`
  * @summary Get Available Devices
  */
 const getAvailableDevices = async (userId) => {
@@ -18,14 +19,15 @@ const getAvailableDevices = async (userId) => {
 
 
 /**
- * Get Device with the given id
+ * Get Device with the given `id`
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} id Device ID 
- * @returns {Document} device if found
- * @returns {null} if not found
+ * @returns {Document} `device` if found
+ * @returns {null} `null` if not found
  * @summary Get Device
  */
 const getDevice = async (id) => {
