@@ -22,9 +22,14 @@ const createTokenAndSend = (user, res) => {
 };
 
 /**
+ * Verify user account
+ * 
  * @version 1.0.0
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description takes user verify token and change verify to true if token is valid else return 400 status
  * @summary User Verify
  */
@@ -44,9 +49,14 @@ exports.verify = async (req, res, next) => {
 }
 
 /**
+ * Request verify email
+ * 
  * @version 1.0.0
  * @throws AppError 500 status, AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @summary User Request Verify
  */
 exports.requestVerify = async (req, res, next) => {
@@ -85,9 +95,14 @@ exports.requestVerify = async (req, res, next) => {
 };
 
 /**
+ * Signup
+ * 
  * @version 1.0.0
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description takes user details from the user and return user and token with 200 status code
  *  if valid else return error with 400 status code
  * @summary User Registration
@@ -135,9 +150,14 @@ exports.signup = async (req, res, next) => {
 };
 
 /**
+ * Login
+ * 
  * @version 1.0.0
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description takes user email and password from the user and return user and token with 200 status code
  *  if valid else return error with 400 status code
  * @summary User Login
@@ -158,9 +178,14 @@ exports.login = async (req, res, next) => {
 };
 
 /**
+ * Update password
+ * 
  * @version 1.0.0
  * @throws AppError 400 status, AppError 401 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description takes currentPassword, Password and passwordConfirm. if currentPassword is wrong return 401 status
  * if password != passwordConfirm return 400
  * @summary User Update Password
@@ -191,9 +216,14 @@ exports.updatePassword = async (req, res, next) => {
 };
 
 /**
+ * Forgot password
+ * 
  * @version 1.0.0
  * @throws AppError 404 status, AppError 401 status, AppError 500 status 
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description takes user email then generate reset token and send it via email to reset your password
  * @summary User forgot password
  */
@@ -234,9 +264,14 @@ exports.forgotPassword = async (req, res, next) => {
 
 
 /**
+ * Reset password
+ * 
  * @version 1.0.0
  * @throws AppError 400 status 
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @summary User reset password
  */
 exports.resetPassword = async (req, res, next) => {
@@ -262,8 +297,13 @@ exports.resetPassword = async (req, res, next) => {
 
 
 /**
+ * Facebook Authentication
+ * 
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @summary if token is invalid return 400, if user`s account already connected to facebook send user 
  * and token with 200 status else send user information with 200 status
  */
@@ -281,8 +321,13 @@ exports.facebookAuth = async (req, res, next) => {
 };
 
 /**
+ * Facebook connect
+ * 
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @summary if not authentivated return 500, if user sent access_token call next to connect to facebook
  * else disconnect from facebook and send user and token
  */
@@ -302,8 +347,13 @@ exports.facebookConnect = async (req, res, next) => {
 };
 
 /**
+ * Google Authentication
+ * 
  * @throws AppError 400 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @summary if token is invalid return 400, if user`s account already connected to google send user 
  * and token with 200 status else send user information with 200 status
  */
@@ -321,8 +371,13 @@ exports.googleAuth = async (req, res, next) => {
 };
 
 /**
+ * Google connect
+ * 
  * @throws AppError 500 status
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @summary if not authentivated return 500, if user sent access_token call next to connect to google
  * else disconnect from google and send user and token
  */

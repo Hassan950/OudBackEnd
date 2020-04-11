@@ -74,8 +74,12 @@ describe('Albums Controller', () => {
     });
     it("Should return the same result for the same ID (and null for invalid ID's)", async () => {
       mockingoose(Album).toReturn([album], 'find');
-      req.query.ids =
-        [album._id  ,  album._id ,'one existing ID',' another valid ID'];
+      req.query.ids = [
+        album._id,
+        album._id,
+        'one existing ID',
+        ' another valid ID'
+      ];
       await albumsController.getAlbums(req, res, next);
       result = res.json.mock.calls;
       expect(result[0][0].albums[0]).toEqual(result[0][0].albums[1]);
@@ -115,8 +119,8 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOneAndDelete');
       req.user = { artist: album.artists[0]._id };
       req.params.id = album._id;
-      fs.unlink = jest.fn();
-      trackService.deleteTracks = jest.fn();
+      fs.unlink = jest.fn().mockRejectedValue(false);
+      trackService.deleteTrack = jest.fn();
       await albumsController.findAndDeleteAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toMatchObject(album);
@@ -179,6 +183,17 @@ describe('Albums Controller', () => {
       await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
+    it("Should throw an error with status code 400 if the genres doesn't exist", async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'findOneAndUpdate');
+      mockingoose(Genre).toReturn([], 'find');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.body = { genres: ['lol xD'] };
+      await albumsController.updateAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
   });
   describe('createAlbum', () => {
     it('Should return the created album with staus code 200', async () => {
@@ -198,6 +213,40 @@ describe('Albums Controller', () => {
       await albumsController.createAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toMatchObject(album);
+    });
+    it("Should throw an error with status code 400 if the artists doesn't exist", async () => {
+      req.body = {
+        album_type: 'single',
+        album_group: 'compilation',
+        artists: artistIds,
+        genres: ['5e6c8ebb8b40fc5518fe8b32'],
+        image: 'example.jpg',
+        name: 'The Begining',
+        release_date: '12-06-1999',
+        tracks: [albumIds[0]]
+      };
+      mockingoose(Album).toReturn(album, 'save');
+      mockingoose(Artist).toReturn([], 'find');
+      mockingoose(Genre).toReturn(album.genres, 'find');
+      await albumsController.createAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+    it("Should throw an error with status code 400 if the genres doesn't exist", async () => {
+      req.body = {
+        album_type: 'single',
+        album_group: 'compilation',
+        artists: artistIds,
+        genres: ['5e6c8ebb8b40fc5518fe8b32'],
+        image: 'example.jpg',
+        name: 'The Begining',
+        release_date: '12-06-1999',
+        tracks: [albumIds[0]]
+      };
+      mockingoose(Album).toReturn(album, 'save');
+      mockingoose(Artist).toReturn(album.artists, 'find');
+      mockingoose(Genre).toReturn([], 'find');
+      await albumsController.createAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
   });
   describe('setImage', () => {
@@ -304,6 +353,18 @@ describe('Albums Controller', () => {
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
+    it("Should throw an error with status code 400 if the artists doesn't exist", async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'save');
+      mockingoose(Track).toReturn(album.tracks[0], 'save');
+      mockingoose(Artist).toReturn([], 'find');
+      req.params.id = album._id;
+      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.body = { name: album.name, artists: album.artists };
+      await albumsController.newTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
   });
 });

@@ -68,6 +68,15 @@ exports.getPopularSongs = async artistId => {
   return artist.popularSongs;
 };
 
+/**
+ * A method that returns related artists to a specific artist
+ *
+ * @function
+ * @summary Gets related artists of an artist
+ * @param {String} artistId Id of the artist
+ * @returns {Array<Object>} array of artists related to the artist
+ * @returns null if the ID doesn't belong to any artist
+ */
 exports.relatedArtists = async artistId => {
   const artist = await Artist.findById(artistId);
 

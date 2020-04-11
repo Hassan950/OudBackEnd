@@ -5,9 +5,14 @@ const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 
 /**
+ * Authentication middleware
+ * 
  * @version 1.0.0
  * @throws AppError 401 if no/wrong token passed
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  * @description takes user token to authenticate user
  * @summary User Authentication
  */
@@ -30,10 +35,6 @@ exports.authenticate = async (req, res, next) => {
   } catch (er) {
     return next(new AppError('Invalid Token', 400));
   }
-
-  // TODO
-  // Add checks if the user changed password after creating this token
-
   // check if user still exists
   const user = await User.findById(payload.id);
   if (!user)
@@ -106,6 +107,10 @@ exports.optionalAuth = async (req, res, next) => {
  * @version 1.0.0
  * @throws AppError 403 if user doesn`t have permission
  * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @param {String} roles authorized roles
  * @description give permission to users based on roles
  * @summary User Authorization
  */

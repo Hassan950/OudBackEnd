@@ -1,5 +1,9 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { playlistController } = require('../../../src/controllers');
+const fs = require('fs');
+const _ = require('lodash');
+const move = require('lodash-move');
+
 let {
   Track,
   Playlist,
@@ -71,7 +75,9 @@ describe('playlist controllers', () => {
     res = requestMocks.mockResponse();
     next = jest.fn();
   });
-
+  afterEach(() => {
+    jest.restoreAllMocks();
+  }); 
   describe('getPlaylist - test', () => {
     it('should throw error 404 when url is has users in it', async () => {
       req.baseUrl = 'api/v1/users/userid/playlists';
@@ -135,6 +141,29 @@ describe('playlist controllers', () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it('should throw error if path not found', async () => {
+      req.params.id = usersIds[0];
+      req.body = {
+        name: 'MGZZZ',
+        public: true,
+        collabrative: true,
+        description: 'dfdgfsfdgasd'
+      };
+      playlist.image = 'bhjhvd.js';
+      req.file.path = 'hfjhgjh.jpg';
+      jest.mock('fs');
+      fs.unlink = jest.fn();
+      fs.unlink.mockImplementationOnce((filename, callback) => {
+        callback(Error);
+      });
+      mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
+      try{
+        await playlistController.changePlaylist(req, res, next);
+      }
+      catch(e){
+        expect(e).toBe(Error);
+      }
+    });
     it('should return 200 if playlist with the passed id exists', async () => {
       req.params.id = playlistsIds[0];
       req.body = {
@@ -143,6 +172,32 @@ describe('playlist controllers', () => {
         collabrative: true,
         description: 'dfdgfsfdgasd'
       };
+      mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
+      (await playlistController.changePlaylist(req, res, next));
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('should return playlist with new details has the passed id exists', async () => {
+      req.params.id = playlistsIds[0];
+      req.body = {
+        name: 'MGZZZ',
+        public: true,
+        collabrative: true,
+        description: 'dfdgfsfdgasd'
+      };
+      mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
+      await playlistController.changePlaylist(req, res, next);
+      const foundPlaylist = res.json.mock.calls[0][0];
+      expect(foundPlaylist).toBe(playlist);
+    });
+    it('should return 200 if playlist with the passed id exists when req.file is null', async () => {
+      req.params.id = playlistsIds[0];
+      req.body = {
+        name: 'MGZZZ',
+        public: true,
+        collabrative: true,
+        description: 'dfdgfsfdgasd'
+      };
+      req.file = null;
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.changePlaylist(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -155,6 +210,7 @@ describe('playlist controllers', () => {
         collabrative: true,
         description: 'dfdgfsfdgasd'
       };
+      req.file = null;
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.changePlaylist(req, res, next);
       const foundPlaylist = res.json.mock.calls[0][0];
@@ -182,6 +238,24 @@ describe('playlist controllers', () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it('should throw error when path not found', async () => {
+      req.params.id = playlistsIds[0];
+      playlist.image = 'Magdy.jpg';
+      req.file.path = 'hfjhgjh.jpg';
+      playlist.save = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlist, 'findOne');
+      jest.mock('fs');
+      fs.unlink = jest.fn();
+      fs.unlink.mockImplementationOnce((filename, callback) => {
+        callback(Error);
+      });
+      try{
+        await playlistController.uploadImageRoute(req, res, next);
+      }
+      catch(e){
+        expect(e).toBe(Error);
+      }
+    });
     it('should return 200 if playlist with the passed id exists', async () => {
       req.params.id = playlistsIds[0];
       req.file.path = playlist.image;
@@ -189,6 +263,43 @@ describe('playlist controllers', () => {
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
       await playlistController.uploadImageRoute(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(204);
+    });
+  });
+  describe('getImage - test', () => {
+    it('should throw error 404 when url is has users in it', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      await playlistController.getImage(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should throw error 404 when url is has me in it', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      await playlistController.getImage(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should return 404 when playlistId is not valid', async () => {
+      req.params.id = 'invalid';
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(null, 'findOne');
+      await playlistController.getImage(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it('should return 200 when playlistId is valid', async () => {
+      req.params.id = playlistsIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlists[0], 'findOne');
+      await playlistController.getImage(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('should return playlist image when playlistId is valid', async () => {
+      req.params.id = playlistsIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlists[0], 'findOne');
+      await playlistController.getImage(req, res, next);
+      const image = res.json.mock.calls[0][0];
+      expect(image).toBe(playlists[0].image);
     });
   });
   describe('getTracks - test', () => {
@@ -349,6 +460,19 @@ describe('playlist controllers', () => {
         collabrative: true,
         description: 'dfdgfsfdgasd'
       };
+      mockingoose(User).toReturn(user, 'findOne');
+      await playlistController.createUserPlaylist(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('should return 200 if user with the passed id exists when req.file not passed', async () => {
+      req.params.id = usersIds[0];
+      req.body = {
+        name: 'MGZZZ',
+        public: true,
+        collabrative: true,
+        description: 'dfdgfsfdgasd'
+      };
+      req.file = null;
       mockingoose(User).toReturn(user, 'findOne');
       await playlistController.createUserPlaylist(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -532,8 +656,11 @@ describe('playlist controllers', () => {
         range_length: 1,
         insert_before: 2
       };
+      Playlist.save = jest.fn().mockReturnThis();
       mockingoose(Playlist).toReturn(playlist, 'findOne');
-      mockingoose(Playlist).toReturn(playlist, 'updateOne');
+      jest.mock('lodash');
+      _.times = jest.fn();
+      _.times.mockImplementationOnce();
       await playlistController.reorderTracks(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });
