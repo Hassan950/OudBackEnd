@@ -1,8 +1,16 @@
+/**
+ * @author Abdelrahman Tarek
+ * @class
+ * @extends {Error}
+ */
 class AppError extends Error {
   /**
-   * 
-   * @param {String} message
-   * @param {Number} statusCode
+   * @constructor
+   * @author Abdelrahman Tarek
+   * @param {String} message Error message
+   * @param {Number} statusCode Error status code
+   * @param {Boolean} [isOperational=true] `true` if the error is operational (default `true`)
+   * @param {String} [stack] Error stack 
    */
   constructor(message, statusCode, isOperational = true, stack = '') {
     super(message);

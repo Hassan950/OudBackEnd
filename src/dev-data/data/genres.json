@@ -1,0 +1,75 @@
+[
+  {
+    "name":"dance pop",
+    "_id":"5e9083c24c798428f45b322c"
+  },
+  {
+    "name":"edm",
+    "_id":"5e9083c24c798428f45b322d"
+  },
+  {
+    "name":"metropopolis",
+    "_id":"5e9083c24c798428f45b322e"
+  },
+  {
+    "name":"pop",
+    "_id":"5e9083c24c798428f45b322f"
+  },
+  {
+    "name":"post-teen pop",
+    "_id":"5e9083c24c798428f45b3230"
+  },
+  {
+    "name":"tropical house",
+    "_id":"5e9083c24c798428f45b3231"
+  },
+  {
+    "name":"uk pop",
+    "_id":"5e9083c24c798428f45b3232"
+  },
+  {
+    "name":"big room",
+    "_id":"5e9083c24c798428f45b3233"
+  },
+  {
+    "name":"canadian electronic",
+    "_id":"5e9083c24c798428f45b3234"
+  },
+  {
+    "name":"electro house",
+    "_id":"5e9083c24c798428f45b3235"
+  },
+  {
+    "name":"progressive house"
+  },
+  {
+    "name":"alternative dance"
+  },
+  {
+    "name":"dance-punk"
+  },
+  {
+    "name":"new rave"
+  },
+  {
+    "name":"egyptian hip-hop"
+  },
+  {
+    "name":"girl group"
+  },
+  {
+    "name":"detroit hip hop"
+  },
+  {
+    "name":"g funk"
+  },
+  {
+    "name":"melodic rap"
+  },
+  {
+    "name":"chicago rap"
+  },
+  {
+    "name":"electropop"
+  }
+]

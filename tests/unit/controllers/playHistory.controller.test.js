@@ -55,5 +55,21 @@ describe('PlayHistory controller', () => {
         expect(res.status.mock.calls[0][0]).toBe(204);
       });
     });
+
+    it('should be valid if after is passed', async () => {
+      req.query.after = 1;
+      await playHistoryController.recentlyPlayed(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].limit).toBe(req.query.limit || 20);
+      expect(res.json.mock.calls[0][0].items).toEqual([playHistory]);
+    });
+
+    it('should be valid if before is passed', async () => {
+      req.query.before = 1;
+      await playHistoryController.recentlyPlayed(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].limit).toBe(req.query.limit || 20);
+      expect(res.json.mock.calls[0][0].items).toEqual([playHistory]);
+    });
   });
 });

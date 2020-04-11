@@ -7,12 +7,14 @@ const fs = require('fs');
  * A method that find user with the given userData and check password with the given password
  * 
  * @function
+ * @public
+ * @async
  * @author Abdelrahman Tarek
  * @summary find user and check password
- * @param {Object} userData 
- * @param {String} password 
- * @returns {Document} user if user found and password is correct
- * @returns {null} if user not found or password is wrong
+ * @param {Object} userData - User data to find with
+ * @param {String} password - User password
+ * @returns {Document} `user` if user found and password is correct
+ * @returns {null} `null` if user not found or password is wrong
  */
 const findUserAndCheckPassword = async (userData, password) => {
   const user = await User.findOne(userData).select('+password');
@@ -23,11 +25,17 @@ const findUserAndCheckPassword = async (userData, password) => {
 };
 
 /**
+ * Find user by `userId` and check if `password` is correct
  * 
+ * @function
+ * @public
+ * @async
  * @author Abdelrahman Tarek
- * @param {String} userId 
- * @param {String} password 
- * @returns user if user found and password is correct else return null
+ * @param {String} userId - User ID
+ * @param {String} password - User password
+ * @summary Find user by `userId` and check if `password` is correct
+ * @returns {Document} `user` if user found and password is correct 
+ * @returns {null} `null` if user is not found or password is not correct
  */
 const findUserByIdAndCheckPassword = async (userId, password) => {
   const user = await User.findById(userId).select('+password');
@@ -41,11 +49,13 @@ const findUserByIdAndCheckPassword = async (userId, password) => {
  * A method that create user with the given data
  * 
  * @function
+ * @public
+ * @async
  * @author Abdelrahman Tarek
  * @summary Create new user
- * @param {Object} userData 
- * @returns {Document} newUser if user is created
- * @returns {null} if failed
+ * @param {Object} userData - User data to find with
+ * @returns {Document} `newUser` if user is created
+ * @returns {null} `null` if failed
  */
 const createUser = async (userData) => {
   const newUser = await User.create(userData);
@@ -139,9 +149,15 @@ const updateImages = async (user, images) => {
 };
 
 /**
+ * Get user with `userData`
+ * 
+ * @function
+ * @public
+ * @async
  * @author Abdelrahman Tarek
- * @param {Object} userData 
- * @returns user with the given userDate
+ * @param {Object} userData - User data to find with
+ * @summary Get user with `userData`
+ * @returns {Document} `user` with the given `userData`
  */
 const getUser = async (userData) => {
   const user = await User.findOne(userData);
@@ -163,9 +179,13 @@ const deleteUserById = async (userId) => {
 /**
  * Get user Queues
  * 
+ * @function
+ * @public
+ * @async
  * @author Abdelrahman Tarek
- * @param {String} userId 
- * @returns queues
+ * @param {String} userId - User ID
+ * @summary Get user Queues
+ * @returns {Array<String>} `queues`
  */
 const getUserQueues = async (userId) => {
   const user = await User.findById(userId).select('queues');
@@ -177,6 +197,18 @@ const getUserQueues = async (userId) => {
   return queues;
 };
 
+/**
+ * Add `queue` to user `queues`
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} queue - Queue
+ * @param {Array<String>} queues - User Queues
+ * @summary Add `queue` to user `queues`
+ * @returns {Array<String>} `queues`
+ */
 const addQueue = (queue, queues) => {
   if (queues && queues.length) {
     if (queues.length > 1) {

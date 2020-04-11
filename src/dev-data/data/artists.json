@@ -1,0 +1,72 @@
+[
+  {
+    "_id":"5e908929dd1f762eccfa9136",
+    "name": "Sia",
+    "user":"5e907dafa0645f45716075ff",
+    "genres": ["5e9083c24c798428f45b322d", "5e9083c24c798428f45b3235"],
+    "bio":"i am sia i was born from the bumhole of a unicorn named steve."
+  },
+  {
+    "_id":"5e908929dd1f762eccfa9137",
+    "name": "Wegz",
+    "user":"5e907dafa0645f4571607600",
+    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f"],
+    "bio":"Bl3b bel 8zala w el 700"
+  },
+  {
+    "_id":"5e908929dd1f762eccfa9138",
+    "name": "Pablo",
+    "user":"5e907dafa0645f4571607601",
+    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f"],
+    "bio":"Dma8 sh8ala mesh btnam"
+  },
+  {
+    "_id":"5e908929dd1f762eccfa9139",
+    "name": "Joker",
+    "user":"5e907dafa0645f4571607602",
+    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b3233"],
+    "bio":"ana el lma 2nfsam asm el 2nfsam bsn el alam"
+  },
+  {
+    "_id":"5e908929dd1f762eccfa913a",
+    "name": "Neon jungle",
+    "user":"5e907dafa0645f4571607603",
+    "genres": ["5e9083c24c798428f45b322d", "5e9083c24c798428f45b322f"],
+    "bio":"U.K. pop group Neon Jungle feature members Amira, Asami, Jess, and Shereen."
+  },
+  {
+    "_id":"5e908929dd1f762eccfa913b",
+    "name": "Madison Beer",
+    "user":"5e907db0a0645f4571607604",
+    "genres": ["5e9083c24c798428f45b322d", "5e9083c24c798428f45b3230"],
+    "bio":"KDA Evelynn"
+  },
+  {
+    "_id":"5e908929dd1f762eccfa913c",
+    "name": "Post Malone",
+    "user":"5e907db0a0645f4571607605",
+    "genres": ["5e9083c24c798428f45b322d", "5e9083c24c798428f45b3230", "5e9083c24c798428f45b322c"],
+    "bio":"Rockstar"
+  },
+  {
+    "_id":"5e908929dd1f762eccfa913d",
+    "name": "Swae Lee",
+    "user":"5e907db0a0645f4571607606",
+    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b3230"],
+    "bio":"Spiderman"
+  },
+  {
+    "_id":"5e908929dd1f762eccfa913e",
+    "name": "Nicki Minaj",
+    "user":"5e907db0a0645f4571607607",
+    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322d"],
+    "bio":"The icy Onika Tanya Maraj-Petty"
+  },
+  {
+    "_id":"5e908929dd1f762eccfa913f",
+    "name": "Akon",
+    "user":"5e907db0a0645f4571607608",
+    "genres": ["5e9083c24c798428f45b322d", "5e9083c24c798428f45b3232"],
+    "bio":"Aliaume Damala Badara Akon Thiam"
+  }
+]
