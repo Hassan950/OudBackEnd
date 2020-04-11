@@ -9,6 +9,7 @@ const multer = require('multer');
 const fs = require('fs').promises;
 const { albumValidation } = require('../validations');
 
+/* istanbul ignore next */
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/albums');
@@ -18,6 +19,8 @@ const multerStorage = multer.diskStorage({
     cb(null, `${req.params.id}-${req.user.artist}-${Date.now()}.${ext}`);
   }
 });
+
+/* istanbul ignore next */
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.split('/')[1].match(/(png|jpg|jpeg)/)) {
     cb(null, true);
@@ -25,10 +28,13 @@ const multerFilter = (req, file, cb) => {
     cb(new AppError('Not an image! Please upload only images.', 400), false);
   }
 };
+
+/* istanbul ignore next */
 const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter
 });
+
 
 /**
  * calls multer to upload an image that is in req.body.image and put it in req.file
@@ -37,6 +43,7 @@ const upload = multer({
  * @author Mohamed Abo-Bakr
  * @summary A middleware that uses multer to upload an image
  */
+/* istanbul ignore next */
 exports.uploadImage = upload.single('image');
 
 /**

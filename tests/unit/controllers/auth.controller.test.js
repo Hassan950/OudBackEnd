@@ -68,6 +68,17 @@ describe('Auth controllers', () => {
       await authController.signup(req, res, next);
       expect(playerService.createPlayer.mock.calls.length).toBe(1);
     });
+
+    it('should call sendEmail with email subject message button link', async () => {
+      emailService.sendEmail = jest.fn().mockResolvedValue(null);
+      await authController.signup(req, res, next);
+      const newUser = res.json.mock.calls[0][0].user;
+      expect(emailService.sendEmail.mock.calls[0][0].email).toBe(newUser.email);
+      expect(emailService.sendEmail.mock.calls[0][0].subject).toBeDefined();
+      expect(emailService.sendEmail.mock.calls[0][0].message).toBeDefined();
+      expect(emailService.sendEmail.mock.calls[0][0].button).toBeDefined();
+      expect(emailService.sendEmail.mock.calls[0][0].link).toBeDefined();
+    });
   });
 
 
@@ -158,6 +169,17 @@ describe('Auth controllers', () => {
         user.verified = true;
         await authController.requestVerify(req, res, next);
         expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+
+      it('should call sendEmail with email subject message button link', async () => {
+        emailService.sendEmail = jest.fn().mockResolvedValue(null);
+        await authController.requestVerify(req, res, next);
+        const newUser = res.json.mock.calls[0][0].user;
+        expect(emailService.sendEmail.mock.calls[0][0].email).toBe(newUser.email);
+        expect(emailService.sendEmail.mock.calls[0][0].subject).toBeDefined();
+        expect(emailService.sendEmail.mock.calls[0][0].message).toBeDefined();
+        expect(emailService.sendEmail.mock.calls[0][0].button).toBeDefined();
+        expect(emailService.sendEmail.mock.calls[0][0].link).toBeDefined();
       });
     });
 

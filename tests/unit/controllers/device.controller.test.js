@@ -135,5 +135,13 @@ describe('Device controller', () => {
       await deviceController.setVolume(req, res, next);
       expect(device.volumePercent).toBe(req.query.volumePercent);
     });
+
+    it('should use player device if deviceId is not passed', async () => {
+      req.query.deviceId = null;
+      await deviceController.setVolume(req, res, next);
+      expect(device.save.mock.calls.length).toBe(1);
+      expect(res.status.mock.calls[0][0]).toBe(204);
+      expect(device.volumePercent).toBe(req.query.volumePercent);
+    });
   });
 });

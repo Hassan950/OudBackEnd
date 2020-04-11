@@ -93,6 +93,18 @@ describe('Queue controller', () => {
       expect(res.json.mock.calls[0][0].tracks).toBe(queue.tracks);
       expect(res.json.mock.calls[0][0].total).toBe(queue.tracks.length);
     });
+
+    it('should reorder the queue if it is in the shuffle mode', async () => {
+      queue.tracks = [user._id, player._id, queue._id];
+      queue.shuffleList = [0, 2, 1];
+      const newOrder = [user._id, queue._id, player._id];
+      await queueController.getQueue(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].tracks[0]).toEqual(newOrder[0]);
+      expect(res.json.mock.calls[0][0].tracks[1]).toEqual(newOrder[1]);
+      expect(res.json.mock.calls[0][0].tracks[2]).toEqual(newOrder[2]);
+      expect(res.json.mock.calls[0][0].total).toBe(queue.tracks.length);
+    });
   });
 
   describe('Repeat player', () => {
@@ -144,7 +156,7 @@ describe('Queue controller', () => {
       player.save = jest.fn().mockResolvedValue(player);
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
-      user.queues = [queue._id]
+      user.queues = [queue._id];
       User.findById = jest.fn().mockImplementationOnce(() => (
         { select: jest.fn().mockResolvedValueOnce(user) }
       ));
@@ -202,6 +214,14 @@ describe('Queue controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
 
+    it('should reverse user queues if queueIndex=1 and queue.length >= 2', async () => {
+      req.query.queueIndex = 1;
+      user.queues = [queue._id, user._id];
+      await queueController.addToQueue(req, res, next);
+      expect(user.queues[0]).toBe(user._id);
+      expect(user.queues[1]).toBe(queue._id);
+    });
+
     it('should revese queues if queues.length>1 and queueIndex=1', async () => {
       req.query.queueIndex = 1;
       const queues = randomArray(2, 10);
@@ -232,6 +252,13 @@ describe('Queue controller', () => {
       await queueController.addToQueue(req, res, next);
       expect(queue.tracks.length).toBe(oldLength + 1);
       expect(queue.tracks[oldLength]).toBe(track._id);
+    });
+
+    it('should append track to queue if no queue track make one', async () => {
+      queue.tracks = undefined;
+      await queueController.addToQueue(req, res, next);
+      expect(queue.tracks.length).toBe(1);
+      expect(queue.tracks[0]).toBe(track._id);
     });
 
     it('should return 204 if valid', async () => {
@@ -285,12 +312,12 @@ describe('Queue controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
 
-    it('should revese queues if queues.length>1 and queueIndex=1', async () => {
+    it('should reverse user queues if queueIndex=1 and queue.length >= 2', async () => {
       req.query.queueIndex = 1;
-      const queues = randomArray(2, 10);
-      user.queues = queues;
+      user.queues = [queue._id, user._id];
       await queueController.editPosition(req, res, next);
-      expect(queues).toEqual(queues.reverse());
+      expect(user.queues[0]).toBe(user._id);
+      expect(user.queues[1]).toBe(queue._id);
     });
 
     it('should return 400 if trackIndex and trackId is not passed', async () => {
@@ -418,12 +445,13 @@ describe('Queue controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
 
-    it('should revese queues if queues.length>1 and queueIndex=1', async () => {
+    it('should reverse user queues if queueIndex=1 and queue.length >= 2', async () => {
+      queue.tracks = [user._id, user._id, user._id];
       req.query.queueIndex = 1;
-      const queues = randomArray(2, 10);
-      user.queues = queues;
+      user.queues = [user._id, queue._id];
       await queueController.deleteTrack(req, res, next);
-      expect(queues).toEqual(queues.reverse());
+      expect(user.queues[0]).toBe(queue._id);
+      expect(user.queues[1]).toBe(user._id);
     });
 
     it('should return 400 if trackIndex and trackId is passed', async () => {
@@ -491,6 +519,44 @@ describe('Queue controller', () => {
       expect(queue.tracks[1]).toBe(req.user._id);
     });
 
+    it('should add track to player if you deleted a queue with only one song and queues>=2 and last queue is not empty', async () => {
+      const tracks = [req.user._id];
+      const context = { type: 'album', id: req.user._id };
+      queue.tracks = tracks;
+      queue.context = context;
+      user.queues = [queue._id, queue._id];
+      req.query.trackIndex = 0;
+      mockingoose(Queue).toReturn(() => {
+        return new Queue({
+          tracks: [req.user._id],
+          context: { type: 'album', id: req.user._id },
+          currentIndex: 0
+        });
+      }, 'findOne')
+      await queueController.deleteTrack(req, res, next);
+      expect(player.item).toBe(tracks[0]);
+      expect(player.context).toBeDefined();
+      expect(player.context.type).toBe(context.type);
+      expect(player.context.id).toEqual(context.id);
+    });
+
+    it('should set player to default if you deleted a queue with only one song and queues>=2 and last queue is empty', async () => {
+      const tracks = [req.user._id];
+      const context = { type: 'album', id: req.user._id };
+      queue.tracks = tracks;
+      queue.context = context;
+      user.queues = [queue._id, queue._id];
+      req.query.trackIndex = 0;
+      await queueController.deleteTrack(req, res, next);
+      expect(player.item).toBe(null);
+      expect(player.context.type).toBe('unknown');
+      expect(player.progressMs).toBe(null);
+      expect(player.shuffleState).toBe(false);
+      expect(player.repeatState).toBe('off');
+      expect(player.isPlaying).toBe(false);
+      expect(player.currentlyPlayingType).toBe('unknown');
+    });
+
     it('should save the queue', async () => {
       queue.tracks = [req.user._id, player._id, req.user._id];
       req.query.trackIndex = 0;
@@ -523,13 +589,6 @@ describe('Queue controller', () => {
       player.shuffleState = true;
       player.currentlyPlayingType = 'track';
       await queueController.deleteTrack(req, res, next);
-      // expect(player.item).toBe(null);
-      // expect(player.context.type).toBe('unknown');
-      // expect(player.progressMs).toBe(null);
-      // expect(player.shuffleState).toBe(false);
-      // expect(player.repeatState).toBe('off');
-      // expect(player.isPlaying).toBe(false);
-      // expect(player.currentlyPlayingType).toBe('unknown');
       expect(queue.currentIndex).toBe(0);
       expect(queue.shuffleIndex).toBe(undefined);
       expect(queue.shuffleList).toBe(undefined);
@@ -636,6 +695,7 @@ describe('Queue controller', () => {
     });
 
     it('should add shuffleList and suffleIndex to queue if state is true', async () => {
+      queue.tracks = [user._id, player._id, user._id];
       req.query.state = true;
       await queueController.shuffleQueue(req, res, next);
       expect(queue.shuffleList).toBeDefined();
