@@ -4,6 +4,8 @@ const multer = require('multer');
 const fs = require('fs').promises;
 const getMP3Duration = require('get-mp3-duration');
 
+
+/* istanbul ignore next */
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/tracks');
@@ -12,6 +14,8 @@ const multerStorage = multer.diskStorage({
     cb(null, `${req.params.id}-${req.user.artist}-${Date.now()}.mp3`);
   }
 });
+
+/* istanbul ignore next */
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.split('/')[1].match(/(mpeg)/)) {
     cb(null, true);
@@ -25,11 +29,14 @@ const multerFilter = (req, file, cb) => {
     );
   }
 };
+
+/* istanbul ignore next */
 const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter
 });
 
+/* istanbul ignore next */
 exports.uploadTrack = upload.single('track');
 
 exports.setTrack = async (req, res, next) => {

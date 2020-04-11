@@ -30,10 +30,6 @@ exports.authenticate = async (req, res, next) => {
   } catch (er) {
     return next(new AppError('Invalid Token', 400));
   }
-
-  // TODO
-  // Add checks if the user changed password after creating this token
-
   // check if user still exists
   const user = await User.findById(payload.id);
   if (!user)
