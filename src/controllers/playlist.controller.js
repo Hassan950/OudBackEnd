@@ -28,14 +28,28 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
+
+/**
+ * calls multer to upload an image that is in req.body.image and put it in req.file
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary A middleware that uses multer to upload an image
+ */
 /* istanbul ignore next */
 exports.uploadImage = upload.single('image');
+
+
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that gets the playlist with the given ID
+ *
+ * @function
  * @author Ahmed Magdy
- * @description get playlist of a specific ID
- * @summary Get Playlist
+ * @summary Gets a playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or if Url contains users or me
  */
 
 exports.getPlaylist = async (req, res, next) => {
@@ -47,6 +61,19 @@ exports.getPlaylist = async (req, res, next) => {
   res.status(200).json(playlist);
 };
 
+
+/**
+ * A middleware that gets the image of a playlist with the given ID
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary Gets the image of a playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or if Url contains users or me
+ */
+
 exports.getImage = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
@@ -57,11 +84,15 @@ exports.getImage = async (req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that changes details of a playlist with the given ID
+ *
+ * @function
  * @author Ahmed Magdy
- * @description change playlist's details of a specific ID
- * @summary change Playlist Details
+ * @summary changes details of a playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or if Url contains users or me
  */
 
 exports.changePlaylist = async (req, res, next) => {
@@ -81,11 +112,15 @@ exports.changePlaylist = async (req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that uploads an image to a playlist with the given ID
+ *
+ * @function
  * @author Ahmed Magdy
- * @description upload an image for a playlist of a specific ID
- * @summary Upload Image
+ * @summary uploads an image to a playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or if Url contains users or me
  */
 
 exports.uploadImageRoute = async (req, res, next) => {
@@ -98,11 +133,15 @@ exports.uploadImageRoute = async (req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that gets the tracks of a playlist if a given Id
+ *
+ * @function
  * @author Ahmed Magdy
- * @description get tracks from a playlist of a specific ID
- * @summary Get tracks
+ * @summary Gets tracks of a playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or if Url contains users or me
  */
 
 exports.getTracks = async (req, res, next) => {
@@ -121,11 +160,15 @@ exports.getTracks = async (req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that gets the playlists that a user follows
+ *
+ * @function
  * @author Ahmed Magdy
- * @description get playlists of a specific id
- * @summary get playlists
+ * @summary Gets followed playlists
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the user doesn't exist or if Url doesont contains users or me
  */
 
 exports.getUserPlaylists = async (req, res, next) => {
@@ -157,11 +200,15 @@ exports.getUserPlaylists = async (req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that creates a playlist for a user of the given ID
+ *
+ * @function
  * @author Ahmed Magdy
- * @description create a playlist
- * @summary create a playlist
+ * @summary create playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the user doesn't exist or if Url doesont contains users 
  */
 
 exports.createUserPlaylist = async (req, res, next) => {
@@ -182,11 +229,15 @@ exports.createUserPlaylist = async (req, res, next) => {
 };
 
 /**
- * @version 1.0.0
- * @throws AppError 400 status
+ * A middleware that deletes the tracks with the given Uri in the playlist of given Id
+ *
+ * @function
  * @author Ahmed Magdy
- * @description delete tracks in playlist of a specific id
- * @summary delete tracks
+ * @summary Deletes tracks in playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or Url contains me or users or all tracks sent doesnot exists
  */
 
 exports.deleteTracks = async (req, res, next) => {
@@ -199,6 +250,18 @@ exports.deleteTracks = async (req, res, next) => {
   if (!playlist) return next(new AppError('no playlist with this id', 404));
   res.sendStatus(204);
 };
+
+/**
+ * A middleware that adds the tracks with the given Uri in the playlist of given Id
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary adds tracks in playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or Url contains me or users or all tracks sent doesnot exists
+ */
 
 exports.addTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
@@ -215,6 +278,18 @@ exports.addTracks = async (req, res, next) => {
   res.sendStatus(204);
 };
 
+/**
+ * A middleware that replaces the tracks in the playlist of given Id with tracks of given url
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary replaces tracks in playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or Url contains me or users or all tracks sent doesnot exists
+ */
+
 exports.replaceTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
@@ -227,6 +302,19 @@ exports.replaceTracks = async (req, res, next) => {
   playlist = await playlistService.addTracks(req.params, tracks, 0);
   res.sendStatus(204);
 };
+
+
+/**
+ * A middleware that reorder the tracks of a playlist of a given Id
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary reorder tracks of a playlist
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the playlist doesn't exist or if Url contains users or me
+ */
 
 exports.reorderTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {

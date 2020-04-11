@@ -36,9 +36,30 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
+
+/**
+ * calls multer to upload a track that is in req.body.track and put it in req.file
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary A middleware that uses multer to upload a track
+ */
 /* istanbul ignore next */
 exports.uploadTrack = upload.single('track');
 
+/**
+ * A middleware Sets the file of a track
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Sets the file of a track
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the track doesn't exist
+ * @throws AppError 403 Forbidden if the artist is not the track's main artist
+ * @throws AppError 400 Bad request if no files were uploaded
+ */
 exports.setTrack = async (req, res, next) => {
   if (!req.file) return next(new AppError('No files were uploaded', 400));
   let track = await trackService.findTrackUtil(req.params.id);
@@ -63,6 +84,17 @@ exports.setTrack = async (req, res, next) => {
   res.status(200).json(track);
 };
 
+/**
+ * A middleware that gets the track with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets a track
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the track doesn't exist
+ */
 exports.getTrack = async (req, res, next) => {
   const track = await trackService.findTrack(req.params.id);
   if (!track)
@@ -70,6 +102,16 @@ exports.getTrack = async (req, res, next) => {
   res.status(200).json(track);
 };
 
+/**
+ * A middleware that gets the tracks with the given ID's
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets several tracks
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.getTracks = async (req, res, next) => {
   const tracks = await trackService.findTracks(req.query.ids);
   res.status(200).json({
@@ -77,6 +119,18 @@ exports.getTracks = async (req, res, next) => {
   });
 };
 
+/**
+ * A middleware that deletes the track with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes a track
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the track doesn't exist
+ * @throws AppError 403 forbidden if the artist is not the track's main artist
+ */
 exports.deleteTrack = async (req, res, next) => {
   const track = await trackService.findTrack(req.params.id);
   if (!track)
@@ -93,6 +147,19 @@ exports.deleteTrack = async (req, res, next) => {
   res.status(200).json(track);
 };
 
+/**
+ * A middleware that updates the track with the given ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Updates a track
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the track doesn't exist
+ * @throws AppError 400 bad request if any of the new data is invalid
+ * @throws AppError 403 forbidden if the artist is not the track's main artist
+*/
 exports.updateTrack = async (req, res, next) => {
   let track = await trackService.findTrack(req.params.id);
   if (!track)
