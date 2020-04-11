@@ -9,7 +9,9 @@ const {
   Album,
   Track,
   Category,
-  Playlist
+  Playlist,
+  Queue,
+  PlayHistory
 } = require('../../models');
 
 const DB = config.get('db');
@@ -45,6 +47,13 @@ const playlists = JSON.parse(
   fs.readFileSync(`${__dirname}/playlists.json`, 'utf-8')
 );
 
+const playhistories = JSON.parse(
+  fs.readFileSync(`${__dirname}/playhistories.json`, 'utf-8')
+);
+
+const queues = JSON.parse(
+  fs.readFileSync(`${__dirname}/queues.json`, 'utf-8')
+);
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
@@ -56,6 +65,8 @@ const importData = async () => {
     await Player.create(players);
     await Category.create(categories);
     await Playlist.create(playlists);
+    await Queue.create(queues);
+    await PlayHistory.create(playhistories);
     console.log('Data successfully loaded!');
   } catch (err) {
     console.log(err);
@@ -67,13 +78,15 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await User.deleteMany();
-    await Player.deleteMany();
     await Genre.deleteMany();
     await Artist.deleteMany();
     await Album.deleteMany();
     await Track.deleteMany();
+    await Player.deleteMany();
     await Category.deleteMany();
     await Playlist.deleteMany();
+    await Queue.deleteMany();
+    await PlayHistory.deleteMany();
     console.log('Data successfully deleted!');
   } catch (err) {
     console.log(err);
