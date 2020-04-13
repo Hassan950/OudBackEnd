@@ -32,18 +32,19 @@ const trackService = require('./track.service');
 const deviceService = require('./device.service');
 
 /**
- * Get player with the given userId
+ * Get `player` with the given `userId`
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
  * @param {Object} [ops] Options Object
- * @param {Boolean} [ops.populate=false] if true will populate (Default false)
- * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return audioUrl if populate is false nothing happens
- * @returns {Document} player
- * @returns {null} if player is not found
- * @summary Get player with the given userId
+ * @param {Boolean} [ops.populate=true] if true will populate (Default `true`)
+ * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return `audioUrl` if populate is false nothing happens
+ * @returns {Document} `player`
+ * @returns {null} if `player` is not found
+ * @summary Get `player` with the given `userId`
  */
 const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
   let player;
@@ -79,13 +80,16 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
  * Get currently playing track with its context
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
  * @param {Object} [ops] Options Object
- * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return audioUrl
- * @returns {Document} currentlyPlaying if player is found and item is not null 
- * @returns {null} if item is null or player is not found
+ * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return `audioUrl`
+ * @returns {Object} `currentlyPlaying` if `player` is found and `player.item` is not `null` \
+ * `currentlyPlaying.item` is the track \
+ * `currentlyPlaying.context` is the track `context` \
+ * @returns {null} `null` if item is null or player is not found
  * @summary Get Currently Playing
  */
 const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
@@ -118,11 +122,12 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
  * Create player with the given userId
  * 
  * @function
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} userId User ID 
- * @throws {MongooseError}
- * @returns {Document} newPlayer if player is created
+ * @throws `MongooseError`
+ * @returns {Document} `newPlayer` if player is created
  * @summary Create Player
  */
 const createPlayer = async (userId) => {
@@ -133,17 +138,53 @@ const createPlayer = async (userId) => {
   return newPlayer;
 };
 
-
+/**
+ * Add `track` to `player`
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} player player 
+ * @param {String} track track ID 
+ * @param {Object} [context] context object 
+ * @param {String} [context.type] context type  
+ * @param {String} [context.id] context id 
+ * @description assign player.item to track, player.progressMs to 0, player.currentlyPlayingType to track \
+ * and if context and context.type is defined \
+ * assign player.context to context 
+ * @summary Add track to player
+ */
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   player.item = track;
   player.progressMs = 0;
   player.currentlyPlayingType = 'track';
-  // get context from context uri
+  // add context to player
   if (context &amp;&amp; context.type) {
     player.context = context;
   }
 };
 
+/**
+ * Start playing from given offset
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} player Player 
+ * @param {Document} queue Queue
+ * @param {Object} offset Offset object
+ * @param {Number} [offset.position] Offset postiton
+ * @param {String} [offset.uri] Offset track uri to start from (oud:track:{trackId})
+ * @param {Array&lt;String>} queues queues IDs array
+ * @description if offset.position is passed \
+ * assign player.item to track in the queue with the given position if the position is &lt; queue length \
+ * else assign player.item the first track in the queue \
+ * else if offset.uri is passed assign player.item to the passed track id if found \
+ * else assign player.item to the first track in the queue
+ * @summary Start playing from given offset
+ * @returns {Document} player
+ */
 const startPlayingFromOffset = async (player, queue, offset, queues) => {
   if (offset.position) {
     if (queues[0].tracks.length > offset.position) {
@@ -164,6 +205,21 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
   return player;
 };
 
+/**
+ * Chnage player progress
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} player Player 
+ * @param {Number} progressMs progress in m Second 
+ * @param {Array&lt;String>} queues queues IDs array
+ * @param {Document} [track] Currently playing track
+ * @description Set player.progressMs to the given progressMs and if progressMs >= track duration (go next if repeat state != track else start the track from zero second)
+ * @summary Chnage player progress
+ * @returns {Document} player
+ */
 const changePlayerProgress = async (player, progressMs, queues, track = null) => {
   player.progressMs = progressMs;
 
@@ -189,6 +245,23 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
   return player;
 };
 
+/**
+ * Add Device to player
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} player PLayer
+ * @param {String} deviceId Device ID 
+ * @description if found a device with the given deviceId \
+ * assign player.device to deviceId and return player \
+ * else \
+ * return null
+ * @summary Add Device to player
+ * @returns {Document} player if found a device with deviceId
+ * @returns {Null} if not found a device with deviceId
+ */
 const addDeviceToPlayer = async (player, deviceId) => {
   const device = await deviceService.getDevice(deviceId);
   if (!device) {
@@ -199,6 +272,23 @@ const addDeviceToPlayer = async (player, deviceId) => {
   return player;
 };
 
+/**
+ * Set `player` to Default
+ * 
+ * @function
+ * @public
+ * @author Abdelrahman Tarek
+ * @param {Document} player Player 
+ * @description Set \
+ * player.item = null \
+ * player.context = { type: 'unknown' } \
+ * player.progressMs = null \
+ * player.shuffleState = false \
+ * player.repeatState = 'off' \
+ * player.isPlaying = false \
+ * player.currentlyPlayingType = 'unknown' 
+ * @summary Set `player` to Default
+ */
 const setPlayerToDefault = (player) => {
   player.item = null;
   player.context = { type: 'unknown' };
@@ -229,13 +319,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="albumTracks.html">albumTracks</a></li><li><a href="artistAlbums.html">artistAlbums</a></li><li><a href="categoryPlaylist.html">categoryPlaylist</a></li><li><a href="global.html#createAlbum">createAlbum</a></li><li><a href="global.html#createTrack">createTrack</a></li><li><a href="global.html#getCategories">getCategories</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="getSeveral.html">getSeveral</a></li><li><a href="newRelease.html">newRelease</a></li><li><a href="oneAlbum.html">oneAlbum</a></li><li><a href="oneArtist.html">oneArtist</a></li><li><a href="oneGenre.html">oneGenre</a></li><li><a href="oneTrack.html">oneTrack</a></li><li><a href="release.html">release</a></li><li><a href="several.html">several</a></li><li><a href="severalAlbums.html">severalAlbums</a></li><li><a href="severalArtists.html">severalArtists</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateAlbum">updateAlbum</a></li></ul><h3>Classes</h3><ul><li><a href="AppError.html">AppError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addToHistory">addToHistory</a></li><li><a href="global.html#addToQueue">addToQueue</a></li><li><a href="global.html#addTrack">addTrack</a></li><li><a href="global.html#artistsExist">artistsExist</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#categoryPlaylists">categoryPlaylists</a></li><li><a href="global.html#changePlaylist">changePlaylist</a></li><li><a href="global.html#checkFile">checkFile</a></li><li><a href="global.html#checkFollowings">checkFollowings</a></li><li><a href="global.html#checkFollowingsPlaylist">checkFollowingsPlaylist</a></li><li><a href="global.html#checkUser">checkUser</a></li><li><a href="global.html#createPlayer">createPlayer</a></li><li><a href="global.html#createTokenAndSend">createTokenAndSend</a></li><li><a href="global.html#createUser">createUser</a></li><li><a href="global.html#createUserPlaylist">createUserPlaylist</a></li><li><a href="global.html#deleteAlbum">deleteAlbum</a></li><li><a href="global.html#deleteImage">deleteImage</a></li><li><a href="global.html#deleteTrack">deleteTrack</a></li><li><a href="global.html#deleteTracks">deleteTracks</a></li><li><a href="global.html#deleteUserById">deleteUserById</a></li><li><a href="global.html#editPosition">editPosition</a></li><li><a href="global.html#editProfile">editProfile</a></li><li><a href="global.html#facebookAuth">facebookAuth</a></li><li><a href="global.html#facebookConnect">facebookConnect</a></li><li><a href="global.html#findAlbum">findAlbum</a></li><li><a href="global.html#findAlbums">findAlbums</a></li><li><a href="global.html#findAlbumTracks">findAlbumTracks</a></li><li><a href="global.html#findAlbumUtil">findAlbumUtil</a></li><li><a href="global.html#findAndDeleteAlbum">findAndDeleteAlbum</a></li><li><a href="global.html#findArtist">findArtist</a></li><li><a href="global.html#findArtistAlbums">findArtistAlbums</a></li><li><a href="global.html#findArtists">findArtists</a></li><li><a href="global.html#findArtistTracks">findArtistTracks</a></li><li><a href="global.html#findCategories">findCategories</a></li><li><a href="global.html#findCategory">findCategory</a></li><li><a href="global.html#findGenre">findGenre</a></li><li><a href="global.html#findGenres">findGenres</a></li><li><a href="global.html#findTrack">findTrack</a></li><li><a href="global.html#findTracks">findTracks</a></li><li><a href="global.html#findTracksOfAlbum">findTracksOfAlbum</a></li><li><a href="global.html#findTrackUtil">findTrackUtil</a></li><li><a href="global.html#findUserAndCheckPassword">findUserAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckPassword">findUserByIdAndCheckPassword</a></li><li><a href="global.html#followPlaylist">followPlaylist</a></li><li><a href="global.html#followUser">followUser</a></li><li><a href="global.html#forgotPassword">forgotPassword</a></li><li><a href="global.html#genresExist">genresExist</a></li><li><a href="global.html#getAlbum">getAlbum</a></li><li><a href="global.html#getAlbums">getAlbums</a></li><li><a href="global.html#getArtist">getArtist</a></li><li><a href="global.html#getArtists">getArtists</a></li><li><a href="global.html#getAvailableDevices">getAvailableDevices</a></li><li><a href="global.html#getCurrentlyPlaying">getCurrentlyPlaying</a></li><li><a href="global.html#getDevice">getDevice</a></li><li><a href="global.html#getFollowedArtists">getFollowedArtists</a></li><li><a href="global.html#getFollowedUsers">getFollowedUsers</a></li><li><a href="global.html#getGenre">getGenre</a></li><li><a href="global.html#getGenres">getGenres</a></li><li><a href="global.html#getHistory">getHistory</a></li><li><a href="global.html#getNewReleases">getNewReleases</a></li><li><a href="global.html#getPlayer">getPlayer</a></li><li><a href="global.html#getPlaylist">getPlaylist</a></li><li><a href="global.html#getPlaylists">getPlaylists</a></li><li><a href="global.html#getPopularSongs">getPopularSongs</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getQueue">getQueue</a></li><li><a href="global.html#getTrack">getTrack</a></li><li><a href="global.html#getTracks">getTracks</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#getUserDevices">getUserDevices</a></li><li><a href="global.html#getUserFollowed">getUserFollowed</a></li><li><a href="global.html#getUserFollowers">getUserFollowers</a></li><li><a href="global.html#getUserPlaylists">getUserPlaylists</a></li><li><a href="global.html#getUserQueues">getUserQueues</a></li><li><a href="global.html#googleAuth">googleAuth</a></li><li><a href="global.html#googleConnect">googleConnect</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#newReleases">newReleases</a></li><li><a href="global.html#newTrack">newTrack</a></li><li><a href="global.html#nextTrack">nextTrack</a></li><li><a href="global.html#optionalAuth">optionalAuth</a></li><li><a href="global.html#pausePlayer">pausePlayer</a></li><li><a href="global.html#previousTrack">previousTrack</a></li><li><a href="global.html#relatedArtists">relatedArtists</a></li><li><a href="global.html#removeTrack">removeTrack</a></li><li><a href="global.html#repeatQueue">repeatQueue</a></li><li><a href="global.html#requestVerify">requestVerify</a></li><li><a href="global.html#resetPassword">resetPassword</a></li><li><a href="global.html#resumePlayer">resumePlayer</a></li><li><a href="global.html#seekPlayer">seekPlayer</a></li><li><a href="global.html#setImage">setImage</a></li><li><a href="global.html#setTrack">setTrack</a></li><li><a href="global.html#setUserId">setUserId</a></li><li><a href="global.html#setVolume">setVolume</a></li><li><a href="global.html#shuffleQueue">shuffleQueue</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#transferPlayback">transferPlayback</a></li><li><a href="global.html#unfollowPlaylist">unfollowPlaylist</a></li><li><a href="global.html#unfollowUser">unfollowUser</a></li><li><a href="global.html#updateImages">updateImages</a></li><li><a href="global.html#updatePassword">updatePassword</a></li><li><a href="global.html#updateTrack">updateTrack</a></li><li><a href="global.html#uploadImage">uploadImage</a></li><li><a href="global.html#uploadImageRoute">uploadImageRoute</a></li><li><a href="global.html#uploadImages">uploadImages</a></li><li><a href="global.html#uploadTrack">uploadTrack</a></li><li><a href="global.html#verify">verify</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="global.html#addTracks">addTracks</a></li><li><a href="albumTracks.html">albumTracks</a></li><li><a href="artistAlbums.html">artistAlbums</a></li><li><a href="categoryPlaylist.html">categoryPlaylist</a></li><li><a href="global.html#changePlaylist">changePlaylist</a></li><li><a href="global.html#createAlbum">createAlbum</a></li><li><a href="global.html#createTrack">createTrack</a></li><li><a href="global.html#createUserPlaylist">createUserPlaylist</a></li><li><a href="global.html#deleteTracks">deleteTracks</a></li><li><a href="global.html#getCategories">getCategories</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getPlaylist">getPlaylist</a></li><li><a href="getSeveral.html">getSeveral</a></li><li><a href="global.html#getTracks">getTracks</a></li><li><a href="global.html#getUserPlaylists">getUserPlaylists</a></li><li><a href="newRelease.html">newRelease</a></li><li><a href="oneAlbum.html">oneAlbum</a></li><li><a href="oneArtist.html">oneArtist</a></li><li><a href="oneGenre.html">oneGenre</a></li><li><a href="oneTrack.html">oneTrack</a></li><li><a href="release.html">release</a></li><li><a href="global.html#reorderTracks">reorderTracks</a></li><li><a href="global.html#replaceTracks">replaceTracks</a></li><li><a href="several.html">several</a></li><li><a href="severalAlbums.html">severalAlbums</a></li><li><a href="severalArtists.html">severalArtists</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateAlbum">updateAlbum</a></li><li><a href="global.html#uploadImage">uploadImage</a></li></ul><h3>Classes</h3><ul><li><a href="AppError.html">AppError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addDeviceToPlayer">addDeviceToPlayer</a></li><li><a href="global.html#addQueue">addQueue</a></li><li><a href="global.html#addToHistory">addToHistory</a></li><li><a href="global.html#addToQueue">addToQueue</a></li><li><a href="global.html#addTrack">addTrack</a></li><li><a href="global.html#addTrackToPlayer">addTrackToPlayer</a></li><li><a href="global.html#appendToQueue">appendToQueue</a></li><li><a href="global.html#artistsExist">artistsExist</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#categoryPlaylists">categoryPlaylists</a></li><li><a href="global.html#changePlayerProgress">changePlayerProgress</a></li><li><a href="global.html#checkFile">checkFile</a></li><li><a href="global.html#checkFollowings">checkFollowings</a></li><li><a href="global.html#checkFollowingsPlaylist">checkFollowingsPlaylist</a></li><li><a href="global.html#checkPassword">checkPassword</a></li><li><a href="global.html#checkUser">checkUser</a></li><li><a href="global.html#createPasswordResetToken">createPasswordResetToken</a></li><li><a href="global.html#createPlayer">createPlayer</a></li><li><a href="global.html#createQueueFromTracks">createQueueFromTracks</a></li><li><a href="global.html#createQueueWithContext">createQueueWithContext</a></li><li><a href="global.html#createTokenAndSend">createTokenAndSend</a></li><li><a href="global.html#createUser">createUser</a></li><li><a href="global.html#createVerifyToken">createVerifyToken</a></li><li><a href="global.html#deleteAlbum">deleteAlbum</a></li><li><a href="global.html#deleteImage">deleteImage</a></li><li><a href="global.html#deleteQueueById">deleteQueueById</a></li><li><a href="global.html#deleteTrack">deleteTrack</a></li><li><a href="global.html#deleteUserById">deleteUserById</a></li><li><a href="global.html#editPosition">editPosition</a></li><li><a href="global.html#editProfile">editProfile</a></li><li><a href="global.html#facebookAuth">facebookAuth</a></li><li><a href="global.html#facebookConnect">facebookConnect</a></li><li><a href="global.html#facebookPassport">facebookPassport</a></li><li><a href="global.html#fillQueueFromTracksUris">fillQueueFromTracksUris</a></li><li><a href="global.html#findAlbum">findAlbum</a></li><li><a href="global.html#findAlbums">findAlbums</a></li><li><a href="global.html#findAlbumTracks">findAlbumTracks</a></li><li><a href="global.html#findAlbumUtil">findAlbumUtil</a></li><li><a href="global.html#findAndDeleteAlbum">findAndDeleteAlbum</a></li><li><a href="global.html#findArtist">findArtist</a></li><li><a href="global.html#findArtistAlbums">findArtistAlbums</a></li><li><a href="global.html#findArtists">findArtists</a></li><li><a href="global.html#findArtistTracks">findArtistTracks</a></li><li><a href="global.html#findCategories">findCategories</a></li><li><a href="global.html#findCategory">findCategory</a></li><li><a href="global.html#findGenre">findGenre</a></li><li><a href="global.html#findGenres">findGenres</a></li><li><a href="global.html#findTrack">findTrack</a></li><li><a href="global.html#findTracks">findTracks</a></li><li><a href="global.html#findTracksOfAlbum">findTracksOfAlbum</a></li><li><a href="global.html#findTrackUtil">findTrackUtil</a></li><li><a href="global.html#findUserAndCheckPassword">findUserAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckPassword">findUserByIdAndCheckPassword</a></li><li><a href="global.html#followPlaylist">followPlaylist</a></li><li><a href="global.html#followUser">followUser</a></li><li><a href="global.html#forgotPassword">forgotPassword</a></li><li><a href="global.html#generateAuthToken">generateAuthToken</a></li><li><a href="global.html#genresExist">genresExist</a></li><li><a href="global.html#getAlbum">getAlbum</a></li><li><a href="global.html#getAlbums">getAlbums</a></li><li><a href="global.html#getArtist">getArtist</a></li><li><a href="global.html#getArtists">getArtists</a></li><li><a href="global.html#getAvailableDevices">getAvailableDevices</a></li><li><a href="global.html#getCurrentlyPlaying">getCurrentlyPlaying</a></li><li><a href="global.html#getDevice">getDevice</a></li><li><a href="global.html#getFollowedArtists">getFollowedArtists</a></li><li><a href="global.html#getFollowedUsers">getFollowedUsers</a></li><li><a href="global.html#getGenre">getGenre</a></li><li><a href="global.html#getGenres">getGenres</a></li><li><a href="global.html#getHashedToken">getHashedToken</a></li><li><a href="global.html#getHistory">getHistory</a></li><li><a href="global.html#getNewReleases">getNewReleases</a></li><li><a href="global.html#getPlayer">getPlayer</a></li><li><a href="global.html#getPlaylists">getPlaylists</a></li><li><a href="global.html#getPopularSongs">getPopularSongs</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getQueue">getQueue</a></li><li><a href="global.html#getQueueById">getQueueById</a></li><li><a href="global.html#getTrack">getTrack</a></li><li><a href="global.html#getTrackPosition">getTrackPosition</a></li><li><a href="global.html#getTracksId">getTracksId</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#getUserDevices">getUserDevices</a></li><li><a href="global.html#getUserFollowed">getUserFollowed</a></li><li><a href="global.html#getUserFollowers">getUserFollowers</a></li><li><a href="global.html#getUserQueues">getUserQueues</a></li><li><a href="global.html#goNext">goNext</a></li><li><a href="global.html#goNextNormal">goNextNormal</a></li><li><a href="global.html#goNextShuffle">goNextShuffle</a></li><li><a href="global.html#googleAuth">googleAuth</a></li><li><a href="global.html#googleConnect">googleConnect</a></li><li><a href="global.html#googlePassport">googlePassport</a></li><li><a href="global.html#goPrevious">goPrevious</a></li><li><a href="global.html#goPreviousNormal">goPreviousNormal</a></li><li><a href="global.html#goPreviousShuffle">goPreviousShuffle</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#newReleases">newReleases</a></li><li><a href="global.html#newTrack">newTrack</a></li><li><a href="global.html#nextTrack">nextTrack</a></li><li><a href="global.html#optionalAuth">optionalAuth</a></li><li><a href="global.html#pausePlayer">pausePlayer</a></li><li><a href="global.html#previousTrack">previousTrack</a></li><li><a href="global.html#recentlyPlayed">recentlyPlayed</a></li><li><a href="global.html#relatedArtists">relatedArtists</a></li><li><a href="global.html#removeTrack">removeTrack</a></li><li><a href="global.html#repeatQueue">repeatQueue</a></li><li><a href="global.html#requestVerify">requestVerify</a></li><li><a href="global.html#resetPassword">resetPassword</a></li><li><a href="global.html#resumePlayer">resumePlayer</a></li><li><a href="global.html#seekPlayer">seekPlayer</a></li><li><a href="global.html#sendEmail">sendEmail</a></li><li><a href="global.html#setImage">setImage</a></li><li><a href="global.html#setPlayerToDefault">setPlayerToDefault</a></li><li><a href="global.html#setQueueToDefault">setQueueToDefault</a></li><li><a href="global.html#setTrack">setTrack</a></li><li><a href="global.html#setUserId">setUserId</a></li><li><a href="global.html#setVolume">setVolume</a></li><li><a href="global.html#shuffleQueue">shuffleQueue</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#startPlayingFromOffset">startPlayingFromOffset</a></li><li><a href="global.html#transferPlayback">transferPlayback</a></li><li><a href="global.html#unfollowPlaylist">unfollowPlaylist</a></li><li><a href="global.html#unfollowUser">unfollowUser</a></li><li><a href="global.html#updateImages">updateImages</a></li><li><a href="global.html#updatePassword">updatePassword</a></li><li><a href="global.html#updateTrack">updateTrack</a></li><li><a href="global.html#uploadImageRoute">uploadImageRoute</a></li><li><a href="global.html#uploadImages">uploadImages</a></li><li><a href="global.html#verify">verify</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Apr 10 2020 13:32:09 GMT+0200 (GMT+02:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Apr 11 2020 23:03:06 GMT+0200 (GMT+02:00)
 </footer>
 
 <script> prettyPrint(); </script>
