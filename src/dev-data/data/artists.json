@@ -162,7 +162,26 @@
     "bio": "I know it"
   },
   {
-    "_id": "5e907db0a0645f4571707605",
+    "_id": "5e907db0a0645f4581607605",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Hassan Shakosh",
+    "email": "shakosh@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "shakosh123",
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f4581607606",
     "role": "artist",
     "images": [
       "uploads\\users\\default-Profile.jpg",
@@ -186,6 +205,42 @@
   },
   {
     "_id": "5e907db0a0645f4571707606",
+    "verified": true,
+    "queues": [],
+    "displayName": "Oka Wi Ortega",
+    "email": "oka_wi_ortega@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "okaortiga123",
+    "genres": [
+      "5e962e04da7d8d40d02a9973",
+      "5e962e04da7d8d40d02a9979"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f4581607607",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Cairokee",
+    "email": "cairokee@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "cairokee123",
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f4581607608",
     "role": "artist",
     "images": [
       "uploads\\users\\default-Profile.jpg",
@@ -205,5 +260,80 @@
       "5e9083c24c798428f45b3232"
     ],
     "bio": "Never mind, I'll find someone like you I wish nothing but the best for you too"
+  },
+  {
+    "verified": true,
+    "queues": [],
+    "displayName": "Hamza Namira",
+    "email": "hamza_namira@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "hamzanamira465",
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "bio": "Hailed as the “new Sayed Darwish”, Hamza Namira is one of the most celebrated faces of modern Arabic music. A songwriter, singer, and multi-instrumentalist from Egypt, Hamza has become a luminous expression of his homeland’s resilience and ambition."
+  },
+  {
+    "_id": "5e907db0a0645f4581607609",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Wegz",
+    "email": "wegza_wensh@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "wegzElWensh",
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f458160760a",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Marwan Pablo",
+    "email": "marwan_pabloyo@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "pabloooz",
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f458160760b",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Ariana Grande",
+    "email": "ariana_grande123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "ArianaGrande156948",
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ]
   }
 ]
