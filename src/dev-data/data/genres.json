@@ -80,27 +80,35 @@
     "_id": "5e962e04da7d8d40d02a9979"
   },
   {
-    "name": "electropop",
-    "_id": "5e962e04da7d8d40d02a997a"
-  },
-  {
     "name": "detroit hip hop",
-    "_id": "5e962e04da7d8d40d03a997a"
+    "_id": "5e962e04da7d8d50d03a997a"
   },
   {
     "name": "g funk",
-    "_id": "5e962e04da7d8d40d03a997b"
+    "_id": "5e962e04da7d8d60d03a997b"
   },
   {
     "name": "hip hop",
-    "_id": "5e962e04da7d8d40d03a997c"
+    "_id": "5e962e04da7d8d70d03a997c"
   },
   {
     "name": "rap",
-    "_id": "5e962e04da7d8d40d03a997d"
+    "_id": "5e962e04da7d8d80d03a997d"
   },
   {
     "name": "british soul",
     "_id": "5e962e04da7d8d40d03a997e"
+  },
+  {
+    "name": "electropop",
+    "_id": "5e962e04da7d8d40d02a997a"
+  },
+  {
+    "name": "egyptian hip hop",
+    "_id": "5e962e04da7d8d40d02a997b"
+  },
+  {
+    "name": "arab alternative",
+    "_id": "5e962e04da7d8d40d02a997c"
   }
 ]
