@@ -16,8 +16,12 @@
     "passwordConfirm": "12341234",
     "country": "US",
     "username": "Taylor",
-    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f", "5e9083c24c798428f45b3230"],
-    "bio":"Taylor Swift is that rarest of pop phenomena: a superstar who managed to completely cross over from country to the mainstream."
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "bio": "Taylor Swift is that rarest of pop phenomena: a superstar who managed to completely cross over from country to the mainstream."
   },
   {
     "_id": "5e907dafa0645f45716075ff",
@@ -36,8 +40,12 @@
     "passwordConfirm": "12341234",
     "country": "US",
     "username": "Miley",
-    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f", "5e9083c24c798428f45b3230"],
-    "bio":"Miley Cyrus is one of the most influential artists in pop culture."
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "bio": "Miley Cyrus is one of the most influential artists in pop culture."
   },
   {
     "_id": "5e907dafa0645f4571607601",
@@ -56,8 +64,11 @@
     "passwordConfirm": "12341234",
     "country": "GB",
     "username": "edsheeran",
-    "genres": ["5e9083c24c798428f45b322f", "5e9083c24c798428f45b3232"],
-    "bio":" a singer/songwriter who seems to acknowledge no boundaries between styles or eras"
+    "genres": [
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": " a singer/songwriter who seems to acknowledge no boundaries between styles or eras"
   },
   {
     "_id": "5e907dafa0645f4571607602",
@@ -76,7 +87,12 @@
     "passwordConfirm": "12341234",
     "country": "AU",
     "username": "siasia",
-    "genres": ["5e9083c24c798428f45b322f", "5e9083c24c798428f45b322c","5e962e04da7d8d40d02a9975","5e962e04da7d8d40d02a9977"],
+    "genres": [
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b322c",
+      "5e962e04da7d8d40d02a9975",
+      "5e962e04da7d8d40d02a9977"
+    ],
     "bio": "i am sia i was born from the bumhole of a unicorn named steve."
   },
   {
@@ -96,8 +112,12 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "saaaad",
-    "genres": ["5e962e04da7d8d40d02a9979","5e962e04da7d8d40d02a9976","5e9083c24c798428f45b322e"],
-    "bio":"Batee5a"
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a9976",
+      "5e9083c24c798428f45b322e"
+    ],
+    "bio": "Batee5a"
   },
   {
     "_id": "5e907db0a0645f4571607604",
@@ -114,8 +134,12 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "mounir",
-    "genres": ["5e9083c24c798428f45b322e", "5e9083c24c798428f45b3235", "5e962e04da7d8d40d02a9979"],
-    "bio":"One of the greatest Egyptian pop superstars of his time"
+    "genres": [
+      "5e9083c24c798428f45b322e",
+      "5e9083c24c798428f45b3235",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "bio": "One of the greatest Egyptian pop superstars of his time"
   },
   {
     "_id": "5e907db0a0645f4571607605",
@@ -132,7 +156,54 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "madfagea",
-    "genres": ["5e962e04da7d8d40d02a9973"],
-    "bio":"I know it"
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "bio": "I know it"
+  },
+  {
+    "_id": "5e907db0a0645f4571707605",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": false,
+    "queues": [],
+    "displayName": "Eminem",
+    "email": "eminem@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "eminem",
+    "genres": [
+      "5e962e04da7d8d40d03a997a",
+      "5e962e04da7d8d40d03a997b",
+      "5e962e04da7d8d40d03a997c",
+      "5e962e04da7d8d40d03a997d"
+    ],
+    "bio": "The real slim shady"
+  },
+  {
+    "_id": "5e907db0a0645f4571707606",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": false,
+    "queues": [],
+    "displayName": "Adele",
+    "email": "adele@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "GB",
+    "username": "adele",
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": "Never mind, I'll find someone like you I wish nothing but the best for you too"
   }
 ]
