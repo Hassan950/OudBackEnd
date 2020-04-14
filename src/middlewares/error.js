@@ -66,7 +66,7 @@ const errorHandler = (err, req, res, next) => {
     message,
     ...(config.get('NODE_ENV') === 'development' && {
       stack: err.stack
-    })
+    }),
   };
 
   if (config.get('NODE_ENV') === 'development') {

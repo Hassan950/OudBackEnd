@@ -1,8 +1,8 @@
 const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock');
-const AppError = require('../../../src/utils/AppError');
 const { userController } = require('../../../src/controllers');
 const httpStatus = require('http-status');
+const fs = require('fs');
 
 describe('User Controllers', () => {
   let user;
@@ -28,7 +28,6 @@ describe('User Controllers', () => {
       expect(res.status).toHaveBeenCalledWith(httpStatus.OK);
       expect(res.send.mock.calls[0][0]).toHaveProperty('_id');
       expect(res.send.mock.calls[0][0]).toHaveProperty('displayName');
-      expect(res.send.mock.calls[0][0]).toHaveProperty('role');
     });
   });
 
@@ -98,5 +97,27 @@ describe('User Controllers', () => {
       expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK)
       expect(res.send.mock.calls[0][0].images[0]).toBe(req.files[0].path)
     })
+
+    it('should send 200 OK when first entry of user images is updated', async () =>{
+      await userController.updateImages(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK)
+      expect(res.send.mock.calls[0][0].images[0]).toBe(req.files[0].path)
+    })
+
+    it('Should throw an error if path is invalid', async () => {
+      user.images = ['invalidPath.png']
+      jest.mock('fs')
+      fs.unlink = jest.fn();
+      fs.unlink.mockImplementationOnce((filename, callback) => {
+        callback(Error);
+      });
+
+      try {
+        await userController.updateImages(req, res, next)
+      }
+      catch (e) {
+        expect(e).toBe(Error);
+      }
+    });
   })
 });

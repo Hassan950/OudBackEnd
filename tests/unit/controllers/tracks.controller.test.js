@@ -76,7 +76,7 @@ describe('Tracks controller', () => {
       mockingoose(Track)
         .toReturn(track, 'findOneAndDelete')
         .toReturn(track, 'findOne');
-      fs.unlink = jest.fn();
+      fs.unlink = jest.fn().mockRejectedValue(false);
       mockingoose(Artist).toReturn(track.artists, 'find');
       track.artists[0] = artistIds[1];
       // A valid ID that belongs to an object
@@ -195,6 +195,22 @@ describe('Tracks controller', () => {
       await tracksController.updateTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it("Should throw an error with a status code of 400 if the artists doesn't exist", async () => {
+      mockingoose(Track)
+        .toReturn(track, 'findOne')
+        .toReturn(track, 'findOneAndUpdate');
+      mockingoose(Artist).toReturn([], 'find');
+      track.artists[0] = artistIds[2];
+      // An ID of a track object
+      req.params.id = trackIds[2];
+      req.user = { artist: artistIds[2]._id };
+      req.body = {
+        name: 'both are updated',
+        artists: track.artists
+      };
+      await tracksController.updateTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
   });
   describe('setTrack', () => {
     it('Should return album with new path with status code 200', async () => {
@@ -207,7 +223,7 @@ describe('Tracks controller', () => {
       req.file = {
         path: 'lol.mp3'
       };
-      fs.unlink = jest.fn().mockResolvedValue();
+      fs.unlink = jest.fn().mockRejectedValue(false);
       fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
