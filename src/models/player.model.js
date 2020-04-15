@@ -57,7 +57,7 @@ const playerSchema = mongoose.Schema({
   }
 });
 
-playerSchema.index({ userId: 1 });
+playerSchema.index({ userId: 1 }, { unique: true });
 
 const Player = mongoose.model('Player', playerSchema);
 

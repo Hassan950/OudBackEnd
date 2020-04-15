@@ -168,9 +168,14 @@ userSchema.pre('save', function (next) {
 
 userSchema.post('save', async function (doc) {
   if (doc.newUser) {
-    await Player.create({
-      userId: doc._id
-    });
+    try {
+      await Player.create({
+        userId: doc._id
+      });
+    } catch (error) {
+      // if the user has player already
+    }
+
     doc.newUser = undefined;
   }
 });
