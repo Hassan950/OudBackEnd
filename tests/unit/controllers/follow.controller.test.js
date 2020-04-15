@@ -134,11 +134,10 @@ describe('Following controller', () => {
       user = new User({
         displayName: 'test',
         verified: true,
-        images: []
+        images: [],
+        type: 'User'
       });
-      artist = new Artist({
-        user: user._id
-      });
+      artist = new Artist();
 
       userFollowing = new Followings({
         userId: '5e6ba8747d3eda317003c976',
@@ -155,11 +154,8 @@ describe('Following controller', () => {
         userId: '5e6ba8747d3eda317003c976',
         followedId: {
           _id: artist._id,
-          user: {
-            _id: user._id,
-            images: user.images,
-            displayName: user.displayName
-          }
+          images: user.images,
+          displayName: user.displayName
         },
         type: 'Artist'
       });
@@ -191,11 +187,12 @@ describe('Following controller', () => {
 
     it('Should return a list of followed artists of the logged in user wrapped in paging object', async () => {
       req.url = 'me';
+      console.log(artistFollowing);
       const doc = {
         _id: artistFollowing.followedId._id,
-        displayName: artistFollowing.followedId.user.displayName,
+        displayName: artistFollowing.followedId.displayName,
         type: artistFollowing.followedId.type,
-        images: artistFollowing.followedId.user.images
+        images: artistFollowing.followedId.images
       };
       mockingoose(Followings).toReturn([artistFollowing], 'find');
       mockingoose(Followings).toReturn(2, 'countDocuments');
@@ -240,9 +237,9 @@ describe('Following controller', () => {
       req.params.userId = req.user._id;
       const doc = {
         _id: artistFollowing.followedId._id,
-        displayName: artistFollowing.followedId.user.displayName,
+        displayName: artistFollowing.followedId.displayName,
         type: artistFollowing.followedId.type,
-        images: artistFollowing.followedId.user.images
+        images: artistFollowing.followedId.images
       };
       mockingoose(Followings).toReturn([artistFollowing], 'find');
       mockingoose(User).toReturn(req.user, 'findOne');

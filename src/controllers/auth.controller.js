@@ -1,4 +1,4 @@
-const { userService, authService, emailService, playerService } = require('../services');
+const { userService, authService, emailService } = require('../services');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 const logger = require('../config/logger');
@@ -109,7 +109,7 @@ exports.requestVerify = async (req, res, next) => {
  * @todo return 401 if set role to premium without credit or atrtist without request
  */
 exports.signup = async (req, res, next) => {
-  if (req.body.password != req.body.passwordConfirm) {
+  if (req.body.password !== req.body.passwordConfirm) {
     return next(new AppError('Please confirm your password', httpStatus.BAD_REQUEST));
   }
   const newUser = await userService.createUser(req.body);
@@ -119,13 +119,11 @@ exports.signup = async (req, res, next) => {
   // generate verify token
   const verifyToken = authService.createVerifyToken(newUser);
 
-  // Create Player and save user
-  await Promise.all([
-    newUser.save({
-      validateBeforeSave: false
-    }),
-    playerService.createPlayer(newUser._id)
-  ]);
+  // save user
+  await newUser.save({
+    validateBeforeSave: false
+  });
+
   // use mail to verify user
   const verifyURL = `${req.protocol}://${req.get(
     'host'
@@ -172,8 +170,10 @@ exports.login = async (req, res, next) => {
   if (!user) {
     return next(new AppError('Incorrect email or password!', httpStatus.UNAUTHORIZED));
   }
+  user.lastLogin = new Date();
 
-  user.password = undefined;
+  await user.save();
+
   createTokenAndSend(user, res);
 };
 
@@ -197,7 +197,7 @@ exports.updatePassword = async (req, res, next) => {
     return next(new AppError('PLease Authentcate first', httpStatus.INTERNAL_SERVER_ERROR));
   }
   // get user with a password
-  if (password != passwordConfirm) {
+  if (password !== passwordConfirm) {
     return next(new AppError('Please confirm your password', httpStatus.BAD_REQUEST));
   }
 
