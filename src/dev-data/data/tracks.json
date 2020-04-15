@@ -40,5 +40,11 @@
     "name":"Khaenah",
     "artists":["5e907db0a0645f4571607605"],
     "album":"5e909be7cfe5b521a0ccf3e8"
+  },
+  {
+    "_id":"5e909be7cfe5b521a0ccf3f3",
+    "name":"New Rules",
+    "artists":["5e907db0a0645f4571607606"],
+    "album":"5e909be7cfe5b521a0ccf3e9"
   }
 ]
