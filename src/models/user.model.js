@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
+const { Player } = require('../models/player.model');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -121,6 +122,9 @@ const userSchema = mongoose.Schema(
       type: Date,
       select: false
     },
+    lastLogin: {
+      type: Date
+    },
     queues: {
       type: [{
         type: mongoose.Types.ObjectId,
@@ -155,6 +159,20 @@ userSchema.pre('save', function (next) {
 
   this.passwordChangedAt = Date.now();
   next();
+});
+
+userSchema.pre('save', function (next) {
+  if (this.isNew) this.newUser = true; // if the user is new make newUser to true
+  next();
+});
+
+userSchema.post('save', async function (doc) {
+  if (doc.newUser) {
+    await Player.create({
+      userId: doc._id
+    });
+    doc.newUser = undefined;
+  }
 });
 
 
