@@ -11,7 +11,8 @@ const {
   Category,
   Playlist,
   Queue,
-  PlayHistory
+  PlayHistory,
+  Normal
 } = require('../../models');
 
 const DB = config.get('db');
@@ -57,7 +58,7 @@ const queues = JSON.parse(
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
-    await User.create(users);
+    await Normal.create(users);
     await Genre.create(genres);
     await Artist.create(artists);
     await Album.create(albums);

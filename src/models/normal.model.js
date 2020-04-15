@@ -28,6 +28,6 @@ const normalSchema = mongoose.Schema(
   }
 );
 
-const Normal = User.discriminator('Normal', normalSchema);
+const Normal = User.discriminator('Normal', normalSchema, 'User');
 
 module.exports = { Normal, normalSchema };
