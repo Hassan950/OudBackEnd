@@ -28,7 +28,6 @@ describe('User Controllers', () => {
       expect(res.status).toHaveBeenCalledWith(httpStatus.OK);
       expect(res.send.mock.calls[0][0]).toHaveProperty('_id');
       expect(res.send.mock.calls[0][0]).toHaveProperty('displayName');
-      expect(res.send.mock.calls[0][0]).toHaveProperty('role');
     });
   });
 

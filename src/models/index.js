@@ -1,4 +1,5 @@
 const { User, userSchema } = require('./user.model');
+const { Normal, normalSchema } = require('./normal.model');
 const { Artist, artistSchema } = require('./artist.model');
 const { Track, trackSchema } = require('./track.model');
 const { Album, albumSchema } = require('./album.model');
@@ -19,6 +20,8 @@ const {
 module.exports = {
   User,
   userSchema,
+  Normal,
+  normalSchema,
   Artist,
   artistSchema,
   Track,

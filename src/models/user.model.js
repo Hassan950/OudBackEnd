@@ -48,38 +48,20 @@ const userSchema = mongoose.Schema(
       minlength: [8, 'Please confirm your password!'],
       select: false,
       validate: {
-        validator: function (el) {
+        validator: function(el) {
           return el === this.password;
         },
         message: 'Passwords are not the same'
       }
     },
-    role: {
-      type: String,
-      enum: ['free', 'premium', 'artist'],
-      default: 'free'
-    },
-    artist: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Artist',
-      default: undefined
-    },
     birthDate: {
       type: Date,
       validate: {
-        validator: function (bd) {
+        validator: function(bd) {
           return moment().diff(bd, 'years') > 10;
         },
         message: 'You must be at least 10 years old'
       }
-    },
-    credit: {
-      type: Number,
-      default: 0
-    },
-    plan: {
-      type: Date,
-      default: null
     },
     images: {
       type: [
@@ -93,7 +75,7 @@ const userSchema = mongoose.Schema(
         'uploads\\users\\default-Cover.jpg'
       ],
       validate: {
-        validator: function (imgs) {
+        validator: function(imgs) {
           return imgs && imgs.length > 0;
         }
       },
@@ -150,13 +132,6 @@ const userSchema = mongoose.Schema(
     passwordResetExpires: {
       type: Date,
       select: false
-    },
-    queues: {
-      type: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Queue'
-      }],
-      select: false
     }
   },
   {
@@ -165,15 +140,13 @@ const userSchema = mongoose.Schema(
     },
     toObject: {
       virtuals: true
-    }
+    },
+    discriminatorKey: 'type'
   }
 );
 
-userSchema.virtual('type').get(function () {
-  return 'user';
-});
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function(next) {
   if (!this.password || !this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 8);
@@ -182,20 +155,15 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now();
   next();
 });
 
-// userSchema.pre('remove', function(next) {
-//   PlaylistFollowings.remove({ userId: this._id }).exec();
-//   Followings.remove({ userId: this._id }).exec();
-//   next();
-// });
 
-userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function(user, JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
