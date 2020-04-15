@@ -165,7 +165,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/artists/{artistId}':
+  /artists/{artistId}:
     get:
       tags:
         - Artists
@@ -188,11 +188,9 @@ paths:
                 $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/artists/{artistId}/albums':
+  /artists/{artistId}/albums:
     get:
       tags:
         - Artists
@@ -258,11 +256,9 @@ paths:
                     description: The maximum number of items available to return
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/artists/{artistId}/top-tracks':
+  /artists/{artistId}/top-tracks:
     get:
       tags:
         - Artists
@@ -293,11 +289,9 @@ paths:
                       $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/artists/{artistId}/related-artists':
+  /artists/{artistId}/related-artists:
     get:
       security:
         - bearerAuth: []
@@ -330,8 +324,6 @@ paths:
                       $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   /artists:
@@ -410,7 +402,7 @@ paths:
           $ref: '#/components/responses/InvalidId'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  '/playlists/{playlistId}/followers/contains':
+  /playlists/{playlistId}/followers/contains:
     get:
       tags:
         - Follow
@@ -813,7 +805,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/playlists/{playlistId}/followers':
+  /playlists/{playlistId}/followers:
     put:
       tags:
         - Follow
@@ -979,7 +971,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  '/users/{userId}':
+  /users/{userId}:
     get:
       tags:
         - Users Profile
@@ -1027,15 +1019,24 @@ paths:
                   items:
                     type: string
                   description: >-
-                    A list of the genres used to classify the album. example:
-                    `"Prog Rock"`, `"Post-Grunge"`. (If not yet classified, the
-                    array is empty.)"
+                    A list of the genre ID's of the genres of the artist. 
                 name:
                   type: string
                   description: The name of the artist.
+                displayName:
+                  type: string
+                  description: The name that will be displayed on his/her profile
                 bio:
                   type: string
                   description: a biography or short biographical profile of the artist.
+                email: 
+                  type: string
+                  description: An email for contact
+              required:
+              - genres
+              - email
+              - name
+              - displayName
       responses:
         '204':
           description: the resources are created and the response body is empty.
@@ -1047,7 +1048,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/albums/{id}':
+  /albums/{id}:
     get:
       tags:
         - Albums
@@ -1072,9 +1073,7 @@ paths:
                 $ref: '#/components/schemas/Album'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  '/me/artists/albums/{id}':
+  /me/artists/albums/{id}:
     delete:
       tags:
         - Albums
@@ -1137,9 +1136,7 @@ paths:
                 genres:
                   type: array
                   description: >-
-                    A list of the genres used to classify the album. i.e. "Prog
-                    Rock", "PostGrunge". (If not yet classified, the array is
-                    empty.)
+                    A list of the genre ID's of the genres used to classify the album.
                   items:
                     type: string
                 album_type:
@@ -1198,7 +1195,7 @@ paths:
                       $ref: '#/components/schemas/Album'
         '400':
           $ref: '#/components/responses/InvalidId'
-  '/albums/{id}/tracks':
+  /albums/{id}/tracks:
     get:
       tags:
         - Albums
@@ -1254,11 +1251,9 @@ paths:
                     description: The maximum number of items available to return
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/tracks/{id}':
+  /tracks/{id}:
     get:
       tags:
         - Tracks
@@ -1309,8 +1304,6 @@ paths:
                 $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -1455,9 +1448,7 @@ paths:
                 genres:
                   type: array
                   description: >-
-                    A list of the genres used to classify the album. i.e. "Prog
-                    Rock", "PostGrunge". (If not yet classified, the array is
-                    empty.)
+                    A list of the genre ID's of the genres used to classify the album.
                   items:
                     type: string
                 album_type:
@@ -1492,7 +1483,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/me/artists/albums/{id}/images':
+  /me/artists/albums/{id}/images:
     post:
       tags:
         - Albums
@@ -1670,7 +1661,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/me/artists/albums/{id}/release':
+  /me/artists/albums/{id}/release:
     patch:
       security:
         - bearerAuth: []
@@ -1709,44 +1700,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  /me/artists/images:
-    post:
-      tags:
-        - Artists
-      summary: Update artist images
-      description: Updates the current artist images
-      security:
-        - bearerAuth: []
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                profileImage:
-                  type: string
-                  format: binary
-                coverImage:
-                  type: string
-                  format: binary
-            encoding:
-              profileImage:
-                contentType: 'image/png, image/jpeg'
-              coverImage:
-                contentType: 'image/png, image/jpeg'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artist'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
   /me/artists/bio:
     patch:
       tags:
@@ -1777,7 +1730,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  /me/artists/popularsongs:
+  /me/artists/top-tracks:
     patch:
       tags:
         - Artists
@@ -1789,10 +1742,15 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                type: string
-              description: ID's of the tracks sorted
+              type: object
+              properties:
+                tracks:
+                  type: array
+                  items:
+                    type: string
+                  description: ID's of the tracks sorted
+              required: 
+              - tracks
       responses:
         '200':
           description: successful operation
@@ -1806,7 +1764,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/me/artists/albums/{id}/tracks':
+  /me/artists/albums/{id}/tracks:
     post:
       tags:
         - Albums
@@ -2250,7 +2208,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/browse/categories/{categoryId}':
+  /browse/categories/{categoryId}:
     get:
       security:
         - bearerAuth: []
@@ -2289,7 +2247,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/browse/categories/{category_id}/playlists':
+  /browse/categories/{category_id}/playlists:
     get:
       security:
         - bearerAuth: []
@@ -2496,7 +2454,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}':
+  /playlists/{playlist_id}:
     get:
       security:
         - bearerAuth: []
@@ -2614,7 +2572,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}/tracks':
+  /playlists/{playlist_id}/tracks:
     delete:
       security:
         - bearerAuth: []
@@ -2935,7 +2893,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}/images':
+  /playlists/{playlist_id}/images:
     get:
       security:
         - bearerAuth: []
@@ -3030,7 +2988,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}/tracks/Replace':
+  /playlists/{playlist_id}/tracks/Replace:
     put:
       security:
         - bearerAuth: []
@@ -3083,7 +3041,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/users/{user_id}/playlists':
+  /users/{user_id}/playlists:
     post:
       security:
         - bearerAuth: []
@@ -3261,7 +3219,7 @@ paths:
           $ref: '#/components/responses/Login'
         '400':
           $ref: '#/components/responses/BadRequest'
-  '/users/verify/{token}':
+  /users/verify/{token}:
     patch:
       tags:
         - UsersAuth
@@ -3302,7 +3260,7 @@ paths:
           $ref: '#/components/responses/TokenSentToEmail'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/users/resetPassword/{token}':
+  /users/resetPassword/{token}:
     patch:
       tags:
         - UsersAuth
@@ -4024,25 +3982,17 @@ components:
         _id:
           type: string
           description: The unique ID of the Artist
-        followersCount:
-          type: integer
-          description: Information about the number of followers of the artist.
-          minimum: 0
         genres:
           type: array
           items:
-            type: string
-          description: >-
-            A list of the genres the artist is associated with. For example:
-            `"Prog Rock"` , `"Post-Grunge"`. (If not yet classified, the array
-            is empty.)
+            $ref: '#/components/schemas/Genre'
         images:
           type: array
           items:
             type: string
             format: url
           description: 'The source URL of the image (Profile, Cover).'
-        name:
+        displayName:
           type: string
           description: The name of the artist.
         bio:
@@ -4063,16 +4013,18 @@ components:
         _id:
           type: string
           description: The unique ID of the Artist
-        name:
+        displayName:
           type: string
           description: The name of the artist.
         type:
           type: string
           description: 'The object type: "artist"'
-        image:
-          type: string
-          format: url
-          description: The Artist profile picture
+        images:
+          type: array
+          items:
+            type: string
+            format: url
+          description: 'The source URL of the image (Profile, Cover).'
     AlbumSimple:
       type: object
       description: Album Simple Object
@@ -4327,6 +4279,10 @@ components:
         name:
           type: string
           description: name of the genre
+      description: >-
+            A list of the genres the artist is associated with. For example:
+            `"Prog Rock"` , `"Post-Grunge"`. (If not yet classified, the array
+            is empty.)
     Album:
       type: object
       properties:
@@ -4348,10 +4304,7 @@ components:
         genres:
           type: array
           items:
-            type: string
-          description: >-
-            A list of the genres used to classify the album. i.e. `"Prog Rock"`,
-            `"PostGrunge"`. (If not yet classified, the array is empty.)
+            $ref: '#/components/schemas/Genre'
         image:
           type: string
           description: The source url of the image
