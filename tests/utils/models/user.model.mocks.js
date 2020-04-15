@@ -14,6 +14,7 @@ const createFakeUser = () => {
     email: faker.internet.email(),
     password: password,
     passwordConfirm: password,
+    role: 'free',
     birthDate: faker.date.between(
       moment().subtract(11, 'years'),
       moment().subtract(150, 'years')

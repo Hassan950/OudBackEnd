@@ -53,7 +53,7 @@ exports.checkFollowingsPlaylist = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 
-exports.setUserId = async (req, res, next) => {
+exports.setUserId = (req, res, next) => {
   req.params.userId = String(req.user._id);
   next();
 };
@@ -79,7 +79,7 @@ exports.getUserFollowed = async (req, res, next) => {
   const list = await followService.getUserFollowed(
     req.query,
     req.params.userId
-    );
+  );
   res.status(httpStatus.OK).json({
     items: list.result,
     limit: req.query.limit,
