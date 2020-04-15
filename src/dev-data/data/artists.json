@@ -490,17 +490,16 @@
     ],
     "verified": true,
     "queues": [],
-    "displayName": "Dua Lipa",
-    "email": "DuaLipa123@gmail.com",
+    "displayName": "Tarek El Sheikh",
+    "email": "TarekElSheikh123@gmail.com",
     "password": "12341234",
     "passwordConfirm": "12341234",
-    "country": "GB",
-    "username": "DuaLipa123",
+    "country": "EG",
+    "username": "Tarek El Sheikh",
     "genres": [
-      "5e9083c24c798428f45b322f",
-      "5e9083c24c798428f45b3232"
+      "5e962e04da7d8d40d02a997b"
     ],
-    "bio": "New Rules made her the youngest female solo artist to reach one billion views on YouTube..."
+    "bio": ""
   },
   {
     "_id": "5e907db0a0645f5581607612",
