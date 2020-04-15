@@ -1543,22 +1543,18 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: IDs
+        - name: Idds
           in: query
           required: true
-          description: the IDs of the Albums to be saved
+          description: comma separated ids of the Albums to be saved
           schema:
             type: array
             items:
               type: string
               maximum: 50
       responses:
-        '200':
+        '201':
           description: Album Saved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Album'
         '400':
           $ref: '#/components/responses/InvalidId'
         '401':
@@ -1574,10 +1570,10 @@ paths:
         - bearerAuth: []
       summary: Remove Saved Albums for Current User
       parameters:
-        - name: IDs
+        - name: Ids
           in: query
           required: true
-          description: the IDs of the Albums to be removed
+          description: comma separated ids of the Albums to be deleted
           schema:
             type: array
             items:
@@ -2111,10 +2107,10 @@ paths:
         - bearerAuth: []
       summary: Save Tracks for Current User
       parameters:
-        - name: IDs
+        - name: Ids
           in: query
           required: true
-          description: the IDs of the Tracks to be saved
+          description: comma separated Ids of the Tracks to be saved
           schema:
             type: array
             items:
@@ -2123,31 +2119,6 @@ paths:
       responses:
         '200':
           description: Tracks Saved
-          content:
-            application/json:
-              schema:
-                description: >-
-                  The saved tracks inside a paging object. The offset-based
-                  paging object is a container for a set of objects.
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/SavedTrack'
-                  limit:
-                    type: integer
-                    description: >-
-                      The maximum number of items in the response (as set in the
-                      query or by default).
-                  offset:
-                    type: integer
-                    description: >-
-                      The offset of the items returned (as set in the query or
-                      by default).
-                  total:
-                    type: integer
-                    description: The maximum number of items available to return
         '400':
           description: Invalid ID
           content:
@@ -2855,17 +2826,17 @@ paths:
             schema:
               type: object
               properties:
-                range_start:
+                rangeStart:
                   type: integer
                   description: The position of the first track to be reordered
-                range_length:
+                rangeLength:
                   type: integer
                   description: >-
                     The amount of tracks to be reordered.The range of tracks to
                     be reordered begins from the range_start position, and
                     includes the range_length subsequent tracks
                   default: 1
-                insert_before:
+                insertBefore:
                   type: integer
                   description: >-
                     The position where the tracks should be inserted.To reorder
@@ -4499,9 +4470,9 @@ components:
           description: the user ID who owns the Playlist
         tracks:
           type: array
-          description: tracks ids in the playlist
+          description: Information about the tracks of the Playlist
           items:
-            type: string
+            $ref: '#/components/schemas/Track'
         collaborative:
           type: boolean
           description: true if user allows other users to modify the Playlist
