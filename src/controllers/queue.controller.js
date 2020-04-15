@@ -216,7 +216,7 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
-  const queue = await queueService.getQueueById(queues[0]);
+  const queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
   if (!queue || !queue.tracks) {
     return next(new AppError('Queue is not found', 404));
@@ -230,6 +230,11 @@ exports.editPosition = async (req, res, next) => {
   else {
     trackIndex = queue.tracks.indexOf(trackId);
 
+    // if shuffle mode
+    if (queue.shuffleList && queue.shuffleList.length) {
+      trackIndex = queue.shuffleList.indexOf(trackIndex);
+    }
+
     if (trackIndex === -1) {
       return next(new AppError(`Track with trackId=${trackId} is not found`, 404));
     }
@@ -239,7 +244,17 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError(`newIndex=${newIndex} is wrong`, 400));
   }
 
-  queue.tracks.move(trackIndex, newIndex);
+  if (queue.shuffleList && queue.shuffleList.length) { // if shuffle mode
+    queue.shuffleList.move(trackIndex, newIndex);
+
+    if (queue.shuffleIndex === trackIndex) queue.shuffleIndex = newIndex;
+
+    queue.currentIndex = queue.shuffleList[queue.shuffleIndex];
+  } else {
+    queue.tracks.move(trackIndex, newIndex);
+
+    if (queue.currentIndex === trackIndex) queue.currentIndex = newIndex;  // if we edit the current track position
+  }
 
   await queue.save();
 
