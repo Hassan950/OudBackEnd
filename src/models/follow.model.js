@@ -8,7 +8,7 @@ const followingsSchema = mongoose.Schema({
   },
   followedId: {
     type: mongoose.Types.ObjectId,
-    refPath: 'type',
+    ref: 'User',
     required: true
   },
   type: {

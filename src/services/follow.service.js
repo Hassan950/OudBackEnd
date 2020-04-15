@@ -2,7 +2,6 @@ const {
   Followings,
   PlaylistFollowings,
   User,
-  Artist,
   Playlist
 } = require('../models');
 const _ = require('lodash');
@@ -22,17 +21,17 @@ exports.checkUser = async id => {
 };
 
 /**
- * A utility function that get followed users for the passed user id
+ * A utility function that get followed users/artists for the passed user id
  *
  * @function
  * @author Hassan Mohamed
- * @summary Get Followed User for the id passed
+ * @summary Get Followed User/artist for the id passed
  * @param {String} id - The id of the user
  * @param {object} query - the query parameters
  * @returns {Array} Array of users followed
  */
 
-const getFollowedUsers = async (query, id) => {
+const getFollowedUtil = async (query, id) => {
   const followings = await Followings.find({
     userId: id,
     type: query.type
@@ -44,41 +43,6 @@ const getFollowedUsers = async (query, id) => {
 
   return _.map(followings, following => {
     return following.followedId;
-  });
-};
-
-/**
- * A utility function that get followed artists for the passed user id
- *
- * @function
- * @author Hassan Mohamed
- * @summary Get Followed User for the id passed
- * @param {String} id - The id of the user
- * @param {object} query - the query parameters
- * @returns {Array} Array of artists followed
- */
-
-const getFollowedArtists = async (query, id) => {
-  const followings = await Followings.find({
-    userId: id,
-    type: query.type
-  })
-    .select('-_id')
-    .populate({
-      path: 'followedId',
-      populate: { path: 'user', select: 'displayName images' },
-      select: 'user'
-    })
-    .skip(query.offset)
-    .limit(query.limit);
-  return _.map(followings, following => {
-    const followedId = following.followedId;
-    return {
-      _id: followedId._id,
-      displayName: followedId.user.displayName,
-      type: followedId.type,
-      images: followedId.user.images
-    };
   });
 };
 
@@ -157,15 +121,12 @@ exports.checkFollowingsPlaylist = async (ids, playlistId, user) => {
  */
 
 exports.getUserFollowed = async (query, id) => {
-  const resultPromise =
-    query.type === 'Artist'
-      ? getFollowedArtists(query, id)
-      : getFollowedUsers(query, id);
-
+  const resultPromise = getFollowedUtil(query, id);
   const totalPromise = Followings.countDocuments({
     userId: id,
     type: query.type
   }).exec();
+  
   const [result, total] = await Promise.all([resultPromise, totalPromise]);
   return { result, total };
 };
@@ -212,13 +173,8 @@ exports.getUserFollowers = async (query, id) => {
  */
 
 exports.followUser = async (ids, type, user) => {
-  let users;
   ids = _.uniq(ids);
-  if (type === 'Artist') {
-    users = await Artist.find({ _id: ids });
-  } else {
-    users = await User.find({ _id: ids });
-  }
+  const users = await User.find({ _id: ids, type: type });
   if (users.length < ids.length) {
     return null;
   }
@@ -245,16 +201,8 @@ exports.followUser = async (ids, type, user) => {
  */
 
 exports.unfollowUser = async (ids, type, user) => {
-  let users;
   ids = _.uniq(ids);
-  if (type === 'Artist') {
-    users = await Artist.find({ _id: ids });
-  } else {
-    users = await User.find({ _id: ids });
-  }
-  if (users.length < ids.length) {
-    return null;
-  }
+  const users = await User.find({ _id: ids, type: type });
   await Followings.deleteMany({
     userId: user._id,
     followedId: users,

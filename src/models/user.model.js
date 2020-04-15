@@ -106,18 +106,6 @@ const userSchema = mongoose.Schema(
       type: String,
       select: false
     },
-    passwordChangedAt: {
-      type: Date,
-      select: false
-    },
-    passwordResetToken: {
-      type: String,
-      select: false
-    },
-    passwordResetExpires: {
-      type: Date,
-      select: false
-    },
     verifyToken: {
       type: String,
       select: false
@@ -136,6 +124,13 @@ const userSchema = mongoose.Schema(
     },
     lastLogin: {
       type: Date
+    },
+    queues: {
+      type: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Queue'
+      }],
+      select: false
     }
   },
   {

@@ -129,6 +129,7 @@ const createPlayer = async (userId) => {
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   player.item = track;
   player.progressMs = 0;
+  player.isPlaying = true;
   player.currentlyPlayingType = 'track';
   // add context to player
   if (context && context.type) {
@@ -158,20 +159,51 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
  * @returns {Document} player
  */
 const startPlayingFromOffset = async (player, queue, offset, queues) => {
-  if (offset.position) {
-    if (queues[0].tracks.length <= offset.position) {
-      player.item = queue.tracks[0];
-    } else {
-      player.item = queue.tracks[offset.position];
+  if (!queue) {
+    queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+  }
+
+  if (offset.position !== undefined) {
+    // shuffle mode
+    if (queue.shuffleList && queue.shuffleList.length) {
+      if (queue.shuffleList.length <= offset.position) {
+        queue.shuffleIndex = 0;
+      } else {
+        queue.shuffleIndex = offset.position;
+      }
+
+      queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // set current index
+    } else { // normal mode
+      if (queue.tracks.length <= offset.position) {
+        queue.currentIndex = 0;
+      } else {
+        queue.currentIndex = offset.position;
+      }
     }
+
+    player.item = queue.tracks[queue.currentIndex]; // set player item
   } else if (offset.uri) {
     const trackId = offset.uri.split(':')[2];
-    const pos = await queueService.getTrackPosition(queues[0], trackId);
-    if (pos === -1) {
-      player.item = queue.tracks[0];
+    let pos = await queueService.getTrackPosition(queues[0], trackId);
+    // shuffle mode
+    if (queue.shuffleList && queue.shuffleList.length) {
+      pos = queue.shuffleList.indexOf(pos); // get position in queue shuffle list
+      if (pos === -1) {
+        queue.shuffleIndex = 0;
+      } else {
+        queue.shuffleIndex = pos;
+      }
+
+      queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // set current index
     } else {
-      player.item = queue.tracks[pos];
+      if (pos === -1) {
+        queue.currentIndex = 0;
+      } else {
+        queue.currentIndex = pos;
+      }
     }
+
+    player.item = queue.tracks[queue.currentIndex]; // set player item
   }
 
   return player;
