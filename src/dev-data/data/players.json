@@ -106,30 +106,6 @@
     "userId": "5e907db0a0645f4571607606"
   },
   {
-    "_id": "5e90f5d59f9c887828eec160",
-    "context": {
-      "type": "unknown"
-    },
-    "progressMs": null,
-    "isPlaying": false,
-    "shuffleState": false,
-    "repeatState": "off",
-    "currentlyPlayingType": "unknown",
-    "userId": "5e907db0a0645f4571607607"
-  },
-  {
-    "_id": "5e90f5d59f9c887828eec161",
-    "context": {
-      "type": "unknown"
-    },
-    "progressMs": null,
-    "isPlaying": false,
-    "shuffleState": false,
-    "repeatState": "off",
-    "currentlyPlayingType": "unknown",
-    "userId": "5e907db0a0645f4571607608"
-  },
-  {
     "_id": "5e90f5d59f9c887828eec162",
     "context": {
       "type": "unknown"
