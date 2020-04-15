@@ -16,8 +16,12 @@
     "passwordConfirm": "12341234",
     "country": "US",
     "username": "Taylor",
-    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f", "5e9083c24c798428f45b3230"],
-    "bio":"Taylor Swift is that rarest of pop phenomena: a superstar who managed to completely cross over from country to the mainstream."
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "bio": "Taylor Swift is that rarest of pop phenomena: a superstar who managed to completely cross over from country to the mainstream."
   },
   {
     "_id": "5e907dafa0645f45716075ff",
@@ -36,8 +40,12 @@
     "passwordConfirm": "12341234",
     "country": "US",
     "username": "Miley",
-    "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f", "5e9083c24c798428f45b3230"],
-    "bio":"Miley Cyrus is one of the most influential artists in pop culture."
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "bio": "Miley Cyrus is one of the most influential artists in pop culture."
   },
   {
     "_id": "5e907dafa0645f4571607601",
@@ -56,8 +64,11 @@
     "passwordConfirm": "12341234",
     "country": "GB",
     "username": "edsheeran",
-    "genres": ["5e9083c24c798428f45b322f", "5e9083c24c798428f45b3232"],
-    "bio":" a singer/songwriter who seems to acknowledge no boundaries between styles or eras"
+    "genres": [
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": " a singer/songwriter who seems to acknowledge no boundaries between styles or eras"
   },
   {
     "_id": "5e907dafa0645f4571607602",
@@ -76,7 +87,12 @@
     "passwordConfirm": "12341234",
     "country": "AU",
     "username": "siasia",
-    "genres": ["5e9083c24c798428f45b322f", "5e9083c24c798428f45b322c","5e962e04da7d8d40d02a9975","5e962e04da7d8d40d02a9977"],
+    "genres": [
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b322c",
+      "5e962e04da7d8d40d02a9975",
+      "5e962e04da7d8d40d02a9977"
+    ],
     "bio": "i am sia i was born from the bumhole of a unicorn named steve."
   },
   {
@@ -96,8 +112,12 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "saaaad",
-    "genres": ["5e962e04da7d8d40d02a9979","5e962e04da7d8d40d02a9976","5e9083c24c798428f45b322e"],
-    "bio":"Batee5a"
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a9976",
+      "5e9083c24c798428f45b322e"
+    ],
+    "bio": "Batee5a"
   },
   {
     "_id": "5e907db0a0645f4571607604",
@@ -114,8 +134,12 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "mounir",
-    "genres": ["5e9083c24c798428f45b322e", "5e9083c24c798428f45b3235", "5e962e04da7d8d40d02a9979"],
-    "bio":"One of the greatest Egyptian pop superstars of his time"
+    "genres": [
+      "5e9083c24c798428f45b322e",
+      "5e9083c24c798428f45b3235",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "bio": "One of the greatest Egyptian pop superstars of his time"
   },
   {
     "_id": "5e907db0a0645f4571607605",
@@ -152,5 +176,309 @@
     "username": "dlipa",
     "genres": ["5e9083c24c798428f45b322c","5e9083c24c798428f45b322f","5e9083c24c798428f45b3232"],
     "bio":"arrived in style in 2015 with her self-titled, chart topping debut album which eclipsed 4 million sales worldwide with single sales reaching over 40 million."
+    },
+  {
+    "_id": "5e907db0a0645f4581607605",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Hassan Shakosh",
+    "email": "shakosh@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "shakosh123",
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f4581607606",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": false,
+    "queues": [],
+    "displayName": "Eminem",
+    "email": "eminem@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "eminem",
+    "genres": [
+      "5e962e04da7d8d50d03a997a",
+      "5e962e04da7d8d60d03a997b",
+      "5e962e04da7d8d70d03a997c",
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "The real slim shady"
+  },
+  {
+    "_id": "5e907db0a0645f4571707606",
+    "verified": true,
+    "queues": [],
+    "displayName": "Oka Wi Ortega",
+    "email": "oka_wi_ortega@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "okaortiga123",
+    "genres": [
+      "5e962e04da7d8d40d02a9973",
+      "5e962e04da7d8d40d02a9979"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f4581607607",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Cairokee",
+    "email": "cairokee@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "cairokee123",
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f4581607608",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": false,
+    "queues": [],
+    "displayName": "Adele",
+    "email": "adele@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "GB",
+    "username": "adele",
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": "Never mind, I'll find someone like you I wish nothing but the best for you too"
+  },
+  {
+    "verified": true,
+    "queues": [],
+    "displayName": "Hamza Namira",
+    "email": "hamza_namira@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "hamzanamira465",
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "bio": "Hailed as the “new Sayed Darwish”, Hamza Namira is one of the most celebrated faces of modern Arabic music. A songwriter, singer, and multi-instrumentalist from Egypt, Hamza has become a luminous expression of his homeland’s resilience and ambition."
+  },
+  {
+    "_id": "5e907db0a0645f4581607609",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Wegz",
+    "email": "wegza_wensh@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "wegzElWensh",
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f458160760a",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Marwan Pablo",
+    "email": "marwan_pabloyo@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "pabloooz",
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f458160760b",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Ariana Grande",
+    "email": "ariana_grande123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "ArianaGrande156948",
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ]
+  },
+  {
+    "_id": "5e907db0a0645f558160760b",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Ellie Goulding",
+    "email": "ellie_goulding1986@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "GB",
+    "username": "Ellie1986",
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": "I think sometimes it sounds like my voice is like, out of control... I have to really control it because it just kind of goes everywhere."
+  },
+  {
+    "_id": "5e907db0a0645f558160760c",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Travis Scott",
+    "email": "travis_scott123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "Travis123",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "HIGHEST IN THE ROOM"
+  },
+  {
+    "_id": "5e907db0a0645f558160760d",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Marwan Moussa",
+    "email": "maro123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "MaroMaro",
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "bio": "أهلا بيك في نهاية العالم"
+  },
+  {
+    "_id": "5e907db0a0645f558160760e",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Abyusif",
+    "email": "abyusif123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "abyusif123",
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "bio": "ABYUSIF"
+  },
+  {
+    "_id": "5e907db0a0645f558160760f",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Abd El Basset Hamouda",
+    "email": "abdelbaset123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "abdelbaset123",
+    "genres": [
+      "5e962e04da7d8d40d02a9976"
+    ],
+    "bio": "الجو هادي خالص والدنيا هس هس..."
+  },
+  {
+    "_id": "5e907db0a0645f5581607610",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Sadat",
+    "email": "sadat123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "sadat123",
+    "genres": [
+      "5e962e04da7d8d40d02a9976",
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "bio": "مزيكا القرن الواحد والعشرين"
   }
 ]
