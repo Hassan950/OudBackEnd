@@ -464,5 +464,164 @@
       "5e962e04da7d8d40d02a9973"
     ],
     "bio": "مزيكا القرن الواحد والعشرين"
+  },
+  {
+    "_id": "5e907db0a0645f5581607611",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Dua Lipa",
+    "email": "DuaLipa123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "GB",
+    "username": "DuaLipa123",
+    "genres": [
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": "New Rules made her the youngest female solo artist to reach one billion views on YouTube..."
+  },
+  {
+    "_id": "5e907db0a0645f5581607612",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Kendrick Lamar",
+    "email": "KendrickLamar123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "KendrickLamar",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "Indisputably the most acclaimed rap artist of his generation...."
+  },
+  {
+    "_id": "5e907db0a0645f5581607613",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Nas",
+    "email": "Nas123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "Nas",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "Nas has stood tall as one of New York City's leading rap voices..."
+  },
+  {
+    "_id": "5e907db0a0645f5581607614",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Umm Kulthum",
+    "email": "Umm Kulthum123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "Umm Kulthum",
+    "genres": [],
+    "bio": "Kulthum's repertoire went through many changes during her career. Although she initially sang songs that she learned from her father....."
+  },
+  {
+    "_id": "5e907db0a0645f5581607615",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Chance The Rapper",
+    "email": "ChanceTheRapper123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "ChanceTheRapper123",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "Chancelor Bennett made his mixtape debut in April 2012 with 10 Day, a wide-ranging effort recorded during..."
+  },
+  {
+    "_id": "5e907db0a0645f5581607616",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Playboi Carti",
+    "email": "PlayboiCarti123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "PlayboiCarti123",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "His early work was produced by Awful Records' in-house man Ethereal..."
+  },
+  {
+    "_id": "5e907db0a0645f5581607617",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "J Cole",
+    "email": "JCole123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "JCole123",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "Jermaine Lamarr Cole. Musician...."
+  },
+  {
+    "_id": "5e907db0a0645f5581607618",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "A$AP Rocky",
+    "email": "A$APRocky@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "A$APRocky",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "Championed by fellow rapper Drake and The Fader magazine before he released his first full-length project.."
   }
 ]
