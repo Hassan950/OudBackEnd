@@ -12,8 +12,7 @@ const mongoose = require('mongoose');
  * @returns null if the artist was not found
  */
 exports.findArtist = async id => {
-  const artist = await User.findById(id)
-    .select('displayName images genres bio popularSongs type')
+  const artist = await Artist.findById(id)
     .populate({
       path: 'popularSongs',
       populate: { path: 'album', select: '-tracks' }
@@ -32,8 +31,7 @@ exports.findArtist = async id => {
  * @returns {Array} An array containing the artists with nulls against unmatched ID's
  */
 exports.findArtists = async ids => {
-  const result = await User.find({ _id: ids })
-    .select('displayName images genres bio popularSongs type')
+  const result = await Artist.find({ _id: ids })
     .populate({
       path: 'popularSongs',
       populate: { path: 'album', select: '-tracks' }
@@ -55,7 +53,7 @@ exports.findArtists = async ids => {
  * @returns null if the artist has no popular songs or the ID doesn't belong to any artist
  */
 exports.getPopularSongs = async artistId => {
-  const artist = await User.findById(artistId)
+  const artist = await Artist.findById(artistId)
     .populate({
       path: 'popularSongs',
       populate: { path: 'album', select: '-tracks' }
@@ -63,12 +61,9 @@ exports.getPopularSongs = async artistId => {
     .select('popularSongs');
   if (!artist) return null;
   if (artist.popularSongs.length === 0) {
-    artist.popularSongs = await Track.find({ 'artists.0': artistId })
-      .sort({
-        views: -1
-      })
-      .populate({ path: 'album', select: '-tracks' })
-      .limit(10);
+    artist.popularSongs = await Track.find({ 'artists.0': artistId }).sort({
+      views: -1
+    }).populate({path: 'album', select: '-tracks'}).limit(10);
   }
   return artist.popularSongs;
 };

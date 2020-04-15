@@ -12,9 +12,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon ./src/server.js",
     "start-prod": "cross-env NODE_ENV=production node ./src/server.js",
-    "test": "jest --watchAll --verbose --coverage",
-    "delete":"node src/dev-data/data/import-data.js --delete",
-    "import":"node src/dev-data/data/import-data.js --import"
+    "test": "jest --watchAll --verbose --coverage"
   },
   "keywords": [
     "node",

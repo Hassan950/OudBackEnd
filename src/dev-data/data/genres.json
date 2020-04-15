@@ -1,122 +1,75 @@
 [
   {
-    "name": "dance pop",
-    "_id": "5e9083c24c798428f45b322c"
+    "name":"dance pop",
+    "_id":"5e9083c24c798428f45b322c"
   },
   {
-    "name": "pop rap",
-    "_id": "5e9083c24c798428f45b322d"
+    "name":"edm",
+    "_id":"5e9083c24c798428f45b322d"
   },
   {
-    "name": "arab pop",
-    "_id": "5e9083c24c798428f45b322e"
+    "name":"metropopolis",
+    "_id":"5e9083c24c798428f45b322e"
   },
   {
-    "name": "pop",
-    "_id": "5e9083c24c798428f45b322f"
+    "name":"pop",
+    "_id":"5e9083c24c798428f45b322f"
   },
   {
-    "name": "post-teen pop",
-    "_id": "5e9083c24c798428f45b3230"
+    "name":"post-teen pop",
+    "_id":"5e9083c24c798428f45b3230"
   },
   {
-    "name": "tropical house",
-    "_id": "5e9083c24c798428f45b3231"
+    "name":"tropical house",
+    "_id":"5e9083c24c798428f45b3231"
   },
   {
-    "name": "uk pop",
-    "_id": "5e9083c24c798428f45b3232"
+    "name":"uk pop",
+    "_id":"5e9083c24c798428f45b3232"
   },
   {
-    "name": "big room",
-    "_id": "5e9083c24c798428f45b3233"
+    "name":"big room",
+    "_id":"5e9083c24c798428f45b3233"
   },
   {
-    "name": "canadian electronic",
-    "_id": "5e9083c24c798428f45b3234"
+    "name":"canadian electronic",
+    "_id":"5e9083c24c798428f45b3234"
   },
   {
-    "name": "classic arab pop",
-    "_id": "5e9083c24c798428f45b3235"
+    "name":"electro house",
+    "_id":"5e9083c24c798428f45b3235"
   },
   {
-    "name": "progressive house",
-    "_id": "5e962e04da7d8d40d02a9970"
+    "name":"progressive house"
   },
   {
-    "name": "alternative dance",
-    "_id": "5e962e04da7d8d40d02a9971"
+    "name":"alternative dance"
   },
   {
-    "name": "dance-punk",
-    "_id": "5e962e04da7d8d40d02a9972"
+    "name":"dance-punk"
   },
   {
-    "name": "mahraganat",
-    "_id": "5e962e04da7d8d40d02a9973"
+    "name":"new rave"
   },
   {
-    "name": "egyptian hip-hop",
-    "_id": "5e962e04da7d8d40d02a9974"
+    "name":"egyptian hip-hop"
   },
   {
-    "name": "australian pop",
-    "_id": "5e962e04da7d8d40d02a9975"
+    "name":"girl group"
   },
   {
-    "name": "shaabi",
-    "_id": "5e962e04da7d8d40d02a9976"
+    "name":"detroit hip hop"
   },
   {
-    "name": "australian dance",
-    "_id": "5e962e04da7d8d40d02a9977"
+    "name":"g funk"
   },
   {
-    "name": "melodic rap",
-    "_id": "5e962e04da7d8d40d02a9978"
+    "name":"melodic rap"
   },
   {
-    "name": "egyptian pop",
-    "_id": "5e962e04da7d8d40d02a9979"
+    "name":"chicago rap"
   },
   {
-    "name": "detroit hip hop",
-    "_id": "5e962e04da7d8d50d03a997a"
-  },
-  {
-    "name": "g funk",
-    "_id": "5e962e04da7d8d60d03a997b"
-  },
-  {
-    "name": "hip hop",
-    "_id": "5e962e04da7d8d70d03a997c"
-  },
-  {
-    "name": "rap",
-    "_id": "5e962e04da7d8d80d03a997d"
-  },
-  {
-    "name": "british soul",
-    "_id": "5e962e04da7d8d40d03a997e"
-  },
-  {
-    "name": "electropop",
-    "_id": "5e962e04da7d8d40d02a997a"
-  },
-  {
-    "name": "egyptian hip hop",
-    "_id": "5e962e04da7d8d40d02a997b"
-  },
-  {
-    "name": "arab alternative",
-    "_id": "5e962e04da7d8d40d02a997c"
-  },
-  {
-    "name": "edm",
-    "_id": "5e962e04ca7d8d40d02a997c"
-  },
-  {
-    "name": "metropopolis",
-    "_id": "5e962e04ca7d8d40d02a997d"
+    "name":"electropop"
   }
 ]

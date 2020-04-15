@@ -100,6 +100,28 @@ describe('User model', () => {
     })
   })
 
+  describe('user model - role', () => {
+    it('should be required', () => {
+      const args = [null, undefined];
+      args.forEach(a => {
+        user.passwordConfirm = a;
+        const error = user.validateSync();
+        expect(error.errors['passwordConfirm']).toBeDefined();
+      });
+    })
+
+    it('should be [free, premium, artist] only', () => {
+      const args = ['free', 'premium', 'artist'];
+      args.forEach(a => {
+        user.role = a;
+        const error = user.validateSync();
+        expect(error).toBeUndefined();
+      });
+      user.role = 'a';
+      const error = user.validateSync();
+      expect(error.errors['role']).toBeDefined();
+    })
+  });
 
   describe('user model - gender', () => {
     it('should be [M,F] only', () => {

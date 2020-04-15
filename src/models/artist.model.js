@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
-const { User } = require('./user.model');
+
 const artistSchema = new mongoose.Schema(
   {
-    role: {
-      type: String,
-      enum: ['artist'],
-      default: 'artist'
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      select: false
     },
     genres: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Genre' }],
@@ -15,6 +16,14 @@ const artistSchema = new mongoose.Schema(
         },
         message: 'An artist should have at least one genre'
       }
+    },
+    name: {
+      type: String,
+      minlength: 3,
+      maxlength: 30,
+      required: true,
+      trim: true,
+      unique: true
     },
     bio: {
       type: String,
@@ -29,11 +38,14 @@ const artistSchema = new mongoose.Schema(
     },
     toObject: {
       virtuals: true
-    },
-    discriminatorKey: 'type'
+    }
   }
 );
 
-const Artist = User.discriminator('Artist', artistSchema);
+artistSchema.virtual('type').get(function() {
+  return 'artist';
+});
+
+const Artist = mongoose.model('Artist', artistSchema);
 
 module.exports = { Artist, artistSchema };
