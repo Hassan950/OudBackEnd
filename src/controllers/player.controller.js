@@ -184,7 +184,7 @@ exports.resumePlayer = async (req, res, next) => {
     queue = await queueService.fillQueueFromTracksUris(uris, queues, player);
   }
 
-  if (offset && ((uris && uris.length) || (contextUri))) {
+  if (offset) {
     player = await playerService.startPlayingFromOffset(player, queue, offset, queues);
   }
   // change position
