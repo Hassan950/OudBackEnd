@@ -168,6 +168,7 @@ userSchema.pre('save', function (next) {
 
 userSchema.post('save', async function (doc) {
   if (doc.newUser) {
+<<<<<<< HEAD
     try {
       await Player.create({
         userId: doc._id
@@ -176,6 +177,11 @@ userSchema.post('save', async function (doc) {
       // if the user has player already
     }
 
+=======
+    await Player.create({
+      userId: doc._id
+    });
+>>>>>>> dev
     doc.newUser = undefined;
   }
 });
