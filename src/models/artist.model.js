@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { User } = require('./user.model');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
+
 const artistSchema = new mongoose.Schema(
   {
     role: {
@@ -33,6 +35,8 @@ const artistSchema = new mongoose.Schema(
     discriminatorKey: 'type'
   }
 );
+
+artistSchema.plugin(mongooseLeanVirtuals);
 
 const Artist = User.discriminator('Artist', artistSchema);
 

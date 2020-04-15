@@ -81,7 +81,7 @@ describe('Tracks controller', () => {
       track.artists[0] = artistIds[1];
       // A valid ID that belongs to an object
       req.params.id = trackIds[1];
-      req.user = { artist: artistIds[1]._id };
+      req.user = { _id: artistIds[1]._id };
       await tracksController.deleteTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -92,7 +92,7 @@ describe('Tracks controller', () => {
         .toReturn(track, 'findOneAndDelete')
         .toReturn(track, 'findOne');
       req.params.id = trackIds[0];
-      req.user = { artist: artistIds[2]._id }; // The right artist is artist[0]
+      req.user = { _id: artistIds[2]._id }; // The right artist is artist[0]
       await tracksController.deleteTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
@@ -102,7 +102,7 @@ describe('Tracks controller', () => {
         .toReturn(null, 'findOne');
       // An ID that doesn't belong to any track
       req.params.id = "a track id that doesn'nt belong to any";
-      req.user = { artist: artistIds[0]._id };
+      req.user = { _id: artistIds[0]._id };
       await tracksController.deleteTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -131,7 +131,7 @@ describe('Tracks controller', () => {
       track.artists[0] = artistIds[2];
       // An ID of a track object
       req.params.id = trackIds[2];
-      req.user = { artist: artistIds[2]._id };
+      req.user = { _id: artistIds[2]._id };
       req.body = {
         name: 'new Track'
       };
@@ -146,7 +146,7 @@ describe('Tracks controller', () => {
       // An ID of a track object
       mockingoose(Artist).toReturn(track.artists, 'find');
       req.params.id = trackIds[0];
-      req.user = { artist: artistIds[0]._id };
+      req.user = { _id: artistIds[0]._id };
       req.body = {
         artists: track.artists
       };
@@ -161,7 +161,7 @@ describe('Tracks controller', () => {
       track.artists[0] = artistIds[2];
       // An ID of a track object
       req.params.id = trackIds[2];
-      req.user = { artist: artistIds[2]._id };
+      req.user = { _id: artistIds[2]._id };
       req.body = {
         name: 'both are updated',
         artists: track.artists
@@ -174,7 +174,7 @@ describe('Tracks controller', () => {
         .toReturn(track, 'findOne')
         .toReturn(track, 'findOneAndUpdate');
       req.params.id = trackIds[2];
-      req.user = { artist: artistIds[1]._id };
+      req.user = { _id: artistIds[1]._id };
       req.body = {
         artists: ['new artist id', 'another new artist id']
       };
@@ -188,7 +188,7 @@ describe('Tracks controller', () => {
         .toReturn(null, 'findOneAndUpdate');
       track.artists[0] = artistIds[2];
       req.params.id = 'a valid id';
-      req.user = { artist: artistIds[0] };
+      req.user = { _id: artistIds[0] };
       req.body = {
         artists: ['new artist id', 'another new artist id']
       };
@@ -203,7 +203,7 @@ describe('Tracks controller', () => {
       track.artists[0] = artistIds[2];
       // An ID of a track object
       req.params.id = trackIds[2];
-      req.user = { artist: artistIds[2]._id };
+      req.user = { _id: artistIds[2]._id };
       req.body = {
         name: 'both are updated',
         artists: track.artists
@@ -218,7 +218,7 @@ describe('Tracks controller', () => {
       mockingoose(Track)
         .toReturn(track, 'findOne')
         .toReturn(track, 'save');
-      req.user = { artist: track.artists[0]._id };
+      req.user = { _id: track.artists[0]._id };
       req.params.id = track._id;
       req.file = {
         path: 'lol.mp3'
@@ -233,7 +233,7 @@ describe('Tracks controller', () => {
       mockingoose(Track)
         .toReturn(null, 'findOne')
         .toReturn(null, 'save');
-      req.user = { artist: track.artists[0]._id };
+      req.user = { _id: track.artists[0]._id };
       req.params.id = track._id;
       req.file = {
         path: 'lol.mp3'
@@ -247,7 +247,7 @@ describe('Tracks controller', () => {
       mockingoose(Track)
         .toReturn(track, 'findOne')
         .toReturn(track, 'save');
-      req.user = { artist: track.artists[1]._id };
+      req.user = { _id: track.artists[1]._id };
       req.params.id = track._id;
       req.file = {
         path: 'lol.mp3'

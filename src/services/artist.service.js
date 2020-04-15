@@ -61,13 +61,14 @@ exports.getPopularSongs = async artistId => {
       populate: { path: 'album', select: '-tracks' }
     })
     .select('popularSongs');
+
   if (!artist) return null;
   if (artist.popularSongs.length === 0) {
     artist.popularSongs = await Track.find({ 'artists.0': artistId })
       .sort({
         views: -1
       })
-      .populate({ path: 'album', select: '-tracks' })
+      .populate({ path: 'album', select: '-tracks -genres' })
       .limit(10);
   }
   return artist.popularSongs;
@@ -83,13 +84,14 @@ exports.getPopularSongs = async artistId => {
  * @returns null if the ID doesn't belong to any artist
  */
 exports.relatedArtists = async artistId => {
-  const artist = await Artist.findById(artistId);
+  const artist = await User.findById(artistId);
 
   if (!artist) return null;
 
-  const artists = await Artist.find({
+  const artists = await User.find({
     genres: artist.genres
   })
+    .select('displayName images genres bio popularSongs type')
     .limit(20)
     .populate({
       path: 'popularSongs',

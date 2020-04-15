@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const genreSchema = new mongoose.Schema(
   {
@@ -23,6 +24,8 @@ const genreSchema = new mongoose.Schema(
 genreSchema.virtual('type').get(function() {
   return 'genre';
 });
+
+genreSchema.plugin(mongooseLeanVirtuals);
 
 const Genre = mongoose.model('Genre', genreSchema);
 

@@ -15,13 +15,14 @@ const _ = require('lodash');
  */
 exports.findAlbum = async id => {
   let album = Album.findById(id)
-    .populate('artists', 'name images')
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
       select: '-album',
-      populate: { path: 'artists', select: 'name images' }
+      populate: { path: 'artists', select: 'displayName images' }
     })
     .select('-album_group');
 
@@ -54,13 +55,13 @@ exports.findAlbum = async id => {
  */
 exports.findAlbumUtil = async id => {
   let album = await Album.findById(id)
-    .populate('artists', 'name images')
+    .populate('artists', 'displayName images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
       select: '-album',
-      populate: { path: 'artists', select: 'name images' }
+      populate: { path: 'artists', select: 'displayName images' }
     })
     .select('-album_group');
   return album;
@@ -77,13 +78,14 @@ exports.findAlbumUtil = async id => {
  */
 exports.findAlbums = async ids => {
   let result = Album.find({ _id: ids })
-    .populate('artists', 'name images')
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
       select: '-album',
-      populate: { path: 'artists', select: 'name images' }
+      populate: { path: 'artists', select: 'displayName images' }
     })
     .select('-album_group');
 
@@ -94,22 +96,20 @@ exports.findAlbums = async ids => {
   [result, lengthArray] = await Promise.all([result, lengthArray]);
   let length;
 
-  const albums = [];
-  for (let i = 0, n = ids.length; i < n; i++) {
-    const val = result.find(album => String(album._id) === ids[i]);
+  const albums = ids.map(id => {
+    let val = result.find(album => String(album._id) == id);
     if (val) {
-      length = lengthArray.find(albumTno => String(albumTno._id) === ids[i]);
-      val.tracks = {
-        limit: 50,
-        offset: 0,
-        total: length.tracks,
-        items: val.tracks
+      length = lengthArray.find(albumTno => String(albumTno._id) === id);
+      return { ...val, 
+        tracks: {
+          limit: 50,
+          offset: 0,
+          total: length.tracks,
+          items: val.tracks
+        }
       };
-      albums[i] = val;
-    } else {
-      albums[i] = null;
-    }
-  }
+    } else return null;
+  });
   return albums;
 };
 
@@ -123,13 +123,14 @@ exports.findAlbums = async ids => {
  */
 exports.deleteAlbum = async id => {
   let album = Album.findByIdAndDelete(id)
-    .populate('artists', 'name images')
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
     .populate('genres')
     .populate({
       path: 'tracks',
       options: { limit: 50, offset: 0 },
       select: '-album',
-      populate: { path: 'artists', select: 'name images' }
+      populate: { path: 'artists', select: 'displayName images' }
     })
     .select('-album_group');
 
@@ -160,25 +161,25 @@ exports.deleteAlbum = async id => {
  * @param {Number} limit The maximum number of tracks to return
  * @param {Nuumber} offset The index of the first track to return starting from 0
  * @returns {Array} An array containing the tracks of the album
- * @returns null if the album was not found or has no tracks
+ * @returns null if the album was not found
  */
 exports.findTracksOfAlbum = async (id, limit, offset) => {
   let result = Album.findById(id)
     .populate({
       path: 'tracks',
       select: '-album',
-      populate: { path: 'artists', select: 'name images' },
+      populate: { path: 'artists', select: 'displayName images' },
       options: { limit: limit, skip: offset }
     })
     .select('tracks');
 
-  let lengthObj = Album.aggregate([
+    let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
 
   [result, lengthObj] = await Promise.all([result, lengthObj]);
-  if (!result || result.tracks.length == 0) return null;
+  if (!result) return null;
   return [result.tracks, lengthObj[0].tracks];
 };
 
@@ -194,13 +195,14 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
  */
 exports.update = async (id, newAlbum) => {
   let album = Album.findByIdAndUpdate(id, newAlbum, { new: true })
-    .populate('artists', 'name images')
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
     .populate('genres')
     .populate({
       path: 'tracks',
       select: '-album',
       options: { limit: 50, offset: 0 },
-      populate: { path: 'artists', select: 'name images' }
+      populate: { path: 'artists', select: 'displayName images' }
     })
     .select('-album_group');
 
@@ -240,13 +242,13 @@ exports.setImage = async (album, path) => {
   ]);
 
   [, lengthObj] = await Promise.all([album.save(), lengthObj]);
+
   album.tracks = {
     limit: 50,
     offset: 0,
     total: lengthObj[0].tracks,
     items: album.tracks
   };
-
   return album;
 };
 
@@ -261,7 +263,7 @@ exports.setImage = async (album, path) => {
  */
 exports.createAlbum = async newAlbum => {
   let album = await (await Album.create(newAlbum))
-    .populate('artists', 'name images')
+    .populate('artists', 'displayName images')
     .populate('genres')
     .execPopulate();
   album.album_group = undefined;
@@ -289,13 +291,13 @@ exports.addTrack = async (album, track) => {
 
   [album, lengthObj] = await Promise.all([
     album
-      .populate('artists', 'name images')
+      .populate('artists', 'displayName images')
       .populate('genres')
       .populate({
         path: 'tracks',
         select: '-album',
         options: { limit: 50, offset: 0 },
-        populate: { path: 'artists', select: 'name images' }
+        populate: { path: 'artists', select: 'displayName images' }
       })
       .execPopulate(),
     lengthObj
@@ -324,7 +326,7 @@ exports.addTrack = async (album, track) => {
  */
 exports.findArtistAlbums = async (artistId, limit, offset) => {
   let result = Album.find({ 'artists.0': artistId })
-    .populate('artists', '_id name images')
+    .populate('artists', '_id displayName images')
     .populate('genres')
     .select('-tracks')
     .limit(limit)

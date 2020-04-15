@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const albumSchema = new mongoose.Schema(
   {
@@ -62,6 +63,8 @@ const albumSchema = new mongoose.Schema(
 albumSchema.virtual('type').get(function() {
   return 'album';
 });
+
+albumSchema.plugin(mongooseLeanVirtuals);
 
 const Album = mongoose.model('Album', albumSchema);
 
