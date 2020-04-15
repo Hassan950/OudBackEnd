@@ -16,14 +16,6 @@ const {
 } = require('../../models');
 
 const DB = config.get('db');
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true
-  })
-  .then(() => console.log('DB connection successful!'));
 
 // READ JSON FILE
 const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
@@ -58,6 +50,14 @@ const queues = JSON.parse(
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
+    const connection = await mongoose
+      .connect(DB, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true
+      });
+    console.log('DB connection successful!');
     await Normal.create(users);
     await Genre.create(genres);
     await Artist.create(artists);
@@ -78,16 +78,15 @@ const importData = async () => {
 // DELETE ALL DATA FROM DB
 const deleteData = async () => {
   try {
-    await User.deleteMany();
-    await Genre.deleteMany();
-    await Artist.deleteMany();
-    await Album.deleteMany();
-    await Track.deleteMany();
-    await Player.deleteMany();
-    await Category.deleteMany();
-    await Playlist.deleteMany();
-    await Queue.deleteMany();
-    await PlayHistory.deleteMany();
+    const connection = await mongoose
+      .connect(DB, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true
+      });
+    console.log('DB connection successful!');
+    await connection.connection.db.dropDatabase();
     console.log('Data successfully deleted!');
   } catch (err) {
     console.log(err);
