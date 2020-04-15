@@ -9,6 +9,7 @@ const { Device, deviceSchema } = require('./device.model');
 const { Player, playerSchema } = require('./player.model');
 const { PlayHistory, playHistorySchema } = require('./playHistory.model');
 const { Queue, queueSchema } = require('./queue.model');
+const { Normal, normalSchema } = require('./normal.model');
 const {
   Followings,
   followingsSchema,
@@ -44,5 +45,7 @@ module.exports = {
   playlistFollowingsSchema,
   PlaylistFollowings,
   playlistSchema,
-  Playlist
+  Playlist,
+  Normal,
+  normalSchema
 };

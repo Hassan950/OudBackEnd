@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Normal } = require('../models');
 const authService = require('./auth.service');
 const queueService = require('./queue.service')
 const fs = require('fs');
@@ -58,7 +58,8 @@ const findUserByIdAndCheckPassword = async (userId, password) => {
  * @returns {null} `null` if failed
  */
 const createUser = async (userData) => {
-  const newUser = await User.create(userData);
+  // create normal user
+  const newUser = await Normal.create(userData);
   return newUser;
 };
 

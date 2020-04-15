@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
+const { Player } = require('../models/player.model');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -48,7 +49,7 @@ const userSchema = mongoose.Schema(
       minlength: [8, 'Please confirm your password!'],
       select: false,
       validate: {
-        validator: function(el) {
+        validator: function (el) {
           return el === this.password;
         },
         message: 'Passwords are not the same'
@@ -57,7 +58,7 @@ const userSchema = mongoose.Schema(
     birthDate: {
       type: Date,
       validate: {
-        validator: function(bd) {
+        validator: function (bd) {
           return moment().diff(bd, 'years') > 10;
         },
         message: 'You must be at least 10 years old'
@@ -75,7 +76,7 @@ const userSchema = mongoose.Schema(
         'uploads\\users\\default-Cover.jpg'
       ],
       validate: {
-        validator: function(imgs) {
+        validator: function (imgs) {
           return imgs && imgs.length > 0;
         }
       },
@@ -132,6 +133,9 @@ const userSchema = mongoose.Schema(
     passwordResetExpires: {
       type: Date,
       select: false
+    },
+    lastLogin: {
+      type: Date
     }
   },
   {
@@ -146,7 +150,7 @@ const userSchema = mongoose.Schema(
 );
 
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.password || !this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 8);
@@ -155,15 +159,29 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now();
   next();
 });
 
+userSchema.pre('save', function (next) {
+  if (this.isNew) this.newUser = true; // if the user is new make newUser to true
+  next();
+});
 
-userSchema.methods.changedPasswordAfter = function(user, JWTTimestamp) {
+userSchema.post('save', async function (doc) {
+  if (doc.newUser) {
+    await Player.create({
+      userId: doc._id
+    });
+    doc.newUser = undefined;
+  }
+});
+
+
+userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,

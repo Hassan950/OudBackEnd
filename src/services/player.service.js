@@ -1,4 +1,4 @@
-const { Player } = require('../models');
+const { Player } = require('../models/player.model');
 const queueService = require('./queue.service');
 const trackService = require('./track.service');
 const deviceService = require('./device.service');

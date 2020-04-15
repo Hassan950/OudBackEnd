@@ -1,4 +1,4 @@
-const { userService, authService, emailService, playerService } = require('../services');
+const { userService, authService, emailService } = require('../services');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 const logger = require('../config/logger');
@@ -119,13 +119,10 @@ exports.signup = async (req, res, next) => {
   // generate verify token
   const verifyToken = authService.createVerifyToken(newUser);
 
-  // Create Player and save user
-  await Promise.all([
-    newUser.save({
-      validateBeforeSave: false
-    }),
-    playerService.createPlayer(newUser._id)
-  ]);
+  // save user
+  await newUser.save({
+    validateBeforeSave: false
+  });
   // use mail to verify user
   const verifyURL = `${req.protocol}://${req.get(
     'host'
@@ -172,8 +169,10 @@ exports.login = async (req, res, next) => {
   if (!user) {
     return next(new AppError('Incorrect email or password!', httpStatus.UNAUTHORIZED));
   }
+  user.lastLogin = new Date();
 
-  user.password = undefined;
+  await user.save();
+
   createTokenAndSend(user, res);
 };
 
