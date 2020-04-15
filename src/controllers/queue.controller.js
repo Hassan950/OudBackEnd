@@ -216,7 +216,7 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError('You must only pass trackIndex or trackId', 400));
   }
 
-  const queue = await queueService.getQueueById(queues[0]);
+  const queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
   if (!queue || !queue.tracks) {
     return next(new AppError('Queue is not found', 404));
@@ -230,6 +230,11 @@ exports.editPosition = async (req, res, next) => {
   else {
     trackIndex = queue.tracks.indexOf(trackId);
 
+    // if shuffle mode
+    if (queue.shuffleList && queue.shuffleList.length) {
+      trackIndex = queue.shuffleList.indexOf(trackIndex);
+    }
+
     if (trackIndex === -1) {
       return next(new AppError(`Track with trackId=${trackId} is not found`, 404));
     }
@@ -239,7 +244,17 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError(`newIndex=${newIndex} is wrong`, 400));
   }
 
-  queue.tracks.move(trackIndex, newIndex);
+  if (queue.shuffleList && queue.shuffleList.length) { // if shuffle mode
+    queue.shuffleList.move(trackIndex, newIndex);
+
+    if (queue.shuffleIndex === trackIndex) queue.shuffleIndex = newIndex;
+
+    queue.currentIndex = queue.shuffleList[queue.shuffleIndex];
+  } else {
+    queue.tracks.move(trackIndex, newIndex);
+
+    if (queue.currentIndex === trackIndex) queue.currentIndex = newIndex;  // if we edit the current track position
+  }
 
   await queue.save();
 
@@ -313,6 +328,10 @@ exports.deleteTrack = async (req, res, next) => {
   else {
     trackIndex = queue.tracks.indexOf(trackId);
 
+    if (queue.shuffleList && queue.shuffleList.length) {
+      trackIndex = queue.shuffleList[trackIndex]; // get the real index if shuffle mode is on
+    }
+
     if (trackIndex === -1) {
       return next(new AppError(`Track with trackId=${trackId} is not found`, 404));
     }
@@ -320,12 +339,18 @@ exports.deleteTrack = async (req, res, next) => {
 
   queue.tracks.splice(trackIndex, 1);
 
+  if (queue.shuffleList && queue.shuffleList.length) { // if shuffle mode delete from shuffle list
+    let index = queue.shuffleList.indexOf(trackIndex);
+    queue.shuffleList.splice(index, 1);
+  }
+
   if (trackIndex === queue.currentIndex) {
     // set all to default
-    if (queue && queue.tracks.length)
+    if (queue.tracks && queue.tracks.length)
       player.item = queue.tracks[0];
 
     queueService.setQueueToDefault(queue);
+    player.shuffleState = false;
   }
 
   if (!queue.tracks.length) {
@@ -338,8 +363,13 @@ exports.deleteTrack = async (req, res, next) => {
     if (!queues || !queues.length) {
       playerService.setPlayerToDefault(player);
     } else {
-      const queue = await queueService.getQueueById(queues[0]);
+      const queue = await queueService.getQueueById(queues[0], { selectDetails: true });
       if (queue && queue.tracks.length) {
+        player.repeatState = 'off'
+
+        if (queue.shuffleList && queue.shuffleList.length) player.shuffleState = true;
+        else player.shuffleState = false;
+
         playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
       } else
         playerService.setPlayerToDefault(player);
