@@ -203,6 +203,7 @@ exports.followUser = async (ids, type, user) => {
 exports.unfollowUser = async (ids, type, user) => {
   ids = _.uniq(ids);
   const users = await User.find({ _id: ids, type: type });
+  if(!users || users.length < ids.length) return false
   await Followings.deleteMany({
     userId: user._id,
     followedId: users,
