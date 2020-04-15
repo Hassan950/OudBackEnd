@@ -195,7 +195,7 @@ const appendToQueue = async (id, tracks) => {
   });
 
   // if queue.tracks.length > queue.shuffleList append to it new tracks indexes
-  if (queue.shuffleList && queue.tracks.length > queue.shuffleList.length) {
+  if (queue.shuffleList && queue.shuffleList.length && queue.tracks.length > queue.shuffleList.length) {
     for (let i = queue.shuffleList.length; i < queue.tracks.length; i++) {
       queue.shuffleList.push(i);
     }
@@ -465,6 +465,9 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
     player.item = queue.tracks[0];
     player.context = null;
     player.progressMs = 0;
+    player.repeatState = 'off';
+    player.shuffleState = false;
+    player.isPlaying = true;
   }
 
   return queue;

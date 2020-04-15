@@ -175,6 +175,7 @@ exports.resumePlayer = async (req, res, next) => {
       id: uri[2]
     }
 
+    playerService.setPlayerToDefault(player);
     playerService.addTrackToPlayer(player, queue.tracks[0], context);
   }
   // add current track
