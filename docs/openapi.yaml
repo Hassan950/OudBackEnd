@@ -4121,6 +4121,38 @@ components:
         views:
           type: integer
           description: The number of times someone listened to this track
+    TrackWithAudioUrl:
+      type: object
+      description: Track with AudioUrl
+      properties:
+        _id:
+          type: string
+          description: The unique Id of the track
+        name:
+          type: string
+          description: The name of the Track.
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistSimple'
+          description: The artists who performed the track.
+        albumId:
+          type: string
+          description: The id of the album of the track.
+        album:
+          $ref: '#/components/schemas/AlbumSimple'
+        type:
+          type: string
+          description: The object type i.e “track”
+        duartion:
+          type: integer
+          description: The duartion of the song in ms
+        views:
+          type: integer
+          description: The number of times someone listened to this track
+        audioUrl:
+          type: string
+          description: AudioUrl to download the track
     TrackSimple:
       type: object
       description: Simple Track Object
@@ -4198,6 +4230,11 @@ components:
           type: boolean
           default: false
           nullable: false
+        lastLogin:
+          description: last time user logged in
+          type: string
+          format: date
+          nullable: true
         type:
           description: 'The object type: “user”'
           type: string
@@ -4287,12 +4324,13 @@ components:
           type: boolean
           default: false
           nullable: false
-        Artist:
-          description: Information about the artist of this user if the role is artist
+        lastLogin:
+          description: last time user logged in
+          type: string
+          format: date
           nullable: true
-          $ref: '#/components/schemas/Artist'
         facebook_id:
-          description: Google Authentication id
+          description: Facebook Authentication id
           nullable: true
           type: string
         google_id:
@@ -4787,7 +4825,7 @@ components:
           description: >-
             The currently playing track. Can be null (e.g. If private session is
             enabled this will be null).
-          $ref: '#/components/schemas/Track'
+          $ref: '#/components/schemas/TrackWithAudioUrl'
         actions:
           description: >-
             Allows to update the user interface based on which playback actions
@@ -4806,7 +4844,7 @@ components:
           description: >-
             The currently playing track. Can be null (e.g. If private session is
             enabled this will be null).
-          $ref: '#/components/schemas/Track'
+          $ref: '#/components/schemas/TrackWithAudioUrl'
         context:
           description: >-
             A Context Object. Can be null (e.g. If private session is enabled
