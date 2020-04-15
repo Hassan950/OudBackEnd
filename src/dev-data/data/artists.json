@@ -335,5 +335,134 @@
       "5e9083c24c798428f45b322f",
       "5e9083c24c798428f45b3230"
     ]
+  },
+  {
+    "_id": "5e907db0a0645f558160760b",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Ellie Goulding",
+    "email": "ellie_goulding1986@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "GB",
+    "username": "Ellie1986",
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": "I think sometimes it sounds like my voice is like, out of control... I have to really control it because it just kind of goes everywhere."
+  },
+  {
+    "_id": "5e907db0a0645f558160760c",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Travis Scott",
+    "email": "travis_scott123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "US",
+    "username": "Travis123",
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "bio": "HIGHEST IN THE ROOM"
+  },
+  {
+    "_id": "5e907db0a0645f558160760d",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Marwan Moussa",
+    "email": "maro123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "MaroMaro",
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "bio": "أهلا بيك في نهاية العالم"
+  },
+  {
+    "_id": "5e907db0a0645f558160760e",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Abyusif",
+    "email": "abyusif123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "abyusif123",
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "bio": "ABYUSIF"
+  },
+  {
+    "_id": "5e907db0a0645f558160760f",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Abd El Basset Hamouda",
+    "email": "abdelbaset123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "abdelbaset123",
+    "genres": [
+      "5e962e04da7d8d40d02a9976"
+    ],
+    "bio": "الجو هادي خالص والدنيا هس هس..."
+  },
+  {
+    "_id": "5e907db0a0645f5581607610",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "displayName": "Sadat",
+    "email": "sadat123@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "sadat123",
+    "genres": [
+      "5e962e04da7d8d40d02a9976",
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "bio": "مزيكا القرن الواحد والعشرين"
   }
 ]
