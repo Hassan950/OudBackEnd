@@ -58,12 +58,12 @@ const importData = async () => {
         useUnifiedTopology: true
       });
     console.log('DB connection successful!');
+    await Player.create(players);
     await Normal.create(users);
     await Genre.create(genres);
     await Artist.create(artists);
     await Album.create(albums);
     await Track.create(tracks);
-    await Player.create(players);
     await Category.create(categories);
     await Playlist.create(playlists);
     await Queue.create(queues);
