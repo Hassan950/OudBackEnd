@@ -156,11 +156,27 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "madfagea",
-    "genres": [
-      "5e962e04da7d8d40d02a9973"
-    ],
-    "bio": "I know it"
+    "genres": ["5e962e04da7d8d40d02a9973"],
+    "bio":"I know it"
   },
+  {
+    "_id": "5e907db0a0645f4571607606",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": false,
+    "queues": [],
+    "displayName": "Dua Lipa",
+    "email": "Dlipa@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "GB",
+    "username": "dlipa",
+    "genres": ["5e9083c24c798428f45b322c","5e9083c24c798428f45b322f","5e9083c24c798428f45b3232"],
+    "bio":"arrived in style in 2015 with her self-titled, chart topping debut album which eclipsed 4 million sales worldwide with single sales reaching over 40 million."
+    },
   {
     "_id": "5e907db0a0645f4581607605",
     "role": "artist",
