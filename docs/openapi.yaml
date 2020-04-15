@@ -3465,8 +3465,8 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
-          $ref: '#/components/responses/Track'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '403':
