@@ -1048,6 +1048,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /artists/request/attachment:
+    post:
+      tags:
+        - Artists
+      summary: Uploads an official document image
+      description: Uploads an official document that is attached to the request to be an artist.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+            encoding:
+              image:
+                contentType: 'image/png, image/jpeg'
+      responses:
+        '204':
+          description: the resources are created and the response body is empty.
+        '400':
+          description: >-
+            The request could not be understood by the server due to malformed
+            syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      
   /albums/{id}:
     get:
       tags:
