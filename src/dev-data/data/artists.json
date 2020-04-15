@@ -535,7 +535,7 @@
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "US",
-    "username": "Nas",
+    "username": "Nas1234",
     "genres": [
       "5e962e04da7d8d80d03a997d"
     ],
@@ -551,12 +551,14 @@
     "verified": true,
     "queues": [],
     "displayName": "Umm Kulthum",
-    "email": "Umm Kulthum123@gmail.com",
+    "email": "UmmKulthum123@gmail.com",
     "password": "12341234",
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "Umm Kulthum",
-    "genres": [],
+    "genres": [
+      "5e9083c24c798428f45b3235"
+    ],
     "bio": "Kulthum's repertoire went through many changes during her career. Although she initially sang songs that she learned from her father....."
   },
   {
