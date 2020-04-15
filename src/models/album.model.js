@@ -34,7 +34,7 @@ const albumSchema = new mongoose.Schema(
     image: { type: String, match: /\.(png|jpg|jpeg)$/, default: 'default.jpg' },
     name: {
       type: String,
-      minlength: 2,
+      minlength: 1,
       maxlength: 30,
       required: true,
       trim: true
