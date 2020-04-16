@@ -11,7 +11,7 @@ const multerStorage = multer.diskStorage({
     cb(null, 'uploads/tracks');
   },
   filename: (req, file, cb) => {
-    cb(null, `${req.params.id}-${req.user.artist}-${Date.now()}.mp3`);
+    cb(null, `${req.params.id}-${req.user._id}-${Date.now()}.mp3`);
   }
 });
 
