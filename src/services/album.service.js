@@ -95,11 +95,10 @@ exports.findAlbums = async ids => {
   ]);
   [result, lengthArray] = await Promise.all([result, lengthArray]);
   let length;
-
   const albums = ids.map(id => {
     let val = result.find(album => String(album._id) == id);
     if (val) {
-      length = lengthArray.find(albumTno => String(albumTno._id) === id);
+      length = lengthArray.find(albumTno => String(albumTno._id) === String(id));
       return { ...val, 
         tracks: {
           limit: 50,

@@ -73,7 +73,9 @@ describe('Albums Controller', () => {
       expect(res.json.mock.calls[0][0].albums).toMatchObject([null, null]);
     });
     it("Should return the same result for the same ID (and null for invalid ID's)", async () => {
-      mockingoose(Album).toReturn([album], 'find');
+      mockingoose(Album)
+        .toReturn([album], 'find')
+        .toReturn([{ _id: album._id, tracks: 3 }], 'aggregate');
       req.query.ids = [
         album._id,
         album._id,
@@ -99,14 +101,6 @@ describe('Albums Controller', () => {
     it('Should throw an error with status code 404 if the album is not found', async () => {
       mockingoose(Album).toReturn(null, 'findOne');
       req.params.id = "valid id that doesn't exist";
-      req.query = { limit: 20, offset: 0 };
-      await albumsController.findAlbumTracks(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-    it('Should throw an error with status code 404 if the album has no tracks', async () => {
-      album.tracks = [];
-      mockingoose(Album).toReturn(album, 'findOne');
-      req.params.id = album._id;
       req.query = { limit: 20, offset: 0 };
       await albumsController.findAlbumTracks(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
