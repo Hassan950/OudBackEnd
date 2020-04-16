@@ -121,7 +121,7 @@ exports.createAlbum = {
       .regex(
         /^([0-2][0-9]|(3)[0-1])(-)(((0)[0-9])|((1)[0-2]))(-)((1)[5-9]\d{2}|(2)(0)[0-1][0-9]|2020)$/
       )
-      .message('Date must match the format "DD-MM-YYYY" and valid')
+      .message('Date must match the format "DD-MM-YYYY" and be valid')
       .required()
   })
 };
@@ -169,7 +169,7 @@ exports.updateAlbum = {
         .regex(
           /^([0-2][0-9]|(3)[0-1])(-)(((0)[0-9])|((1)[0-2]))(-)((1)[5-9]\d{2}|(2)(0)[0-1][0-9]|2020)$/
         )
-        .message('Date must match the format "DD-MM-YYYY" and valid')
+        .message('Date must match the format "DD-MM-YYYY" and be valid')
     })
     .min(1)
 };

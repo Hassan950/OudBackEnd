@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const trackSchema = new mongoose.Schema(
   {
@@ -57,6 +58,8 @@ trackSchema.virtual('type').get(function() {
 trackSchema.virtual('albumId').get(function() {
   return (this.album && this.album._id) ? this.album._id : undefined;
 });
+
+trackSchema.plugin(mongooseLeanVirtuals)
 
 const Track = mongoose.model('Track', trackSchema);
 

@@ -1,7 +1,7 @@
 const { artistController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 const requestMocks = require('../../utils/request.mock');
-const { Artist, Track, Album } = require('../../../src/models');
+const { Artist, User, Track, Album } = require('../../../src/models');
 
 trackIds = [
   '5e6c8ebb8b40fc5508fe8b32',
@@ -27,23 +27,24 @@ describe('Artists Controller', () => {
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
+    Artist.schema.path('popularSongs', Object);
   });
   describe('getArtist', () => {
     it('Should return the artist with status code 200', async () => {
-      mockingoose(Artist).toReturn(artist, 'findOne');
+      mockingoose(User).toReturn(artist, 'findOne');
       await artistController.getArtist(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toMatchObject(artist);
     });
     it('Should throw an error with status code 404 if the artist is not found', async () => {
-      mockingoose(Artist).toReturn(null, 'findOne');
+      mockingoose(User).toReturn(null, 'findOne');
       await artistController.getArtist(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
   });
   describe('getArtists', () => {
     it("Should return the artists with nulls against unmatched ID's with status code 200", async () => {
-      mockingoose(Artist).toReturn(artists, 'find');
+      mockingoose(User).toReturn(artists, 'find');
       req.query.ids = [String(artist._id), String(artist._id), null];
       await artistController.getArtists(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -80,10 +81,8 @@ describe('Artists Controller', () => {
   });
   describe('getPopularSongs', () => {
     it('Should return array of popular songs of the artist with status code 200', async () => {
-      mockingoose(Artist).toReturn(
-        {
-          popularSongs: artist.popularSongs
-        },
+      mockingoose(User).toReturn(
+        artist,
         'findOne'
       );
       req.params = { id: artist._id };
@@ -92,14 +91,14 @@ describe('Artists Controller', () => {
       expect(res.json.mock.calls[0][0]).toHaveProperty('tracks');
     });
     it('Should throw an error with status code 404 if the artist was not found', async () => {
-      mockingoose(Artist).toReturn(null, 'findOne');
+      mockingoose(User).toReturn(null, 'findOne');
       req.params = { id: artist._id };
       await artistController.getTracks(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
     it('Should throw an error with status code 404 if the artist has no popular songs', async () => {
       artist.popularSongs = [];
-      mockingoose(Artist).toReturn(artist, 'findOne');
+      mockingoose(User).toReturn(artist, 'findOne');
       req.params = { id: artist._id };
       await artistController.getTracks(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
@@ -107,7 +106,7 @@ describe('Artists Controller', () => {
   });
   describe('relatedArtists', () => {
     it('Should return the list of artists with status code 200', async () => {
-      mockingoose(Artist)
+      mockingoose(User)
         .toReturn(artist, 'findOne')
         .toReturn(artists, 'find');
       req.params = { id: artist._id };
@@ -116,7 +115,7 @@ describe('Artists Controller', () => {
       expect(res.json.mock.calls[0][0]).toHaveProperty('artists');
     });
     it('Should throw an error with stats code 404 if the artist was not found', async () => {
-      mockingoose(Artist)
+      mockingoose(User)
         .toReturn(null, 'findOne')
         .toReturn(artists, 'find');
       req.params = { id: artist._id };
@@ -124,7 +123,7 @@ describe('Artists Controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
     it('Should return an empty array with status code 200 if the artist has no related artists', async () => {
-      mockingoose(Artist)
+      mockingoose(User)
         .toReturn(artist, 'findOne')
         .toReturn([], 'find');
       req.params = { id: artist._id };
