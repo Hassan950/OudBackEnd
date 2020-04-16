@@ -73,7 +73,9 @@ describe('Albums Controller', () => {
       expect(res.json.mock.calls[0][0].albums).toMatchObject([null, null]);
     });
     it("Should return the same result for the same ID (and null for invalid ID's)", async () => {
-      mockingoose(Album).toReturn([album], 'find');
+      mockingoose(Album)
+        .toReturn([album], 'find')
+        .toReturn([{ _id: album._id, tracks: 3 }], 'aggregate');
       req.query.ids = [
         album._id,
         album._id,
@@ -103,21 +105,14 @@ describe('Albums Controller', () => {
       await albumsController.findAlbumTracks(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
-    it('Should throw an error with status code 404 if the album has no tracks', async () => {
-      album.tracks = [];
-      mockingoose(Album).toReturn(album, 'findOne');
-      req.params.id = album._id;
-      req.query = { limit: 20, offset: 0 };
-      await albumsController.findAlbumTracks(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
   });
   describe('deleteAblum', () => {
     it('Should return the deleted album with status code 200 if the album was found', async () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
-        .toReturn(album, 'findOneAndDelete');
-      req.user = { artist: album.artists[0]._id };
+        .toReturn(album, 'findOneAndDelete')
+        .toReturn([{ tracks: 3 }], 'aggregate');
+      req.user = { _id: album.artists[0]._id };
       req.params.id = album._id;
       fs.unlink = jest.fn().mockRejectedValue(false);
       trackService.deleteTrack = jest.fn();
@@ -129,7 +124,7 @@ describe('Albums Controller', () => {
       mockingoose(Album)
         .toReturn(null, 'findOne')
         .toReturn(null, 'findOneAndDelete');
-      req.user = { artist: album.artists[0]._id };
+      req.user = { _id: album.artists[0]._id };
       req.params.id = album._id;
       await albumsController.findAndDeleteAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
@@ -138,7 +133,7 @@ describe('Albums Controller', () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
         .toReturn(album, 'findOneAndDelete');
-      req.user = { artist: album.artists[1]._id };
+      req.user = { _id: album.artists[1]._id };
       req.params.id = album._id;
       await albumsController.findAndDeleteAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
@@ -148,9 +143,10 @@ describe('Albums Controller', () => {
     it('Should return the album updated with status code 200', async () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
-        .toReturn(album, 'findOneAndUpdate');
+        .toReturn(album, 'findOneAndUpdate')
+        .toReturn([{ tracks: 3 }], 'aggregate');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id };
+      req.user = { _id: album.artists[0]._id };
       await albumsController.updateAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toMatchObject(album);
@@ -160,7 +156,7 @@ describe('Albums Controller', () => {
         .toReturn(null, 'findOne')
         .toReturn(null, 'findOneAndUpdate');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id };
+      req.user = { _id: album.artists[0]._id };
       await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -169,7 +165,7 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOne')
         .toReturn(album, 'findOneAndUpdate');
       req.params.id = album._id;
-      req.user = { artist: album.artists[1]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[1]._id }; // the right artist is artist[0]
       await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
@@ -179,7 +175,7 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOne')
         .toReturn(album, 'findOneAndUpdate');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[0]._id }; // the right artist is artist[0]
       await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
@@ -189,7 +185,7 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOneAndUpdate');
       mockingoose(Genre).toReturn([], 'find');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[0]._id }; // the right artist is artist[0]
       req.body = { genres: ['lol xD'] };
       await albumsController.updateAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(400);
@@ -207,12 +203,15 @@ describe('Albums Controller', () => {
         release_date: '12-06-1999',
         tracks: [albumIds[0]]
       };
+      
       mockingoose(Album).toReturn(album, 'save');
       mockingoose(Artist).toReturn(album.artists, 'find');
       mockingoose(Genre).toReturn(album.genres, 'find');
       await albumsController.createAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toMatchObject(album);
+      expect(res.json.mock.calls[0][0]).toMatchObject({
+        _id: album._id, album_type: album.album_type
+      });
     });
     it("Should throw an error with status code 400 if the artists doesn't exist", async () => {
       req.body = {
@@ -253,22 +252,25 @@ describe('Albums Controller', () => {
     it('Should return album with new path with status code 200', async () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
-        .toReturn(album, 'save');
-      req.user = { artist: album.artists[0]._id };
+        .toReturn(album, 'save')
+        .toReturn([{ tracks: 3 }], 'aggregate');
+      req.user = { _id: album.artists[0]._id };
       req.params.id = album._id;
       req.file = {
         path: 'lol.jpg'
       };
       fs.unlink = jest.fn();
       await albumsController.setImage(req, res, next);
-      expect(res.json.mock.calls[0][0]).toMatchObject(album);
+      expect(res.json.mock.calls[0][0]).toMatchObject({
+        _id: album._id, album_type:album.album_type
+      });
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it("Should throw an error with status code 403 if the user is not the album's main artist", async () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
         .toReturn(album, 'save');
-      req.user = { artist: album.artists[1]._id };
+      req.user = { _id: album.artists[1]._id };
       req.params.id = album._id;
       req.file = {
         path: 'lol.jpg'
@@ -282,7 +284,7 @@ describe('Albums Controller', () => {
       mockingoose(Album)
         .toReturn(album, 'findOne')
         .toReturn(album, 'save');
-      req.user = { artist: album.artists[0]._id };
+      req.user = { _id: album.artists[0]._id };
       req.params.id = album._id;
       req.file = {
         path: 'lol.jpg'
@@ -295,7 +297,7 @@ describe('Albums Controller', () => {
       mockingoose(Album)
         .toReturn(null, 'findOne')
         .toReturn(null, 'save');
-      req.user = { artist: album.artists[1]._id };
+      req.user = { _id: album.artists[1]._id };
       req.params.id = album._id;
       req.file = {
         path: 'lol.jpg'
@@ -314,11 +316,13 @@ describe('Albums Controller', () => {
       mockingoose(Track).toReturn(album.tracks[0], 'save');
       mockingoose(Artist).toReturn(album.artists, 'find');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[0]._id }; // the right artist is artist[0]
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0]).toMatchObject(album);
+      expect(res.json.mock.calls[0][0]).toMatchObject({
+        _id: album._id, album_type:album.album_type
+      });
     });
     it('Should throw an error with status code 404 if the album was not found', async () => {
       mockingoose(Album)
@@ -326,7 +330,7 @@ describe('Albums Controller', () => {
         .toReturn(null, 'save');
       mockingoose(Track).toReturn(album.tracks[0], 'save');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[0]._id }; // the right artist is artist[0]
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
@@ -337,7 +341,7 @@ describe('Albums Controller', () => {
         .toReturn(album, 'save');
       mockingoose(Track).toReturn(album.tracks[0], 'save');
       req.params.id = album._id;
-      req.user = { artist: album.artists[1]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[1]._id }; // the right artist is artist[0]
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
@@ -349,7 +353,7 @@ describe('Albums Controller', () => {
         .toReturn(album, 'save');
       mockingoose(Track).toReturn(album.tracks[0], 'save');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[0]._id }; // the right artist is artist[0]
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
@@ -361,7 +365,7 @@ describe('Albums Controller', () => {
       mockingoose(Track).toReturn(album.tracks[0], 'save');
       mockingoose(Artist).toReturn([], 'find');
       req.params.id = album._id;
-      req.user = { artist: album.artists[0]._id }; // the right artist is artist[0]
+      req.user = { _id: album.artists[0]._id }; // the right artist is artist[0]
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(400);

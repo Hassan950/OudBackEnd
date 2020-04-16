@@ -12,7 +12,8 @@ const mongoose = require('mongoose');
  * @returns null if the artist was not found
  */
 exports.findArtist = async id => {
-  const artist = await Artist.findById(id)
+  const artist = await User.findById(id)
+    .select('displayName images genres bio popularSongs type')
     .populate({
       path: 'popularSongs',
       populate: { path: 'album', select: '-tracks' }
@@ -31,7 +32,8 @@ exports.findArtist = async id => {
  * @returns {Array} An array containing the artists with nulls against unmatched ID's
  */
 exports.findArtists = async ids => {
-  const result = await Artist.find({ _id: ids })
+  const result = await User.find({ _id: ids })
+    .select('displayName images genres bio popularSongs type')
     .populate({
       path: 'popularSongs',
       populate: { path: 'album', select: '-tracks' }
@@ -53,17 +55,21 @@ exports.findArtists = async ids => {
  * @returns null if the artist has no popular songs or the ID doesn't belong to any artist
  */
 exports.getPopularSongs = async artistId => {
-  const artist = await Artist.findById(artistId)
+  const artist = await User.findById(artistId)
     .populate({
       path: 'popularSongs',
       populate: { path: 'album', select: '-tracks' }
     })
     .select('popularSongs');
+
   if (!artist) return null;
   if (artist.popularSongs.length === 0) {
-    artist.popularSongs = await Track.find({ 'artists.0': artistId }).sort({
-      views: -1
-    }).populate({path: 'album', select: '-tracks'}).limit(10);
+    artist.popularSongs = await Track.find({ 'artists.0': artistId })
+      .sort({
+        views: -1
+      })
+      .populate({ path: 'album', select: '-tracks -genres' })
+      .limit(10);
   }
   return artist.popularSongs;
 };
@@ -78,13 +84,14 @@ exports.getPopularSongs = async artistId => {
  * @returns null if the ID doesn't belong to any artist
  */
 exports.relatedArtists = async artistId => {
-  const artist = await Artist.findById(artistId);
+  const artist = await User.findById(artistId);
 
   if (!artist) return null;
 
-  const artists = await Artist.find({
-    genres: artist.genres
+  const artists = await User.find({
+    genres: {$in: artist.genres}
   })
+    .select('displayName images genres bio popularSongs type')
     .limit(20)
     .populate({
       path: 'popularSongs',

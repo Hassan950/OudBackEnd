@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
+const { Player } = require('../models/player.model');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -54,16 +55,6 @@ const userSchema = mongoose.Schema(
         message: 'Passwords are not the same'
       }
     },
-    role: {
-      type: String,
-      enum: ['free', 'premium', 'artist'],
-      default: 'free'
-    },
-    artist: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Artist',
-      default: undefined
-    },
     birthDate: {
       type: Date,
       validate: {
@@ -72,14 +63,6 @@ const userSchema = mongoose.Schema(
         },
         message: 'You must be at least 10 years old'
       }
-    },
-    credit: {
-      type: Number,
-      default: 0
-    },
-    plan: {
-      type: Date,
-      default: null
     },
     images: {
       type: [
@@ -123,18 +106,6 @@ const userSchema = mongoose.Schema(
       type: String,
       select: false
     },
-    passwordChangedAt: {
-      type: Date,
-      select: false
-    },
-    passwordResetToken: {
-      type: String,
-      select: false
-    },
-    passwordResetExpires: {
-      type: Date,
-      select: false
-    },
     verifyToken: {
       type: String,
       select: false
@@ -151,6 +122,9 @@ const userSchema = mongoose.Schema(
       type: Date,
       select: false
     },
+    lastLogin: {
+      type: Date
+    },
     queues: {
       type: [{
         type: mongoose.Types.ObjectId,
@@ -165,13 +139,11 @@ const userSchema = mongoose.Schema(
     },
     toObject: {
       virtuals: true
-    }
+    },
+    discriminatorKey: 'type'
   }
 );
 
-userSchema.virtual('type').get(function () {
-  return 'user';
-});
 
 userSchema.pre('save', async function (next) {
   if (!this.password || !this.isModified('password')) return next();
@@ -189,11 +161,25 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-// userSchema.pre('remove', function(next) {
-//   PlaylistFollowings.remove({ userId: this._id }).exec();
-//   Followings.remove({ userId: this._id }).exec();
-//   next();
-// });
+userSchema.pre('save', function (next) {
+  if (this.isNew) this.newUser = true; // if the user is new make newUser to true
+  next();
+});
+
+userSchema.post('save', async function (doc) {
+  if (doc.newUser) {
+    try {
+      await Player.create({
+        userId: doc._id
+      });
+    } catch (error) {
+      // if the user has player already
+    }
+
+    doc.newUser = undefined;
+  }
+});
+
 
 userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
   if (this.passwordChangedAt) {

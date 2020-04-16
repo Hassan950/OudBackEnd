@@ -175,15 +175,16 @@ exports.resumePlayer = async (req, res, next) => {
       id: uri[2]
     }
 
+    playerService.setPlayerToDefault(player);
     playerService.addTrackToPlayer(player, queue.tracks[0], context);
   }
   // add current track
   if (uris && uris.length) {
     // fill tracks array
-    queue = queueService.fillQueueFromTracksUris(uris, queues, player);
+    queue = await queueService.fillQueueFromTracksUris(uris, queues, player);
   }
 
-  if (offset && ((uris && uris.length) || (contextUri))) {
+  if (offset) {
     player = await playerService.startPlayingFromOffset(player, queue, offset, queues);
   }
   // change position

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const albumSchema = new mongoose.Schema(
   {
@@ -34,7 +35,7 @@ const albumSchema = new mongoose.Schema(
     image: { type: String, match: /\.(png|jpg|jpeg)$/, default: 'default.jpg' },
     name: {
       type: String,
-      minlength: 2,
+      minlength: 1,
       maxlength: 30,
       required: true,
       trim: true
@@ -62,6 +63,9 @@ const albumSchema = new mongoose.Schema(
 albumSchema.virtual('type').get(function() {
   return 'album';
 });
+
+
+albumSchema.plugin(mongooseLeanVirtuals);
 
 const Album = mongoose.model('Album', albumSchema);
 

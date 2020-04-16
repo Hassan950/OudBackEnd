@@ -181,7 +181,7 @@ const deleteQueueById = async (id) => {
  * @returns {null} `null` if `queue` is not found 
  */
 const appendToQueue = async (id, tracks) => {
-  const queue = await Queue.findById(id);
+  const queue = await Queue.findById(id).select('+shuffleList');
 
   if (!queue) return null;
 
@@ -194,6 +194,12 @@ const appendToQueue = async (id, tracks) => {
       queue.tracks.push(track);
   });
 
+  // if queue.tracks.length > queue.shuffleList append to it new tracks indexes
+  if (queue.shuffleList && queue.shuffleList.length && queue.tracks.length > queue.shuffleList.length) {
+    for (let i = queue.shuffleList.length; i < queue.tracks.length; i++) {
+      queue.shuffleList.push(i);
+    }
+  }
 
   await queue.save();
 
@@ -443,12 +449,13 @@ const goPrevious = (queue, player) => {
  */
 const fillQueueFromTracksUris = async (uris, queues, player) => {
   let tracks = [];
-  uris.forEach(async uri => {
-    const trackId = uri.split(':')[2];
+  for (let i = 0; i < uris.length; i++) {
+    const trackId = uris[i].split(':')[2];
     const track = await trackService.findTrack(trackId);
     if (track)
       tracks.push(trackId);
-  });
+  }
+
   let queue;
   if (queues && queues.length) {
     queue = await appendToQueue(queues[0], tracks);
@@ -458,6 +465,9 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
     player.item = queue.tracks[0];
     player.context = null;
     player.progressMs = 0;
+    player.repeatState = 'off';
+    player.shuffleState = false;
+    player.isPlaying = true;
   }
 
   return queue;

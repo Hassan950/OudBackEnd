@@ -7,7 +7,6 @@ const {
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs').promises;
-const { albumValidation } = require('../validations');
 
 /* istanbul ignore next */
 const multerStorage = multer.diskStorage({
@@ -95,7 +94,7 @@ exports.findAndDeleteAlbum = async (req, res, next) => {
   let album = await albumService.findAlbumUtil(req.params.id);
   if (!album)
     return next(new AppError('The requested resource is not found', 404));
-  if (String(album.artists[0]._id) !== String(req.user.artist)) {
+  if (String(album.artists[0]._id) !== String(req.user._id)) {
     return next(
       new AppError('You do not have permission to perform this action.', 403)
     );
@@ -155,12 +154,12 @@ exports.updateAlbum = async (req, res, next) => {
     return next(new AppError('The requested resource is not found', 404));
   if (
     album.released ||
-    String(album.artists[0]._id) !== String(req.user.artist)
+    String(album.artists[0]._id) !== String(req.user._id)
   )
     return next(new AppError('Forbidden.', 403));
   if (
     req.body.artists &&
-    !(await albumValidation.artistsExist(req.body.artists))
+    !(await artistService.artistsExist(req.body.artists))
   )
     return next(
       new AppError("The artist ID's given are invalid or doesn't exist", 400)
@@ -196,7 +195,7 @@ exports.setImage = async (req, res, next) => {
   }
   if (
     album.released ||
-    String(album.artists[0]._id) !== String(req.user.artist)
+    String(album.artists[0]._id) !== String(req.user._id)
   ) {
     await fs.unlink(req.file.path);
     return next(
@@ -255,7 +254,7 @@ exports.newTrack = async (req, res, next) => {
     return next(new AppError('The requested resource is not found', 404));
   if (
     album.released ||
-    String(album.artists[0]._id) !== String(req.user.artist)
+    String(album.artists[0]._id) !== String(req.user._id)
   )
     return next(new AppError('Forbidden.', 403));
 

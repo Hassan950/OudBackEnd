@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
+const { User } = require('./user.model');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const artistSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-      select: false
+    role: {
+      type: String,
+      enum: ['artist'],
+      default: 'artist'
     },
     genres: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Genre' }],
@@ -16,14 +17,6 @@ const artistSchema = new mongoose.Schema(
         },
         message: 'An artist should have at least one genre'
       }
-    },
-    name: {
-      type: String,
-      minlength: 3,
-      maxlength: 30,
-      required: true,
-      trim: true,
-      unique: true
     },
     bio: {
       type: String,
@@ -38,14 +31,13 @@ const artistSchema = new mongoose.Schema(
     },
     toObject: {
       virtuals: true
-    }
+    },
+    discriminatorKey: 'type'
   }
 );
 
-artistSchema.virtual('type').get(function() {
-  return 'artist';
-});
+artistSchema.plugin(mongooseLeanVirtuals);
 
-const Artist = mongoose.model('Artist', artistSchema);
+const Artist = User.discriminator('Artist', artistSchema);
 
 module.exports = { Artist, artistSchema };
