@@ -175,7 +175,7 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
     })
     .select('tracks');
 
-  let lengthObj = Album.aggregate([
+    let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
