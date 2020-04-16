@@ -98,8 +98,11 @@ exports.findAlbums = async ids => {
   const albums = ids.map(id => {
     let val = result.find(album => String(album._id) == id);
     if (val) {
-      length = lengthArray.find(albumTno => String(albumTno._id) === String(id));
-      return { ...val, 
+      length = lengthArray.find(
+        albumTno => String(albumTno._id) === String(id)
+      );
+      return {
+        ...val,
         tracks: {
           limit: 50,
           offset: 0,
@@ -172,7 +175,7 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
     })
     .select('tracks');
 
-    let lengthObj = Album.aggregate([
+  let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
@@ -233,6 +236,7 @@ exports.update = async (id, newAlbum) => {
  * @returns Updated album
  */
 exports.setImage = async (album, path) => {
+  path = path.replace(/\\/g, '/');
   album.image = path;
 
   let lengthObj = Album.aggregate([
@@ -241,7 +245,7 @@ exports.setImage = async (album, path) => {
   ]);
 
   [, lengthObj] = await Promise.all([album.save(), lengthObj]);
-  album = album.toJSON()
+  album = album.toJSON();
 
   album.tracks = {
     limit: 50,
@@ -267,7 +271,7 @@ exports.createAlbum = async newAlbum => {
     .populate('genres')
     .execPopulate();
   album.album_group = undefined;
-  album = album.toJSON()
+  album = album.toJSON();
 
   album.tracks = {
     limit: 50,
@@ -311,7 +315,7 @@ exports.addTrack = async (album, track) => {
     lengthObj
   ]);
 
-  album = album.toJSON()
+  album = album.toJSON();
   album.tracks = {
     limit: 50,
     offset: 0,
