@@ -89,7 +89,7 @@ exports.relatedArtists = async artistId => {
   if (!artist) return null;
 
   const artists = await User.find({
-    genres: artist.genres
+    genres: {$in: artist.genres}
   })
     .select('displayName images genres bio popularSongs type')
     .limit(20)

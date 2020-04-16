@@ -241,6 +241,7 @@ exports.setImage = async (album, path) => {
   ]);
 
   [, lengthObj] = await Promise.all([album.save(), lengthObj]);
+  album = album.toJSON()
 
   album.tracks = {
     limit: 50,
@@ -266,6 +267,14 @@ exports.createAlbum = async newAlbum => {
     .populate('genres')
     .execPopulate();
   album.album_group = undefined;
+  album = album.toJSON()
+
+  album.tracks = {
+    limit: 50,
+    offset: 0,
+    total: 0,
+    items: album.tracks
+  };
   return album;
 };
 
@@ -302,6 +311,7 @@ exports.addTrack = async (album, track) => {
     lengthObj
   ]);
 
+  album = album.toJSON()
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -324,13 +334,13 @@ exports.addTrack = async (album, track) => {
  * @returns null if the artist has no albums or the ID doesn't belong to any artist
  */
 exports.findArtistAlbums = async (artistId, limit, offset) => {
-  let result = Album.find({ 'artists.0': artistId })
+  let result = Album.find({ artists: artistId })
     .populate('artists', '_id displayName images')
     .populate('genres')
     .select('-tracks')
     .limit(limit)
     .skip(offset);
-  let length = Album.countDocuments({ 'artists.0': artistId });
+  let length = Album.countDocuments({ artists: artistId });
   return await Promise.all([result, length]);
 };
 

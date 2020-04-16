@@ -64,6 +64,7 @@ albumSchema.virtual('type').get(function() {
   return 'album';
 });
 
+
 albumSchema.plugin(mongooseLeanVirtuals);
 
 const Album = mongoose.model('Album', albumSchema);
