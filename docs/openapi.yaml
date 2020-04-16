@@ -1176,9 +1176,6 @@ paths:
                   description: >-
                     the type of the album: one of the following 'single',
                     'album' or 'compilation'
-                album_group:
-                  type: string
-                  description: 'one of ''single'', ''album'', ''compilation'' and ''appears_on'''
                 release_date:
                   type: string
                   description: The date the album was first released
@@ -1488,11 +1485,6 @@ paths:
                   description: >-
                     the type of the album: one of the following 'single',
                     'album' or 'compilation'
-                album_group:
-                  type: string
-                  description: >-
-                    one of the following 'single', 'album' or 'compilation',
-                    'appears_on'
                 release_date:
                   type: string
                   description: The date the album was first released
