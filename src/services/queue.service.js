@@ -1,4 +1,4 @@
-const { Queue, Album, Playlist, Artist } = require('../models');
+const { Queue, Album, Playlist, Artist, Track } = require('../models');
 const trackService = require('./track.service');
 const playerService = require('./player.service');
 const _ = require('lodash');
@@ -136,7 +136,23 @@ const createQueueWithContext = async (contextUri) => {
   } else if (type === 'artist') {
     const artist = await Artist.findById(id);
 
-    if (!artist || !artist.popularSongs || !artist.popularSongs.length) return null;
+    if (!artist) return null;
+
+    // get top 10 tracks by views
+    let topTracks = await Track.find({ 'artists.0': id })
+      .sort({
+        views: -1
+      })
+      .limit(10);
+    // select only _id
+    topTracks = topTracks.map(track => track._id);
+    // if popularSongs is empty use top tracks
+    if (!artist.popularSongs || !artist.popularSongs.length)
+      artist.popularSongs = topTracks;
+    else {
+      // append topTracks and popularSongs then unique the result
+      artist.popularSongs = _.uniq(_.union(artist.popularSongs, topTracks));
+    }
 
     tracks = artist.popularSongs;
   }
