@@ -1,4 +1,5 @@
 const { Player } = require('../models/player.model');
+const { Track } = require('../models/track.model');
 const queueService = require('./queue.service');
 const trackService = require('./track.service');
 const deviceService = require('./device.service');
@@ -123,10 +124,14 @@ const createPlayer = async (userId) => {
  * @param {String} [context.id] context id 
  * @description assign player.item to track, player.progressMs to 0, player.currentlyPlayingType to track \
  * and if context and context.type is defined \
- * assign player.context to context 
+ * assign player.context to context \
+ * increase track views
  * @summary Add track to player
  */
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
+  // increase track views
+  Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
+  // play the track
   player.item = track;
   player.progressMs = 0;
   player.isPlaying = true;
@@ -181,7 +186,7 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    player.item = queue.tracks[queue.currentIndex]; // set player item
+    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   } else if (offset.uri) {
     const trackId = offset.uri.split(':')[2];
     let pos = await queueService.getTrackPosition(queues[0], trackId);
@@ -203,7 +208,7 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    player.item = queue.tracks[queue.currentIndex]; // set player item
+    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   }
 
   return player;

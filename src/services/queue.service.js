@@ -1,5 +1,6 @@
 const { Queue, Album, Playlist, Artist } = require('../models');
 const trackService = require('./track.service');
+const playerService = require('./player.service');
 const _ = require('lodash');
 
 /**
@@ -462,12 +463,9 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
   } else {
     queue = await createQueueFromTracks(tracks);
     queues = [queue._id];
-    player.item = queue.tracks[0];
-    player.context = null;
-    player.progressMs = 0;
-    player.repeatState = 'off';
-    player.shuffleState = false;
-    player.isPlaying = true;
+
+    playerService.setPlayerToDefault(player);
+    playerService.addTrackToPlayer(player, queue.tracks[0]);
   }
 
   return queue;
