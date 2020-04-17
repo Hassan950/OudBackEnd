@@ -75,6 +75,7 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
       }
     })
     .select('item context')
+    .lean()
     ;
 
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
