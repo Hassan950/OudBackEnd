@@ -347,7 +347,7 @@ exports.deleteTrack = async (req, res, next) => {
   if (trackIndex === queue.currentIndex) {
     // set all to default
     if (queue.tracks && queue.tracks.length)
-      player.item = queue.tracks[0];
+      playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
 
     queueService.setQueueToDefault(queue);
     player.shuffleState = false;
@@ -506,16 +506,11 @@ exports.nextTrack = async (req, res, next) => {
 
   queueService.goNext(queue, player);
 
-  player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
-  player.context = queue.context;
+  playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 
-  if (player.context && player.context.type !== 'unknown')
-    playHistoryService.addToHistory(id, player.context); // add to history
+  playHistoryService.addToHistory(id, player.context); // add to history
 
   queue.save(); // save the queue
-
-  player.isPlaying = true; // play the track
-  player.progressMs = 0;
 
   await player.save();
   res.status(204).end();
@@ -570,17 +565,11 @@ exports.previousTrack = async (req, res, next) => {
   }
 
   queueService.goPrevious(queue, player);
+  playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 
-  player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
-  player.context = queue.context;
-
-  if (player.context && player.context.type !== 'unknown')
-    playHistoryService.addToHistory(id, player.context); // add to history
+  playHistoryService.addToHistory(id, player.context); // add to history
 
   queue.save(); // save the queue
-
-  player.isPlaying = true; // play the track
-  player.progressMs = 0;
 
   await player.save();
   res.status(204).end();
