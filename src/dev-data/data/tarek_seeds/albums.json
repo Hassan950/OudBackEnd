@@ -338,5 +338,36 @@
       "5e9b4df40f27b613b44fba48",
       "5e9b4df40f27b613b44fba49"
     ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba48",
+    "name": "سلفنى ضحكتك",
+    "artists": [
+      "5e907db0a0645f558160760f"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9976"
+    ],
+    "album_type": "album",
+    "release_date": "01-01-2010",
+    "tracks": [
+      "5e9b4df40f27b613b44fba50",
+      "5e9b4df40f27b613b44fba51"
+    ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba49",
+    "name": "Bedon Montag",
+    "artists": [
+      "5e907db0a0645f558160760f"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9976"
+    ],
+    "album_type": "album",
+    "release_date": "01-01-1998",
+    "tracks": [
+      "5e9b4df40f27b613b44fba52"
+    ]
   }
 ]

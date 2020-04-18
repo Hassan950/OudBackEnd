@@ -673,7 +673,8 @@ const createQueueFromRelatedAlbums = async (albumId) => {
           { genres: { $in: album.genres } },
           { artists: { $in: album.artists } }
         ],
-        _id: { $ne: albumId }
+        _id: { $ne: albumId },
+        released: true
       }
     },
     { $limit: 20 }
