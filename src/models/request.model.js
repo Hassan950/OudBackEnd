@@ -37,6 +37,11 @@ const requestSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Please enter a valid email!'],
     trim: true
+  },
+  attachment: {
+    type: String,
+    match: /\.(png|jpg|jpeg)$/,
+    default: 'default.jpg'
   }
 });
 

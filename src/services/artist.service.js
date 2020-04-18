@@ -168,3 +168,44 @@ exports.update = async (artist, newData) => {
 exports.createRequest = async requestData => {
   return await Request.create(requestData);
 };
+
+/**
+ * A method that deletes a request
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes a request
+ * @param {string} requestId the ID of the request
+ * @returns null if the request was not found
+ */
+exports.deleteRequest = async requestId => {
+  await Request.findByIdAndDelete(requestId);
+};
+
+/**
+ * A method that gets a request
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets a request
+ * @param {string} requestId the ID of the request
+ * @returns null if the request was not found
+ */
+exports.getRequest = async requestId => {
+  return await Request.findById(requestId);
+};
+
+/**
+ * A method that sets the attachment of a request
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary sets the attachment of a request
+ * @param {object} requestId the request
+ * @param {string} path path of the uploaded file
+ * @returns null if the request was not found
+ */
+exports.setAttachment = async (request, path) => {
+  request.attachment = path;
+  await request.save();
+};

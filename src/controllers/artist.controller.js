@@ -1,5 +1,43 @@
 const { artistService, albumService, genreService } = require('../services');
 const AppError = require('../utils/AppError');
+const multer = require('multer');
+const fs = require('fs').promises;
+
+/* istanbul ignore next */
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/requests');
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `${req.params.id}-${Date.now()}.${ext}`);
+  }
+});
+
+/* istanbul ignore next */
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.split('/')[1].match(/(png|jpg|jpeg)/)) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+/* istanbul ignore next */
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+/**
+ * calls multer to upload an image that is in req.body.image and put it in req.file
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary A middleware that uses multer to upload an image
+ */
+/* istanbul ignore next */
+exports.uploadImage = upload.single('image');
 
 /**
  * A middleware that gets the Artist with the given ID
@@ -144,4 +182,37 @@ exports.artistRequest = async (req, res, next) => {
   res.status(200).json({
     id: request._id
   });
+};
+
+/**
+ * A middleware Sets the attachment of a request
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Sets the image of a request
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the request doesn't exist
+ * @throws AppError 400 Bad request if no files were uploaded
+ * @throws AppError 403 forbidden if the request has already been submitted
+ */
+exports.setAttach = async (req, res, next) => {
+  if (!req.file) {
+    await artistService.deleteRequest(req.params.id);
+    return next(new AppError('No files were uploaded', 400));
+  }
+  const request = await artistService.getRequest(req.params.id);
+  if (!request) {
+    await fs.unlink(req.file.path);
+    return next(new AppError('The requested resource is not found', 404));
+  }
+  if (request.attachment !== 'default.jpg') {
+    await fs.unlink(req.file.path);
+    return next(new AppError('The request has already been submitted', 403));
+  }
+
+  await artistService.setAttachment(request, req.file.path);
+
+  return res.status(204).send();
 };

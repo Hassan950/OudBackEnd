@@ -64,10 +64,18 @@ router
   );
 
 router
-  .route('/request')
+  .route('/requests')
   .post(
     validate(artistValidation.artistRequest),
     catchAsync(artistController.artistRequest)
+  );
+
+router
+  .route('/requests/:id/attachments')
+  .post(
+    validate(artistValidation.oneArtist),
+    artistController.uploadImage,
+    catchAsync(artistController.setAttach)
   );
 
 module.exports = router;

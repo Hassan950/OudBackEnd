@@ -63,4 +63,8 @@ describe('Request model', () => {
     const error = request.validateSync();
     expect(error.errors['name']).toBeDefined();
   });
+  it("Should throw an error if the attachment doesn't match image formats", () => {
+    request.attachment = 'lol';
+    expect(request.validateSync().errors['attachment']).toBeDefined();
+  });
 });
