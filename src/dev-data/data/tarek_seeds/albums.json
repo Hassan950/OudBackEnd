@@ -307,5 +307,36 @@
     "tracks": [
       "5e9b4b9b0f27b613b44fba46"
     ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba46",
+    "name": "HIGHEST IN THE ROOM",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "album_type": "single",
+    "release_date": "04-10-2019",
+    "tracks": [
+      "5e9b4df40f27b613b44fba47"
+    ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba47",
+    "name": "ASTROWORLD",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "album_type": "single",
+    "release_date": "03-08-2018",
+    "tracks": [
+      "5e9b4df40f27b613b44fba48",
+      "5e9b4df40f27b613b44fba49"
+    ]
   }
 ]

@@ -160,5 +160,29 @@
       "5e907db0a0645f558160760b"
     ],
     "album": "5e9b4b3d0f27b613b44fba45"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba47",
+    "name": "HIGHEST IN THE ROOM",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "album": "5e9b4dad0f27b613b44fba46"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba48",
+    "name": "SICKO MODE",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "album": "5e9b4dad0f27b613b44fba47"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba49",
+    "name": "BUTTERFLY EFFECT",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "album": "5e9b4dad0f27b613b44fba47"
   }
 ]
