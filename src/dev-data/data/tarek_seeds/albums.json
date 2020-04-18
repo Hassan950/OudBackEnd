@@ -244,5 +244,68 @@
     "tracks": [
       "5e9b49440f27b613b44fba43"
     ]
+  },
+  {
+    "_id": "5e9b4b3d0f27b613b44fba43",
+    "name": "Delirium",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "06-11-2015",
+    "tracks": [
+      "5e9b4b9b0f27b613b44fba44"
+    ]
+  },
+  {
+    "_id": "5e9b4b3d0f27b613b44fba44",
+    "name": "Sixteen",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "single",
+    "release_date": "12-04-2019",
+    "tracks": [
+      "5e9b4b9b0f27b613b44fba45"
+    ]
+  },
+  {
+    "_id": "5e9b4b3d0f27b613b44fba45",
+    "name": "Still Falling For You",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "single",
+    "release_date": "19-08-2016",
+    "tracks": [
+      "5e9b4b9b0f27b613b44fba46"
+    ]
   }
 ]
