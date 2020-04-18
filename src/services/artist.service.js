@@ -1,5 +1,6 @@
 const { Artist, User, Track } = require('../models');
-const mongoose = require('mongoose');
+const _ = require('lodash');
+const { trackService } = require('../services');
 
 /**
  * A method that gets an artist by it's ID
@@ -61,7 +62,7 @@ exports.getPopularSongs = async artistId => {
       populate: { path: 'album', select: '-tracks' }
     })
     .select('popularSongs');
-
+     
   if (!artist) return null;
   if (artist.popularSongs.length === 0) {
     artist.popularSongs = await Track.find({ 'artists.0': artistId })
@@ -89,7 +90,7 @@ exports.relatedArtists = async artistId => {
   if (!artist) return null;
 
   const artists = await User.find({
-    genres: {$in: artist.genres}
+    genres: { $in: artist.genres }
   })
     .select('displayName images genres bio popularSongs type')
     .limit(20)
@@ -115,4 +116,43 @@ exports.artistsExist = async artistIds => {
   const artists = await Artist.find({ _id: artistIds });
   if (artistIds.length !== artists.length) return false;
   return true;
+};
+
+/**
+ * A method that updates the current artist's data
+ *
+ * @function
+ * @author MOhamed Abo-Bakr
+ * @summary Updates the current artist's data
+ * @param {object} artist the current artist
+ * @param {object} newData the new data
+ * @returns The updated artist
+ */
+exports.update = async (artist, newData) => {
+  if (newData.bio) artist.bio = newData.bio;
+  if (newData.tracks) {
+    const exist = await trackService.ArtistTracksExist(
+      artist._id,
+      newData.tracks
+    );
+
+    if (!exist) return null;
+    artist.popularSongs = newData.tracks;
+  }
+  await (await artist.save())
+    .populate({
+      path: 'popularSongs',
+      populate: { path: 'album', select: '-tracks' }
+    })
+    .populate('genres')
+    .execPopulate();
+
+  return _.pick(artist, [
+    '_id',
+    'genres',
+    'images',
+    'displayName',
+    'bio',
+    'popularSongs'
+  ]);
 };

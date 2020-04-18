@@ -99,3 +99,28 @@ exports.relatedArtists = async (req, res, next) => {
     artists: artists
   });
 };
+
+/**
+ * A middleware that updates the current artist's data
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Updates the current artist's data
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.updateArtist = async (req, res, next) => {
+  const artist = await artistService.update(req.user, req.body);
+
+  if (!artist)
+    return next(
+      new AppError(
+        "The tracks given do not exist or doesn't belong to this artist",
+        400
+      )
+    );
+  res.status(200).json({
+    artist: artist
+  });
+};

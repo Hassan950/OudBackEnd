@@ -2,7 +2,6 @@ const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { idsArray } = require('./custom.validation');
 
-
 /**
  * Schema that checks that the request is valid for endpoints that requires one artist
  *
@@ -56,5 +55,41 @@ exports.artistAlbums = {
       .default(20)
       .max(50),
     offset: Joi.number().default(0)
+  })
+};
+
+/**
+ * Schema that checks that the request is valid for update bio endpoint
+ *
+ * @author Mohamed Abo-Bakr
+ * @summary Schema for a req for update bio endpoint
+ * @namespace
+ * @property {object} body An object that holds parameters that are sent up from the client in the body
+ * @property {string} body.bio The new bio
+ */
+exports.updateBio = {
+  body: Joi.object().keys({
+    bio: Joi.string()
+      .min(0)
+      .max(255)
+      .required()
+  })
+};
+
+/**
+ * Schema that checks that the request is valid for update popular songs endpoint
+ *
+ * @author Mohamed Abo-Bakr
+ * @summary Schema for a req for update popular songs endpoint
+ * @namespace
+ * @property {object} body An object that holds parameters that are sent up from the client in the post request
+ * @property {Array<string>} body.tracks ID's of the tracks
+ */
+exports.updatePopularSongs = {
+  body: Joi.object().keys({
+    tracks: Joi.array()
+      .items(Joi.objectId())
+      .min(1)
+      .required()
   })
 };
