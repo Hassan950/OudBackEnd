@@ -93,3 +93,37 @@ exports.updatePopularSongs = {
       .required()
   })
 };
+
+/**
+ * Schema that checks that the request is valid for Request to be an artist endpoint
+ *
+ * @author Mohamed Abo-Bakr
+ * @summary Schema for a req for request to be an artist endpoint
+ * @namespace
+ * @property {object} body An object that holds parameters that are sent up from the client in the post request
+ * @property {Array<string>} body.genres ID's of the genres of the artist
+ */
+exports.artistRequest = {
+  body: Joi.object().keys({
+    genres: Joi.array()
+      .items(Joi.objectId())
+      .min(1)
+      .required(),
+    name: Joi.string()
+      .min(5)
+      .max(30)
+      .required()
+      .trim(),
+    bio: Joi.string()
+      .min(0)
+      .max(255),
+    email: Joi.string()
+      .trim()
+      .required()
+      .email(),
+    displayName: Joi.string()
+      .trim()
+      .max(30)
+      .required()
+  })
+};

@@ -45,6 +45,10 @@ describe('Request model', () => {
       expect(error.errors['displayName']).toBeDefined();
     });
   });
+  it('Should throw an error if displayName if longer than 30 charactesr', () => {
+    request.displayName = 'a string that is longer than thirty characters';
+    expect(request.validateSync().errors['displayName']).toBeDefined();
+  });
   it('should thorw error if no name passed', () => {
     const args = [null, undefined];
     args.forEach(a => {

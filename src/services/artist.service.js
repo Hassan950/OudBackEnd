@@ -1,6 +1,6 @@
-const { Artist, User, Track } = require('../models');
+const { Artist, User, Track, Request } = require('../models');
 const _ = require('lodash');
-const { trackService } = require('../services');
+const { trackService, genreService } = require('../services');
 
 /**
  * A method that gets an artist by it's ID
@@ -62,7 +62,7 @@ exports.getPopularSongs = async artistId => {
       populate: { path: 'album', select: '-tracks' }
     })
     .select('popularSongs');
-     
+
   if (!artist) return null;
   if (artist.popularSongs.length === 0) {
     artist.popularSongs = await Track.find({ 'artists.0': artistId })
@@ -155,4 +155,16 @@ exports.update = async (artist, newData) => {
     'bio',
     'popularSongs'
   ]);
+};
+
+/**
+ * A method that creates an artist request
+ *
+ * @function
+ * @author MOhamed Abo-Bakr
+ * @summary creates an artist request with the given data
+ * @param {object} requestData the data of the request
+ */
+exports.createRequest = async requestData => {
+  return await Request.create(requestData);
 };

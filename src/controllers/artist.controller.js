@@ -1,4 +1,4 @@
-const { artistService, albumService } = require('../services');
+const { artistService, albumService, genreService } = require('../services');
 const AppError = require('../utils/AppError');
 
 /**
@@ -122,5 +122,26 @@ exports.updateArtist = async (req, res, next) => {
     );
   res.status(200).json({
     artist: artist
+  });
+};
+
+/**
+ * A middleware that Creates an artist request
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Add an artist request
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.artistRequest = async (req, res, next) => {
+  if (!(await genreService.genresExist(req.body.genres)))
+    return next(
+      new AppError("The genre ID's given are invalid or doesn't exist", 400)
+    );
+  const request = await artistService.createRequest(req.body);
+  res.status(200).json({
+    id: request._id
   });
 };

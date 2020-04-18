@@ -19,7 +19,8 @@ const requestSchema = new mongoose.Schema({
   displayName: {
     type: String,
     required: [true, 'Please Enter your displayName!'],
-    trim: true
+    trim: true,
+    maxlength: 30
   },
   name: {
     type: String,

@@ -63,4 +63,11 @@ router
     catchAsync(artistController.updateArtist)
   );
 
+router
+  .route('/request')
+  .post(
+    validate(artistValidation.artistRequest),
+    catchAsync(artistController.artistRequest)
+  );
+
 module.exports = router;
