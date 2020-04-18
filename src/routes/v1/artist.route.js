@@ -78,4 +78,11 @@ router
     catchAsync(artistController.setAttach)
   );
 
+router
+  .route('/requests/:id/handle')
+  .post(
+    validate(artistValidation.requestHandle),
+    catchAsync(artistController.handleRequest)
+  );
+
 module.exports = router;

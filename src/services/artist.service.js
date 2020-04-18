@@ -1,6 +1,7 @@
 const { Artist, User, Track, Request } = require('../models');
 const _ = require('lodash');
-const { trackService, genreService } = require('../services');
+const { trackService, emailService } = require('../services');
+const logger = require('../config/logger');
 
 /**
  * A method that gets an artist by it's ID
@@ -208,4 +209,70 @@ exports.getRequest = async requestId => {
 exports.setAttachment = async (request, path) => {
   request.attachment = path;
   await request.save();
+};
+
+/**
+ * A method that handles accepted request
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Handles accepted requests
+ * @param {object} request The request
+ * @returns created artist
+ */
+exports.acceptRequest = async request => {
+  await Artist.create({
+    displayName: request.displayName,
+    username: request.name,
+    email: request.email,
+    password: '12341234',
+    passwordConfirm: '12341234',
+    genres: request.genres,
+    bio: request.bio,
+    country: request.country
+  });
+  await this.deleteRequest(request._id);
+  const message =
+    `Congratulations, we are sending this email to inform you that your request to be an artist is accepted \n ` +
+    `you can now log in to Oud website with: <br> email: ${request.email} <br> password: 12341234 <br> ` +
+    `You can then change your password and let the world hear you.`;
+
+  emailService
+    .sendEmail({
+      email: request.email,
+      subject: 'Your request to be an artist',
+      message,
+      button: 'Oud',
+      link: 'https://oud-zerobase.me'
+    })
+    .then()
+    .catch(error => {
+      logger.error(`${error.code} :${error.message}`);
+    });
+};
+
+/**
+ * A method that handles refused requests
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Handles refused requests
+ * @param {object} request The request
+ */
+exports.refuseRequest = async request => {
+  await this.deleteRequest(request._id);
+  const message = `We are sorry to inform you that your request has been refused as your data doesn't match our specifications for an artist`;
+
+  emailService
+    .sendEmail({
+      email: request.email,
+      subject: 'Your request to be an artist',
+      message,
+      button: 'Oud',
+      link: 'https://oud-zerobase.me'
+    })
+    .then()
+    .catch(error => {
+      logger.error(`${error.code} :${error.message}`);
+    });
 };

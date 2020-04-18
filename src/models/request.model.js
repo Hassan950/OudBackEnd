@@ -42,6 +42,13 @@ const requestSchema = new mongoose.Schema({
     type: String,
     match: /\.(png|jpg|jpeg)$/,
     default: 'default.jpg'
+  },
+  country: {
+    type: String,
+    validate: [validator.isISO31661Alpha2, 'Invalid country'],
+    trim: true,
+    uppercase: true,
+    required: [true, 'Please Enter your Country!']
   }
 });
 

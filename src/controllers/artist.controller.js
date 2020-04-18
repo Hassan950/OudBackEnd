@@ -216,3 +216,29 @@ exports.setAttach = async (req, res, next) => {
 
   return res.status(204).send();
 };
+
+/**
+ * A middleware that responds to the request with the given ID, if accepted is true the request is deleted and an artist is
+ * created with the data in the request and an email is sent to the email of the request
+ * and accepted is false the request is deleted.
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Responds to an artist request
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @throws AppError 404 Not found if the request doesn't exist
+ */
+exports.handleRequest = async (req, res, next) => {
+  const request = await artistService.getRequest(req.params.id);
+  if (!request) {
+    return next(new AppError('The requested resource is not found', 404));
+  }
+  if (req.body.accept) {
+    await artistService.acceptRequest(request);
+  } else {
+    await artistService.refuseRequest(request);
+  }
+  return res.status(204).send();
+};

@@ -36,7 +36,6 @@ describe('Artists Controller', () => {
         'uploads\\users\\default-Profile.jpg',
         'uploads\\users\\default-Cover.jpg'
       ],
-      name: 'loool',
       popularSongs: trackIds,
       bio: 'I am not a real artist I am just here for testing.'
     });
@@ -188,7 +187,7 @@ describe('Artists Controller', () => {
         name: 'test-man',
         genres: ['5e6c8ebb8b40fc5518fe8b32'],
         attachment: 'default.jpg',
-        name: 'loool',
+        country: 'EG',
         popularSongs: trackIds,
         bio: 'I am not a real artist I am just here for testing.'
       });
@@ -203,7 +202,7 @@ describe('Artists Controller', () => {
           name: 'test-man',
           genres: ['5e6c8ebb8b40fc5518fe8b32'],
           attachment: 'default.jpg',
-          name: 'loool',
+          country: 'EG',
           popularSongs: trackIds,
           bio: 'I am not a real artist I am just here for testing.'
         };
