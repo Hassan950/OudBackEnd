@@ -2618,7 +2618,7 @@ paths:
           schema:
             type: object
             properties:
-              URIs:
+              ids:
                 type: array
                 items:
                   type: string
@@ -2756,7 +2756,7 @@ paths:
             schema:
               type: object
               properties:
-                uris:
+                ids:
                   type: array
                   items:
                     type: string
@@ -3033,7 +3033,7 @@ paths:
             schema:
               type: object
               properties:
-                uris:
+                ids:
                   type: array
                   description: uris of the tracks
                   items:
