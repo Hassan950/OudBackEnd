@@ -7,10 +7,6 @@ const albumSchema = new mongoose.Schema(
       type: String,
       enum: ['single', 'album', 'compilation']
     },
-    album_group: {
-      type: String,
-      enum: ['single', 'album', 'compilation', 'appears_on']
-    },
     artists: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Artist' }],
       validate: {
