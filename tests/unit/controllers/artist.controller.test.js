@@ -4,9 +4,9 @@ const requestMocks = require('../../utils/request.mock');
 const { Artist, User, Track, Album } = require('../../../src/models');
 
 trackIds = [
-  '5e6c8ebb8b40fc5508fe8b32',
-  '5e6f6a7fac1d6d06f40706f2',
-  '5e6c8ebb8b40fc5518fe8b32'
+  { _id: '5e6c8ebb8b40fc5508fe8b32' },
+  { _id: '5e6f6a7fac1d6d06f40706f2' },
+  { _id: '5e6c8ebb8b40fc5518fe8b32' }
 ];
 
 describe('Artists Controller', () => {
@@ -17,11 +17,20 @@ describe('Artists Controller', () => {
   let artists;
   beforeEach(() => {
     artist = new Artist({
-      user: '5e6c8ebb8b40fc5518fe8b32',
+      displayName: 'Test artist',
+      password: '12341234',
+      passwordConfirm: '12341234',
+      email: 'testing@gmail.com',
+      username: 'test-man',
+      country: 'EG',
       genres: ['5e6c8ebb8b40fc5518fe8b32'],
-      images: ['lol.jpg', 'default.png'],
+      images: [
+        'uploads\\users\\default-Profile.jpg',
+        'uploads\\users\\default-Cover.jpg'
+      ],
       name: 'loool',
-      popularSongs: trackIds
+      popularSongs: trackIds,
+      bio: 'I am not a real artist I am just here for testing.'
     });
     artists = [artist, artist];
     req = { params: {}, query: {}, body: {} };
@@ -56,14 +65,16 @@ describe('Artists Controller', () => {
   });
   describe('getAlbums', () => {
     it('Should return the albums in a paging object with status code 200', async () => {
-      mockingoose(Album).toReturn(
-        [
-          {
-            artists: [{ _id: artist._id }]
-          }
-        ],
-        'find'
-      ).toReturn(1,'countDocuments');
+      mockingoose(Album)
+        .toReturn(
+          [
+            {
+              artists: [{ _id: artist._id }]
+            }
+          ],
+          'find'
+        )
+        .toReturn(1, 'countDocuments');
       req.params = { id: String(artist._id) };
       req.query = { offset: 0, limit: 20 };
       await artistController.getAlbums(req, res, next);
@@ -81,10 +92,7 @@ describe('Artists Controller', () => {
   });
   describe('getPopularSongs', () => {
     it('Should return array of popular songs of the artist with status code 200', async () => {
-      mockingoose(User).toReturn(
-        artist,
-        'findOne'
-      );
+      mockingoose(User).toReturn(artist, 'findOne');
       req.params = { id: artist._id };
       await artistController.getTracks(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -129,6 +137,38 @@ describe('Artists Controller', () => {
       req.params = { id: artist._id };
       await artistController.relatedArtists(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+  });
+  describe('updateArtist', () => {
+    it('Should return updated artist if provided a valid bio', async () => {
+      req.body = { bio: 'A valid bio' };
+      artist.bio = req.body.bio;
+      req.user = artist;
+      mockingoose(Artist).toReturn(artist, 'save');
+      await artistController.updateArtist(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].artist).toMatchObject({
+        bio: artist.bio
+      });
+    });
+    it('Should return updated artist if provided a valid list of tracks', async () => {
+      req.body = { tracks: artist.popularSongs };
+      req.user = artist;
+      mockingoose(Artist).toReturn(artist, 'save');
+      mockingoose(Track).toReturn(artist.popularSongs, 'find');
+      await artistController.updateArtist(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].artist).toMatchObject({
+        _id: artist._id
+      });
+    });
+    it("Should throw an error with status code 400 if the tracks doesn't belong to this artist or doesn't exist", async () => {
+      req.body = { tracks: artist.popularSongs };
+      req.user = artist;
+      mockingoose(Artist).toReturn(artist, 'save');
+      mockingoose(Track).toReturn([], 'find');
+      await artistController.updateArtist(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
   });
 });
