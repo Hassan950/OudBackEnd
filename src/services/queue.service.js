@@ -138,23 +138,7 @@ const createQueueWithContext = async (contextUri) => {
 
     if (!artist) return null;
 
-    // get top 10 tracks by views
-    let topTracks = await Track.find({ 'artists.0': id })
-      .sort({
-        views: -1
-      })
-      .limit(10);
-    // select only _id
-    topTracks = topTracks.map(track => track._id);
-    // if popularSongs is empty use top tracks
-    if (!artist.popularSongs || !artist.popularSongs.length)
-      artist.popularSongs = topTracks;
-    else {
-      // append topTracks and popularSongs then unique the result
-      artist.popularSongs = _.uniq(_.union(artist.popularSongs, topTracks));
-    }
-
-    tracks = artist.popularSongs;
+    tracks = await getArtistTopTracksQueue(artist);
   }
 
   const queue = await Queue.create({
@@ -166,6 +150,37 @@ const createQueueWithContext = async (contextUri) => {
   });
 
   return queue;
+};
+
+/**
+ * Get artist top tracks to create queue with
+ * 
+ * @function
+ * @private
+ * @async
+ * @author Abdelrahman Tarek
+ * @summary Get artist top tracks to create queue with
+ * @param {Document} artist artist
+ * @returns {Array<String>} artist top tracks
+ */
+const getArtistTopTracksQueue = async (artist) => {
+  // get top 10 tracks by views
+  let topTracks = await Track.find({ 'artists.0': artist._id })
+    .sort({
+      views: -1
+    })
+    .limit(10);
+  // select only _id
+  topTracks = topTracks.map(track => track._id);
+  // if popularSongs is empty use top tracks
+  if (!artist.popularSongs || !artist.popularSongs.length)
+    artist.popularSongs = topTracks;
+  else {
+    // append topTracks and popularSongs then unique the result
+    artist.popularSongs = _.uniq(_.union(artist.popularSongs, topTracks));
+  }
+
+  return artist.popularSongs;
 };
 
 /**
@@ -295,6 +310,7 @@ const shuffleQueue = (queue) => {
  * 
  * @function
  * @public
+ * @async
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player 
@@ -304,21 +320,33 @@ const shuffleQueue = (queue) => {
  * play the first track if `player.repeatState` is `context` \
  * else go to the next track 
  * @summary Go Next if `player` in shuffle mode
- * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ * @returns {Document} queue
  */
-const goNextShuffle = (queue, player, queues) => {
+const goNextShuffle = async (queue, player, queues) => {
   if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.shuffleIndex = 0; // return to the first track
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
     } else {
-      // TODO 
-      // add 10 tracks to queue realted to the last track
+      // create a queue similar to the current queue
+      const userService = require('./user.service');
+
+      let newQueue = await createSimilarQueue(queue);
+
+      if (!newQueue || !newQueue.tracks || !newQueue.tracks.length)
+        return queue;
+
+      queue = newQueue;
+
+      playerService.setPlayerToDefault(player);
+      queues = await userService.addQueue(queue, queues);
     }
   } else { // Go to the next track
     queue.shuffleIndex++;
     queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
   }
+
+  return queue;
 };
 
 /**
@@ -326,6 +354,7 @@ const goNextShuffle = (queue, player, queues) => {
  * 
  * @function
  * @public
+ * @async
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player 
@@ -335,17 +364,29 @@ const goNextShuffle = (queue, player, queues) => {
  * play the first track if `player.repeatState` is `context` \
  * else go to the next track 
  * @summary Go Next if `player` in Normal mode
- * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ * @returns {Document} queue
  */
-const goNextNormal = (queue, player, queues) => {
+const goNextNormal = async (queue, player, queues) => {
   if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = 0; // return to the first track
     } else {
-      // TODO 
-      // add 10 tracks to queue realted to the last track
+      // create a queue similar to the current queue
+      const userService = require('./user.service');
+
+      let newQueue = await createSimilarQueue(queue);
+
+      if (!newQueue || !newQueue.tracks || !newQueue.tracks.length)
+        return queue;
+
+      queue = newQueue;
+
+      playerService.setPlayerToDefault(player);
+      queues = await userService.addQueue(queue, queues);
     }
   } else queue.currentIndex++; // Go to the next track
+
+  return queue;
 };
 
 /**
@@ -353,6 +394,7 @@ const goNextNormal = (queue, player, queues) => {
  * 
  * @function
  * @public
+ * @async
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player
@@ -361,13 +403,14 @@ const goNextNormal = (queue, player, queues) => {
  * if player is in shuffle mode call `goNextShuffle` \
  * else call `goNextNormal`
  * @summary Go Next
+ * @returns {Document} queue
  */
-const goNext = (queue, player, queues) => {
+const goNext = async (queue, player, queues) => {
   // Shuffle state
   if (player.shuffleState) {
-    goNextShuffle(queue, player, queues);
+    return await goNextShuffle(queue, player, queues);
   } else {
-    goNextNormal(queue, player, queues);
+    return await goNextNormal(queue, player, queues);
   }
 };
 
@@ -530,6 +573,79 @@ const setQueueToDefault = (queue) => {
   queue.shuffleList = undefined;
 };
 
+/**
+ * Create queue similar to the current queue 
+ * 
+ * @function
+ * @private
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Document} queue 
+ * @description Create queue similar to the current queue 
+ * @summary Create queue similar to the current queue 
+ * @returns {Document} newQueue
+ */
+const createSimilarQueue = async (queue) => {
+  const context = queue.context.type;
+  const id = queue.context.id;
+  let newQueue;
+  if (context === 'artist') {
+    // create a queue from realted artists
+    newQueue = await createQueueFromRelatedArtists(id);
+  } else if (context === 'album') {
+    // create a queue from artist albums
+  } else if (context === 'playlist') {
+    // create a queue from a similar playlist
+  } else {
+    // get random 10 tracks 
+  }
+
+  return newQueue;
+};
+
+
+/**
+ * Create queue from related artists
+ * 
+ * @function
+ * @private
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} artistId 
+ * @returns {Document} queue
+ */
+const createQueueFromRelatedArtists = async (artistId) => {
+  let artist = await Artist.findById(artistId);
+
+  if (!artist) return null;
+
+  // get realted artists
+  const artists = await Artist.aggregate([
+    { $match: { genres: { $in: artist.genres }, _id: { $ne: artistId } } },
+    { $limit: 20 }
+  ]);
+
+  if (!artists || artists.length < 2) return null;
+
+  // get random number from 0 to artists.length - 1
+  const index = Math.floor(Math.random() * artists.length);
+  // get the random artist
+  artist = artists[index];
+
+  // get artist top tracks to create the queue with
+  const tracks = await getArtistTopTracksQueue(artist);
+
+  if (!tracks || !tracks.length) return null;
+
+  // create new queue
+  return await Queue.create({
+    tracks: tracks,
+    context: {
+      type: 'artist',
+      id: artist._id
+    }
+  });
+};
 
 module.exports = {
   fillQueueFromTracksUris,
