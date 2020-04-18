@@ -545,7 +545,7 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
     queue = await appendToQueue(queues[0], tracks);
   } else {
     queue = await createQueueFromTracks(tracks);
-    queues = [queue._id];
+    queues.push(queue._id);
 
     playerService.setPlayerToDefault(player);
     playerService.addTrackToPlayer(player, queue.tracks[0]);
@@ -599,7 +599,8 @@ const createSimilarQueue = async (queue) => {
     // create a queue from a similar playlist
     newQueue = await createQueueFromRelatedPlaylists(id);
   } else {
-    // get random 10 tracks 
+    // create a queue from a similar playlist
+    newQueue = await createQueueFromListOfTracks(queue.tracks);
   }
 
   return newQueue;
@@ -736,6 +737,49 @@ const createQueueFromRelatedPlaylists = async (playlistId) => {
 
   // get album tracks
   const tracks = playlist.tracks;
+
+  if (!tracks || !tracks.length) return null;
+
+  // create new queue
+  return await Queue.create({
+    tracks: tracks,
+    context: {
+      type: 'playlist',
+      id: playlist._id
+    }
+  });
+};
+
+/**
+ * Create queue from list of tracks
+ * 
+ * @function
+ * @private
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Array<String>} tracks Tracks array
+ * @returns {Document} queue
+ */
+const createQueueFromListOfTracks = async (tracks) => {
+  const playlists = await Playlist.aggregate([
+    {
+      $match: {
+        tracks: { $in: tracks },
+        public: true
+      }
+    },
+    { $limit: 20 }
+  ]);
+
+  if (!playlists || !playlists.length) return null;
+
+  // get random number from 0 to albums.length - 1
+  const index = Math.floor(Math.random() * playlists.length);
+  // get the random artist
+  playlist = playlists[index];
+
+  // get album tracks
+  tracks = playlist.tracks;
 
   if (!tracks || !tracks.length) return null;
 
