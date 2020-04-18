@@ -59,6 +59,9 @@ const addToHistory = async (userId, context = {
     context: context
   };
 
+  // if no context or context type is unknown don't add it to history
+  if (!context || context.type === 'unknown') return;
+
   let history = await PlayHistory.findOne(query);
 
   if (!history) {
