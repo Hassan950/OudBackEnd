@@ -1,6 +1,7 @@
 const { Track } = require('../models/track.model');
 const _ = require('lodash');
 const fs = require('fs').promises;
+const logger = require('../config/logger');
 
 /**
  * A method that gets array of tracks By their ID's
@@ -46,7 +47,7 @@ exports.deleteTrack = async id => {
     try {
       await fs.unlink(track.audioUrl);
     } catch (err) {
-      console.log(err.message);
+      logger.error(err.message);
     }
   }
 };
@@ -210,7 +211,7 @@ exports.checkFile = async id => {
     try {
       await fs.unlink(track.audioUrl);
     } catch (err) {
-      console.log(err.message);
+      logger.error(err.message);
     }
   }
 };
