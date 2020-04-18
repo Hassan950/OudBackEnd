@@ -998,7 +998,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  /artists/request:
+  /artists/requests:
     post:
       tags:
         - Artists
@@ -1056,7 +1056,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /artists/request/attachment:
+  /artists/requests/{id}/attachments:
     post:
       tags:
         - Artists
@@ -1064,6 +1064,14 @@ paths:
       description: Uploads an official document that is attached to the request to be an artist.
       security:
         - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of the request
+          required: true
+          schema:
+            type: string
+            format: string
       requestBody:
         content:
           multipart/form-data:
