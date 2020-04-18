@@ -298,6 +298,7 @@ const shuffleQueue = (queue) => {
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player 
+ * @param {Array<String>} queues User queues
  * @description Go Next if `player` in shuffle mode \
  * if the playing track is the last track in the `shuffleList` \
  * play the first track if `player.repeatState` is `context` \
@@ -305,7 +306,7 @@ const shuffleQueue = (queue) => {
  * @summary Go Next if `player` in shuffle mode
  * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
  */
-const goNextShuffle = (queue, player) => {
+const goNextShuffle = (queue, player, queues) => {
   if (queue.shuffleIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.shuffleIndex = 0; // return to the first track
@@ -328,6 +329,7 @@ const goNextShuffle = (queue, player) => {
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player 
+ * @param {Array<String>} queues User queues
  * @description Go Next if `player` in Normal mode \
  * if the playing track is the last track in the `queue` \
  * play the first track if `player.repeatState` is `context` \
@@ -335,7 +337,7 @@ const goNextShuffle = (queue, player) => {
  * @summary Go Next if `player` in Normal mode
  * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
  */
-const goNextNormal = (queue, player) => {
+const goNextNormal = (queue, player, queues) => {
   if (queue.currentIndex === queue.tracks.length - 1) { // last track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = 0; // return to the first track
@@ -354,17 +356,18 @@ const goNextNormal = (queue, player) => {
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player
+ * @param {Array<String>} queues User queues
  * @description Go Next \
  * if player is in shuffle mode call `goNextShuffle` \
  * else call `goNextNormal`
  * @summary Go Next
  */
-const goNext = (queue, player) => {
+const goNext = (queue, player, queues) => {
   // Shuffle state
   if (player.shuffleState) {
-    goNextShuffle(queue, player);
+    goNextShuffle(queue, player, queues);
   } else {
-    goNextNormal(queue, player);
+    goNextNormal(queue, player, queues);
   }
 };
 
@@ -373,29 +376,38 @@ const goNext = (queue, player) => {
  * 
  * @function
  * @public
+ * @async
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player 
+ * @param {Array<String>} queues User queues
  * @description Go Previous if `player` in shuffle mode \
  * if the playing track is the first track in the `shuffleList` \
  * play the last track if `player.repeatState` is `context` \
  * else go to the Previous track 
  * @summary Go Previous if `player` in shuffle mode
- * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ * @returns {Document} queue
  */
-const goPreviousShuffle = (queue, player) => {
+const goPreviousShuffle = async (queue, player, queues) => {
   if (queue.shuffleIndex === 0) { // first track in the queue
     if (player.repeatState === 'context') {
       queue.shuffleIndex = queue.tracks.length - 1; // return to the last track
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
     } else {
-      // TODO 
-      // add 10 tracks to queue realted to the last track
+      // play the last queue
+      if (queues && queues.length > 1) {
+        queues.reverse();
+        queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+        setQueueToDefault(queue);
+        playerService.setPlayerToDefault(player);
+      }
     }
   } else { // Go to the previous track
     queue.shuffleIndex--;
     queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
   }
+
+  return queue;
 };
 
 /**
@@ -403,25 +415,34 @@ const goPreviousShuffle = (queue, player) => {
  * 
  * @function
  * @public
+ * @async
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player 
+ * @param {Array<String>} queues User queues
  * @description Go Previous if `player` in Normal mode \
  * if the playing track is the first track in the `queue` \
  * play the last track if `player.repeatState` is `context` \
  * else go to the Previous track 
  * @summary Go Previous if `player` in Normal mode
- * @todo add 10 tracks to queue realted to the last track if `player.repeatState` != 'context'
+ * @returns {Document} queue
  */
-const goPreviousNormal = (queue, player) => {
+const goPreviousNormal = async (queue, player, queues) => {
   if (queue.currentIndex === 0) { // first track in the queue
     if (player.repeatState === 'context') {
       queue.currentIndex = queue.tracks.length - 1; // return to the last track
     } else {
-      // TODO 
-      // add 10 tracks to queue realted to the last track
+      // play the last queue
+      if (queues && queues.length > 1) {
+        queues.reverse();
+        queue = await getQueueById(queues[0], { selectDetails: true });
+        setQueueToDefault(queue);
+        playerService.setPlayerToDefault(player);
+      }
     }
   } else queue.currentIndex--; // Go to the previous track
+
+  return queue;
 };
 
 /**
@@ -429,20 +450,23 @@ const goPreviousNormal = (queue, player) => {
  * 
  * @function
  * @public
+ * @async
  * @author Abdelrahman Tarek
  * @param {Document} queue Queue 
  * @param {Document} player Player
+ * @param {Array<String>} queues User queues
  * @description Go Previous \
  * if player is in shuffle mode call `goPreviousShuffle` \
  * else call `goPreviousNormal`
  * @summary Go Previous
+ * @returns {Document} queue
  */
-const goPrevious = (queue, player) => {
+const goPrevious = async (queue, player, queues) => {
   // Shuffle state
   if (player.shuffleState) {
-    goPreviousShuffle(queue, player);
+    return await goPreviousShuffle(queue, player, queues);
   } else {
-    goPreviousNormal(queue, player);
+    return await goPreviousNormal(queue, player, queues);
   }
 
 };

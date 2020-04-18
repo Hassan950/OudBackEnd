@@ -373,7 +373,6 @@ exports.deleteTrack = async (req, res, next) => {
         playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
       } else
         playerService.setPlayerToDefault(player);
-
     }
 
     await Promise.all([
@@ -504,7 +503,7 @@ exports.nextTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  queueService.goNext(queue, player);
+  await queueService.goNext(queue, player, queues);
 
   playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 
@@ -564,13 +563,18 @@ exports.previousTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  queueService.goPrevious(queue, player);
+  queue = await queueService.goPrevious(queue, player, queues);
+
   playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 
   playHistoryService.addToHistory(id, player.context); // add to history
 
-  queue.save(); // save the queue
+  req.user.queues = queues;
 
-  await player.save();
+  await Promise.all([
+    queue.save(),
+    player.save(),
+    req.user.save()
+  ]);
   res.status(204).end();
 };

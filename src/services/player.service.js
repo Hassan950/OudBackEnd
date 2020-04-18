@@ -22,7 +22,7 @@ const deviceService = require('./device.service');
 const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
   let player;
 
-  if (ops.populate) {
+  if (ops && ops.populate) {
     player = await Player.findOne({ userId: userId })
       .populate({
         path: 'item',
@@ -81,7 +81,7 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
   if (currentlyPlaying) {
-    if (ops.link) {
+    if (ops && ops.link) {
       // Add host link
       const audio = currentlyPlaying.item.audioUrl.split('/');
       currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
@@ -245,7 +245,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
         return null;
       }
       // go next
-      queueService.goNext(queue, player);
+      queueService.goNext(queue, player, queues);
       // add next track to player
       playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
       queue.save(); // save the queue

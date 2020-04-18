@@ -164,7 +164,8 @@ describe('Player controller', () => {
       req.query.deviceId = device._id;
       req.query.trackId = track._id;
       mockingoose(Track)
-        .toReturn(track, 'findOne');
+        .toReturn(track, 'findOne')
+        .toReturn([track], 'find');
     });
 
     it('it should return 500 status code if not authenticated', async () => {
@@ -224,13 +225,6 @@ describe('Player controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
-    it('should return 404 if context is not found for artist context (artist.popularSongs = null)', async () => {
-      req.body.contextUri = `oud:artist:${dummyId}`;
-      mockingoose(Artist).toReturn({}, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
     it('should return 404 if context is not found for album context (album.tracks empty)', async () => {
       // album
       req.body.contextUri = `oud:album:${dummyId}`;
@@ -243,13 +237,6 @@ describe('Player controller', () => {
       // playlist
       req.body.contextUri = `oud:playlist:${dummyId}`;
       mockingoose(Playlist).toReturn({ tracks: [] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should return 404 if context is not found for artist context (artist.popularSongs empty)', async () => {
-      req.body.contextUri = `oud:artist:${dummyId}`;
-      mockingoose(Artist).toReturn({ popularSongs: [] }, 'findOne');
       await playerController.resumePlayer(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
