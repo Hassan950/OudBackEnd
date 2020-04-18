@@ -1038,8 +1038,16 @@ paths:
               - name
               - displayName
       responses:
-        '204':
-          description: the resources are created and the response body is empty.
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: string
+                    description: The id of the created request
         '400':
           description: >-
             The request could not be understood by the server due to malformed
@@ -1073,12 +1081,13 @@ paths:
           description: the resources are created and the response body is empty.
         '400':
           description: >-
-            The request could not be understood by the server due to malformed
-            syntax.
+            the server cannot or will not process the request due to something that is perceived to be a client error. and the artist request will be discarded and removed from the server and the user should resubmit.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
       
   /albums/{id}:
     get:
