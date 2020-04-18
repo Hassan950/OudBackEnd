@@ -193,5 +193,56 @@
     "tracks": [
       "5e9b47be0f27b613b44fba3e"
     ]
+  },
+  {
+    "_id": "5e9b48d20f27b613b44fba40",
+    "name": "21",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "19-01-2011",
+    "tracks": [
+      "5e9b49440f27b613b44fba41"
+    ]
+  },
+  {
+    "_id": "5e9b48d20f27b613b44fba41",
+    "name": "25",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "20-11-2015",
+    "tracks": [
+      "5e9b49440f27b613b44fba42"
+    ]
+  },
+  {
+    "_id": "5e9b48d20f27b613b44fba42",
+    "name": "Skyfall",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "05-10-2012",
+    "tracks": [
+      "5e9b49440f27b613b44fba43"
+    ]
   }
 ]
