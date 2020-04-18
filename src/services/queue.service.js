@@ -594,6 +594,7 @@ const createSimilarQueue = async (queue) => {
     newQueue = await createQueueFromRelatedArtists(id);
   } else if (context === 'album') {
     // create a queue from artist albums
+    newQueue = await createQueueFromRelatedAlbums(id);
   } else if (context === 'playlist') {
     // create a queue from a similar playlist
   } else {
@@ -625,7 +626,7 @@ const createQueueFromRelatedArtists = async (artistId) => {
     { $limit: 20 }
   ]);
 
-  if (!artists || artists.length < 2) return null;
+  if (!artists || !artists.length) return null;
 
   // get random number from 0 to artists.length - 1
   const index = Math.floor(Math.random() * artists.length);
@@ -643,6 +644,57 @@ const createQueueFromRelatedArtists = async (artistId) => {
     context: {
       type: 'artist',
       id: artist._id
+    }
+  });
+};
+
+/**
+ * Create queue from related Albums
+ * 
+ * @function
+ * @private
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} albumId 
+ * @returns {Document} queue
+ */
+const createQueueFromRelatedAlbums = async (albumId) => {
+  let album = await Album.findById(albumId);
+
+  if (!album) return null;
+
+  // get realted albums
+  const albums = await Album.aggregate([
+    {
+      $match: {
+        $or: [
+          { genres: { $in: album.genres } },
+          { artists: { $in: album.artists } }
+        ],
+        _id: { $ne: albumId }
+      }
+    },
+    { $limit: 20 }
+  ]);
+
+  if (!albums || !albums.length) return null;
+
+  // get random number from 0 to albums.length - 1
+  const index = Math.floor(Math.random() * albums.length);
+  // get the random artist
+  album = albums[index];
+
+  // get album tracks
+  const tracks = album.tracks;
+
+  if (!tracks || !tracks.length) return null;
+
+  // create new queue
+  return await Queue.create({
+    tracks: tracks,
+    context: {
+      type: 'album',
+      id: album._id
     }
   });
 };
