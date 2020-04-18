@@ -1,5 +1,4 @@
 const { Artist, User, Track } = require('../models');
-const mongoose = require('mongoose');
 
 /**
  * A method that gets an artist by it's ID

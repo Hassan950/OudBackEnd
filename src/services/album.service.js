@@ -1,7 +1,7 @@
 const { Album } = require('../models/album.model');
 const mongoose = require('mongoose');
 const fs = require('fs').promises;
-const _ = require('lodash');
+const logger = require('../config/logger');
 
 /**
  * A method that gets an album by it's ID
@@ -23,8 +23,7 @@ exports.findAlbum = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    })
-    .select('-album_group');
+    });
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -62,8 +61,7 @@ exports.findAlbumUtil = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    })
-    .select('-album_group');
+    });
   return album;
 };
 
@@ -86,8 +84,7 @@ exports.findAlbums = async ids => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    })
-    .select('-album_group');
+    });
 
   let lengthArray = Album.aggregate([
     { $match: { _id: { $in: ids.map(id => mongoose.Types.ObjectId(id)) } } },
@@ -98,8 +95,11 @@ exports.findAlbums = async ids => {
   const albums = ids.map(id => {
     let val = result.find(album => String(album._id) == id);
     if (val) {
-      length = lengthArray.find(albumTno => String(albumTno._id) === String(id));
-      return { ...val, 
+      length = lengthArray.find(
+        albumTno => String(albumTno._id) === String(id)
+      );
+      return {
+        ...val,
         tracks: {
           limit: 50,
           offset: 0,
@@ -130,8 +130,7 @@ exports.deleteAlbum = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    })
-    .select('-album_group');
+    });
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -172,7 +171,7 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
     })
     .select('tracks');
 
-    let lengthObj = Album.aggregate([
+  let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
@@ -202,8 +201,7 @@ exports.update = async (id, newAlbum) => {
       select: '-album',
       options: { limit: 50, offset: 0 },
       populate: { path: 'artists', select: 'displayName images' }
-    })
-    .select('-album_group');
+    });
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -241,7 +239,7 @@ exports.setImage = async (album, path) => {
   ]);
 
   [, lengthObj] = await Promise.all([album.save(), lengthObj]);
-  album = album.toJSON()
+  album = album.toJSON();
 
   album.tracks = {
     limit: 50,
@@ -267,7 +265,7 @@ exports.createAlbum = async newAlbum => {
     .populate('genres')
     .execPopulate();
   album.album_group = undefined;
-  album = album.toJSON()
+  album = album.toJSON();
 
   album.tracks = {
     limit: 50,
@@ -311,7 +309,7 @@ exports.addTrack = async (album, track) => {
     lengthObj
   ]);
 
-  album = album.toJSON()
+  album = album.toJSON();
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -358,7 +356,7 @@ exports.deleteImage = async image => {
     try {
       await fs.unlink(image);
     } catch (err) {
-      console.log(err.message);
+      logger.error(err.message);
     }
   }
 };
