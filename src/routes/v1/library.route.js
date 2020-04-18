@@ -6,12 +6,13 @@ const { libraryValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router({ mergeParams: true });
-//router.use(catchAsync(authMiddleware.authenticate));
+router.use(catchAsync(authMiddleware.authenticate));
 
-// router('/')
-// .get()
-// .put()
-// .delete();
+router
+  .route('/')
+  .get(validate(libraryValidation.get), catchAsync(libraryController.get))
+  .put(validate(libraryValidation.put), catchAsync(libraryController.put))
+  .delete(validate(libraryValidation.delete), catchAsync(libraryController.delete));
 
 router
   .route('/contains')

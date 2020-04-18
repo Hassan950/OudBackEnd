@@ -6,7 +6,7 @@ const likedTracksSchema = mongoose.Schema({
     ref: 'User',
     required: true
   },
-  trackId: {
+  track: {
     type: mongoose.Types.ObjectId,
     ref: 'Track',
     required: true
@@ -17,7 +17,7 @@ const likedTracksSchema = mongoose.Schema({
   }
 });
 
-likedTracksSchema.index({ userId: 1, trackId: 1 }, { unique: true });
+likedTracksSchema.index({ userId: 1, track: 1 }, { unique: true });
 
 const likedTracks = mongoose.model('likedTracks', likedTracksSchema);
 
@@ -27,7 +27,7 @@ const likedAlbumsSchema = mongoose.Schema({
     ref: 'User',
     required: true
   },
-  albumId: {
+  album: {
     type: mongoose.Types.ObjectId,
     ref: 'Album',
     required: true
@@ -38,7 +38,7 @@ const likedAlbumsSchema = mongoose.Schema({
   }
 });
 
-likedAlbumsSchema.index({ userId: 1, albumId: 1 }, { unique: true });
+likedAlbumsSchema.index({ userId: 1, album: 1 }, { unique: true });
 
 const likedAlbums = mongoose.model('likedAlbums', likedAlbumsSchema);
 
