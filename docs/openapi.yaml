@@ -1590,7 +1590,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: Idds
+        - name: ids
           in: query
           required: true
           description: comma separated ids of the Albums to be saved
@@ -1617,7 +1617,7 @@ paths:
         - bearerAuth: []
       summary: Remove Saved Albums for Current User
       parameters:
-        - name: Ids
+        - name: ids
           in: query
           required: true
           description: comma separated ids of the Albums to be deleted
@@ -1938,15 +1938,16 @@ paths:
       parameters:
         - name: q
           in: query
-          description: Search query keywords and optional field filters and operators.
+          description: name of what you want to search for eg q = Top this will return items with name that includes Top.
           schema:
             type: string
+          required: true  
         - name: type
           in: query
           description: >-
             A comma-separated list of item types to search across. Valid types
-            are album , artist, playlist, and track. Search results include hits
-            from all the specified item types.
+            are album ,user, artist, playlist, and track. Search results include hits
+            from all the specified item types.Its optional if not sent search will be on all types.
           schema:
             type: string
         - name: limit
@@ -1967,8 +1968,8 @@ paths:
       responses:
         '200':
           description: >-
-            the response body contains array of Simplified Playlist objects in
-            JSON format.
+            the response body contains array of objects in
+            JSON format with the required type.
           content:
             application/json:
               schema:
@@ -2121,7 +2122,7 @@ paths:
         - bearerAuth: []
       summary: Save Tracks for Current User
       parameters:
-        - name: Ids
+        - name: ids
           in: query
           required: true
           description: comma separated Ids of the Tracks to be saved
@@ -2164,7 +2165,7 @@ paths:
         - bearerAuth: []
       summary: Remove Saved Tracks for Current User
       parameters:
-        - name: IDs
+        - name: ids
           in: query
           required: true
           description: the IDs of the Tracks to be removed
