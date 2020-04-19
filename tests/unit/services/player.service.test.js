@@ -140,4 +140,15 @@ describe('Player Service', () => {
       expect(result.device).toBe(device._id);
     });
   });
+
+  describe('Create Player', () => {
+    beforeEach(() => {
+      mockingoose(Player).toReturn(player, 'save');
+    });
+
+    it('should create player and return it', async () => {
+      const result = await playerService.createPlayer(user._id);
+      expect(result).toBe(player);
+    });
+  });
 });
