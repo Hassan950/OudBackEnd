@@ -1834,7 +1834,7 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: ID's of the tracks sorted
+                  description: ID's of the tracks sorted. (maximum 10 tracks)
               required: 
               - tracks
       responses:
