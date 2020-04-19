@@ -1,0 +1,373 @@
+[
+  {
+    "_id": "5e98bd8d2c7baf48ebe7888a",
+    "album_type": "album",
+    "artists": [
+      "5e907db0a0645f4581607606"
+    ],
+    "genres": [
+      "5e962e04da7d8d70d03a997c",
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "name": "Infinite",
+    "release_date": "12-11-1996",
+    "tracks": [
+      "5e98bdad2c7baf48ebe7888b"
+    ]
+  },
+  {
+    "_id": "5e9887ee2344f83a2900c2db",
+    "album_type": "single",
+    "artists": [
+      "5e907db0a0645f4581607606"
+    ],
+    "genres": [
+      "5e962e04da7d8d70d03a997c",
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "name": "Killshot",
+    "release_date": "19-09-2018",
+    "tracks": [
+      "5e9888bc2344f83a2900c2dc"
+    ]
+  },
+  {
+    "_id": "5e98bf312c7baf48ebe7888e",
+    "album_type": "album",
+    "artists": [
+      "5e907db0a0645f4581607606"
+    ],
+    "genres": [
+      "5e962e04da7d8d70d03a997c",
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "name": "Kamikaze",
+    "release_date": "31-08-2018",
+    "tracks": [
+      "5e98bf4b2c7baf48ebe7888f",
+      "5e98f1442c7baf48ebe78893"
+    ]
+  },
+  {
+    "_id": "5e9b32340f27b613b44fba23",
+    "name": "خربان",
+    "artists": [
+      "5e907db0a0645f5581607610",
+      "5e907db0a0645f4581607609"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9976",
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "album_type": "single",
+    "release_date": "08-08-2018",
+    "tracks": [
+      "5e9b32c40f27b613b44fba24"
+    ]
+  },
+  {
+    "_id": "5e9b370d0f27b613b44fba26",
+    "name": "مزيكا القرن الواحد وعشرين",
+    "artists": [
+      "5e907db0a0645f5581607610"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9976",
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "album_type": "album",
+    "release_date": "02-06-2018",
+    "tracks": [
+      "5e9b37660f27b613b44fba27",
+      "5e9b37d50f27b613b44fba29"
+    ]
+  },
+  {
+    "_id": "5e9b38be0f27b613b44fba2b",
+    "name": "Drakola",
+    "artists": [
+      "5e907db0a0645f5581607610"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9976",
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "album_type": "single",
+    "release_date": "22-04-2018",
+    "tracks": [
+      "5e9b39050f27b613b44fba2c"
+    ]
+  },
+  {
+    "_id": "5e9b3c710f27b613b44fba2e",
+    "name": "نهاية العالم",
+    "artists": [
+      "5e907db0a0645f558160760d"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "album_type": "single",
+    "release_date": "06-09-2019",
+    "tracks": [
+      "5e9b3d310f27b613b44fba2f"
+    ]
+  },
+  {
+    "_id": "5e9b407a0f27b613b44fba31",
+    "name": "البوصلة ضاعت",
+    "artists": [
+      "5e907db0a0645f558160760d"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "album_type": "single",
+    "release_date": "23-08-2019",
+    "tracks": [
+      "5e9b40b80f27b613b44fba32"
+    ]
+  },
+  {
+    "_id": "5e9b41630f27b613b44fba34",
+    "name": "أبطال",
+    "artists": [
+      "5e907db0a0645f558160760d"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "album_type": "single",
+    "release_date": "29-12-2019",
+    "tracks": [
+      "5e9b41d70f27b613b44fba35"
+    ]
+  },
+  {
+    "_id": "5e9b44a00f27b613b44fba37",
+    "name": "Basha E3temed",
+    "artists": [
+      "5e907db0a0645f558160760e"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "album_type": "single",
+    "release_date": "16-10-2019",
+    "tracks": [
+      "5e9b44fb0f27b613b44fba38"
+    ]
+  },
+  {
+    "_id": "5e9b46020f27b613b44fba3a",
+    "name": "Wtwat",
+    "artists": [
+      "5e907db0a0645f558160760e"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "album_type": "single",
+    "release_date": "29-08-2019",
+    "tracks": [
+      "5e9b46610f27b613b44fba3b"
+    ]
+  },
+  {
+    "_id": "5e9b47470f27b613b44fba3d",
+    "name": "Yatawaghal Yatasarab",
+    "artists": [
+      "5e907db0a0645f558160760e"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9974",
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "album_type": "single",
+    "release_date": "04-08-2019",
+    "tracks": [
+      "5e9b47be0f27b613b44fba3e"
+    ]
+  },
+  {
+    "_id": "5e9b48d20f27b613b44fba40",
+    "name": "21",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "19-01-2011",
+    "tracks": [
+      "5e9b49440f27b613b44fba41"
+    ]
+  },
+  {
+    "_id": "5e9b48d20f27b613b44fba41",
+    "name": "25",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "20-11-2015",
+    "tracks": [
+      "5e9b49440f27b613b44fba42"
+    ]
+  },
+  {
+    "_id": "5e9b48d20f27b613b44fba42",
+    "name": "Skyfall",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d03a997e",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "05-10-2012",
+    "tracks": [
+      "5e9b49440f27b613b44fba43"
+    ]
+  },
+  {
+    "_id": "5e9b4b3d0f27b613b44fba43",
+    "name": "Delirium",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "album",
+    "release_date": "06-11-2015",
+    "tracks": [
+      "5e9b4b9b0f27b613b44fba44"
+    ]
+  },
+  {
+    "_id": "5e9b4b3d0f27b613b44fba44",
+    "name": "Sixteen",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "single",
+    "release_date": "12-04-2019",
+    "tracks": [
+      "5e9b4b9b0f27b613b44fba45"
+    ]
+  },
+  {
+    "_id": "5e9b4b3d0f27b613b44fba45",
+    "name": "Still Falling For You",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e962e04ca7d8d40d02a997c",
+      "5e962e04ca7d8d40d02a997d",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230",
+      "5e9083c24c798428f45b3231",
+      "5e9083c24c798428f45b3232"
+    ],
+    "album_type": "single",
+    "release_date": "19-08-2016",
+    "tracks": [
+      "5e9b4b9b0f27b613b44fba46"
+    ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba46",
+    "name": "HIGHEST IN THE ROOM",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "album_type": "single",
+    "release_date": "04-10-2019",
+    "tracks": [
+      "5e9b4df40f27b613b44fba47"
+    ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba47",
+    "name": "ASTROWORLD",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "genres": [
+      "5e962e04da7d8d80d03a997d"
+    ],
+    "album_type": "single",
+    "release_date": "03-08-2018",
+    "tracks": [
+      "5e9b4df40f27b613b44fba48",
+      "5e9b4df40f27b613b44fba49"
+    ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba48",
+    "name": "سلفنى ضحكتك",
+    "artists": [
+      "5e907db0a0645f558160760f"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9976"
+    ],
+    "album_type": "album",
+    "release_date": "01-01-2010",
+    "tracks": [
+      "5e9b4df40f27b613b44fba50",
+      "5e9b4df40f27b613b44fba51"
+    ]
+  },
+  {
+    "_id": "5e9b4dad0f27b613b44fba49",
+    "name": "Bedon Montag",
+    "artists": [
+      "5e907db0a0645f558160760f"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9976"
+    ],
+    "album_type": "album",
+    "release_date": "01-01-1998",
+    "tracks": [
+      "5e9b4df40f27b613b44fba52"
+    ]
+  }
+]

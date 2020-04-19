@@ -38,10 +38,6 @@ describe('Album Model', () => {
     album.album_type = 'lol';
     expect(album.validateSync().errors['album_type']).toBeDefined();
   });
-  it('Should throw an error if album_group value is not one of ["single","compilation","album","appears_on"]', () => {
-    album.album_group = 'lol';
-    expect(album.validateSync().errors['album_group']).toBeDefined();
-  });
   it("Should throw an error if no artists ID's were passed (empty list or no list at all)", () => {
     album.artists = null;
     expect(album.validateSync().errors['artists']).toBeDefined();

@@ -2,7 +2,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e2",
     "album_type":"album",
-    "album_group":"album",
     "artists":["5e907dafa0645f4571607602"],
     "genres": ["5e9083c24c798428f45b322f", "5e9083c24c798428f45b322c","5e962e04da7d8d40d02a9975","5e962e04da7d8d40d02a9977"],
     "name":"This is acting",
@@ -12,7 +11,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e3",
     "album_type":"album",
-    "album_group":"album",
     "artists":["5e907dafa0645f4571607600"],
     "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f", "5e9083c24c798428f45b3230"],
     "name":"1989",
@@ -22,7 +20,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e4",
     "album_type":"single",
-    "album_group":"single",
     "artists":["5e907dafa0645f45716075ff"],
     "genres": ["5e9083c24c798428f45b322c", "5e9083c24c798428f45b322f", "5e9083c24c798428f45b3230"],
     "name":"Bangerz",
@@ -32,7 +29,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e5",
     "album_type":"single",
-    "album_group":"single",
     "artists":["5e907dafa0645f4571607601"],
     "genres": ["5e9083c24c798428f45b322f", "5e9083c24c798428f45b3232"],
     "release_date":"05-06-2015",
@@ -42,7 +38,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e6",
     "album_type":"single",
-    "album_group":"single",
     "artists":["5e907dafa0645f4571607603"],
     "genres": ["5e962e04da7d8d40d02a9979","5e962e04da7d8d40d02a9976","5e9083c24c798428f45b322e"],
     "name":"Best of Ahmed Saad",
@@ -52,7 +47,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e7",
     "album_type":"single",
-    "album_group":"single",
     "artists":["5e907db0a0645f4571607604"],
     "genres": ["5e9083c24c798428f45b322e", "5e9083c24c798428f45b3235", "5e962e04da7d8d40d02a9979"],
     "name":"Ya Ahl El Arab W El Tarab",
@@ -62,7 +56,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e8",
     "album_type":"single",
-    "album_group":"single",
     "artists":["5e907db0a0645f4571607605"],
     "genres": ["5e962e04da7d8d40d02a9973"],
     "name":"El Rahaen",
@@ -72,7 +65,6 @@
   {
     "_id":"5e909be7cfe5b521a0ccf3e9",
     "album_type":"single",
-    "album_group":"single",
     "artists":["5e907db0a0645f4571607606"],
     "genres": ["5e9083c24c798428f45b322c","5e9083c24c798428f45b322f","5e9083c24c798428f45b3232"],
     "name":"Dua Lipa",
