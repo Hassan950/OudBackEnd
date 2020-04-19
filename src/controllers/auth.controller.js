@@ -87,7 +87,7 @@ exports.requestVerify = async (req, res, next) => {
     link: verifyURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   user.verifyToken = undefined;
@@ -146,7 +146,7 @@ exports.signup = async (req, res, next) => {
     link: verifyURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   newUser.verifyToken = undefined;
@@ -259,7 +259,7 @@ exports.forgotPassword = async (req, res, next) => {
     link: resetURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   res.status(httpStatus.OK).json({
