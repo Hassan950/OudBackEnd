@@ -347,7 +347,7 @@ exports.deleteTrack = async (req, res, next) => {
   if (trackIndex === queue.currentIndex) {
     // set all to default
     if (queue.tracks && queue.tracks.length)
-      player.item = queue.tracks[0];
+      playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
 
     queueService.setQueueToDefault(queue);
     player.shuffleState = false;
@@ -373,7 +373,6 @@ exports.deleteTrack = async (req, res, next) => {
         playerService.addTrackToPlayer(player, queue.tracks[0], queue.context);
       } else
         playerService.setPlayerToDefault(player);
-
     }
 
     await Promise.all([
@@ -504,20 +503,19 @@ exports.nextTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  queueService.goNext(queue, player);
+  queue = await queueService.goNext(queue, player, queues);
 
-  player.item = queue.tracks[queue.currentIndex]; // add the next track to player item
-  player.context = queue.context;
+  playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 
-  if (player.context && player.context.type !== 'unknown')
-    playHistoryService.addToHistory(id, player.context); // add to history
+  playHistoryService.addToHistory(id, player.context); // add to history
 
-  queue.save(); // save the queue
+  req.user.queues = queues;
 
-  player.isPlaying = true; // play the track
-  player.progressMs = 0;
-
-  await player.save();
+  await Promise.all([
+    queue.save(),
+    player.save(),
+    req.user.save()
+  ]);
   res.status(204).end();
 };
 
@@ -569,19 +567,18 @@ exports.previousTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  queueService.goPrevious(queue, player);
+  queue = await queueService.goPrevious(queue, player, queues);
 
-  player.item = queue.tracks[queue.currentIndex]; // add the previous track to player item
-  player.context = queue.context;
+  playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 
-  if (player.context && player.context.type !== 'unknown')
-    playHistoryService.addToHistory(id, player.context); // add to history
+  playHistoryService.addToHistory(id, player.context); // add to history
 
-  queue.save(); // save the queue
+  req.user.queues = queues;
 
-  player.isPlaying = true; // play the track
-  player.progressMs = 0;
-
-  await player.save();
+  await Promise.all([
+    queue.save(),
+    player.save(),
+    req.user.save()
+  ]);
   res.status(204).end();
 };

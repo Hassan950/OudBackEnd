@@ -1,7 +1,7 @@
 const { Playlist, Track, User, PlaylistFollowings } = require('../models');
 const _ = require('lodash');
 const move = require('lodash-move');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 /**
  * A method that gets a playlist by it's ID
@@ -119,9 +119,8 @@ exports.getTracks = async (params, query) => {
   return { tracks, total };
 };
 
-
 /**
- * A method that get Followedplaylists of a user 
+ * A method that get Followedplaylists of a user
  *
  * @function
  * @author Ahmed Magdy
@@ -158,13 +157,12 @@ exports.getUserPlaylists = async (id, query, publicity) => {
   return { playlists, total };
 };
 
-
 /**
- * A method that get tracks of a given urls and its helping to other functions  
+ * A method that get tracks of a given urls and its helping to other functions
  *
  * @function
  * @author Ahmed Magdy
- * @summary get tracks 
+ * @summary get tracks
  * @param {array} uris array of uris
  * @returns {array} array of tracks if the tracks was found
  * @returns null if the tracks was not found
@@ -175,13 +173,12 @@ exports.getTracksId = async Ids => {
   return tracks;
 };
 
-
 /**
- * A method that get tracks of a given urls and its helping to other functions  
+ * A method that get tracks of a given urls and its helping to other functions
  *
  * @function
  * @author Ahmed Magdy
- * @summary get user 
+ * @summary get user
  * @param {string} id id of user
  * @returns user if the user was found
  * @returns null if the user was not found
@@ -193,7 +190,7 @@ exports.checkUser = async id => {
 };
 
 /**
- * A method that create playlist 
+ * A method that create playlist
  *
  * @function
  * @author Ahmed Magdy
@@ -201,9 +198,8 @@ exports.checkUser = async id => {
  * @param {object} params An object containing parameter values parsed from the URL path
  * @param {object} body An object that holds parameters that are sent up from the client in the request
  * @param {string} image new image of playlist
- * @returns playlist 
+ * @returns playlist
  */
-
 
 exports.createUserPlaylist = async (params, body, image) => {
   const playlist = await Playlist.create({
@@ -217,9 +213,8 @@ exports.createUserPlaylist = async (params, body, image) => {
   return playlist;
 };
 
-
 /**
- * A method that deletes tracks in a playlist 
+ * A method that deletes tracks in a playlist
  *
  * @function
  * @author Ahmed Magdy
@@ -240,7 +235,7 @@ exports.deleteTracks = async (params, tracks) => {
 };
 
 /**
- * A method that adds tracks in a playlist 
+ * A method that adds tracks in a playlist
  *
  * @function
  * @author Ahmed Magdy
@@ -279,7 +274,7 @@ exports.addTracks = async (params, tracks, position) => {
 };
 
 /**
- * A method that reorder tracks in a playlist 
+ * A method that reorder tracks in a playlist
  *
  * @function
  * @author Ahmed Magdy

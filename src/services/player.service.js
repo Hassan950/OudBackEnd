@@ -1,4 +1,5 @@
 const { Player } = require('../models/player.model');
+const { Track } = require('../models/track.model');
 const queueService = require('./queue.service');
 const trackService = require('./track.service');
 const deviceService = require('./device.service');
@@ -21,7 +22,7 @@ const deviceService = require('./device.service');
 const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
   let player;
 
-  if (ops.populate) {
+  if (ops && ops.populate) {
     player = await Player.findOne({ userId: userId })
       .populate({
         path: 'item',
@@ -74,12 +75,13 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
       }
     })
     .select('item context')
+    .lean()
     ;
 
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
   if (currentlyPlaying) {
-    if (ops.link) {
+    if (ops && ops.link) {
       // Add host link
       const audio = currentlyPlaying.item.audioUrl.split('/');
       currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
@@ -123,10 +125,14 @@ const createPlayer = async (userId) => {
  * @param {String} [context.id] context id 
  * @description assign player.item to track, player.progressMs to 0, player.currentlyPlayingType to track \
  * and if context and context.type is defined \
- * assign player.context to context 
+ * assign player.context to context \
+ * increase track views
  * @summary Add track to player
  */
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
+  // increase track views
+  Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
+  // play the track
   player.item = track;
   player.progressMs = 0;
   player.isPlaying = true;
@@ -181,7 +187,7 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    player.item = queue.tracks[queue.currentIndex]; // set player item
+    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   } else if (offset.uri) {
     const trackId = offset.uri.split(':')[2];
     let pos = await queueService.getTrackPosition(queues[0], trackId);
@@ -203,7 +209,7 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    player.item = queue.tracks[queue.currentIndex]; // set player item
+    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   }
 
   return player;
@@ -239,7 +245,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
         return null;
       }
       // go next
-      queueService.goNext(queue, player);
+      queueService.goNext(queue, player, queues);
       // add next track to player
       playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
       queue.save(); // save the queue
