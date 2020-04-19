@@ -1,5 +1,5 @@
-const { playerService } = require('../../../src/services');
-const { Player, Device } = require('../../../src/models');
+const playerService = require('../../../src/services/player.service');
+const { Player, Device, Track } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 const playerMocks = require('../../utils/models/player.model.mocks');
 const queueMocks = require('../../utils/models/queue.model.mocks');
@@ -149,6 +149,95 @@ describe('Player Service', () => {
     it('should create player and return it', async () => {
       const result = await playerService.createPlayer(user._id);
       expect(result).toBe(player);
+    });
+  });
+
+  describe('Change PLayer Progress', () => {
+    let track;
+    let queue;
+    const queueService = require('../../../src/services/queue.service');
+    beforeEach(() => {
+      track = new Track({
+        name: 'song',
+        audioUrl: 'song.mp3',
+        artists: [
+          '5e6c8ebb8b40fc5508fe8b32',
+          '5e6c8ebb8b40fc6608fe8b32',
+          '5e6c8ebb8b40fc7708fe8b32'
+        ],
+        album: '5e6c8ebb8b40fc7708fe8b32',
+        duration: 21000
+      });
+      queue = queueMocks.createFakeQueue();
+      mockingoose(Track).toReturn(track, 'findOne');
+      queueService.getQueueById = jest.fn().mockResolvedValue(queue);
+      queueService.goNext = jest.fn();
+    });
+
+    it('should set player progressMs and return player', async () => {
+      const result = await playerService.changePlayerProgress(player, 200, []);
+      expect(result).toBe(player);
+      expect(result.progressMs).toBe(200);
+    });
+
+    it('should set player progress to 0 if progressMs >= track duration and repeatState is track and track is passed', async () => {
+      player.repeatState = 'track';
+      const result = await playerService.changePlayerProgress(player, track.duration + 200, [], track);
+      expect(result).toBe(player);
+      expect(result.progressMs).toBe(0);
+    });
+
+    it('should set player progress to 0 if progressMs >= track duration and repeatState is track and track is not passed', async () => {
+      player.repeatState = 'track';
+      const result = await playerService.changePlayerProgress(player, track.duration + 200, []);
+      expect(result).toBe(player);
+      expect(result.progressMs).toBe(0);
+    });
+
+    it('should call getQueueById if progressMs >= track duration and repeatState is not track', async () => {
+      player.repeatState = 'context';
+      await playerService.changePlayerProgress(player, track.duration + 200, [1], track);
+      expect(queueService.getQueueById.mock.calls.length).toBe(1);
+      expect(queueService.getQueueById.mock.calls[0][0]).toBe(1);
+      expect(queueService.getQueueById.mock.calls[0][1]).toEqual({ selectDetails: true });
+    });
+
+    it('should return null if queue is not found', async () => {
+      player.repeatState = 'context';
+      queueService.getQueueById = jest.fn().mockResolvedValue(null);
+      const result = await playerService.changePlayerProgress(player, track.duration + 200, [1], track);
+      expect(result).toBe(null);
+    });
+    it('should return null if queue.tracks is not found', async () => {
+      player.repeatState = 'context';
+      queue.tracks = null;
+      queueService.getQueueById = jest.fn().mockResolvedValue(queue);
+      const result = await playerService.changePlayerProgress(player, track.duration + 200, [1], track);
+      expect(result).toBe(null);
+    });
+    it('should return null if queue.tracks is empty', async () => {
+      player.repeatState = 'context';
+      queue.tracks = [];
+      queueService.getQueueById = jest.fn().mockResolvedValue(queue);
+      const result = await playerService.changePlayerProgress(player, track.duration + 200, [1], track);
+      expect(result).toBe(null);
+    });
+    it('should call goNext', async () => {
+      player.repeatState = 'context';
+      const queues = [1];
+      await playerService.changePlayerProgress(player, track.duration + 200, queues, track);
+      expect(queueService.goNext.mock.calls.length).toBe(1);
+      expect(queueService.goNext.mock.calls[0][0]).toBe(queue);
+      expect(queueService.goNext.mock.calls[0][1]).toBe(player);
+      expect(queueService.goNext.mock.calls[0][2]).toEqual(queues);
+    });
+
+    it('should save the queue', async () => {
+      queue.save = jest.fn();
+      player.repeatState = 'context';
+      const queues = [1];
+      await playerService.changePlayerProgress(player, track.duration + 200, queues, track);
+      expect(queue.save).toBeCalled();
     });
   });
 });
