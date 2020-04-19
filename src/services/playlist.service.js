@@ -81,10 +81,12 @@ exports.uploadImage = async (params, image) => {
   let playlist = await Playlist.findById(params.id);
   if (!playlist) return playlist;
   const path = playlist.image;
-  if (path != image && path != 'uploads\\playlist\\default.jpg') {
-    fs.unlink(`${path}`, err => {
-      if (err) throw err;
-    });
+  if (path != image && path != 'uploads\\playlists\\default.jpg') {
+    try {
+      await fs.unlink(path);
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
   }
   playlist.image = image;
   await playlist.save();
