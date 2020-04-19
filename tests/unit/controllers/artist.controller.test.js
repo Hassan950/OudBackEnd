@@ -10,6 +10,7 @@ const {
   Genre
 } = require('../../../src/models');
 let fs = require('fs').promises;
+let { emailService } = require('../../../src/services');
 
 trackIds = [
   { _id: '5e6c8ebb8b40fc5508fe8b32' },
@@ -256,6 +257,38 @@ describe('Artists Controller', () => {
         fs.unlink = jest.fn().mockResolvedValue();
         await artistController.setAttach(req, res, next);
         expect(next.mock.calls[0][0].statusCode).toBe(403);
+      });
+    });
+    describe('handleRequest', () => {
+      it('Should return 204 if the request is fulfilled by acceptance', async () => {
+        mockingoose(Artist).toReturn(artist, 'save');
+        emailService.sendEmail = jest.fn().mockResolvedValue();
+        mockingoose(Request)
+          .toReturn(request, 'findOneAndDelete')
+          .toReturn(request, 'findOne');
+        req.body = { accept: true };
+        await artistController.handleRequest(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(204);
+      });
+      it('Should return 204 if the request is fulfilled by refusal', async () => {
+        mockingoose(Artist).toReturn(artist, 'save');
+        emailService.sendEmail = jest.fn().mockResolvedValue();
+        mockingoose(Request)
+          .toReturn(request, 'findOneAndDelete')
+          .toReturn(request, 'findOne');
+        req.body = { accept: false };
+        await artistController.handleRequest(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(204);
+      });
+      it("Should throw an error with status code 404 if the request doesn't exist", async () => {
+        mockingoose(Artist).toReturn(artist, 'save');
+        emailService.sendEmail = jest.fn().mockResolvedValue();
+        mockingoose(Request)
+          .toReturn(request, 'findOneAndDelete')
+          .toReturn(null, 'findOne');
+        req.body = { accept: true };
+        await artistController.handleRequest(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
       });
     });
   });
