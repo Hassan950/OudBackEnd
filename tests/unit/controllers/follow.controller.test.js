@@ -187,7 +187,6 @@ describe('Following controller', () => {
 
     it('Should return a list of followed artists of the logged in user wrapped in paging object', async () => {
       req.url = 'me';
-      console.log(artistFollowing);
       const doc = {
         _id: artistFollowing.followedId._id,
         displayName: artistFollowing.followedId.displayName,
