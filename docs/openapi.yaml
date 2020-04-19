@@ -429,16 +429,13 @@ paths:
         '200':
           description: >-
             the response body contains a JSON array of `true` or `false` values,
-            in the same order in which the `ids` were specified.
+            in the same order in which the ids were specified.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  ids:
-                    type: array
-                    items:
-                      type: boolean
+                type: array
+                items:
+                  type: boolean
         '400':
           $ref: '#/components/responses/InvalidId'
         '401':
