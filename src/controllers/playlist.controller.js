@@ -9,7 +9,7 @@ const multerStorage = multer.diskStorage({
     cb(null, 'uploads/playlists');
   },
   filename: (req, file, cb) => {
-    cb(null, `${req.params.id}.${file.originalname}`);
+    cb(null, `${req.params.id}-${Date.now()}.${ext}`);
   }
 });
 
