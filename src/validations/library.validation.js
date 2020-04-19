@@ -1,10 +1,10 @@
 const Joi = require('@hapi/joi');
-const { tracksIds } = require('./custom.validation');
+const { idsArray } = require('./custom.validation');
 
 exports.check = {
   query: Joi.object().keys({
     ids: Joi.string()
-      .custom(tracksIds)
+      .custom(idsArray(50))
       .required()
   })
 };
@@ -12,7 +12,7 @@ exports.check = {
 exports.put = {
   query: Joi.object().keys({
     ids: Joi.string()
-      .custom(tracksIds)
+      .custom(idsArray(50))
       .required()
   })
 };
@@ -30,7 +30,7 @@ exports.get = {
 exports.delete = {
   query: Joi.object().keys({
     ids: Joi.string()
-      .custom(tracksIds)
+      .custom(idsArray(50))
       .required()
   })
 };
