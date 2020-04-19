@@ -72,7 +72,7 @@ exports.requestVerify = async (req, res, next) => {
   const verifyToken = authService.createVerifyToken(user);
   await user.save({ validateBeforeSave: false });
 
-  const verifyURL = `${req.protocol}://${req.get(
+  const verifyURL = `${req.get(
     'host'
   )}/verify/${verifyToken}`;
 
@@ -87,7 +87,7 @@ exports.requestVerify = async (req, res, next) => {
     link: verifyURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   user.verifyToken = undefined;
@@ -131,7 +131,7 @@ exports.signup = async (req, res, next) => {
   });
 
   // use mail to verify user
-  const verifyURL = `${req.protocol}://${req.get(
+  const verifyURL = `${req.get(
     'host'
   )}/verify/${verifyToken}`;
 
@@ -146,7 +146,7 @@ exports.signup = async (req, res, next) => {
     link: verifyURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   newUser.verifyToken = undefined;
@@ -245,7 +245,7 @@ exports.forgotPassword = async (req, res, next) => {
     validateBeforeSave: false
   });
   // send reset token via email
-  const resetURL = `${req.protocol}://${req.get(
+  const resetURL = `${req.get(
     'host'
   )}/resetPassword/${resetToken}`;
 
@@ -259,7 +259,7 @@ exports.forgotPassword = async (req, res, next) => {
     link: resetURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   res.status(httpStatus.OK).json({
