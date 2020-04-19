@@ -133,7 +133,7 @@ const updateImages = async (user, images) => {
       !path
         .split('\\')
         .pop()
-        .match(/^(default-){1,1}.*\.(jpg|png|jpeg)$/)
+        .match(/^(default-){1,1}.*\.(jpg|png|jpeg|svg)$/)
   );
   const promisesArray = paths.map(path => {
     return fs.unlink(path);

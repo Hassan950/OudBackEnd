@@ -35,7 +35,7 @@ const playlistSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    match: /.(png|jpg|jpeg)$/,
+    match: /.(png|jpg|jpeg|svg)$/,
     default: 'uploads\\default.jpg'
   }
 });
