@@ -221,7 +221,7 @@ exports.setAttachment = async (request, path) => {
  * @returns created artist
  */
 exports.acceptRequest = async request => {
-  await Artist.create({
+  const artist = await Artist.create({
     displayName: request.displayName,
     username: request.name,
     email: request.email,
@@ -234,7 +234,7 @@ exports.acceptRequest = async request => {
   await this.deleteRequest(request._id);
   const message =
     `Congratulations, we are sending this email to inform you that your request to be an artist is accepted \n ` +
-    `you can now log in to Oud website with: <br> email: ${request.email} <br> password: 12341234 <br> ` +
+    `you can now log in to Oud website with: <br> email: ${artist.email} <br> password: <code style="background-color: #f1f1f1; padding-left: 4px; padding-right: 4px;">12341234</code> <br> ` +
     `You can then change your password and let the world hear you.`;
 
   emailService
@@ -243,7 +243,7 @@ exports.acceptRequest = async request => {
       subject: 'Your request to be an artist',
       message,
       button: 'Oud',
-      link: 'https://oud-zerobase.me'
+      link: 'https://oud-zerobase.me/login'
     })
     .then()
     .catch(error => {
@@ -269,7 +269,7 @@ exports.refuseRequest = async request => {
       subject: 'Your request to be an artist',
       message,
       button: 'Oud',
-      link: 'https://oud-zerobase.me'
+      link: 'https://oud-zerobase.me/login'
     })
     .then()
     .catch(error => {
