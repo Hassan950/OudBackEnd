@@ -15,10 +15,14 @@ const logger = require('../config/logger');
  */
 exports.findArtist = async id => {
   const artist = await User.findById(id)
-    .select('displayName images genres bio popularSongs type')
+    .select('displayName images genres bio popularSongs')
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .populate('genres');
 
@@ -35,10 +39,14 @@ exports.findArtist = async id => {
  */
 exports.findArtists = async ids => {
   const result = await User.find({ _id: ids })
-    .select('displayName images genres bio popularSongs type')
+    .select('displayName images genres bio popularSongs')
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .populate('genres');
   const artists = ids.map(id => {
@@ -60,7 +68,11 @@ exports.getPopularSongs = async artistId => {
   const artist = await User.findById(artistId)
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .select('popularSongs');
 
@@ -93,11 +105,15 @@ exports.relatedArtists = async artistId => {
   const artists = await User.find({
     genres: { $in: artist.genres }
   })
-    .select('displayName images genres bio popularSongs type')
     .limit(20)
+    .select('displayName images genres bio popularSongs')
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .populate('genres');
   return artists;
@@ -145,7 +161,11 @@ exports.update = async (artist, newData) => {
     artist
       .populate({
         path: 'popularSongs',
-        populate: { path: 'album', select: '-tracks' }
+        populate: {
+          path: 'album artists',
+          select: 'album_type artists image name displayName images',
+          populate: { path: 'artists', select: 'displayName images' }
+        }
       })
       .populate('genres')
       .execPopulate()
@@ -266,8 +286,8 @@ exports.acceptRequest = async (request, host) => {
 exports.refuseRequest = async (request, host) => {
   await this.deleteRequest(request._id);
   const message = `We are sorry to inform you that your request has been refused as your data doesn't match our specifications for an artist`;
-
   const loginURL = `${host}/login`;
+
   emailService
     .sendEmail({
       email: request.email,

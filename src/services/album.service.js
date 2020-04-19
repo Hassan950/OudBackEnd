@@ -23,7 +23,8 @@ exports.findAlbum = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -61,7 +62,8 @@ exports.findAlbumUtil = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
   return album;
 };
 
@@ -84,7 +86,8 @@ exports.findAlbums = async ids => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthArray = Album.aggregate([
     { $match: { _id: { $in: ids.map(id => mongoose.Types.ObjectId(id)) } } },
@@ -130,7 +133,8 @@ exports.deleteAlbum = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -201,7 +205,8 @@ exports.update = async (id, newAlbum) => {
       select: '-album',
       options: { limit: 50, offset: 0 },
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -231,6 +236,7 @@ exports.update = async (id, newAlbum) => {
  * @returns Updated album
  */
 exports.setImage = async (album, path) => {
+  path = path.replace(/\\/g, '/');
   album.image = path;
 
   let lengthObj = Album.aggregate([
@@ -240,7 +246,7 @@ exports.setImage = async (album, path) => {
 
   [, lengthObj] = await Promise.all([album.save(), lengthObj]);
   album = album.toJSON();
-
+  album.album_group = undefined;
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -264,9 +270,9 @@ exports.createAlbum = async newAlbum => {
     .populate('artists', 'displayName images')
     .populate('genres')
     .execPopulate();
-  album.album_group = undefined;
-  album = album.toJSON();
 
+  album = album.toJSON();
+  album.album_group = undefined;
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -310,6 +316,7 @@ exports.addTrack = async (album, track) => {
   ]);
 
   album = album.toJSON();
+  album.album_group = undefined;
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -342,7 +349,7 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
   let result = Album.find({ 'artists.0': artistId, album_type: types })
     .populate('artists', '_id displayName images')
     .populate('genres')
-    .select('-tracks')
+    .select('-tracks -genres -released -release_date')
     .limit(limit)
     .skip(offset);
   let length = Album.countDocuments({
@@ -353,15 +360,16 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
 
   if (appears) {
     let appearsAlbums;
-    if (limit - result.length) {
+    if (limit - result.length !== 0) {
+      let secondskip = offset - length > 0 ? offset - length : 0;
       appearsAlbums = Album.find({
         $and: [{ artists: artistId }, { 'artists.0': { $ne: artistId } }]
       })
         .populate('artists', '_id displayName images')
         .populate('genres')
-        .select('-tracks')
+        .select('-tracks -genres -released -release_date')
         .limit(limit - length)
-        .skip(offset);
+        .skip(secondskip);
     } else appearsAlbums = Promise.resolve([]);
     let appearslength = Album.countDocuments({
       $and: [{ artists: artistId }, { 'artists.0': { $ne: artistId } }]
@@ -370,7 +378,9 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
       appearsAlbums,
       appearslength
     ]);
-
+    appearsAlbums.forEach(album => {
+      album.album_group = 'appears_on';
+    });
     length += appearslength;
     result = result.concat(appearsAlbums);
   }

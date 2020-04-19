@@ -21,7 +21,7 @@ exports.findTracks = async ids => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date',
+      select: '-tracks -genres -released -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
   if (result.length == ids.length) return result;
@@ -87,7 +87,7 @@ exports.findTrack = async id => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date',
+      select: '-tracks -genres -released -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
   return track;
@@ -111,7 +111,7 @@ exports.findTrackUtil = async id => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date',
+      select: '-tracks -genres -released -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
   return track;
@@ -138,7 +138,7 @@ exports.update = async (id, newTrack) => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date',
+      select: '-tracks -genres -released -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
 
@@ -162,7 +162,7 @@ exports.createTrack = async (albumId, newTrack) => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date',
+      select: '-tracks -genres -released -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     })
     .execPopulate();
@@ -179,6 +179,7 @@ exports.createTrack = async (albumId, newTrack) => {
  * @returns Updated track
  */
 exports.setTrack = async (track, url, duration) => {
+  url = url.replace(/\\/g, '/');
   track.audioUrl = url;
   track.duration = duration;
   await (await track.save())
@@ -188,7 +189,7 @@ exports.setTrack = async (track, url, duration) => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date',
+      select: '-tracks -genres -released -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     })
     .execPopulate();
@@ -214,28 +215,6 @@ exports.checkFile = async id => {
       logger.error(err.message);
     }
   }
-};
-
-/**
- * A method that gets array of tracks of a specific artist
- *
- * @function
- * @author Mohamed Abo-Bakr
- * @summary Get list of tracks of a specific artist
- * @param {String} artistId - ID of the artist
- * @returns {Array} An array containing the tracks of the artist
- */
-exports.findArtistTracks = async artistId => {
-  return await Track.find({ artists: artistId })
-    .populate({
-      path: 'artists',
-      select: 'displayName images'
-    })
-    .populate({
-      path: 'album',
-      select: '-tracks -genres -released -release_date',
-      populate: { path: 'artists', select: 'displayName images' }
-    });
 };
 
 /**
