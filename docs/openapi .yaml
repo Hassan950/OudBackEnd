@@ -221,6 +221,17 @@ paths:
           schema:
             type: integer
             default: 0
+        - name: included_groups
+          in: query
+          description: >-
+                    A comma-separated list of keywords that will be used to filter the response. If not supplied, all album types will be returned. Valid values are:
+                      - album
+                      - single
+                      - appears_on
+                      - compilation'
+                    For example: include_groups=album,single.
+          schema:
+            type: string
       responses:
         '200':
           description: >-
@@ -1032,11 +1043,15 @@ paths:
                 email: 
                   type: string
                   description: An email for contact
+                country:
+                  type: string
+                  description: The country of the artist
               required:
               - genres
               - email
               - name
               - displayName
+              - country
       responses:
         '200':
           description: successful operation
