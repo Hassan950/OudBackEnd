@@ -9,7 +9,8 @@ const multerStorage = multer.diskStorage({
     cb(null, 'uploads/playlists');
   },
   filename: (req, file, cb) => {
-    cb(null, `${req.params.id}.${file.originalname}`);
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `${req.params.id}-${Date.now()}.${ext}`);
   }
 });
 
