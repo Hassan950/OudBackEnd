@@ -240,4 +240,151 @@ describe('Player Service', () => {
       expect(queue.save).toBeCalled();
     });
   });
+
+  describe('startPlayingFromOffset', () => {
+    let track;
+    let queue;
+    let queues;
+    let offset;
+    const queueService = require('../../../src/services/queue.service');
+    beforeEach(() => {
+      queue = queueMocks.createFakeQueue();
+      queue.tracks = [user._id, user._id, user._id];
+      queues = [0];
+      offset = {};
+      queueService.getQueueById = jest.fn().mockResolvedValue(queue);
+    });
+
+    it('should call getQueueById if queue is null', async () => {
+      await playerService.startPlayingFromOffset(player, null, offset, queues);
+      expect(queueService.getQueueById).toBeCalled();
+    });
+
+    it('should return player', async () => {
+      const result = await playerService.startPlayingFromOffset(player, null, offset, queues);
+      expect(result).toBe(player);
+    });
+
+    describe('Offset position', () => {
+      beforeEach(() => {
+        offset = { position: 0 };
+      });
+
+      describe('Normal mode', () => {
+        beforeEach(() => {
+          queue.shuffleList = null;
+        });
+
+        it('should set queue.currentIndex by 0 if position > tracks length', async () => {
+          offset.position = queue.tracks.length + 1;
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.currentIndex).toBe(0);
+        });
+
+        it('should set queue.currentIndex by 0 if position = tracks length', async () => {
+          offset.position = queue.tracks.length;
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.currentIndex).toBe(0);
+        });
+
+        it('should set queue.currentIndex by position', async () => {
+          offset.position = 1;
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.currentIndex).toBe(offset.position);
+        });
+      });
+
+      describe('Shuffle Mode', () => {
+        beforeEach(() => {
+          queue.shuffleList = [0, 1, 2];
+        });
+
+        it('should set queue.shuffleIndex by 0 if position > tracks length', async () => {
+          offset.position = queue.tracks.length + 1;
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.shuffleIndex).toBe(0);
+          expect(queue.currentIndex).toBe(queue.shuffleList[queue.shuffleIndex]);
+        });
+
+        it('should set queue.shuffleIndex by 0 if position = tracks length', async () => {
+          offset.position = queue.tracks.length;
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.shuffleIndex).toBe(0);
+          expect(queue.currentIndex).toBe(queue.shuffleList[queue.shuffleIndex]);
+        });
+
+        it('should set queue.shuffleIndex by position', async () => {
+          offset.position = 1;
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.shuffleIndex).toBe(offset.position);
+          expect(queue.currentIndex).toBe(queue.shuffleList[queue.shuffleIndex]);
+        });
+      });
+    });
+
+    describe('Offset uri', () => {
+      beforeEach(() => {
+        offset = { uri: `oud:track:${user.id}` };
+        queueService.getTrackPosition = jest.fn().mockResolvedValue(0);
+      });
+
+      it('should call getTrackPoition', async () => {
+        await playerService.startPlayingFromOffset(player, null, offset, queues);
+        expect(queueService.getTrackPosition).toBeCalled();
+        expect(queueService.getTrackPosition.mock.calls[0][0]).toBe(queues[0]);
+        expect(queueService.getTrackPosition.mock.calls[0][1]).toBe(user.id);
+      });
+
+      describe('Normal mode', () => {
+        beforeEach(() => {
+          queue.shuffleList = null;
+        });
+
+        it('should set queue.currentIndex by 0 if position > tracks length', async () => {
+          queueService.getTrackPosition = jest.fn().mockResolvedValue(-1);
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.currentIndex).toBe(0);
+        });
+
+        it('should set queue.currentIndex by 0 if position = tracks length', async () => {
+          queueService.getTrackPosition = jest.fn().mockResolvedValue(-1);
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.currentIndex).toBe(0);
+        });
+
+        it('should set queue.currentIndex by position', async () => {
+          queueService.getTrackPosition = jest.fn().mockResolvedValue(1);
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.currentIndex).toBe(1);
+        });
+      });
+
+      describe('Shuffle Mode', () => {
+        beforeEach(() => {
+          queue.shuffleList = [0, 1, 2];
+        });
+
+        it('should set queue.shuffleIndex by 0 if position > tracks length', async () => {
+          queueService.getTrackPosition = jest.fn().mockResolvedValue(queue.tracks.length + 1);
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.shuffleIndex).toBe(0);
+          expect(queue.currentIndex).toBe(queue.shuffleList[queue.shuffleIndex]);
+        });
+
+        it('should set queue.shuffleIndex by 0 if position = tracks length', async () => {
+          queueService.getTrackPosition = jest.fn().mockResolvedValue(queue.tracks.length);
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.shuffleIndex).toBe(0);
+          expect(queue.currentIndex).toBe(queue.shuffleList[queue.shuffleIndex]);
+        });
+
+        it('should set queue.shuffleIndex by position', async () => {
+          queueService.getTrackPosition = jest.fn().mockResolvedValue(1);
+          await playerService.startPlayingFromOffset(player, null, offset, queues);
+          expect(queue.shuffleIndex).toBe(1);
+          expect(queue.currentIndex).toBe(queue.shuffleList[queue.shuffleIndex]);
+        });
+      });
+    });
+  });
 });
