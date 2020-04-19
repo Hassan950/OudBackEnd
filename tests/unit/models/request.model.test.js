@@ -8,7 +8,8 @@ describe('Request model', () => {
       name: 'hassan',
       email: 'lol.9@xd.com',
       genres: '5e6c8ebb8b40fc5508fe8b32',
-      bio: 'not longer than 255'
+      bio: 'not longer than 255',
+      country: 'EG'
     });
   });
   it('Should return undefined when validating a valid request', () => {
@@ -66,5 +67,9 @@ describe('Request model', () => {
   it("Should throw an error if the attachment doesn't match image formats", () => {
     request.attachment = 'lol';
     expect(request.validateSync().errors['attachment']).toBeDefined();
+  });
+  it("Should throw an error if the country is invalid", () => {
+    request.country = 'lol';
+    expect(request.validateSync().errors['country']).toBeDefined();
   });
 });

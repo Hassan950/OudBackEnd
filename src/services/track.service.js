@@ -248,7 +248,7 @@ exports.findArtistTracks = async artistId => {
  * @param {Array<objectID>} tracksIds ID's of the tracks to check
  * @returns true if they belong to him null if they don't belong to him or doesn't exist
  */
-exports.ArtistTracksExist = async (artistId, tracksIds) => {
+exports.artistTracksExist = async (artistId, tracksIds) => {
   const tracks = await Track.find({ 'artists.0': artistId });
   if (tracks.length === tracksIds.length) return true;
   return null;

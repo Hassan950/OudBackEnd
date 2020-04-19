@@ -31,7 +31,7 @@ describe('Artists Controller', () => {
       email: 'testing@gmail.com',
       username: 'test-man',
       country: 'EG',
-      genres: ['5e6c8ebb8b40fc5518fe8b32'],
+      genres: [{ _id: '5e6c8ebb8b40fc5518fe8b32' }],
       images: [
         'uploads\\users\\default-Profile.jpg',
         'uploads\\users\\default-Cover.jpg'
@@ -44,6 +44,7 @@ describe('Artists Controller', () => {
     res = requestMocks.mockResponse();
     next = jest.fn();
     Artist.schema.path('popularSongs', Object);
+    Artist.schema.path('genres', Object);
   });
   describe('getArtist', () => {
     it('Should return the artist with status code 200', async () => {
@@ -219,7 +220,7 @@ describe('Artists Controller', () => {
           name: 'test-man',
           genres: ['5e6c8ebb8b40fc5518fe8b32'],
           attachment: 'default.jpg',
-          name: 'loool',
+          country: 'EG',
           popularSongs: trackIds,
           bio: 'I am not a real artist I am just here for testing.'
         };

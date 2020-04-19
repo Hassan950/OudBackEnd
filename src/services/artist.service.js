@@ -123,7 +123,7 @@ exports.artistsExist = async artistIds => {
  * A method that updates the current artist's data
  *
  * @function
- * @author MOhamed Abo-Bakr
+ * @author Mohamed Abo-Bakr
  * @summary Updates the current artist's data
  * @param {object} artist the current artist
  * @param {object} newData the new data
@@ -132,7 +132,7 @@ exports.artistsExist = async artistIds => {
 exports.update = async (artist, newData) => {
   if (newData.bio) artist.bio = newData.bio;
   if (newData.tracks) {
-    const exist = await trackService.ArtistTracksExist(
+    const exist = await trackService.artistTracksExist(
       artist._id,
       newData.tracks
     );
@@ -140,13 +140,16 @@ exports.update = async (artist, newData) => {
     if (!exist) return null;
     artist.popularSongs = newData.tracks;
   }
-  await (await artist.save())
-    .populate({
-      path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
-    })
-    .populate('genres')
-    .execPopulate();
+  await Promise.all([
+    artist.save(),
+    artist
+      .populate({
+        path: 'popularSongs',
+        populate: { path: 'album', select: '-tracks' }
+      })
+      .populate('genres')
+      .execPopulate()
+  ]);
 
   return _.pick(artist, [
     '_id',
@@ -162,7 +165,7 @@ exports.update = async (artist, newData) => {
  * A method that creates an artist request
  *
  * @function
- * @author MOhamed Abo-Bakr
+ * @author Mohamed Abo-Bakr
  * @summary creates an artist request with the given data
  * @param {object} requestData the data of the request
  */
@@ -242,7 +245,7 @@ exports.acceptRequest = async request => {
       email: request.email,
       subject: 'Your request to be an artist',
       message,
-      button: 'Oud',
+      button: 'Home',
       link: 'https://oud-zerobase.me/login'
     })
     .then()
@@ -268,7 +271,7 @@ exports.refuseRequest = async request => {
       email: request.email,
       subject: 'Your request to be an artist',
       message,
-      button: 'Oud',
+      button: 'Home',
       link: 'https://oud-zerobase.me/login'
     })
     .then()
