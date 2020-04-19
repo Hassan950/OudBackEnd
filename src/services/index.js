@@ -12,4 +12,5 @@ exports.followService = require('./follow.service');
 exports.albumService = require('./album.service');
 exports.artistService = require('./artist.service');
 exports.genreService = require('.//genre.service');
+exports.searchService = require('./search.service');
 

@@ -13,3 +13,4 @@ exports.albumsController = require('./album.controller');
 exports.artistController = require('./artist.controller');
 exports.genreController = require('./genre.controller');
 exports.followController = require('./follow.controller');
+exports.searchController = require('./search.controller');
