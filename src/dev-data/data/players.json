@@ -1,0 +1,238 @@
+[
+  {
+    "_id": "5e90f5d59f9c887828eec158",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e3"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907dafa0645f45716075ff",
+    "item": "5e909be7cfe5b521a0ccf3ec"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec159",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e2"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907dafa0645f4571607600",
+    "item": "5e909be7cfe5b521a0ccf3ed"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec15a",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e4"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907dafa0645f4571607601",
+    "item": "5e909be7cfe5b521a0ccf3ee"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec15b",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e5"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907dafa0645f4571607602",
+    "item": "5e909be7cfe5b521a0ccf3ef"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec15c",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e6"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907dafa0645f4571607603",
+    "item": "5e909be7cfe5b521a0ccf3f0"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec15d",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f4571607604"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec15e",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f4571607605"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec15f",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f4571607606"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec162",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f4571607609"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec163",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e4"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907db0a0645f457160760a",
+    "item": "5e909be7cfe5b521a0ccf3ee"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec164",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3ea"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907db0a0645f457160760b",
+    "item": "5e909be7cfe5b521a0ccf3f5"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec165",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f457160760c"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec166",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f457160760d"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec167",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f457160760e"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec168",
+    "context": {
+      "type": "unknown"
+    },
+    "progressMs": null,
+    "isPlaying": false,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "unknown",
+    "userId": "5e907db0a0645f457160760f"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec169",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3eb"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907db0a0645f4571607610",
+    "item": "5e909be7cfe5b521a0ccf3f6"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec16a",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e9"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907db0a0645f4571607611",
+    "item": "5e909be7cfe5b521a0ccf3f3"
+  },
+  {
+    "_id": "5e90f5d59f9c887828eec16b",
+    "context": {
+      "type": "album",
+      "id": "5e909be7cfe5b521a0ccf3e8"
+    },
+    "progressMs": "0",
+    "isPlaying": true,
+    "shuffleState": false,
+    "repeatState": "off",
+    "currentlyPlayingType": "track",
+    "userId": "5e907db0a0645f4571607612",
+    "item": "5e909be7cfe5b521a0ccf3f2"
+  }
+]

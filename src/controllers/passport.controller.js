@@ -1,6 +1,20 @@
 const { userService } = require('../services');
 const AppError = require('../utils/AppError');
 
+/**
+ * Facebook Authentication passport
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Object} req - Express Request object
+ * @param {String} accessToken
+ * @param {String} refreshToken
+ * @param {Object} profile
+ * @param {Function} done
+ * @summary Facebook Authentication passport
+ */
 exports.facebookPassport = async (req, accessToken, refreshToken, profile, done) => {
   try {
     if (req.user) {
@@ -34,6 +48,20 @@ exports.facebookPassport = async (req, accessToken, refreshToken, profile, done)
   }
 };
 
+/**
+ * Google Authentication passport
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Object} req - Express Request object
+ * @param {String} accessToken
+ * @param {String} refreshToken
+ * @param {Object} profile
+ * @param {Function} done
+ * @summary Google Authentication passport
+ */
 exports.googlePassport = async (req, accessToken, refreshToken, profile, done) => {
   try {
     if (req.user) {

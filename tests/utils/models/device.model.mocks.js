@@ -9,6 +9,7 @@ const createFakeDevice = () => {
     isActive: false,
     isPrivateSession: false,
     volumePercent: 50,
+    type: 'Computer',
     name: faker.internet.userName(),
     userId: mongoose.Types.ObjectId()
   });

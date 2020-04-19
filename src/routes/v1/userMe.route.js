@@ -6,6 +6,9 @@ const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 const playerRouter = require('./player.route')
 const libraryRouter = require('./library.route');
+const queueRouter = require('./queue.route');
+const artistRoute = require('./artist.route');
+const playlistRouter = require('./playlist.route');
 
 const router = express.Router();
 
@@ -17,20 +20,26 @@ const router = express.Router();
 router.use('/player', playerRouter);
 router.use('/tracks', libraryRouter);
 router.use('/albums', libraryRouter);
+// /me/playlists router
+router.use('/playlists', playlistRouter);
+
+// /me/artist router
+router.use('/artists', artistRoute);
+
+// /me/queue
+router.use('/queue', queueRouter);
+
 
 router
   .route('/updatePassword')
-  .patch(validate(authValidation.updatePassword), catchAsync(authController.updatePassword));
-
-router
-  .route('/verify')
-  .post(catchAsync(authController.requestVerify));
-
-router
-  .route('/')
-  .get(
-    catchAsync(userController.getProfile)
+  .patch(
+    validate(authValidation.updatePassword),
+    catchAsync(authController.updatePassword)
   );
+
+router.route('/verify').post(catchAsync(authController.requestVerify));
+
+router.route('/').get(catchAsync(userController.getProfile));
 
 router
   .route('/profile')
@@ -41,9 +50,6 @@ router
 
 router
   .route('/profilePicture')
-  .patch(
-    userController.uploadImages,
-    catchAsync(userController.updateImages)
-  );
+  .patch(userController.uploadImages, catchAsync(userController.updateImages));
 
 module.exports = router;

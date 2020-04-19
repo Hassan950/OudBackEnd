@@ -1,10 +1,12 @@
 {
-  "EMAIL_USERNAME": "ce92c73dafd49a",
-  "EMAIL_PASSWORD": "fc18cd9c2df809",
-  "EMAIL_HOST": "smtp.mailtrap.io",
-  "EMAIL_PORT": "2525",
+  "JWT_KEY": "1234",
+  "JWT_EXPIRES_IN": "30d",
   "FBClientID": "1",
   "FBClientSecret": "1",
   "GoogleClientID": "1",
-  "GoogleClientSecret": "1"
+  "GoogleClientSecret": "1",
+  "SENDGRID_API_KEY": "SG.1",
+  "db": "mongodb://localhost:27017/oud",
+  "PORT": "3000",
+  "NODE_ENV": "development"
 }
