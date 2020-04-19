@@ -250,7 +250,37 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AlbumSimple'
+                      type: object
+                      description: Album Simple Object
+                      properties:
+                        _id:
+                          type: string
+                          description: Unique ID of the album
+                        album_type:
+                          type: string
+                          description: >-
+                            the type of the album: one of the following 'single', 'album' or
+                            'compilation'
+                        album_group:
+                          type: string
+                          description: >-
+                            Possible values are “album”, “single”, “compilation”, “appears_on”. Compare to album_type this field represents relationship between the artist and the album.
+                        artists:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/ArtistSimple'
+                          description: >-
+                            The artists of the album. Each artist object includes a link in href
+                            to more detailed information about the artist.
+                        image:
+                          type: string
+                          description: The source url of the image
+                        name:
+                          type: string
+                          description: The name of the album
+                        type:
+                          type: string
+                          description: The object type "album"
                     description: The requested Albums.
                   limit:
                     type: integer
@@ -4094,13 +4124,6 @@ components:
           description: >-
             the type of the album: one of the following 'single', 'album' or
             'compilation'
-        album_group:
-          type: string
-          description: >-
-            The field is present when getting an artist’s albums. Possible
-            values are “album”, “single”, “compilation”, “appears_on”. Compare
-            to `album_type` this field represents relationship between the
-            artist and the album.
         artists:
           type: array
           items:
