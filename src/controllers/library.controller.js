@@ -5,98 +5,101 @@ const AppError = require('../utils/AppError');
 exports.check = async(req, res , next)=>{
   if(req.baseUrl.match(/.*tracks.*/))
   {
-    checkSavedTracks(req, res, next);
+    const check = await checkSavedTracks(req, res, next);
+    res.status(200).json({
+      isFound: check
+    });
   }
-  else{
-    checkSavedAlbums(req, res, next);
+  else
+  {
+    const check = await checkSavedAlbums(req, res, next);
+    res.status(200).json({
+      isFound: check
+    });
   }
-
 }
 
 
 const checkSavedTracks = async(req ,res,next)=>{
   let ids = req.query.ids.split(',');
   const check = await libraryService.checkTracks(req.user,ids);
-  res.status(200).json({
-    IsFound: check
-  });
+  return check;
 }
 
 const checkSavedAlbums = async(req ,res,next)=>{
   let ids = req.query.ids.split(',');
   const check = await libraryService.checkAlbums(req.user,ids);
-  res.status(200).json({
-    IsFound: check
-  });
+  return check;
 }
 
 exports.get = async(req, res , next)=>{
   if(req.baseUrl.match(/.*tracks.*/))
   {
-    getSavedTracks(req, res, next);
+    const tracks = await getSavedTracks(req, res, next);
+    res.status(200).json({
+      items: tracks
+    });
   }
   else{
-    getSavedAlbums(req, res, next);
+    const albums = await getSavedAlbums(req, res, next);
+    res.status(200).json({
+      items: albums
+    });
   }
 
 }
 
 const getSavedTracks = async(req ,res,next)=>{
   const tracks = await libraryService.getTracks(req.user,req.query);
-  res.status(200).json({
-    items: tracks
-  });
+  return tracks;
 }
 
 const getSavedAlbums = async(req ,res,next)=>{
-  let ids = req.query.ids.split(',');
   const albums = await libraryService.getAlbums(req.user,req.query);
-  res.status(200).json({
-    items: albums
-  });
+  return albums;
 }
 
 exports.put = async(req, res , next)=>{
   if(req.baseUrl.match(/.*tracks.*/))
   {
     saveTracks(req, res, next);
+    res.sendStatus(201);
   }
   else{
     saveAlbums(req, res, next);
+    res.sendStatus(201);
   }
 }
 
 const saveTracks = async(req ,res,next)=>{
   let ids = req.query.ids.split(',');
   await libraryService.saveTracks(req.user,ids);
-  res.sendStatus(201);
 }
 
 const saveAlbums = async(req ,res,next)=>{
   let ids = req.query.ids.split(',');
   await libraryService.saveAlbums(req.user,ids);
-  res.sendStatus(201);
 }
 
 exports.delete = async(req, res , next)=>{
   if(req.baseUrl.match(/.*tracks.*/))
   {
     deleteSavedTracks(req, res, next);
+    res.sendStatus(204);
   }
   else{
     deleteSavedAlbums(req, res, next);
+    res.sendStatus(204);
   }
 }
 
 const deleteSavedTracks = async(req,res,next)=>{
   let ids = req.query.ids.split(',');
   await libraryService.deleteSavedTracks(req.user,ids);
-  res.sendStatus(204);
 }
 
 const deleteSavedAlbums = async(req,res,next)=>{
   let ids = req.query.ids.split(',');
   await libraryService.deleteSavedAlbums(req.user,ids);
-  res.sendStatus(204);
 }
 

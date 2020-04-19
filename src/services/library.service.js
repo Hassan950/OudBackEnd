@@ -1,4 +1,4 @@
-const { likedTracks, likedAlbums } = require('../models');
+const { likedTracks, likedAlbums, Track, Album } = require('../models');
 const _ = require('lodash');
 
 module.exports.checkTracks = async(user , ids)=>{
@@ -47,26 +47,32 @@ module.exports.getTracks = async(user,query)=>{
 
 module.exports.saveTracks = async(user,ids)=>{
   _.map(ids,async(id)=>{
-    await likedTracks.create(
-      {
-        userId: user.id,
-        track: id,
-        addedAt: Date.now()
-      }
-    )
+    const track = await Track.findById(id);
+    if(track){
+      await likedTracks.create(
+        {
+          userId: user.id,
+          track: id,
+          addedAt: Date.now()
+        }
+      )
+    }
  });
 }
 
 module.exports.saveAlbums = async(user,ids)=>{
   _.map(ids,async(id)=>{
-    await likedAlbums.create(
-      {
-        userId: user.id,
-        album: id,
-        addedAt: Date.now()
-      }
-    )
- });
+    const album = await Album.findById(id); 
+    if(album){
+      await likedAlbums.create(
+        {
+          userId: user.id,
+          album: id,
+          addedAt: Date.now()
+        }
+      )
+   }
+  }); 
 }
 module.exports.deleteSavedTracks = async(user,ids)=>{
   await likedTracks.deleteMany({userId: user.id},{track: {$in: ids}});
