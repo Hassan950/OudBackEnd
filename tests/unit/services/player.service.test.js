@@ -1,5 +1,5 @@
 const { playerService } = require('../../../src/services');
-const { Player } = require('../../../src/models');
+const { Player, Device } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 const playerMocks = require('../../utils/models/player.model.mocks');
 const queueMocks = require('../../utils/models/queue.model.mocks');
@@ -103,6 +103,41 @@ describe('Player Service', () => {
       const context = { type: 'artist', id: user._id };
       playerService.addTrackToPlayer(player, user._id, context);
       expect(player.context).toEqual(context);
+    });
+  });
+
+  describe('Set Player to default', () => {
+    it('should set player to default', () => {
+      playerService.setPlayerToDefault(player);
+      expect(player.item).toBe(null);
+      expect(player.context).toEqual({ type: 'unknown' });
+      expect(player.progressMs).toBe(null);
+      expect(player.shuffleState).toBe(false);
+      expect(player.repeatState).toBe('off');
+      expect(player.isPlaying).toBe(false);
+      expect(player.currentlyPlayingType).toBe('unknown');
+    });
+  });
+
+  describe('Add Device to player', () => {
+    let device;
+    beforeEach(() => {
+      device = deviceMocks.createFakeDevice();
+      mockingoose(Device)
+        .toReturn(device, 'findOne');
+    });
+
+    it('should return null if device is not found ', async () => {
+      mockingoose(Device)
+        .toReturn(null, 'findOne');
+      const result = await playerService.addDeviceToPlayer(player, device._id);
+      expect(result).toBe(null);
+    });
+
+    it('should set player device and return player', async () => {
+      const result = await playerService.addDeviceToPlayer(player, device._id);
+      expect(result).toBe(player);
+      expect(result.device).toBe(device._id);
     });
   });
 });
