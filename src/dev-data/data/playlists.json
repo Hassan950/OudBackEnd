@@ -6,7 +6,7 @@
     "public":false,
     "collabrative":false,
     "owner": "5e907db0a0645f4571607612",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3ec",
       "5e909be7cfe5b521a0ccf3f6"
@@ -19,7 +19,7 @@
     "public":true,
     "collabrative":false,
     "owner": "5e907db0a0645f457160760e",
-    "image": "uploads\\default.jpg",
+    "image": "uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3ed"
     ]
@@ -31,7 +31,7 @@
     "public":false,
     "collabrative":false,
     "owner": "5e88ba4f286f2d242257baa0",
-    "image": "uploads\\default.jpg",
+    "image": "uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3ee"
     ]
@@ -43,7 +43,7 @@
     "public":false,
     "collabrative":false,
     "owner": "5e88ba4f286f2d242257baa1",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3ef"
     ]
@@ -55,7 +55,7 @@
     "public":true,
     "collabrative":false,
     "owner": "5e88ba4f286f2d242257baa2",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f0"
     ]
@@ -67,7 +67,7 @@
     "public":true,
     "collabrative":false,
     "owner": "5e907dafa0645f4571607603",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f1"
     ]
@@ -79,7 +79,7 @@
     "public":true,
     "collabrative":false,
     "owner": "5e907db0a0645f457160760d",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f2"
     ]
@@ -91,7 +91,7 @@
     "public":true,
     "collabrative":true,
     "owner": "5e907db0a0645f4571607604",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f3"
     ]
@@ -103,7 +103,7 @@
     "public":true,
     "collabrative":false,
     "owner": "5e907db0a0645f4571607605",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f4"
     ]
@@ -115,7 +115,7 @@
     "public":false,
     "collabrative":true,
     "owner": "5e907db0a0645f4571607606",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f5"
     ]
@@ -127,7 +127,7 @@
     "public":false,
     "collabrative":true,
     "owner": "5e907db0a0645f4571607607",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f6"
     ]
@@ -139,7 +139,7 @@
     "public":false,
     "collabrative":true,
     "owner": "5e907db0a0645f457160760c",
-    "image":"uploads\\default.jpg",
+    "image":"uploads\\playlists\\default.jpg",
     "tracks":[
       "5e909be7cfe5b521a0ccf3f6"
     ]

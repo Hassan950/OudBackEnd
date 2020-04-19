@@ -15,7 +15,7 @@ const fs = require('fs').promises;
  */
 
 exports.getPlaylist = async params => {
-  const playlist = await Playlist.findById(params.id);
+  const playlist = await Playlist.findById(params.id).populate('tracks');
   return playlist;
 };
 
@@ -48,7 +48,7 @@ exports.changePlaylist = async (params, body, image) => {
   if (!playlist) return playlist;
   if (!image) return playlist;
   const path = playlist.image;
-  if (path != image && path != 'uploads\\default.jpg') {
+  if (path != image && path != 'uploads\\playlists\\default.jpg') {
     try {
       await fs.unlink(path);
     } catch (err) {
@@ -61,7 +61,7 @@ exports.changePlaylist = async (params, body, image) => {
       image: image
     },
     { new: true }
-  );
+  ).populate('tracks');
   return playlist;
 };
 
@@ -81,7 +81,7 @@ exports.uploadImage = async (params, image) => {
   let playlist = await Playlist.findById(params.id);
   if (!playlist) return playlist;
   const path = playlist.image;
-  if (path != image && path != 'uploads\\default.jpg') {
+  if (path != image && path != 'uploads\\playlist\\default.jpg') {
     fs.unlink(`${path}`, err => {
       if (err) throw err;
     });
@@ -170,8 +170,8 @@ exports.getUserPlaylists = async (id, query, publicity) => {
  * @returns null if the tracks was not found
  */
 
-exports.getTracksId = async uris => {
-  const tracks = await Track.find({ audioUrl: { $in: uris } });
+exports.getTracksId = async Ids => {
+  const tracks = await Track.find({ _id: { $in: Ids } });
   return tracks;
 };
 
