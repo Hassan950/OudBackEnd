@@ -17,7 +17,6 @@ exports.countryCheck = (value, helpers) => {
   return value;
 };
 
-
 exports.idArrayCheck = (value, helpers) => {
   if (!mongoose.Types.ObjectId.isValid(value[0]) || value.length != 1) {
     return helpers.message('Invalid id');
@@ -98,7 +97,7 @@ exports.contextUriCheck = (value, helpers) => {
 };
 
 exports.idsArray = maxNum => {
-  return function (value, helpers) {
+  return function(value, helpers) {
     const values = value.split(',');
     if (values.length > maxNum)
       return helpers.message('too many ids requested');
@@ -116,4 +115,19 @@ exports.idsArray = maxNum => {
 
 exports.capitalize = (value, helper) => {
   return value.replace(/^./, value[0].toUpperCase());
+};
+
+exports.albumGroups = (value, helpers) => {
+  const validValues = ['single', 'album', 'appears_on', 'compilation'];
+  let values = value.split(',');
+  values = [...new Set(values)];
+  try {
+    values.forEach(v => {
+      if (!validValues.includes(v))
+        throw helpers.message(`Bad album type: ${v}`);
+    });
+  } catch (err) {
+    return err;
+  }
+  return values;
 };

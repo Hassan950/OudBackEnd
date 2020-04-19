@@ -88,7 +88,8 @@ exports.getAlbums = async (req, res, next) => {
   const albums = await albumService.findArtistAlbums(
     req.params.id,
     req.query.limit,
-    req.query.offset
+    req.query.offset,
+    req.query.included_groups
   );
 
   res.status(200).json({
@@ -236,9 +237,9 @@ exports.handleRequest = async (req, res, next) => {
     return next(new AppError('The requested resource is not found', 404));
   }
   if (req.body.accept) {
-    await artistService.acceptRequest(request);
+    await artistService.acceptRequest(request, req.get('host'));
   } else {
-    await artistService.refuseRequest(request);
+    await artistService.refuseRequest(request, req.get('host'));
   }
   return res.status(204).send();
 };

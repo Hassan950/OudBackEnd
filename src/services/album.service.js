@@ -327,19 +327,54 @@ exports.addTrack = async (album, track) => {
  * @param {String} artistId Id of the artist
  * @param {Number} limit Maximum number of albums to be retrieved
  * @param {Number} offset index of the first album (starting from 0)
+ * @param {Array<string>} groups the required album groups
  * @returns {Array<Object>} array of albums of the artist
  * @returns {Number} the length of the array
  * @returns null if the artist has no albums or the ID doesn't belong to any artist
  */
-exports.findArtistAlbums = async (artistId, limit, offset) => {
-  let result = Album.find({ artists: artistId })
+exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
+  let types = ['single', 'album', 'compilation'];
+  let appears = true;
+  if (groups) {
+    types = groups.filter(group => group !== 'appears_on');
+    appears = groups.includes('appears_on');
+  }
+  let result = Album.find({ 'artists.0': artistId, album_type: types })
     .populate('artists', '_id displayName images')
     .populate('genres')
     .select('-tracks')
     .limit(limit)
     .skip(offset);
-  let length = Album.countDocuments({ artists: artistId });
-  return await Promise.all([result, length]);
+  let length = Album.countDocuments({
+    'artists.0': artistId,
+    album_type: types
+  });
+  [result, length] = await Promise.all([result, length]);
+
+  if (appears) {
+    let appearsAlbums;
+    if (limit - result.length) {
+      appearsAlbums = Album.find({
+        $and: [{ artists: artistId }, { 'artists.0': { $ne: artistId } }]
+      })
+        .populate('artists', '_id displayName images')
+        .populate('genres')
+        .select('-tracks')
+        .limit(limit - length)
+        .skip(offset);
+    } else appearsAlbums = Promise.resolve([]);
+    let appearslength = Album.countDocuments({
+      $and: [{ artists: artistId }, { 'artists.0': { $ne: artistId } }]
+    });
+    [appearsAlbums, appearslength] = await Promise.all([
+      appearsAlbums,
+      appearslength
+    ]);
+
+    length += appearslength;
+    result = result.concat(appearsAlbums);
+  }
+  return [result, length];
 };
 
 /**

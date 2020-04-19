@@ -223,7 +223,7 @@ exports.setAttachment = async (request, path) => {
  * @param {object} request The request
  * @returns created artist
  */
-exports.acceptRequest = async request => {
+exports.acceptRequest = async (request, host) => {
   const artist = await Artist.create({
     displayName: request.displayName,
     username: request.name,
@@ -240,13 +240,14 @@ exports.acceptRequest = async request => {
     `you can now log in to Oud website with: <br> email: ${artist.email} <br> password: <code style="background-color: #f1f1f1; padding-left: 4px; padding-right: 4px;">12341234</code> <br> ` +
     `You can then change your password and let the world hear you.`;
 
+  const loginURL = `${host}/login`;
   emailService
     .sendEmail({
       email: request.email,
       subject: 'Your request to be an artist',
       message,
       button: 'Home',
-      link: 'https://oud-zerobase.me/login'
+      link: loginURL
     })
     .then()
     .catch(error => {
@@ -262,17 +263,18 @@ exports.acceptRequest = async request => {
  * @summary Handles refused requests
  * @param {object} request The request
  */
-exports.refuseRequest = async request => {
+exports.refuseRequest = async (request, host) => {
   await this.deleteRequest(request._id);
   const message = `We are sorry to inform you that your request has been refused as your data doesn't match our specifications for an artist`;
 
+  const loginURL = `${host}/login`;
   emailService
     .sendEmail({
       email: request.email,
       subject: 'Your request to be an artist',
       message,
       button: 'Home',
-      link: 'https://oud-zerobase.me/login'
+      link: loginURL
     })
     .then()
     .catch(error => {

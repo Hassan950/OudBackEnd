@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
-const { idsArray, countryCheck } = require('./custom.validation');
+const { idsArray, countryCheck, albumGroups } = require('./custom.validation');
 
 /**
  * Schema that checks that the request is valid for endpoints that requires one artist
@@ -54,7 +54,8 @@ exports.artistAlbums = {
     limit: Joi.number()
       .default(20)
       .max(50),
-    offset: Joi.number().default(0)
+    offset: Joi.number().default(0),
+    included_groups: Joi.string().custom(albumGroups)
   })
 };
 

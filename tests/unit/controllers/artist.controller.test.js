@@ -88,7 +88,7 @@ describe('Artists Controller', () => {
       req.query = { offset: 0, limit: 20 };
       await artistController.getAlbums(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0].total).toBe(1);
+      expect(res.json.mock.calls[0][0].total).toBe(2);
     });
     it('Should return an empty array if no tracks are found', async () => {
       mockingoose(Album).toReturn([], 'find');
@@ -267,6 +267,7 @@ describe('Artists Controller', () => {
           .toReturn(request, 'findOneAndDelete')
           .toReturn(request, 'findOne');
         req.body = { accept: true };
+        req.get = jest.fn();
         await artistController.handleRequest(req, res, next);
         expect(res.status.mock.calls[0][0]).toBe(204);
       });
@@ -277,6 +278,7 @@ describe('Artists Controller', () => {
           .toReturn(request, 'findOneAndDelete')
           .toReturn(request, 'findOne');
         req.body = { accept: false };
+        req.get = jest.fn();
         await artistController.handleRequest(req, res, next);
         expect(res.status.mock.calls[0][0]).toBe(204);
       });
