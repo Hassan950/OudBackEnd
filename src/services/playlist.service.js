@@ -48,7 +48,7 @@ exports.changePlaylist = async (params, body, image) => {
   if (!playlist) return playlist;
   if (!image) return playlist;
   const path = playlist.image;
-  if (path != image && path != 'uploads\\playlists\\default.jpg') {
+  if (path != image && path != 'uploads\\playlists\\default.svg') {
     try {
       await fs.unlink(path);
     } catch (err) {
@@ -81,7 +81,7 @@ exports.uploadImage = async (params, image) => {
   let playlist = await Playlist.findById(params.id);
   if (!playlist) return playlist;
   const path = playlist.image;
-  if (path != image && path != 'uploads\\playlists\\default.jpg') {
+  if (path != image && path != 'uploads\\playlists\\default.svg') {
     try {
       await fs.unlink(path);
     } catch (err) {

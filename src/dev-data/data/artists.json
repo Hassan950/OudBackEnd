@@ -3,7 +3,7 @@
     "_id": "5e907dafa0645f4571607600",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -27,7 +27,7 @@
     "_id": "5e907dafa0645f45716075ff",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -51,7 +51,7 @@
     "_id": "5e907dafa0645f4571607601",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -74,7 +74,7 @@
     "_id": "5e907dafa0645f4571607602",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -99,7 +99,7 @@
     "_id": "5e907dafa0645f4571607603",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -123,7 +123,7 @@
     "_id": "5e907db0a0645f4571607604",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -145,7 +145,7 @@
     "_id": "5e907db0a0645f4571607605",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -163,7 +163,7 @@
     "_id": "5e907db0a0645f4571607606",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -181,7 +181,7 @@
     "_id": "5e907db0a0645f4581607605",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -200,7 +200,7 @@
     "_id": "5e907db0a0645f4581607606",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -238,7 +238,7 @@
     "_id": "5e907db0a0645f4581607607",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -259,7 +259,7 @@
     "_id": "5e907db0a0645f4581607608",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -297,7 +297,7 @@
     "_id": "5e907db0a0645f4581607609",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -316,7 +316,7 @@
     "_id": "5e907db0a0645f458160760a",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -335,7 +335,7 @@
     "_id": "5e907db0a0645f458160760b",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -356,7 +356,7 @@
     "_id": "5e907db0a0645f558160760b",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -382,7 +382,7 @@
     "_id": "5e907db0a0645f558160760c",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -402,7 +402,7 @@
     "_id": "5e907db0a0645f558160760d",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -423,7 +423,7 @@
     "_id": "5e907db0a0645f558160760e",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -444,7 +444,7 @@
     "_id": "5e907db0a0645f558160760f",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -464,7 +464,7 @@
     "_id": "5e907db0a0645f5581607610",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -485,7 +485,7 @@
     "_id": "5e907db0a0645f5581607611",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -505,7 +505,7 @@
     "_id": "5e907db0a0645f5581607612",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -525,7 +525,7 @@
     "_id": "5e907db0a0645f5581607613",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -545,7 +545,7 @@
     "_id": "5e907db0a0645f5581607614",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -565,7 +565,7 @@
     "_id": "5e907db0a0645f5581607615",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -585,7 +585,7 @@
     "_id": "5e907db0a0645f5581607616",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -605,7 +605,7 @@
     "_id": "5e907db0a0645f5581607617",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -625,7 +625,7 @@
     "_id": "5e907db0a0645f5581607618",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
