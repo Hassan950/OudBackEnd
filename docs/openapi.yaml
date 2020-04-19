@@ -897,7 +897,7 @@ paths:
                 $ref: '#/components/schemas/UserPrivate'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  /me/profilePicure:
+  /me/profilePicture:
     patch:
       tags:
         - Users Profile
@@ -911,11 +911,11 @@ paths:
             schema:
               type: object
               properties:
-                profileImage:
+                images:
                   type: string
                   format: binary
             encoding:
-              profileImage:
+              images:
                 contentType: 'image/png, image/jpeg'
       responses:
         '200':
