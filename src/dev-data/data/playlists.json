@@ -1,148 +1,158 @@
 [
   {
-    "_id":"5e6dea511e17a305285ba610",
-    "name":"Top of 2018",
-    "description":"Best of 2018",
-    "public":false,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba610",
+    "name": "Top of 2018",
+    "description": "Best of 2018",
+    "public": false,
+    "collabrative": false,
     "owner": "5e907db0a0645f4571607612",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3ec",
       "5e909be7cfe5b521a0ccf3f6"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba611",
-    "name":"Top of 2019",
-    "description":"Best of 2019",
-    "public":true,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba611",
+    "name": "Top of 2019",
+    "description": "Best of 2019",
+    "public": true,
+    "collabrative": false,
     "owner": "5e907db0a0645f457160760e",
     "image": "uploads\\playlists\\default.svg",
-    "tracks":[
+    "tracks": [
       "5e909be7cfe5b521a0ccf3ed"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba612",
-    "name":"Sad",
-    "description":"Sad Songs that will make you cry",
-    "public":false,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba612",
+    "name": "Sad",
+    "description": "Sad Songs that will make you cry",
+    "public": false,
+    "collabrative": false,
     "owner": "5e88ba4f286f2d242257baa0",
     "image": "uploads\\playlists\\default.svg",
-    "tracks":[
+    "tracks": [
       "5e909be7cfe5b521a0ccf3ee"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba613",
-    "name":"Party Time",
-    "description":"lets Party and Have Fun",
-    "public":false,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba613",
+    "name": "Party Time",
+    "description": "lets Party and Have Fun",
+    "public": false,
+    "collabrative": false,
     "owner": "5e88ba4f286f2d242257baa1",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3ef"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba614",
-    "name":"Pop Time",
-    "description":"Lets have fun",
-    "public":true,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba614",
+    "name": "Pop Time",
+    "description": "Lets have fun",
+    "public": true,
+    "collabrative": false,
     "owner": "5e88ba4f286f2d242257baa2",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3f0"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba615",
-    "name":"Get Fit",
-    "description":"Helps you in getting into training",
-    "public":true,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba615",
+    "name": "Get Fit",
+    "description": "Helps you in getting into training",
+    "public": true,
+    "collabrative": false,
     "owner": "5e907dafa0645f4571607603",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3f1"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba616",
-    "name":"Arab Hip-Hop",
-    "description":"Arab Hip-Hop",
-    "public":true,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba616",
+    "name": "Arab Hip-Hop",
+    "description": "Arab Hip-Hop",
+    "public": true,
+    "collabrative": false,
     "owner": "5e907db0a0645f457160760d",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
-      "5e909be7cfe5b521a0ccf3f2"
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
+      "5e9b3d310f27b613b44fba2f",
+      "5e9b40b80f27b613b44fba32",
+      "5e9b41d70f27b613b44fba35",
+      "5e9b44fb0f27b613b44fba38",
+      "5e9b46610f27b613b44fba3b",
+      "5e9b47be0f27b613b44fba3e",
+      "5e9cc40f111e012d183ddec5",
+      "5e9cc500111e012d183ddec8",
+      "5e9cc720111e012d183ddecb",
+      "5e9cd053111e012d183ddece",
+      "5e9cd14e111e012d183dded1",
+      "5e9cd288111e012d183dded4"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba617",
-    "name":"Soft Rock",
-    "description":"The Great masterpieces of the genre",
-    "public":true,
-    "collabrative":true,
+    "_id": "5e6dea511e17a305285ba617",
+    "name": "Soft Rock",
+    "description": "The Great masterpieces of the genre",
+    "public": true,
+    "collabrative": true,
     "owner": "5e907db0a0645f4571607604",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3f3"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba618",
-    "name":"Dance Party",
-    "description":"move your feet",
-    "public":true,
-    "collabrative":false,
+    "_id": "5e6dea511e17a305285ba618",
+    "name": "Dance Party",
+    "description": "move your feet",
+    "public": true,
+    "collabrative": false,
     "owner": "5e907db0a0645f4571607605",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3f4"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba619",
-    "name":"Yoga",
-    "description":"Relax your Whole Body",
-    "public":false,
-    "collabrative":true,
+    "_id": "5e6dea511e17a305285ba619",
+    "name": "Yoga",
+    "description": "Relax your Whole Body",
+    "public": false,
+    "collabrative": true,
     "owner": "5e907db0a0645f4571607606",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3f5"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba620",
-    "name":"Chill Hits",
-    "description":"Kick Back to best chill tunes",
-    "public":false,
-    "collabrative":true,
+    "_id": "5e6dea511e17a305285ba620",
+    "name": "Chill Hits",
+    "description": "Kick Back to best chill tunes",
+    "public": false,
+    "collabrative": true,
     "owner": "5e907db0a0645f4571607607",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3f6"
     ]
   },
   {
-    "_id":"5e6dea511e17a305285ba621",
-    "name":"Comfort Zone",
-    "description":"Chilled songs you are familliar with",
-    "public":false,
-    "collabrative":true,
+    "_id": "5e6dea511e17a305285ba621",
+    "name": "Comfort Zone",
+    "description": "Chilled songs you are familliar with",
+    "public": false,
+    "collabrative": true,
     "owner": "5e907db0a0645f457160760c",
-    "image":"uploads\\playlists\\default.svg",
-    "tracks":[
+    "image": "uploads\\playlists\\default.svg",
+    "tracks": [
       "5e909be7cfe5b521a0ccf3f6"
     ]
   }
-  
 ]

@@ -5,7 +5,6 @@ const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
 const { Player, Device, User, Queue, Album, Artist, Playlist, Track } = require('../../../src/models');
 const { playerController } = require('../../../src/controllers');
-const { trackService } = require('../../../src/services');
 const mockingoose = require('mockingoose').default;
 
 describe('Player controller', () => {
