@@ -139,7 +139,11 @@ exports.getTracks = async (params, query) => {
 exports.getUserPlaylists = async (id, query, publicity) => {
   const playlistPromise = PlaylistFollowings.find({ userId: id })
     .where(publicity)
-    .populate('playlistId')
+    .populate(
+      {
+        path: 'playlistId',
+        populate: { path: 'tracks' }
+      })
     .select('playlistId')
     .select('-_id')
     .skip(query.offset)
@@ -214,7 +218,7 @@ exports.createUserPlaylist = async (params, body, image) => {
     owner: params.id,
     image: image
   });
-  return playlist;
+  return playlist.populate('tracks');
 };
 
 /**
