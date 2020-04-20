@@ -1341,6 +1341,34 @@ paths:
           $ref: '#/components/responses/InvalidId'
         '404':
           $ref: '#/components/responses/NotFound'
+  /tracks/{id}/download:
+    get:
+      tags:
+        - Tracks
+      summary: Download a track
+      description: Download Track with the given id
+      security:
+        - bearerAuth: ['premium', 'artist']
+      parameters:
+        - name: id
+          in: path
+          description: ID of track to return
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        
   /tracks/{id}:
     get:
       tags:
