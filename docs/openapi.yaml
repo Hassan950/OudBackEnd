@@ -2069,20 +2069,14 @@ paths:
               maximum: 50
       responses:
         '200':
-          description: ok
+          description: true or false if found album saved
           content:
             application/json:
               schema:
-                description: >-
-                  JSON array of true or false values, in the same order in which
-                  the ids were specified.
-                type: object
-                properties:
-                  IsFound:
-                    type: array
-                    items:
-                      type: boolean
-                      description: true or false if found album saved
+                type: array
+                items:
+                  type: boolean
+                  description: true or false if found album saved
         '400':
           description: Invalid ID
           content:
@@ -2115,20 +2109,14 @@ paths:
               maximum: 50
       responses:
         '200':
-          description: ok
+          description: true or false if found track saved
           content:
             application/json:
               schema:
-                description: >-
-                  JSON array of true or false values, in the same order in which
-                  the ids were specified.
-                type: object
-                properties:
-                  IsFound:
-                    type: array
-                    items:
-                      type: boolean
-                      description: true or false if found album saved
+                type: array
+                items:
+                  type: boolean
+                  description: true or false if found track saved
         '400':
           description: Invalid ID
           content:
