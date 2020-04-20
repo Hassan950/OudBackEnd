@@ -396,7 +396,6 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
  */
 
 exports.deleteImage = async image => {
-  console.log(image);
   if (image) {
     try {
       await fs.unlink(image);

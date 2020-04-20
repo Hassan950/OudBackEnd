@@ -43,7 +43,7 @@ exports.findTracks = async ids => {
  */
 exports.deleteTrack = async id => {
   const track = await Track.findByIdAndDelete(id);
-  if (track.audioUrl !== 'default.mp3') {
+  if (track.audioUrl) {
     try {
       await fs.unlink(track.audioUrl);
     } catch (err) {
@@ -208,7 +208,7 @@ exports.setTrack = async (track, url, duration) => {
  */
 exports.checkFile = async id => {
   const track = await Track.findById(id).select('audioUrl');
-  if (track.audioUrl !== 'default.mp3') {
+  if (track.audioUrl) {
     try {
       await fs.unlink(track.audioUrl);
     } catch (err) {
