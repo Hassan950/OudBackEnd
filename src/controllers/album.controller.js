@@ -153,10 +153,13 @@ exports.updateAlbum = async (req, res, next) => {
     return next(new AppError('The requested resource is not found', 404));
   if (album.released || String(album.artists[0]._id) !== String(req.user._id))
     return next(new AppError('Forbidden.', 403));
-  if (req.body.artists && !(await artistService.artistsExist(req.body.artists)))
-    return next(
-      new AppError("The artist ID's given are invalid or doesn't exist", 400)
+  if (req.body.artists) {
+    const result = await artistService.artistsExist(
+      req.body.artists,
+      req.user._id
     );
+    if (result instanceof AppError) return next(result);
+  }
 
   if (req.body.genres && !(await genreService.genresExist(req.body.genres)))
     return next(
@@ -185,8 +188,7 @@ exports.releaseAlbum = async (req, res, next) => {
   if (album.released || String(album.artists[0]) !== String(req.user._id))
     return next(new AppError('Forbidden.', 403));
   album = await albumService.releaseAlbum(album);
-  if (album instanceof(AppError))
-    return next(album);
+  if (album instanceof AppError) return next(album);
   res.status(200).json(album);
 };
 
@@ -236,10 +238,11 @@ exports.setImage = async (req, res, next) => {
  * @throws AppError 400 Bad request if the ID's given doesn't exist
  */
 exports.createAlbum = async (req, res, next) => {
-  if (!(await artistService.artistsExist(req.body.artists)))
-    return next(
-      new AppError("The artist ID's given are invalid or doesn't exist", 400)
-    );
+  const result = await artistService.artistsExist(
+    req.body.artists,
+    req.user._id
+  );
+  if (result instanceof AppError) return next(result);
 
   if (!(await genreService.genresExist(req.body.genres)))
     return next(
@@ -269,10 +272,11 @@ exports.newTrack = async (req, res, next) => {
   if (album.released || String(album.artists[0]._id) !== String(req.user._id))
     return next(new AppError('Forbidden.', 403));
 
-  if (!(await artistService.artistsExist(req.body.artists)))
-    return next(
-      new AppError("The artist ID's given are invalid or doesn't exist", 400)
-    );
+  const result = await artistService.artistsExist(
+    req.body.artists,
+    req.user._id
+  );
+  if (result instanceof AppError) return next(result);
 
   let track = await trackService.createTrack(req.params.id, req.body);
   album = await albumService.addTrack(album, track._id);

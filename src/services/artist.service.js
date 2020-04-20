@@ -2,6 +2,7 @@ const { Artist, User, Track, Request } = require('../models');
 const _ = require('lodash');
 const { trackService, emailService } = require('../services');
 const logger = require('../config/logger');
+const AppError = require('../utils/AppError');
 
 /**
  * A method that gets an artist by it's ID
@@ -129,9 +130,18 @@ exports.relatedArtists = async artistId => {
  * @returns true if they exist
  * @returns false if they don't exist
  */
-exports.artistsExist = async artistIds => {
+exports.artistsExist = async (artistIds, artistId) => {
   const artists = await Artist.find({ _id: artistIds });
-  if (artistIds.length !== artists.length) return false;
+  if (artistIds.length !== artists.length)
+    return new AppError(
+      "The artist ID's given are invalid or doesn't exist",
+      400
+    );
+  if (String(artistIds[0]) !== String(artistId))
+    return new AppError(
+      'The main album artist should be the first in the list',
+      400
+    );
   return true;
 };
 

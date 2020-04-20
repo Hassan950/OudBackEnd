@@ -4,7 +4,6 @@ const multer = require('multer');
 const fs = require('fs').promises;
 const getMP3Duration = require('get-mp3-duration');
 
-
 /* istanbul ignore next */
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -35,7 +34,6 @@ const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter
 });
-
 
 /**
  * calls multer to upload a track that is in req.body.track and put it in req.file
@@ -159,7 +157,7 @@ exports.deleteTrack = async (req, res, next) => {
  * @throws AppError 404 Not found if the track doesn't exist
  * @throws AppError 400 bad request if any of the new data is invalid
  * @throws AppError 403 forbidden if the artist is not the track's main artist
-*/
+ */
 exports.updateTrack = async (req, res, next) => {
   let track = await trackService.findTrack(req.params.id);
   if (!track)
@@ -171,10 +169,13 @@ exports.updateTrack = async (req, res, next) => {
         403
       )
     );
-  if (req.body.artists && !(await artistService.artistsExist(req.body.artists)))
-    return next(
-      new AppError("The artist ID's given are invalid or doesn't exist", 400)
+  if (req.body.artists) {
+    const result = await artistService.artistsExist(
+      req.body.artists,
+      req.user._id
     );
+    if (result instanceof AppError) return next(result);
+  }
 
   track = await trackService.update(req.params.id, req.body);
   res.status(200).json(track);
