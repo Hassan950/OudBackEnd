@@ -4500,11 +4500,7 @@ components:
           description: The date and time the album was saved.
           format: date-time
         album:
-          description: Information about the album.
-          type: object
-          properties:
-            schema:
-              $ref: '#/components/schemas/Album'
+          $ref: '#/components/schemas/Album'
     SavedTrack:
       type: object
       properties:
@@ -4513,11 +4509,7 @@ components:
           description: The date and time the track was saved.
           format: date-time
         track:
-          description: Information about the track.
-          type: object
-          properties:
-            schema:
-              $ref: '#/components/schemas/Track'
+          $ref: '#/components/schemas/Track'
     PlaylistSimple:
       type: object
       properties:
