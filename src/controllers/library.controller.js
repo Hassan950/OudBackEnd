@@ -47,10 +47,8 @@ exports.check = async(req, res , next)=>{
  */
 
 const checkSavedTracks = async(req ,res,next)=>{
-  //ids sent in query as a comma separated ids so i put them in a regular array
-  let ids = req.query.ids.split(',');
   //sent the logged in user and the passed ids to this function to check if its liked or not
-  const check = await libraryService.checkTracks(req.user,ids);
+  const check = await libraryService.checkTracks(req.user,req.query.ids);
   return check;
 }
 
@@ -66,8 +64,6 @@ const checkSavedTracks = async(req ,res,next)=>{
  */
 
 const checkSavedAlbums = async(req ,res,next)=>{
-  //ids sent in query as a comma separated ids so i put them in a regular array
-  let ids = req.query.ids.split(',');
   //sent the logged in user and the passed ids to this function to check if its liked or not
   const check = await libraryService.checkAlbums(req.user,ids);
   return check;
@@ -166,36 +162,97 @@ exports.put = async(req, res , next)=>{
     res.sendStatus(201);
   }
 }
-////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * A middleware that likes tracks by the logged in user
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary likes tracks by the logged in user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
 const saveTracks = async(req ,res,next)=>{
-  let ids = req.query.ids.split(',');
-  await libraryService.saveTracks(req.user,ids);
+  //ids sent in query as a comma separated ids so i put them in a regular array
+  //let ids = req.query.ids.split(',');
+  // calls this functions which makes the action to user to like tracks
+  await libraryService.saveTracks(req.user,req.query.ids);
 }
 
+/**
+ * A middleware that likes albums by the logged in user
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary likes albums by the logged in user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
 const saveAlbums = async(req ,res,next)=>{
+  //ids sent in query as a comma separated ids so i put them in a regular array
   let ids = req.query.ids.split(',');
+  // calls this functions which makes the action to user to like albums
   await libraryService.saveAlbums(req.user,ids);
 }
 
+/**
+ * A middleware that directs to function to delete liked tracks or delete liked albums of the logged in user
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary directs to function to delete liked tracks or delete liked albums of the logged in user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.delete = async(req, res , next)=>{
+  // if the url includes tracks then it directs to function that deletes liked tracks
   if(req.baseUrl.match(/.*tracks.*/))
   {
+    //function allows user to delete liked tracks
     deleteSavedTracks(req, res, next);
     res.sendStatus(204);
   }
   else{
+    // if the url includes tracks then it directs to function that deletes liked albums
+    //function allows user to delete liked albums
     deleteSavedAlbums(req, res, next);
     res.sendStatus(204);
   }
 }
 
+/**
+ * A middleware that allows user to unlike tracks 
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary allows user to unlike tracks
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 const deleteSavedTracks = async(req,res,next)=>{
-  let ids = req.query.ids.split(',');
-  await libraryService.deleteSavedTracks(req.user,ids);
+  // calls this functions which makes the action to user to unlike tracks
+  await libraryService.deleteSavedTracks(req.user,req.query.ids);
 }
 
+/**
+ * A middleware that allows user to unlike tracks 
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary allows user to unlike albums
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
 const deleteSavedAlbums = async(req,res,next)=>{
-  let ids = req.query.ids.split(',');
-  await libraryService.deleteSavedAlbums(req.user,ids);
+  // calls this functions which makes the action to user to unlike albums
+  await libraryService.deleteSavedAlbums(req.user,req.query.ids);
 }
 

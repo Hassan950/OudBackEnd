@@ -6,7 +6,7 @@ const { libraryValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router({ mergeParams: true });
-router.use(catchAsync(authMiddleware.authenticate));
+//router.use(catchAsync(authMiddleware.authenticate));
 
 router
   .route('/')
