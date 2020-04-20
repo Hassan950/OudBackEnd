@@ -139,7 +139,6 @@ exports.getTracks = async (params, query) => {
 exports.getUserPlaylists = async (id, query, publicity) => {
   const playlistPromise = PlaylistFollowings.find({ userId: id })
     .where(publicity)
-    .populate('playlistId')
     .select('playlistId')
     .select('-_id')
     .skip(query.offset)
@@ -154,10 +153,11 @@ exports.getUserPlaylists = async (id, query, publicity) => {
   } else {
     totalPromise = PlaylistFollowings.countDocuments({ userId: id }).exec();
   }
-  let [playlists, total] = await Promise.all([playlistPromise, totalPromise]);
-  playlists = _.map(playlists, playlist => {
+  let [playlistsIds, total] = await Promise.all([playlistPromise, totalPromise]);
+  playlistsIds = _.map(playlistsIds, playlist => {
     return playlist.playlistId;
   });
+  const playlists = await Playlist.find({ _id: {$in: playlistsIds }}).populate('tracks');
   return { playlists, total };
 };
 
