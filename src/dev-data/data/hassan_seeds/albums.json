@@ -1,0 +1,392 @@
+[
+  {
+    "_id": "5e9cc2c6111e012d183ddec4",
+    "artists": [
+      "5e907db0a0645f458160760a"
+    ],
+    "tracks": [
+      "5e9cc40f111e012d183ddec5"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "image": "uploads\\albums\\5e9cc2c6111e012d183ddec4-5e907db0a0645f458160760a-1587333704889.jpeg",
+    "released": false,
+    "name": "Free",
+    "album_type": "single",
+    "release_date": "30-10-2019"
+  },
+  {
+    "_id": "5e9cc4cc111e012d183ddec7",
+    "artists": [
+      "5e907db0a0645f458160760a"
+    ],
+    "tracks": [
+      "5e9cc500111e012d183ddec8"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "image": "uploads\\albums\\5e9cc4cc111e012d183ddec7-5e907db0a0645f458160760a-1587334884750.jpeg",
+    "released": false,
+    "name": "El Gemeza",
+    "album_type": "single",
+    "release_date": "01-06-2019"
+  },
+  {
+    "_id": "5e9cc704111e012d183ddeca",
+    "artists": [
+      "5e907db0a0645f458160760a"
+    ],
+    "tracks": [
+      "5e9cc720111e012d183ddecb"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "image": "uploads\\albums\\5e9cc704111e012d183ddeca-5e907db0a0645f458160760a-1587334923028.jpeg",
+    "released": false,
+    "name": "3ayz Fin",
+    "album_type": "single",
+    "release_date": "25-04-2018"
+  },
+  {
+    "_id": "5e9cd032111e012d183ddecd",
+    "artists": [
+      "5e907db0a0645f4581607609"
+    ],
+    "tracks": [
+      "5e9cd053111e012d183ddece"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "image": "uploads\\albums\\5e9cd032111e012d183ddecd-5e907db0a0645f4581607609-1587335886131.jpeg",
+    "released": false,
+    "name": "دورك جي",
+    "album_type": "single",
+    "release_date": "15-03-2020"
+  },
+  {
+    "_id": "5e9cd132111e012d183dded0",
+    "artists": [
+      "5e907db0a0645f4581607609"
+    ],
+    "tracks": [
+      "5e9cd14e111e012d183dded1",
+      "5e9cd288111e012d183dded4"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "image": "uploads\\albums\\5e9cd132111e012d183dded0-5e907db0a0645f4581607609-1587335946763.jpeg",
+    "released": false,
+    "name": "باظت",
+    "album_type": "single",
+    "release_date": "03-06-2019"
+  },
+  {
+    "_id": "5e9cd23a111e012d183dded3",
+    "artists": [
+      "5e907db0a0645f4581607609"
+    ],
+    "tracks": [],
+    "genres": [
+      "5e962e04da7d8d40d02a997b"
+    ],
+    "image": "uploads\\albums\\5e9cd23a111e012d183dded3-5e907db0a0645f4581607609-1587335987262.jpeg",
+    "released": false,
+    "name": "علي بابا",
+    "album_type": "single",
+    "release_date": "17-02-2020"
+  },
+  {
+    "_id": "5e9cdaa3111e012d183dded6",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "tracks": [
+      "5e9cdbbe111e012d183dded7"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "image": "uploads\\albums\\5e9cdaa3111e012d183dded6-5e907db0a0645f4581607607-1587338011819.jpeg",
+    "released": false,
+    "name": "The Ugly Ducklings",
+    "album_type": "album",
+    "release_date": "21-03-2019"
+  },
+  {
+    "_id": "5e9cdd46111e012d183dded9",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "tracks": [
+      "5e9cddaf111e012d183ddeda",
+      "5e9ce143111e012d183ddee3"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "image": "uploads\\albums\\5e9cdd46111e012d183dded9-5e907db0a0645f4581607607-1587338601548.jpeg",
+    "released": false,
+    "name": "El Sekka Shemal",
+    "album_type": "album",
+    "release_date": "03-07-2015"
+  },
+  {
+    "_id": "5e9cde31111e012d183ddedc",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "tracks": [
+      "5e9cde79111e012d183ddedd",
+      "5e9cdedc111e012d183ddedf",
+      "5e9ce02b111e012d183ddee1"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "image": "uploads\\albums\\5e9cde31111e012d183ddedc-5e907db0a0645f4581607607-1587338828988.jpeg",
+    "released": false,
+    "name": "مطلوب زعيم Matloob Zaeem",
+    "album_type": "album",
+    "release_date": "10-01-2014"
+  },
+  {
+    "_id": "5e9ce1ea111e012d183ddee5",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "tracks": [
+      "5e9ce23a111e012d183ddee6"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "image": "uploads\\albums\\5e9ce1ea111e012d183ddee5-5e907db0a0645f4581607607-1587339780133.jpeg",
+    "released": false,
+    "name": "أتجنن Etganen (Seeb Nafsak)",
+    "album_type": "single",
+    "release_date": "31-01-2014"
+  },
+  {
+    "_id": "5e9ce4a0ee7376379c0960fa",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "tracks": [
+      "5e9ce565ee7376379c0960fb",
+      "5e9ce5adee7376379c0960fd",
+      "5e9ce7edee7376379c0960ff"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "image": "uploads\\albums\\5e9ce4a0ee7376379c0960fa-5e9cbac42ec0720eecbb92a1-1587340588735.jpeg",
+    "released": false,
+    "name": "Insan",
+    "album_type": "album",
+    "release_date": "12-07-2011"
+  },
+  {
+    "_id": "5e9ce9e8ee7376379c096101",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "tracks": [
+      "5e9cea40ee7376379c096102"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "image": "uploads\\albums\\5e9ce9e8ee7376379c096101-5e9cbac42ec0720eecbb92a1-1587341846329.jpeg",
+    "released": false,
+    "name": "Dari Ya Alby",
+    "album_type": "single",
+    "release_date": "08-02-2018"
+  },
+  {
+    "_id": "5e9ceadaee7376379c096104",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "tracks": [
+      "5e9ceb24ee7376379c096105",
+      "5e9ceb80ee7376379c096107"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a997b",
+      "5e962e04da7d8d40d02a997c"
+    ],
+    "image": "uploads\\albums\\5e9ceadaee7376379c096104-5e9cbac42ec0720eecbb92a1-1587342074546.jpeg",
+    "released": false,
+    "name": "Dream With Me - Ehlam Ma'aya",
+    "album_type": "album",
+    "release_date": "15-01-2009"
+  },
+  {
+    "_id": "5e9cef963e578911e4c5c1bc",
+    "artists": [
+      "5e907db0a0645f4581607605",
+      "5e9cedfe57e0fb2db8591034"
+    ],
+    "tracks": [
+      "5e9cefe63e578911e4c5c1bd"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "image": "uploads\\albums\\5e9cef963e578911e4c5c1bc-5e907db0a0645f4581607605-1587343289397.jpeg",
+    "released": false,
+    "name": "Oud Al batal",
+    "album_type": "single",
+    "release_date": "03-03-2020"
+  },
+  {
+    "_id": "5e9cf0683e578911e4c5c1bf",
+    "artists": [
+      "5e907db0a0645f4581607605",
+      "5e9cedfe57e0fb2db8591034"
+    ],
+    "tracks": [
+      "5e9cf0b53e578911e4c5c1c0"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "image": "uploads\\albums\\5e9cf0683e578911e4c5c1bf-5e907db0a0645f4581607605-1587343512586.jpeg",
+    "released": false,
+    "name": "Mahragan Bent El Geran",
+    "album_type": "single",
+    "release_date": "27-01-2020"
+  },
+  {
+    "_id": "5e9cf1123e578911e4c5c1c2",
+    "artists": [
+      "5e907db0a0645f4581607605",
+      "5e9cedfe57e0fb2db8591034"
+    ],
+    "tracks": [
+      "5e9cf1643e578911e4c5c1c3"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "image": "uploads\\albums\\5e9cf1123e578911e4c5c1c2-5e907db0a0645f4581607605-1587343658059.jpeg",
+    "released": false,
+    "name": "Bonbony Sa2et Fi Nutella",
+    "album_type": "single",
+    "release_date": "05-03-2020"
+  },
+  {
+    "_id": "5e9cf4813e578911e4c5c1c5",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "tracks": [
+      "5e9cf4c03e578911e4c5c1c6"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "image": "uploads\\albums\\5e9cf4813e578911e4c5c1c5-5e907db0a0645f4571707606-1587344536173.jpeg",
+    "released": false,
+    "name": "Ana Aslan Gamed",
+    "album_type": "single",
+    "release_date": "01-01-2014"
+  },
+  {
+    "_id": "5e9cf5193e578911e4c5c1c8",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "tracks": [
+      "5e9cf54f3e578911e4c5c1c9",
+      "5e9cf5b33e578911e4c5c1cb",
+      "5e9cf5e83e578911e4c5c1cd"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "image": "uploads\\albums\\5e9cf5193e578911e4c5c1c8-5e907db0a0645f4571707606-1587344697830.jpeg",
+    "released": false,
+    "name": "Oka Wi Ortega",
+    "album_type": "album",
+    "release_date": "11-03-2015"
+  },
+  {
+    "_id": "5e9cf63c3e578911e4c5c1cf",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "tracks": [
+      "5e9cf8203e578911e4c5c1d0"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "image": "uploads\\albums\\5e9cf63c3e578911e4c5c1cf-5e907db0a0645f4571707606-1587344972977.jpeg",
+    "released": false,
+    "name": "العب يلا",
+    "album_type": "single",
+    "release_date": "19-09-2017"
+  },
+  {
+    "_id": "5e9cf98a3e578911e4c5c1d2",
+    "artists": [
+      "5e907db0a0645f458160760b"
+    ],
+    "tracks": [
+      "5e9cf9f73e578911e4c5c1d3",
+      "5e9cfa663e578911e4c5c1d5",
+      "5e9cfaf73e578911e4c5c1d7"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "image": "uploads\\albums\\5e9cf98a3e578911e4c5c1d2-5e907db0a0645f458160760b-1587345842642.jpeg",
+    "released": false,
+    "name": "My Everything",
+    "album_type": "album",
+    "release_date": "25-08-2014"
+  },
+  {
+    "_id": "5e9cfb6d3e578911e4c5c1d9",
+    "artists": [
+      "5e907db0a0645f458160760b"
+    ],
+    "tracks": [
+      "5e9cfbbe3e578911e4c5c1da"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "image": "uploads\\albums\\5e9cfb6d3e578911e4c5c1d9-5e907db0a0645f458160760b-1587346327087.jpeg",
+    "released": false,
+    "name": "Dangerous Woman",
+    "album_type": "album",
+    "release_date": "20-05-2016"
+  }
+]

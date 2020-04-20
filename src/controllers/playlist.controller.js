@@ -101,7 +101,7 @@ exports.changePlaylist = async (req, res, next) => {
     return next(new AppError('not found', 404));
   }
   let image;
-  if (!req.file) image = 'uploads\\playlists\\default.jpg';
+  if (!req.file) image = 'uploads\\playlists\\default.svg';
   else image = req.file.path;
   const playlist = await playlistService.changePlaylist(
     req.params,
@@ -217,7 +217,7 @@ exports.createUserPlaylist = async (req, res, next) => {
     return next(new AppError('not found', 404));
   }
   let image;
-  if (!req.file) image = 'uploads\\playlists\\default.jpg';
+  if (!req.file) image = 'uploads\\playlists\\default.svg';
   else image = req.file.path;
   const user = await playlistService.checkUser(req.params.id);
   if (!user) return next(new AppError('no user with this id', 404));
