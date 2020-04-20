@@ -150,7 +150,7 @@ describe('User model', () => {
       user.images = [];
       user.validateSync();
       expect(user.images.length).toBeGreaterThan(0);
-      user.images.forEach(path => expect(path).toMatch(/^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg)$/));
+      user.images.forEach(path => expect(path).toMatch(/^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg|svg)$/));
     })
     it('if user uploaded images less than the default options array will be completed automatically', () => {
       user.images = ['uploads\\users\\fakeName-5e6ba8747d3eda317003c976-1584622066176.jpeg'];

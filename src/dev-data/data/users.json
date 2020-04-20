@@ -4,7 +4,7 @@
     "role": "premium",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -21,7 +21,7 @@
     "role": "premium",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -40,7 +40,7 @@
     "role": "premium",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -59,7 +59,7 @@
     "role": "premium",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -76,7 +76,7 @@
     "role": "premium",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -93,7 +93,7 @@
     "role": "free",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -110,7 +110,7 @@
     "role": "free",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -127,7 +127,7 @@
     "role": "free",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -146,7 +146,7 @@
     "role": "free",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,
@@ -165,7 +165,7 @@
     "role": "free",
     "plan": null,
     "images": [
-      "uploads\\users\\default-Profile.jpg",
+      "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": false,

@@ -6,10 +6,11 @@ const multer = require('multer');
 /* istanbul ignore next */
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads');
+    cb(null, 'uploads/playlists');
   },
   filename: (req, file, cb) => {
-    cb(null, `${req.params.id}.${file.originalname}`);
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `${req.params.id}-${Date.now()}.${ext}`);
   }
 });
 
@@ -100,7 +101,7 @@ exports.changePlaylist = async (req, res, next) => {
     return next(new AppError('not found', 404));
   }
   let image;
-  if (!req.file) image = 'uploads\\default.jpg';
+  if (!req.file) image = 'uploads\\playlists\\default.svg';
   else image = req.file.path;
   const playlist = await playlistService.changePlaylist(
     req.params,
@@ -216,7 +217,7 @@ exports.createUserPlaylist = async (req, res, next) => {
     return next(new AppError('not found', 404));
   }
   let image;
-  if (!req.file) image = 'uploads\\default.jpg';
+  if (!req.file) image = 'uploads\\playlists\\default.svg';
   else image = req.file.path;
   const user = await playlistService.checkUser(req.params.id);
   if (!user) return next(new AppError('no user with this id', 404));
@@ -244,7 +245,7 @@ exports.deleteTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const tracks = await playlistService.getTracksId(req.body.uris);
+  const tracks = await playlistService.getTracksId(req.body.ids);
   if (!tracks) return next(new AppError('no tracks with these uris', 404));
   const playlist = await playlistService.deleteTracks(req.params, tracks);
   if (!playlist) return next(new AppError('no playlist with this id', 404));
@@ -267,7 +268,7 @@ exports.addTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const tracks = await playlistService.getTracksId(req.body.uris);
+  const tracks = await playlistService.getTracksId(req.body.ids);
   if (!tracks) return next(new AppError('no tracks with these uris', 404));
   const playlist = await playlistService.addTracks(
     req.params,
@@ -294,8 +295,8 @@ exports.replaceTracks = async (req, res, next) => {
   if (req.baseUrl.match(/.*users.*/) || req.baseUrl.match(/.*me.*/)) {
     return next(new AppError('endpoint not found', 404));
   }
-  const tracks = await playlistService.getTracksId(req.body.uris);
-  if (!tracks) return next(new AppError('no tracks with these uris', 404));
+  const tracks = await playlistService.getTracksId(req.body.ids);
+  if (!tracks) return next(new AppError('no tracks with these ids', 404));
   let playlist = await playlistService.getPlaylist(req.params);
   if (!playlist) return next(new AppError('no playlist with such id', 404));
   playlist = await playlistService.deleteTracks(playlist, playlist.tracks);

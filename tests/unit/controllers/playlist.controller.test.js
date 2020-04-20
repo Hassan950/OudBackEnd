@@ -141,7 +141,7 @@ describe('playlist controllers', () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
-    it('should throw error if path not found', async () => {
+    it('should throw error if there is an error other than "ENOENT (No such file or directory)"', async () => {
       req.params.id = usersIds[0];
       req.body = {
         name: 'MGZZZ',
@@ -151,17 +151,18 @@ describe('playlist controllers', () => {
       };
       playlist.image = 'bhjhvd.js';
       req.file.path = 'hfjhgjh.jpg';
+      const error = { code: 'EACCES', message: 'Permission denied' };
       jest.mock('fs');
-      fs.unlink = jest.fn();
-      fs.unlink.mockImplementationOnce((filename, callback) => {
-        callback(Error);
-      });
+      fs.promises.unlink = jest.fn();
+      fs.promises.unlink.mockImplementationOnce(() => Promise.reject(error));
+      expect.assertions(1);
+
       mockingoose(Playlist).toReturn(playlist, 'findOneAndUpdate');
-      try{
+      try {
         await playlistController.changePlaylist(req, res, next);
       }
       catch(e){
-        expect(e).toBe(Error);
+        expect(e).toBe(error);
       }
     });
     it('should return 200 if playlist with the passed id exists', async () => {
@@ -238,22 +239,23 @@ describe('playlist controllers', () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
-    it('should throw error when path not found', async () => {
+    it('should throw error if there is an error other than "ENOENT (No such file or directory)"', async () => {
       req.params.id = playlistsIds[0];
       playlist.image = 'Magdy.jpg';
       req.file.path = 'hfjhgjh.jpg';
       playlist.save = jest.fn().mockReturnThis();
       mockingoose(Playlist).toReturn(playlist, 'findOne');
+      const error = { code: 'EACCES', message: 'Permission denied' };
       jest.mock('fs');
-      fs.unlink = jest.fn();
-      fs.unlink.mockImplementationOnce((filename, callback) => {
-        callback(Error);
-      });
-      try{
+      fs.promises.unlink = jest.fn();
+      fs.promises.unlink.mockImplementationOnce(() => Promise.reject(error));
+      expect.assertions(1);
+
+      try {
         await playlistController.uploadImageRoute(req, res, next);
       }
       catch(e){
-        expect(e).toBe(Error);
+        expect(e).toBe(error);
       }
     });
     it('should return 200 if playlist with the passed id exists', async () => {

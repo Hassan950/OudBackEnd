@@ -2,11 +2,10 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
-const { Player } = require('../models/player.model');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
-    imgs.push('uploads\\users\\default-Profile.jpg');
+    imgs.push('uploads\\users\\default-Profile.svg');
   }
   if (imgs.length == 1) {
     imgs.push('uploads\\users\\default-Cover.jpg');
@@ -68,11 +67,11 @@ const userSchema = mongoose.Schema(
       type: [
         {
           type: String,
-          match: /((^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg)$)|(^.*-([a-f\d]{24})-[0-9]*\.(jpg|jpeg|png)))/
+          match: /((^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg|svg)$)|(^.*-([a-f\d]{24})-[0-9]*\.(jpg|jpeg|png)))/
         }
       ],
       default: [
-        'uploads\\users\\default-Profile.jpg',
+        'uploads\\users\\default-Profile.svg',
         'uploads\\users\\default-Cover.jpg'
       ],
       validate: {
@@ -168,6 +167,8 @@ userSchema.pre('save', function (next) {
 
 userSchema.post('save', async function (doc) {
   if (doc.newUser) {
+    const { Player } = require('../models/player.model');
+    const { Playlist } = require('../models/playlist.model');
     try {
       await Player.create({
         userId: doc._id
@@ -175,6 +176,10 @@ userSchema.post('save', async function (doc) {
     } catch (error) {
       // if the user has player already
     }
+    await Playlist.create({
+      name: 'Liked Songs',
+      owner: doc._id
+    });
 
     doc.newUser = undefined;
   }

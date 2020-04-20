@@ -180,7 +180,7 @@ exports.getUserPlaylists = {
  * @property {object} params An object containing parameter values parsed from the URL path
  * @property {string} params.id Id of the playlist
  * @property {object} query An object containing the URL query parameters
- * @property {array} query.uris array of tracks url to be deleted
+ * @property {array} query.ids array of tracks ids to be deleted
  */
 
 exports.deleteTracks = {
@@ -188,7 +188,7 @@ exports.deleteTracks = {
     id: Joi.objectId()
   }),
   body: Joi.object().keys({
-    uris: Joi.array().items(Joi.string()).required()
+    ids: Joi.array().items(Joi.string()).required()
   })
 };
 
@@ -247,7 +247,7 @@ exports.replaceTracks = {
     id: Joi.objectId()
   }),
   body: Joi.object().keys({
-    uris: Joi.array().items(Joi.string()).required()
+    ids: Joi.array().items(Joi.string()).required()
   })
 };
 
@@ -269,7 +269,7 @@ exports.addTracks = {
     id: Joi.objectId()
   }),
   body: Joi.object().keys({
-    uris: Joi.array().items(Joi.string()).required(),
+    ids: Joi.array().items(Joi.string()).required(),
     position: Joi.number().default(0)
   })
 };

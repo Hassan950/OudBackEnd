@@ -72,7 +72,7 @@ exports.requestVerify = async (req, res, next) => {
   const verifyToken = authService.createVerifyToken(user);
   await user.save({ validateBeforeSave: false });
 
-  const verifyURL = `${req.protocol}://${req.get(
+  const verifyURL = `${req.get(
     'host'
   )}/verify/${verifyToken}`;
 
@@ -87,7 +87,7 @@ exports.requestVerify = async (req, res, next) => {
     link: verifyURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   user.verifyToken = undefined;
@@ -106,16 +106,22 @@ exports.requestVerify = async (req, res, next) => {
  * @description takes user details from the user and return user and token with 200 status code
  *  if valid else return error with 400 status code
  * @summary User Registration
- * @todo return 401 if set role to premium without credit or atrtist without request
  */
 exports.signup = async (req, res, next) => {
   if (req.body.password !== req.body.passwordConfirm) {
     return next(new AppError('Please confirm your password', httpStatus.BAD_REQUEST));
   }
+
+  if (req.body.role === 'artist') {
+    return next(new AppError(`You can't create artist account without request`, httpStatus.UNAUTHORIZED));
+  }
+
+  if (req.body.role === 'premium') {
+    return next(new AppError(`You can't create premium account without credit`, httpStatus.UNAUTHORIZED));
+  }
+
   const newUser = await userService.createUser(req.body);
-  // TODO
-  // Return 401 if role is premium without credit
-  // Return 401 if role is artist without request
+
   // generate verify token
   const verifyToken = authService.createVerifyToken(newUser);
 
@@ -125,7 +131,7 @@ exports.signup = async (req, res, next) => {
   });
 
   // use mail to verify user
-  const verifyURL = `${req.protocol}://${req.get(
+  const verifyURL = `${req.get(
     'host'
   )}/verify/${verifyToken}`;
 
@@ -140,7 +146,7 @@ exports.signup = async (req, res, next) => {
     link: verifyURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   newUser.verifyToken = undefined;
@@ -239,7 +245,7 @@ exports.forgotPassword = async (req, res, next) => {
     validateBeforeSave: false
   });
   // send reset token via email
-  const resetURL = `${req.protocol}://${req.get(
+  const resetURL = `${req.get(
     'host'
   )}/resetPassword/${resetToken}`;
 
@@ -253,7 +259,7 @@ exports.forgotPassword = async (req, res, next) => {
     link: resetURL
   }).then().catch(error => {
     const { message, code, response } = error;
-    logger.error(`${error.code} :${error.message}`);
+    logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
   });
 
   res.status(httpStatus.OK).json({
