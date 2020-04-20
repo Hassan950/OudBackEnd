@@ -19,18 +19,14 @@ exports.check = async(req, res , next)=>{
   {
     //function returns array of boolean true if the track is liked or false if track isnot liked by user
     const check = await checkSavedTracks(req, res, next);
-    res.status(200).json({
-      isFound: check
-    });
+    res.status(200).send(check);
   }
   else
   {
     // if the url includes albums then it directs to function that checks saved albums
     //function returns array of boolean true if the album is liked or false if album isnot liked by user
     const check = await checkSavedAlbums(req, res, next);
-    res.status(200).json({
-      isFound: check
-    });
+    res.status(200).send(check);
   }
 }
 
@@ -88,7 +84,10 @@ exports.get = async(req, res , next)=>{
     //function returns array of liked tracks by the logged in user 
     const tracks = await getSavedTracks(req, res, next);
     res.status(200).json({
-      items: tracks
+      items: tracks.tracks,
+      offset: req.query.offset,
+      limit: req.query.limit,
+      total: tracks.total
     });
   }
   else{
@@ -96,7 +95,10 @@ exports.get = async(req, res , next)=>{
     //function returns array of liked albums by the logged in user
     const albums = await getSavedAlbums(req, res, next);
     res.status(200).json({
-      items: albums
+      items: albums.albums,
+      offset: req.query.offset,
+      limit: req.query.limit,
+      total: albums.total
     });
   }
 

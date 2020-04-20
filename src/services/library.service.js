@@ -75,18 +75,38 @@ module.exports.checkAlbums = async(user,ids)=>{
 
 module.exports.getAlbums = async(user,query)=>{
   //find all likedalbums which userId is the same as the id of the logged in user and skips the offset sent and returns items whin the limit 
-  const albums = await likedAlbums.find({userId: user.id})
+  let result = await likedAlbums.find({userId: user.id})
   .populate({
     path: 'album',
-    select: '-tracks -genres -released -release_date',
-    populate: { path: 'artists', select: 'displayName images' }
+    populate: { path: 'tracks artists genres' ,
+    select : 'type displayName images name artists ',
+    populate:{
+      path: 'artists' ,
+      select: 'type displayName images'
+  }
+  }
   })
   .select('-userId')
   .select('-_id')
   .skip(query.offset)
   .limit(query.limit);
-  return albums;
-}
+  let lengthArray = likedAlbums.aggregate([
+    { $match: { userId: user.id }},
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+  [result, lengthArray] = await Promise.all([result, lengthArray]);
+  const albums = result.map(album => {
+    album.album.tracks = {
+      items: _.slice(album.album.tracks,query.offset, query.offset+ query.limit),
+      offset: query.offset,
+      limit: query.limit,
+      total: album.album.tracks.length
+    }
+    return album
+  })
+  const total = await likedAlbums.countDocuments({ userId: user.id });
+  return { albums , total};
+};
 
 /**
  * A method that gets array of liked tracks
@@ -102,15 +122,24 @@ module.exports.getAlbums = async(user,query)=>{
 module.exports.getTracks = async(user,query)=>{
   //find all likedtracks which userId is the same as the id of the logged in user and skips the offset sent and returns items whin the limit 
   let tracks = await likedTracks.find({userId: user.id})
-  .populate('track')
-  .select({
-    path:'-userId',
-    populate: { path: 'artists', select: 'displayName ' }
+  .populate({
+    path:'track',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    }
   })
+  .select('-userId')
   .select('-_id')
   .skip(query.offset)
   .limit(query.limit);
-  return  tracks ;
+  const total = await likedTracks.countDocuments({userId: user.id});
+  return  { tracks,total} ;
 }
 
 /**
@@ -147,7 +176,6 @@ module.exports.saveTracks = async(user,ids)=>{
           }
         }
       );
-      console.log(playlist);
       //save the liked track in model Liked Tracks
       await likedTracks.create(
         {
