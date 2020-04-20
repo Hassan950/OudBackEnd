@@ -33,6 +33,10 @@ const albums = JSON.parse(fs.readFileSync(`${__dirname}/albums.json`, 'utf-8'));
 
 const tracks = JSON.parse(fs.readFileSync(`${__dirname}/tracks.json`), 'utf-8');
 
+const albums2 = JSON.parse(fs.readFileSync(`${__dirname}/tarek_seeds/albums.json`, 'utf-8'));
+
+const tracks2 = JSON.parse(fs.readFileSync(`${__dirname}/tarek_seeds/tracks.json`), 'utf-8');
+
 const categories = JSON.parse(
   fs.readFileSync(`${__dirname}/categories.json`, 'utf-8')
 );
@@ -64,7 +68,9 @@ const importData = async () => {
     await Genre.create(genres);
     await Artist.create(artists);
     await Album.create(albums);
+    await Album.create(albums2);
     await Track.create(tracks);
+    await Track.create(tracks2);
     await Category.create(categories);
     await Playlist.create(playlists);
     await Queue.create(queues);
