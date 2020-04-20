@@ -1,5 +1,5 @@
 const queueService = require('../../../src/services/queue.service');
-const { Player, Device, Track, Queue, Artist, Playlist, Album } = require('../../../src/models');
+const { Player, Device, Track, Artist, Playlist, Queue, Album } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 const playerMocks = require('../../utils/models/player.model.mocks');
 const queueMocks = require('../../utils/models/queue.model.mocks');
@@ -11,6 +11,7 @@ describe('Queue Service', () => {
   let user;
   let player;
   beforeEach(() => {
+    jest.clearAllMocks();
     player = playerMocks.createFakePlayer();
     user = userMocks.createFakeUser();
     queue = queueMocks.createFakeQueue();
@@ -18,6 +19,34 @@ describe('Queue Service', () => {
     mockingoose(Queue).toReturn(queue, 'findOne');
   });
 
+  describe('Get Track Poition', () => {
+    it('should return -1 if queue in not found', async () => {
+      mockingoose(Queue).toReturn(null, 'findOne');
+      const result = await queueService.getTrackPosition(queue._id, user._id);
+      expect(result).toBe(-1);
+    });
+
+    it('should return -1 if queue.tracks in not found', async () => {
+      queue.tracks = null;
+      mockingoose(Queue).toReturn(queue, 'findOne');
+      const result = await queueService.getTrackPosition(queue._id, user._id);
+      expect(result).toBe(-1);
+    });
+
+    it('should return -1 if track is not found', async () => {
+      queue.tracks = [1, 2];
+      mockingoose(Queue).toReturn(queue, 'findOne');
+      const result = await queueService.getTrackPosition(queue._id, 5);
+      expect(result).toBe(-1);
+    });
+
+    it('should return track position if track is found', async () => {
+      queue.tracks = [user._id, player._id];
+      mockingoose(Queue).toReturn(queue, 'findOne');
+      const result = await queueService.getTrackPosition(queue._id, user._id);
+      expect(result).toBe(0);
+    });
+  });
   describe('GetQueueById', () => {
     it('should get queue', async () => {
       const result = await queueService.getQueueById(queue._id);
@@ -217,6 +246,27 @@ describe('Queue Service', () => {
       await queueService.appendToQueue(queue._id, tracks);
       expect(queue.save).toBeCalled();
       Queue.findById.mockRestore();
+    });
+  });
+
+  describe('Create queue from tracks', () => {
+    let tracks;
+    beforeEach(() => {
+      tracks = [user._id, queue._id, player._id];
+      Queue.create = jest.fn().mockResolvedValue(queue);
+    });
+
+    it('should return queue', async () => {
+      const result = await queueService.createQueueFromTracks(tracks);
+      expect(result).toBe(queue);
+      Queue.create.mockRestore();
+    });
+
+    it('should create queue', async () => {
+      const result = await queueService.createQueueFromTracks(tracks);
+      expect(Queue.create).toBeCalled();
+      expect(Queue.create).toBeCalledWith({ tracks: tracks });
+      Queue.create.mockRestore();
     });
   });
 });
