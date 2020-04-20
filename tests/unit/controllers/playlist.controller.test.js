@@ -392,12 +392,10 @@ describe('playlist controllers', () => {
       PlaylistFollowings.where = jest.fn().mockReturnThis();
       mockingoose(User).toReturn(user, 'findOne');
       mockingoose(PlaylistFollowings).toReturn(playlistFollowings, 'find');
+      mockingoose(Playlist).toReturn(playlists, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       const foundPlaylists = res.json.mock.calls[0][0].items;
-      expect(foundPlaylists).toEqual([
-        playlistFollowings[0].playlistId,
-        playlistFollowings[1].playlistId
-      ]);
+      expect(toString(foundPlaylists)).toEqual(toString(playlists));
     });
     it('should return 200 if user with the passed id exists for me url', async () => {
       req.baseUrl = 'api/v1/me/playlists';
@@ -420,12 +418,10 @@ describe('playlist controllers', () => {
       PlaylistFollowings.limit = jest.fn().mockReturnThis();
       PlaylistFollowings.where = jest.fn().mockReturnThis();
       mockingoose(PlaylistFollowings).toReturn(playlistFollowings, 'find');
+      mockingoose(Playlist).toReturn(playlists, 'find');
       await playlistController.getUserPlaylists(req, res, next);
       const foundPlaylists = res.json.mock.calls[0][0].items;
-      expect(foundPlaylists).toEqual([
-        playlistFollowings[0].playlistId,
-        playlistFollowings[1].playlistId
-      ]);
+      expect(toString(foundPlaylists)).toEqual(toString(playlists));
     });
   });
   describe('createPlaylist - test', () => {
