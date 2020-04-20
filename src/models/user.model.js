@@ -67,7 +67,7 @@ const userSchema = mongoose.Schema(
       type: [
         {
           type: String,
-          match: /((^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg|svg)$)|(^.*-([a-f\d]{24})-[0-9]*\.(jpg|jpeg|png)))/
+          match: /((^(uploads(\\|\/)users(\\|\/))(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg|svg)$)|(^.*-([a-f\d]{24})-[0-9]*\.(jpg|jpeg|png)))/
         }
       ],
       default: [
@@ -200,5 +200,6 @@ userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
 };
 
 const User = mongoose.model('User', userSchema);
+
 
 module.exports = { User, userSchema };
