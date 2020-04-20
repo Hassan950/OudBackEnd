@@ -64,9 +64,7 @@ const importData = async () => {
     await Genre.create(genres);
     await Artist.create(artists);
     await Album.create(albums);
-    await Album.create(albums2);
     await Track.create(tracks);
-    await Track.create(tracks2);
     await Category.create(categories);
     await Playlist.create(playlists);
     await Queue.create(queues);
