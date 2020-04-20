@@ -57,6 +57,7 @@ module.exports.getPlaylists = async function getPlaylists(params, query) {
     return { category, total };
   }
   const playlists = await Playlist.find({ _id: { $in: category.playlists } })
+    .populate('tracks')
     .skip(query.offset)
     .limit(query.limit);
   const total = category.playlists.length;
@@ -77,6 +78,11 @@ module.exports.getNewReleases = async function getNewReleases(query) {
   const albums = await Album.find()
     .skip(query.offset)
     .limit(query.limit)
+    .select('-tracks -genres -released -release_date')
+    .populate({
+     path:'artists',
+     select: 'displayName type images _id',
+    })
     .sort({ release_date: -1 });
   const total = await Album.countDocuments();
   return { albums, total };
