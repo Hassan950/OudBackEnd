@@ -2621,7 +2621,7 @@ paths:
                   description: >-
                     Value for playlist description as displayed in Clients and
                     in the Web API.
-                image:
+                image/png:
                   type: string
                   format: binary
                   description: the image of the playlist
@@ -2752,7 +2752,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/PlaylistTrack'
+                      $ref: '#/components/schemas/Track'
                     description: the Requested releases
                   limit:
                     type: integer
@@ -2911,7 +2911,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /me/playlists:
+  /me/playlits:
     get:
       security:
         - bearerAuth: []
