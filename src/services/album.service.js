@@ -401,7 +401,7 @@ exports.deleteImage = async image => {
     try {
       await fs.unlink(image);
     } catch (err) {
-      logger.error(err.message);
+      if (err.code !== 'ENOENT') throw err;
     }
   }
 };

@@ -47,7 +47,7 @@ exports.deleteTrack = async id => {
     try {
       await fs.unlink(track.audioUrl);
     } catch (err) {
-      logger.error(err.message);
+      if (err.code !== 'ENOENT') throw err;
     }
   }
 };
@@ -212,7 +212,7 @@ exports.checkFile = async id => {
     try {
       await fs.unlink(track.audioUrl);
     } catch (err) {
-      logger.error(err.message);
+      if (err.code !== 'ENOENT') throw err;
     }
   }
 };
