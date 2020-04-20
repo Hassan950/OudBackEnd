@@ -4534,7 +4534,7 @@ components:
           type: array
           description: Information about the tracks of the Playlist
           items:
-            $ref: '#/components/schemas/Track'
+            $ref: '#/components/schemas/PlaylistTrack'
         collaborative:
           type: boolean
           description: true if user allows other users to modify the Playlist
@@ -4577,7 +4577,7 @@ components:
           type: array
           description: Information about the tracks of the Playlist
           items:
-            $ref: '#/components/schemas/Track'
+            $ref: '#/components/schemas/PlaylistTrack'
         image:
           type: string
           description: The image of the playlist
@@ -4590,20 +4590,32 @@ components:
           description: 'The object type: `"Playlist"`'
     PlaylistTrack:
       type: object
+      description: Simple Track Object
       properties:
-        added_at:
+        _id:
           type: string
-          description: te date and time the track was created
-          format: date-time
-        added_by:
+          description: The unique Id of the track
+        name:
           type: string
-          description: the user who added the track
-        track:
-          description: information about track
-          type: object
-          properties:
-            schema:
-              $ref: '#/components/schemas/Track'
+          description: The name of the Track.
+        album:
+          type: string
+          description: id of the album
+        artists:
+          type: array
+          items:
+            type: string
+          description: ids of artists who performed the track.
+        type:
+          type: string
+          description: The object type i.e “track”
+        duartion: 
+          type: integer
+          description: The duartion of the song in ms
+        views:
+          type: integer
+          description: The number of times someone listened to this track
+
     Signup:
       type: object
       required:
