@@ -32,7 +32,7 @@ const albumSchema = new mongoose.Schema(
         message: 'An album should have at least one genre'
       }
     },
-    image: { type: String, match: /\.(png|jpg|jpeg)$/, default: 'default.jpg' },
+    image: { type: String, match: /\.(png|jpg|jpeg|svg)$/ },
     name: {
       type: String,
       minlength: 1,

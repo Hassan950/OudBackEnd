@@ -1,7 +1,6 @@
 const { Album } = require('../models/album.model');
 const mongoose = require('mongoose');
 const fs = require('fs').promises;
-const logger = require('../config/logger');
 
 /**
  * A method that gets an album by it's ID
@@ -397,7 +396,8 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
  */
 
 exports.deleteImage = async image => {
-  if (image !== 'default.jpg') {
+  console.log(image);
+  if (image) {
     try {
       await fs.unlink(image);
     } catch (err) {
