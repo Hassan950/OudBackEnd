@@ -4,7 +4,6 @@ let { Track, Artist, Genre } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 let fs = require('fs').promises;
 jest.mock('get-mp3-duration', () => () => 21000);
-let { albumValidation } = require('../../../src/validations');
 
 artistIds = [
   { _id: '5e6c8ebb8b40fc5508fe8b32' },
@@ -35,8 +34,6 @@ describe('Tracks controller', () => {
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
-    Track.schema.path('album', Object);
-    Track.schema.path('artist', Object);
   });
   describe('getTracks', () => {
     it("Should return list of tracks with the ID's given with status code 200", async () => {
@@ -146,9 +143,9 @@ describe('Tracks controller', () => {
       // An ID of a track object
       mockingoose(Artist).toReturn(track.artists, 'find');
       req.params.id = trackIds[0];
-      req.user = { _id: artistIds[0]._id };
+      req.user = { _id: track.artists[0]._id };
       req.body = {
-        artists: track.artists
+        artists: [artistIds[0]._id, artistIds[1]._id, artistIds[2]._id]
       };
       await tracksController.updateTrack(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -158,13 +155,12 @@ describe('Tracks controller', () => {
         .toReturn(track, 'findOne')
         .toReturn(track, 'findOneAndUpdate');
       mockingoose(Artist).toReturn(track.artists, 'find');
-      track.artists[0] = artistIds[2];
       // An ID of a track object
       req.params.id = trackIds[2];
-      req.user = { _id: artistIds[2]._id };
+      req.user = { _id: track.artists[0]._id };
       req.body = {
         name: 'both are updated',
-        artists: track.artists
+        artists: [artistIds[0]._id, artistIds[1]._id, artistIds[2]._id]
       };
       await tracksController.updateTrack(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);

@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { idsArray } = require('./custom.validation');
-const { Artist, Genre } = require('../models');
 
 /**
  * Schema that checks that the request is valid for endpoints that requires one album
