@@ -156,8 +156,10 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "madfagea",
-    "genres": ["5e962e04da7d8d40d02a9973"],
-    "bio":"I know it"
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "bio": "I know it"
   },
   {
     "_id": "5e907db0a0645f4571607606",
@@ -174,9 +176,13 @@
     "passwordConfirm": "12341234",
     "country": "GB",
     "username": "dlipa",
-    "genres": ["5e9083c24c798428f45b322c","5e9083c24c798428f45b322f","5e9083c24c798428f45b3232"],
-    "bio":"arrived in style in 2015 with her self-titled, chart topping debut album which eclipsed 4 million sales worldwide with single sales reaching over 40 million."
-    },
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": "arrived in style in 2015 with her self-titled, chart topping debut album which eclipsed 4 million sales worldwide with single sales reaching over 40 million."
+  },
   {
     "_id": "5e907db0a0645f4581607605",
     "role": "artist",
@@ -278,6 +284,12 @@
     "bio": "Never mind, I'll find someone like you I wish nothing but the best for you too"
   },
   {
+    "_id": "5e9cbac42ec0720eecbb92a1",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.svg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
     "verified": true,
     "queues": [],
     "displayName": "Hamza Namira",
@@ -640,5 +652,27 @@
       "5e962e04da7d8d80d03a997d"
     ],
     "bio": "Championed by fellow rapper Drake and The Fader magazine before he released his first full-length project.."
+  },
+  {
+    "_id": "5e9cedfe57e0fb2db8591034",
+    "role": "artist",
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "bio": "",
+    "popularSongs": [],
+    "images": [
+      "uploads\\users\\default-Profile.svg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "type": "Artist",
+    "displayName": "Omar Kamal",
+    "email": "o_kamal18@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "kamal123123"
   }
 ]
