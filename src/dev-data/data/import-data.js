@@ -33,10 +33,6 @@ const albums = JSON.parse(fs.readFileSync(`${__dirname}/albums.json`, 'utf-8'));
 
 const tracks = JSON.parse(fs.readFileSync(`${__dirname}/tracks.json`), 'utf-8');
 
-const albums2 = JSON.parse(fs.readFileSync(`${__dirname}/tarek_seeds/albums.json`, 'utf-8'));
-
-const tracks2 = JSON.parse(fs.readFileSync(`${__dirname}/tarek_seeds/tracks.json`), 'utf-8');
-
 const categories = JSON.parse(
   fs.readFileSync(`${__dirname}/categories.json`, 'utf-8')
 );
