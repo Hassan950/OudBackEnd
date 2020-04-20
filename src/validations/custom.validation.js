@@ -1,6 +1,7 @@
 const moment = require('moment');
 const validator = require('validator');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 exports.ageCheck = (value, helpers) => {
   const age = moment().diff(value, 'years');
@@ -120,7 +121,7 @@ exports.capitalize = (value, helper) => {
 exports.albumGroups = (value, helpers) => {
   const validValues = ['single', 'album', 'appears_on', 'compilation'];
   let values = value.split(',');
-  values = [...new Set(values)];
+  values = _.uniq(values);
   try {
     values.forEach(v => {
       if (!validValues.includes(v))
