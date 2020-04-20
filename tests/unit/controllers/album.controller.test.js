@@ -114,7 +114,7 @@ describe('Albums Controller', () => {
         .toReturn([{ tracks: 3 }], 'aggregate');
       req.user = { _id: album.artists[0]._id };
       req.params.id = album._id;
-      fs.unlink = jest.fn().mockRejectedValue(false);
+      fs.unlink = jest.fn();
       trackService.deleteTrack = jest.fn();
       await albumsController.findAndDeleteAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);

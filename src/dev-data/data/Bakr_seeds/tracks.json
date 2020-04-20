@@ -1,0 +1,194 @@
+[
+  {
+    "_id": "5e909be7cfe5b521a0ccf3cc",
+    "name": "End Game",
+    "artists": ["5e907dafa0645f4571607600", "5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e3",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3cc-5e907dafa0645f4571607600-1587378071750.mp3",
+    "duration": "244898"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3cd",
+    "name": "Delicate",
+    "artists": ["5e907dafa0645f4571607600"],
+    "album": "5e909be7cfe5b521a0ccf3e3",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3cd-5e907dafa0645f4571607600-1587378102072.mp3",
+    "duration": "232307"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3ce",
+    "name": "Ready For It",
+    "artists": ["5e907dafa0645f4571607600"],
+    "album": "5e909be7cfe5b521a0ccf3e3",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3ce-5e907dafa0645f4571607600-1587378127166.mp3",
+    "duration": "208248"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3ad",
+    "name": "Bird Set Free",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3ad-5e907dafa0645f4571607602-1587377252791.mp3",
+    "duration": "252500",
+    "artists": ["5e907dafa0645f4571607602"],
+    "album": "5e909be7cfe5b521a0ccf3e2"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3ae",
+    "name": "Move Your Body",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3ae-5e907dafa0645f4571607602-1587377213697.mp3",
+    "duration": "247275",
+    "artists": ["5e907dafa0645f4571607602"],
+    "album": "5e909be7cfe5b521a0ccf3e2"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3af",
+    "name": "Unstoppable",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3af-5e907dafa0645f4571607602-1587377282954.mp3",
+    "duration": "217809",
+    "artists": ["5e907dafa0645f4571607602"],
+    "album": "5e909be7cfe5b521a0ccf3e2"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3bc",
+    "name": "Wrecking ball",
+    "artists": ["5e907dafa0645f45716075ff"],
+    "album": "5e909be7cfe5b521a0ccf3e4",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3bc-5e907dafa0645f45716075ff-1587378603140.mp3",
+    "duration": "221414"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3bd",
+    "name": "Adore You",
+    "artists": ["5e907dafa0645f45716075ff"],
+    "album": "5e909be7cfe5b521a0ccf3e4",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3bd-5e907dafa0645f45716075ff-1587378625777.mp3",
+    "duration": "278805"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3be",
+    "name": "We Can't Stop",
+    "artists": ["5e907dafa0645f45716075ff"],
+    "album": "5e909be7cfe5b521a0ccf3e4",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3be-5e907dafa0645f45716075ff-1587378641509.mp3",
+    "duration": "231314"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf32f",
+    "name": "Shape of you",
+    "artists": ["5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e5",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf32f-5e907dafa0645f4571607601-1587380143018.mp3",
+    "duration": "233770"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf331",
+    "name": "Galway Girl",
+    "artists": ["5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e5",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf331-5e907dafa0645f4571607601-1587380176285.mp3",
+    "duration": "170893"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf332",
+    "name": "Perfect",
+    "artists": ["5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e5",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf332-5e907dafa0645f4571607601-1587380201741.mp3",
+    "duration": "263471"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f0",
+    "name": "Mesh Baqy Meny",
+    "artists": ["5e907dafa0645f4571607603"],
+    "album": "5e909be7cfe5b521a0ccf3e6",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f0-5e907dafa0645f4571607603-1587380790306.mp3",
+    "duration": "375928"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4f0",
+    "name": "Sa'alt Nafsy Keteer",
+    "artists": ["5e907dafa0645f4571607603"],
+    "album": "5e909be7cfe5b521a0ccf4e6",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf4f0-5e907dafa0645f4571607603-1587381193274.mp3",
+    "duration": "210155"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4f1",
+    "name": "مسحراتي",
+    "artists": ["5e907dafa0645f4571607603"],
+    "album": "5e909be7cfe5b521a0ccf4e1",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf4f1-5e907dafa0645f4571607603-1587381237643.mp3",
+    "duration": "154932"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f1",
+    "name": "Ya Ahl El Arab",
+    "artists": ["5e907db0a0645f4571607604"],
+    "album": "5e909be7cfe5b521a0ccf6e7",
+    "duration": 210678,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f1-5e907db0a0645f4571607604-1587382878753.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cdf3f1",
+    "name": "Ya Hamaam",
+    "artists": ["5e907db0a0645f4571607604"],
+    "album": "5e909be7cfe5b521a0ccf6e7",
+    "duration": 284473,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cdf3f1-5e907db0a0645f4571607604-1587383125314.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf6f1",
+    "name": "ازاي",
+    "artists": ["5e907db0a0645f4571607604"],
+    "album": "5e909be7cfe5b521a0ccf3e7",
+    "duration": 182988,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf6f1-5e907db0a0645f4571607604-1587383207156.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f2",
+    "name": "كفا حبيبي بكفا",
+    "artists": ["5e907db0a0645f4571607605"],
+    "album": "5e909be7cfe5b521a0ccf3e8",
+    "duration": 219716,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f2-5e907db0a0645f4571607605-1587385688199.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccd3f2",
+    "name": "مولد المدفعجية",
+    "artists": ["5e907db0a0645f4571607605"],
+    "album": "5e909be7cfe5b521a0ccd3e8",
+    "duration": 22491,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccd3f2-5e907db0a0645f4571607605-1587385775103.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cdf3f2",
+    "name": "الناس",
+    "artists": ["5e907db0a0645f4571607605"],
+    "album": "5e909be7cfe5b521a0cce3e8",
+    "duration": 231184,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cdf3f2-5e907db0a0645f4571607605-1587385969712.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f3",
+    "name": "Cool",
+    "artists": ["5e907db0a0645f4571607606"],
+    "album": "5e909be7cfe5b521a0ccf3e9",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f3-5e907db0a0645f4571607606-1587386174475.mp3",
+    "duration": "209659"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cdf3f3",
+    "name": "Physical",
+    "artists": ["5e907db0a0645f4571607606"],
+    "album": "5e909be7cfe5b521a0ccf3e9",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cdf3f3-5e907db0a0645f4571607606-1587386214553.mp3",
+    "duration": "193907"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cef3f3",
+    "name": "Levitating",
+    "artists": ["5e907db0a0645f4571607606"],
+    "album": "5e909be7cfe5b521a0ccf3e9",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cef3f3-5e907db0a0645f4571607606-1587386233070.mp3",
+    "duration": "203886"
+  }
+]

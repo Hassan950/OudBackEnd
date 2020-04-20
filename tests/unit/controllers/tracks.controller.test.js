@@ -76,7 +76,7 @@ describe('Tracks controller', () => {
       mockingoose(Track)
         .toReturn(track, 'findOneAndDelete')
         .toReturn(track, 'findOne');
-      fs.unlink = jest.fn().mockRejectedValue(false);
+      fs.unlink = jest.fn();
       mockingoose(Artist).toReturn(track.artists, 'find');
       track.artists[0] = artistIds[1];
       // A valid ID that belongs to an object
@@ -223,7 +223,7 @@ describe('Tracks controller', () => {
       req.file = {
         path: 'lol.mp3'
       };
-      fs.unlink = jest.fn().mockRejectedValue(false);
+      fs.unlink = jest.fn();
       fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
