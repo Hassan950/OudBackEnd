@@ -75,7 +75,16 @@ module.exports.checkAlbums = async(user,ids)=>{
 
 module.exports.getAlbums = async(user,query)=>{
   //find all likedalbums which userId is the same as the id of the logged in user and skips the offset sent and returns items whin the limit 
-  const albums = await likedAlbums.find({userId: user.id}).populate('album').select('-userId').select('-_id').skip(query.offset).limit(query.limit);
+  const albums = await likedAlbums.find({userId: user.id})
+  .populate({
+    path: 'album',
+    select: '-tracks -genres -released -release_date',
+    populate: { path: 'artists', select: 'displayName images' }
+  })
+  .select('-userId')
+  .select('-_id')
+  .skip(query.offset)
+  .limit(query.limit);
   return albums;
 }
 
@@ -92,7 +101,15 @@ module.exports.getAlbums = async(user,query)=>{
 
 module.exports.getTracks = async(user,query)=>{
   //find all likedtracks which userId is the same as the id of the logged in user and skips the offset sent and returns items whin the limit 
-  let tracks = await likedTracks.find({userId: user.id}).populate('track').select('-userId').select('-_id').skip(query.offset).limit(query.limit);
+  let tracks = await likedTracks.find({userId: user.id})
+  .populate('track')
+  .select({
+    path:'-userId',
+    populate: { path: 'artists', select: 'displayName ' }
+  })
+  .select('-_id')
+  .skip(query.offset)
+  .limit(query.limit);
   return  tracks ;
 }
 
