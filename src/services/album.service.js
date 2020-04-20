@@ -1,6 +1,7 @@
 const { Album } = require('../models/album.model');
 const mongoose = require('mongoose');
 const fs = require('fs').promises;
+const AppError = require('../utils/AppError');
 
 /**
  * A method that gets an album by it's ID
@@ -417,4 +418,84 @@ exports.deleteImage = async image => {
 
 exports.removeTrack = async (albumId, trackId) => {
   await Album.findByIdAndUpdate(albumId, { $pull: { tracks: trackId } });
+};
+
+/**
+ * A method that releases an album if it has an image and all of its
+ * tracks have files. and returns the updated album.
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Releases an album
+ * @param {object} album
+ * @returns Updated album if successful
+ * @returns null if the album didn't match the specifications of released albums
+ */
+exports.releaseAlbum = async album => {
+  if (album.image) {
+    for (let i = 0, n = album.tracks.length; i < n; i++) {
+      if (!album.tracks[i].audioUrl)
+        return new AppError(
+          'All tracks of the album must have files before releasing',
+          400
+        );
+    }
+  } else
+    return new AppError(
+      'An album should have an image before being released',
+      400
+    );
+  if (album.album_type === 'single' && album.tracks.length !== 1)
+    return new AppError('Single albums must have exactly one track', 400);
+
+  album.released = true;
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(album._id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [, album, lengthObj] = await Promise.all([
+    album.save(),
+    album
+      .populate('artists', 'displayName images')
+      .populate('genres')
+      .populate({
+        path: 'tracks',
+        select: '-album',
+        options: { limit: 50, offset: 0 },
+        populate: { path: 'artists', select: 'displayName images' }
+      })
+      .execPopulate(),
+    lengthObj
+  ]);
+
+  album = album.toJSON();
+  album.album_group = undefined;
+  album.tracks = {
+    limit: 50,
+    offset: 0,
+    total: lengthObj[0].tracks,
+    items: album.tracks
+  };
+  return album;
+};
+
+/**
+ * A method that gets an album by it's ID with the tracks containing
+ * their audioUrl's for the use with releaseAlbum and not to return to
+ * the client
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets an album
+ * @param {String} id ID of the album to be retrieved
+ * @returns album if the album was found
+ * @returns null if the album was not found
+ */
+exports.findAlbumPrivate = async id => {
+  return await Album.findById(id).populate({
+    path: 'tracks',
+    select: 'audioUrl'
+  });
 };

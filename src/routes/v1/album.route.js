@@ -58,7 +58,7 @@ router
     catchAsync(authMiddleware.authenticate),
     authMiddleware.authorize('artist'),
     validate(albumValidation.release),
-    catchAsync(albumsController.updateAlbum)
+    catchAsync(albumsController.releaseAlbum)
   );
 
 router
