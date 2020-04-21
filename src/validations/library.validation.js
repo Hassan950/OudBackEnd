@@ -12,7 +12,7 @@ const { idsArray } = require('./custom.validation');
  * @property {number} query.ids ids of the tracks or albums to check in endpoints
  */
 
-exports.check = {
+exports.likedOrNot = {
   query: Joi.object().keys({
     ids: Joi.string()
       .custom(idsArray(50))// to make sure that ids is sent in comma separated way
@@ -31,7 +31,7 @@ exports.check = {
  */
 
 
-exports.put = {
+exports.likeItems = {
   query: Joi.object().keys({
     ids: Joi.string()
       .custom(idsArray(50))// to make sure that ids is sent in comma separated way
@@ -50,7 +50,7 @@ exports.put = {
  * @property {number} query.offset index of the first element to return
  */
 
-exports.get = {
+exports.getLikedItems = {
   query: Joi.object().keys({
     offset: Joi.number().default(0),//offset should be a number but it is optional so if not sent its default value is zero
     limit: Joi.number()//offset should be a number  (optional)
@@ -70,7 +70,7 @@ exports.get = {
  * @property {number} query.ids ids of the tracks or albums to unlike in endpoints
  */
 
-exports.delete = {
+exports.unlikeItems = {
   query: Joi.object().keys({
     ids: Joi.string()// ids should be strings
       .custom(idsArray(50))// to make sure that ids is sent in comma separated way

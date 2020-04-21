@@ -13,7 +13,7 @@ const AppError = require('../utils/AppError');
  * @param {Function} next - Express next middleware function
  */
 
-exports.check = async(req, res , next)=>{
+exports.likedOrNot = async(req, res , next)=>{
   // if the url includes tracks then it directs to function that checks saved tracks
   if(req.baseUrl.match(/.*tracks.*/))
   {
@@ -77,7 +77,7 @@ const checkSavedAlbums = async(req ,res,next)=>{
  */
 
 
-exports.get = async(req, res , next)=>{
+exports.getLikedItems = async(req, res , next)=>{
   // if the url includes tracks then it directs to function that gets liked tracks
   if(req.baseUrl.match(/.*tracks.*/))
   {
@@ -149,7 +149,7 @@ const getSavedAlbums = async(req ,res,next)=>{
  * @param {Function} next - Express next middleware function
  */
 
-exports.put = async(req, res , next)=>{
+exports.likeItems = async(req, res , next)=>{
   // if the url includes tracks then it directs to function that likes tracks
   if(req.baseUrl.match(/.*tracks.*/))
   {
@@ -211,7 +211,7 @@ const saveAlbums = async(req ,res,next)=>{
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.delete = async(req, res , next)=>{
+exports.unlikeItems = async(req, res , next)=>{
   // if the url includes tracks then it directs to function that deletes liked tracks
   if(req.baseUrl.match(/.*tracks.*/))
   {

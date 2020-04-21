@@ -127,7 +127,7 @@ module.exports.getTracks = async(user,query)=>{
     populate: {
       path: 'album artists',
       select: '-tracks -genres -released -release_date',
-      select: 'type displayName images name',
+      select: 'type displayName images name album_type',
       populate: {
         path:'artists',
         select:'type displayName images'

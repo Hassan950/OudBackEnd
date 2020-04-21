@@ -6,16 +6,16 @@ const { libraryValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router({ mergeParams: true });
-//router.use(catchAsync(authMiddleware.authenticate));
+router.use(catchAsync(authMiddleware.authenticate));
 
 router
   .route('/')
-  .get(validate(libraryValidation.get), catchAsync(libraryController.get))
-  .put(validate(libraryValidation.put), catchAsync(libraryController.put))
-  .delete(validate(libraryValidation.delete), catchAsync(libraryController.delete));
+  .get(validate(libraryValidation.getLikedItems), catchAsync(libraryController.getLikedItems))
+  .put(validate(libraryValidation.likeItems), catchAsync(libraryController.likeItems))
+  .delete(validate(libraryValidation.unlikeItems), catchAsync(libraryController.unlikeItems));
 
 router
   .route('/contains')
-  .get(validate(libraryValidation.check), catchAsync(libraryController.check));
+  .get(validate(libraryValidation.likedOrNot), catchAsync(libraryController.likedOrNot));
 
 module.exports = router;
