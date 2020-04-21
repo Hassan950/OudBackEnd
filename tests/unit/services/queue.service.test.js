@@ -1,4 +1,6 @@
 const queueService = require('../../../src/services/queue.service');
+const userService = require('../../../src/services/user.service');
+const playerService = require('../../../src/services/player.service');
 const { Player, Device, Track, Artist, Playlist, Queue, Album } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 const playerMocks = require('../../utils/models/player.model.mocks');
@@ -10,13 +12,126 @@ describe('Queue Service', () => {
   let queue;
   let user;
   let player;
+  let queues;
   beforeEach(() => {
+    queues = [0, 1];
     jest.clearAllMocks();
     player = playerMocks.createFakePlayer();
     user = userMocks.createFakeUser();
     queue = queueMocks.createFakeQueue();
     queue.tracks = [user._id, queue._id, player._id];
     mockingoose(Queue).toReturn(queue, 'findOne');
+    mockingoose(Artist).toReturn([], 'aggregate');
+    mockingoose(Album).toReturn([], 'aggregate');
+    mockingoose(Playlist).toReturn([], 'aggregate');
+  });
+
+  describe('Go Next Normal', () => {
+    beforeEach(() => {
+      queue.currentIndex = 0;
+      queue.tracks = [user._id, player._id, queue._id];
+    });
+
+    it('should go to the next track', async () => {
+      const result = await queueService.goNextNormal(queue, player, queues);
+      expect(result.currentIndex).toBe(1);
+    });
+
+    it('should go to the first track if it is playing the last track and the repeat is context', async () => {
+      queue.currentIndex = queue.tracks.length - 1;
+      player.repeatState = 'context';
+      const result = await queueService.goNextNormal(queue, player, queues);
+      expect(result.currentIndex).toBe(0);
+    });
+  });
+
+  describe('Go Previous Normal', () => {
+    beforeEach(() => {
+      queue.currentIndex = 2;
+      queue.tracks = [user._id, player._id, queue._id];
+    });
+
+    it('should go to the previous track', async () => {
+      const result = await queueService.goPreviousNormal(queue, player, queues);
+      expect(result.currentIndex).toBe(1);
+    });
+
+    it('should go to the last track if it is playing the first track and the repeat is context', async () => {
+      queue.currentIndex = 0;
+      player.repeatState = 'context';
+      const result = await queueService.goPreviousNormal(queue, player, queues);
+      expect(result.currentIndex).toBe(2);
+    });
+  });
+
+  describe('Create similar queue', () => {
+    beforeEach(() => {
+      mockingoose(Playlist).toReturn(null, 'aggregate');
+      mockingoose(Album).toReturn(null, 'aggregate');
+      mockingoose(Artist).toReturn(null, 'aggregate');
+      mockingoose(Playlist).toReturn(null, 'findOne');
+      mockingoose(Album).toReturn(null, 'findOne');
+      mockingoose(Artist).toReturn(null, 'findOne');
+    });
+
+    it('should call createQueueFromRelatedArtists and return null if context is artist', async () => {
+      queue.context.type = 'artist';
+      const result = await queueService.createSimilarQueue(queue);
+      expect(result).toBe(null);
+    });
+
+    it('should call createQueueFromRelatedAlbums and return null if context is album', async () => {
+      queue.context.type = 'album';
+      const result = await queueService.createSimilarQueue(queue);
+      expect(result).toBe(null);
+    });
+
+    it('should call createQueueFromRelatedPlaylists and return null if context is playlist', async () => {
+      queue.context.type = 'playlist';
+      const result = await queueService.createSimilarQueue(queue);
+      expect(result).toBe(null);
+    });
+
+    it('should call createQueueFromListOfTracks and return null if context is unknown', async () => {
+      queue.context.type = 'unknown';
+      const result = await queueService.createSimilarQueue(queue);
+      expect(result).toBe(null);
+    });
+  });
+
+  describe('Fill Queue from Track Uris', () => {
+    let uris;
+    beforeEach(() => {
+      uris = ['oud:track:1'];
+      mockingoose(Track).toReturn(null, 'findOne');
+    });
+
+    it('should return queue', async () => {
+      const result = await queueService.fillQueueFromTracksUris(uris, queues, player);
+      expect(result).toBe(queue);
+    });
+
+    it('should call set Player to default if queues is empty', async () => {
+      playerService.setPlayerToDefault = jest.fn();
+      const result = await queueService.fillQueueFromTracksUris(uris, [], player);
+      expect(playerService.setPlayerToDefault).toBeCalled();
+      expect(playerService.setPlayerToDefault).toBeCalledWith(player);
+    });
+
+    it('should call add track to player if queues is empty', async () => {
+      playerService.addTrackToPlayer = jest.fn();
+      const result = await queueService.fillQueueFromTracksUris(uris, [], player);
+      expect(playerService.addTrackToPlayer).toBeCalled();
+    });
+  });
+
+  describe('Set queue to default', () => {
+    it('should set queue to default', () => {
+      queueService.setQueueToDefault(queue);
+      expect(queue.currentIndex).toBe(0);
+      expect(queue.shuffleIndex).toBeUndefined();
+      expect(queue.shuffleList).toBeUndefined();
+    });
   });
 
   describe('Get Track Poition', () => {
@@ -47,6 +162,71 @@ describe('Queue Service', () => {
       expect(result).toBe(0);
     });
   });
+
+  describe('Shuffle Queue', () => {
+    beforeEach(() => {
+      queue.shuffleList = null;
+      queue.currentIndex = 0;
+      queue.tracks = [user._id, player._id, queue._id];
+    });
+
+    it('should shuffle the queue', () => {
+      const result = queueService.shuffleQueue(queue);
+      expect(result.shuffleList.length).toBe(queue.tracks.length);
+    });
+
+    it('should set shuffleIndex', () => {
+      const result = queueService.shuffleQueue(queue);
+      expect(result.shuffleIndex).toBe(result.shuffleList.indexOf(queue.currentIndex));
+    });
+  });
+
+  describe('Go Next Shuffle', () => {
+    beforeEach(() => {
+      queue.shuffleList = [0, 2, 1];
+      queue.currentIndex = 0;
+      queue.tracks = [user._id, player._id, queue._id];
+      queue.shuffleIndex = 0;
+    });
+
+    it('should go to the next track', async () => {
+      const result = await queueService.goNextShuffle(queue, player, queues);
+      expect(result.shuffleIndex).toBe(1);
+      expect(result.currentIndex).toBe(2);
+    });
+
+    it('should go to the first track if it is playing the last track and the repeat is context', async () => {
+      queue.shuffleIndex = queue.tracks.length - 1;
+      player.repeatState = 'context';
+      const result = await queueService.goNextShuffle(queue, player, queues);
+      expect(result.shuffleIndex).toBe(0);
+      expect(result.currentIndex).toBe(0);
+    });
+  });
+
+  describe('Go Previous Shuffle', () => {
+    beforeEach(() => {
+      queue.shuffleList = [0, 2, 1];
+      queue.currentIndex = 1;
+      queue.tracks = [user._id, player._id, queue._id];
+      queue.shuffleIndex = 2;
+    });
+
+    it('should go to the previous track', async () => {
+      const result = await queueService.goPreviousShuffle(queue, player, queues);
+      expect(result.shuffleIndex).toBe(1);
+      expect(result.currentIndex).toBe(2);
+    });
+
+    it('should go to the last track if it is playing the first track and the repeat is context', async () => {
+      queue.shuffleIndex = 0;
+      player.repeatState = 'context';
+      const result = await queueService.goPreviousShuffle(queue, player, queues);
+      expect(result.shuffleIndex).toBe(2);
+      expect(result.currentIndex).toBe(1);
+    });
+  });
+
   describe('GetQueueById', () => {
     it('should get queue', async () => {
       const result = await queueService.getQueueById(queue._id);
@@ -267,6 +447,186 @@ describe('Queue Service', () => {
       expect(Queue.create).toBeCalled();
       expect(Queue.create).toBeCalledWith({ tracks: tracks });
       Queue.create.mockRestore();
+    });
+  });
+
+  describe('Create Queue from related artists', () => {
+    beforeEach(() => {
+      mockingoose(Artist).toReturn([{ _id: 1 }, { _id: 2 }, { _id: 3 }, { _id: 4 }], 'aggregate');
+      mockingoose(Artist).toReturn({}, "findOne");
+      mockingoose(Track).toReturn([{ _id: 1 }, { _id: 2 }, { _id: 3 }, { _id: 4 }], 'aggregate');
+      mockingoose(Track).toReturn([{ _id: 1 }, { _id: 2 }, { _id: 3 }, { _id: 4 }]);
+    });
+
+    it('should return null if artist is not found', async () => {
+      mockingoose(Artist).toReturn(null, "findOne");
+      const result = await queueService.createQueueFromRelatedArtists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if artists is not found', async () => {
+      mockingoose(Artist).toReturn(null, 'aggregate');
+      const result = await queueService.createQueueFromRelatedArtists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if artists is empty', async () => {
+      mockingoose(Artist).toReturn([], 'aggregate');
+      const result = await queueService.createQueueFromRelatedArtists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is null', async () => {
+      mockingoose(Track).toReturn(null, 'find');
+      const result = await queueService.createQueueFromRelatedArtists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is empty', async () => {
+      mockingoose(Track).toReturn([], 'find');
+      const result = await queueService.createQueueFromRelatedArtists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should create Queue', async () => {
+      Queue.create = jest.fn().mockResolvedValue(queue);
+      const result = await queueService.createQueueFromRelatedArtists('1');
+      expect(Queue.create).toBeCalled();
+    });
+  });
+
+  describe('Create Queue from related albums', () => {
+    beforeEach(() => {
+      mockingoose(Album).toReturn([
+        { _id: 1, tracks: [1] },
+        { _id: 2, tracks: [2] },
+        { _id: 3, tracks: [3] },
+        { _id: 4, tracks: [4] }], 'aggregate');
+      mockingoose(Album).toReturn({}, "findOne");
+    });
+
+    it('should return null if Album is not found', async () => {
+      mockingoose(Album).toReturn(null, "findOne");
+      const result = await queueService.createQueueFromRelatedAlbums('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if Albums is not found', async () => {
+      mockingoose(Album).toReturn(null, 'aggregate');
+      const result = await queueService.createQueueFromRelatedAlbums('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if Albums is empty', async () => {
+      mockingoose(Album).toReturn([], 'aggregate');
+      const result = await queueService.createQueueFromRelatedAlbums('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is null', async () => {
+      mockingoose(Album).toReturn([{ _id: 4 }], 'aggregate');
+      const result = await queueService.createQueueFromRelatedAlbums('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is empty', async () => {
+      mockingoose(Album).toReturn([{ _id: 4, tracks: [] }], 'aggregate');
+      const result = await queueService.createQueueFromRelatedAlbums('1');
+      expect(result).toBe(null);
+    });
+
+    it('should create Queue', async () => {
+      Queue.create = jest.fn().mockResolvedValue(queue);
+      const result = await queueService.createQueueFromRelatedAlbums('1');
+      expect(Queue.create).toBeCalled();
+    });
+  });
+
+  describe('Create Queue from related Playlists', () => {
+    beforeEach(() => {
+      mockingoose(Playlist).toReturn([
+        { _id: 1, tracks: [1] },
+        { _id: 2, tracks: [2] },
+        { _id: 3, tracks: [3] },
+        { _id: 4, tracks: [4] }], 'aggregate');
+      mockingoose(Playlist).toReturn({}, "findOne");
+    });
+
+    it('should return null if Playlist is not found', async () => {
+      mockingoose(Playlist).toReturn(null, "findOne");
+      const result = await queueService.createQueueFromRelatedPlaylists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if Playlists is not found', async () => {
+      mockingoose(Playlist).toReturn(null, 'aggregate');
+      const result = await queueService.createQueueFromRelatedPlaylists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if Playlists is empty', async () => {
+      mockingoose(Playlist).toReturn([], 'aggregate');
+      const result = await queueService.createQueueFromRelatedPlaylists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is null', async () => {
+      mockingoose(Playlist).toReturn([{ _id: 4 }], 'aggregate');
+      const result = await queueService.createQueueFromRelatedPlaylists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is empty', async () => {
+      mockingoose(Playlist).toReturn([{ _id: 4, tracks: [] }], 'aggregate');
+      const result = await queueService.createQueueFromRelatedPlaylists('1');
+      expect(result).toBe(null);
+    });
+
+    it('should create Queue', async () => {
+      Queue.create = jest.fn().mockResolvedValue(queue);
+      const result = await queueService.createQueueFromRelatedPlaylists('1');
+      expect(Queue.create).toBeCalled();
+    });
+  });
+
+  describe('Create Queue from List of tracks', () => {
+    beforeEach(() => {
+      mockingoose(Playlist).toReturn([
+        { _id: 1, tracks: [1] },
+        { _id: 2, tracks: [2] },
+        { _id: 3, tracks: [3] },
+        { _id: 4, tracks: [4] }], 'aggregate');
+      mockingoose(Playlist).toReturn({}, "findOne");
+    });
+
+    it('should return null if Playlists is not found', async () => {
+      mockingoose(Playlist).toReturn(null, 'aggregate');
+      const result = await queueService.createQueueFromListOfTracks('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if Playlists is empty', async () => {
+      mockingoose(Playlist).toReturn([], 'aggregate');
+      const result = await queueService.createQueueFromListOfTracks('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is null', async () => {
+      mockingoose(Playlist).toReturn([{ _id: 4 }], 'aggregate');
+      const result = await queueService.createQueueFromListOfTracks('1');
+      expect(result).toBe(null);
+    });
+
+    it('should return null if tracks is empty', async () => {
+      mockingoose(Playlist).toReturn([{ _id: 4, tracks: [] }], 'aggregate');
+      const result = await queueService.createQueueFromListOfTracks('1');
+      expect(result).toBe(null);
+    });
+
+    it('should create Queue', async () => {
+      Queue.create = jest.fn().mockResolvedValue(queue);
+      const result = await queueService.createQueueFromListOfTracks('1');
+      expect(Queue.create).toBeCalled();
     });
   });
 });
