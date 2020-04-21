@@ -558,7 +558,6 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
     queues.push(queue._id);
 
     playerService.setPlayerToDefault(player);
-    playerService.addTrackToPlayer(player, queue.tracks[0]);
   }
 
   return queue;

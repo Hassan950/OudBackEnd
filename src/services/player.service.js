@@ -129,7 +129,7 @@ const createPlayer = async (userId) => {
  * increase track views
  * @summary Add track to player
  */
-const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
+const addTrackToPlayer = async (player, track, context = { type: undefined, id: undefined }) => {
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
   // handle ads counter
@@ -158,7 +158,7 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
       transferring_playback: true
     };
     // play random ad
-    const ad = Ad.aggregate([
+    const ad = await Ad.aggregate([
       { $sample: { size: 1 } }
     ]);
     player.item = ad;
@@ -223,7 +223,6 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   } else if (offset.uri) {
     const trackId = offset.uri.split(':')[2];
     let pos = await queueService.getTrackPosition(queues[0], trackId);
@@ -245,7 +244,6 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   }
 
   return player;
@@ -283,9 +281,8 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
       }
       // go next
       queueService.goNext(queue, player, queues);
-      // add next track to player
-      addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
-      queue.save(); // save the queue
+
+      await queue.save(); // save the queue
     } else player.progressMs = 0;
   }
 

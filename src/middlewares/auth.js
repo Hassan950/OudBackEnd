@@ -1,7 +1,7 @@
 const { promisify } = require('util');
 const config = require('config');
 const AppError = require('../utils/AppError');
-const { User } = require('../models');
+const { User, Player } = require('../models');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 
@@ -50,9 +50,13 @@ exports.authenticate = async (req, res, next) => {
   if (user.role === 'premium' && moment().isAfter(user.plan)) {
     user.role = 'free';
     user.plan = undefined;
-    await user.save();
+
+    Promise.all([
+      user.save(),
+      Player.findOneAndUpdate({ userId: user._id }, { $set: { adsCounter: 0 } })
+    ]);
   }
-  
+
   // check if user changed password
   if (user.changedPasswordAfter(payload.iat)) {
     return next(

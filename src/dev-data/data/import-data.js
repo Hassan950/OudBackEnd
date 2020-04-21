@@ -12,7 +12,8 @@ const {
   Playlist,
   Queue,
   PlayHistory,
-  Normal
+  Normal,
+  Ad
 } = require('../../models');
 
 const DB = config.get('db');
@@ -32,6 +33,8 @@ const artists = JSON.parse(
 const albums = JSON.parse(fs.readFileSync(`${__dirname}/albums.json`, 'utf-8'));
 
 const tracks = JSON.parse(fs.readFileSync(`${__dirname}/tracks.json`), 'utf-8');
+
+const ads = JSON.parse(fs.readFileSync(`${__dirname}/ads.json`), 'utf-8');
 
 const categories = JSON.parse(
   fs.readFileSync(`${__dirname}/categories.json`, 'utf-8')
@@ -69,6 +72,7 @@ const importData = async () => {
     await Playlist.create(playlists);
     await Queue.create(queues);
     await PlayHistory.create(playhistories);
+    await Ad.create(ads);
     console.log('Data successfully loaded!');
   } catch (err) {
     console.log(err);

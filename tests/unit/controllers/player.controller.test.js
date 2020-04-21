@@ -5,6 +5,7 @@ const userMocks = require('../../utils/models/user.model.mocks');
 const requestMocks = require('../../utils/request.mock.js');
 const { Player, Device, User, Queue, Album, Artist, Playlist, Track } = require('../../../src/models');
 const { playerController } = require('../../../src/controllers');
+const playerService = require('../../../src/services/player.service');
 const mockingoose = require('mockingoose').default;
 
 describe('Player controller', () => {
@@ -165,6 +166,7 @@ describe('Player controller', () => {
       mockingoose(Track)
         .toReturn(track, 'findOne')
         .toReturn([track], 'find');
+      playerService.addTrackToPlayer = jest.fn().mockImplementationOnce(() => { player.item = track._id });
     });
 
     it('it should return 500 status code if not authenticated', async () => {
@@ -185,177 +187,21 @@ describe('Player controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
 
-    it('should return 404 if context is not found for album context (null)', async () => {
-      // album
-      req.body.contextUri = `oud:album:${dummyId}`;
-      mockingoose(Album).toReturn(null, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should return 404 if context is not found for playlist context (null)', async () => {
-      // playlist
-      req.body.contextUri = `oud:playlist:${dummyId}`;
-      mockingoose(Playlist).toReturn(null, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should return 404 if context is not found for artist context (null)', async () => {
-      req.body.contextUri = `oud:artist:${dummyId}`;
-      mockingoose(Artist).toReturn(null, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should return 404 if context is not found for album context (album.tracks = null)', async () => {
-      // album
-      req.body.contextUri = `oud:album:${dummyId}`;
-      mockingoose(Album).toReturn({}, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should return 404 if context is not found for playlist context (playlist.tracks = null)', async () => {
-      // playlist
-      req.body.contextUri = `oud:playlist:${dummyId}`;
-      mockingoose(Playlist).toReturn({}, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should return 404 if context is not found for album context (album.tracks empty)', async () => {
-      // album
-      req.body.contextUri = `oud:album:${dummyId}`;
-      mockingoose(Album).toReturn({ tracks: [] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should return 404 if context is not found for playlist context (playlist.tracks empty)', async () => {
-      // playlist
-      req.body.contextUri = `oud:playlist:${dummyId}`;
-      mockingoose(Playlist).toReturn({ tracks: [] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-
-    it('should create new queue from album context if passed add it to queues and play it', async () => {
-      req.body.contextUri = `oud:album:${dummyId}`;
-      mockingoose(Album).toReturn({ tracks: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(2);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('album');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from playlist context if passed add it to queues and play it', async () => {
-      req.body.contextUri = `oud:playlist:${dummyId}`;
-      mockingoose(Playlist).toReturn({ tracks: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(2);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('playlist');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from artist context if passed add it to queues and play it', async () => {
-      req.body.contextUri = `oud:artist:${dummyId}`;
-      mockingoose(Artist).toReturn({ popularSongs: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(2);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('artist');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from album context if passed add it to queues and play it case: queues length 2', async () => {
-      user.queues = [queue._id, queue._id];
-      req.body.contextUri = `oud:album:${dummyId}`;
-      mockingoose(Album).toReturn({ tracks: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(2);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('album');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from playlist context if passed add it to queues and play it case: queues length 2', async () => {
-      user.queues = [queue._id, queue._id];
-      req.body.contextUri = `oud:playlist:${dummyId}`;
-      mockingoose(Playlist).toReturn({ tracks: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(2);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('playlist');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from artist context if passed add it to queues and play it case: queues length 2', async () => {
-      user.queues = [queue._id, queue._id];
-      req.body.contextUri = `oud:artist:${dummyId}`;
-      mockingoose(Artist).toReturn({ popularSongs: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(2);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('artist');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from album context if passed add it to queues and play it case : queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
-      req.body.contextUri = `oud:album:${dummyId}`;
-      mockingoose(Album).toReturn({ tracks: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(1);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('album');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from playlist context if passed add it to queues and play it case : queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
-      req.body.contextUri = `oud:playlist:${dummyId}`;
-      mockingoose(Playlist).toReturn({ tracks: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(1);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('playlist');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
-    it('should create new queue from artist context if passed add it to queues and play it case : queues is empty', async () => {
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(null) }
-      ));
-      req.body.contextUri = `oud:artist:${dummyId}`;
-      mockingoose(Artist).toReturn({ popularSongs: [dummyId] }, 'findOne');
-      await playerController.resumePlayer(req, res, next);
-      expect(user.queues.length).toBe(1);
-      expect(player.item).toBe(dummyId);
-      expect(player.context.type).toBe('artist');
-      expect(player.context.id).toEqual(dummyId);
-    });
-
     it('should return 204 if valid', async () => {
+      queue.tracks = [track._id];
       await playerController.resumePlayer(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(204);
     });
 
     it('should save the player', async () => {
+      queue.tracks = [track._id];
       await playerController.resumePlayer(req, res, next);
       expect(player.save.mock.calls.length).toBe(1);
     });
 
-    it('should change isPlaying to true', async () => {
-      player.isPlaying = false;
+    it('should call add track to player to true', async () => {
       await playerController.resumePlayer(req, res, next);
-      expect(player.isPlaying).toBe(true);
+      expect(playerService.addTrackToPlayer).toBeCalled();
     });
 
     it('should change player positionMs if passed', async () => {

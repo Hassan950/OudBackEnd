@@ -178,7 +178,6 @@ exports.resumePlayer = async (req, res, next) => {
     }
 
     playerService.setPlayerToDefault(player);
-    playerService.addTrackToPlayer(player, queue.tracks[0], context);
   }
   // add current track
   if (uris && uris.length) {
@@ -202,6 +201,10 @@ exports.resumePlayer = async (req, res, next) => {
         next(new AppError('Queue is not found', 404));
     }
   }
+
+  if (queue && queue.tracks && queue.tracks.length)
+    await playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
+
   if (!player.item) {
     return next(new AppError('Nothing to be played', 404));
   }
