@@ -89,7 +89,8 @@ exports.getAlbums = async (req, res, next) => {
     req.params.id,
     req.query.limit,
     req.query.offset,
-    req.query.included_groups
+    req.query.included_groups,
+    req.user
   );
 
   res.status(200).json({

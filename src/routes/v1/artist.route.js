@@ -27,6 +27,7 @@ router
 router
   .route('/:id/albums')
   .get(
+    catchAsync(authMiddleware.optionalAuth),
     validate(artistValidation.artistAlbums),
     catchAsync(artistController.getAlbums)
   );

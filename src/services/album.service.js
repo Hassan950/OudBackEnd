@@ -361,26 +361,36 @@ exports.addTrack = async (album, track) => {
  * @param {Number} limit Maximum number of albums to be retrieved
  * @param {Number} offset index of the first album (starting from 0)
  * @param {Array<string>} groups the required album groups
+ * @param {object} user
  * @returns {Array<Object>} array of albums of the artist
  * @returns {Number} the length of the array
  * @returns null if the artist has no albums or the ID doesn't belong to any artist
  */
-exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
+exports.findArtistAlbums = async (artistId, limit, offset, groups, user) => {
   let types = ['single', 'album', 'compilation'];
   let appears = true;
+  let released = [true];
+  if (user && String(user._id) === String(artistId)) {
+    released = [true, false];
+  }
   if (groups) {
     types = groups.filter(group => group !== 'appears_on');
     appears = groups.includes('appears_on');
   }
-  let result = Album.find({ 'artists.0': artistId, album_type: types })
+  let result = Album.find({
+    'artists.0': artistId,
+    album_type: types,
+    released: released
+  })
     .populate('artists', '_id displayName images')
     .populate('genres')
-    .select('-tracks -genres -released -release_date')
+    .select('-tracks -genres -release_date')
     .limit(limit)
     .skip(offset);
   let length = Album.countDocuments({
     'artists.0': artistId,
-    album_type: types
+    album_type: types,
+    released: released
   });
   [result, length] = await Promise.all([result, length]);
 
@@ -389,16 +399,22 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups) => {
     if (limit - result.length !== 0) {
       let secondskip = offset - length > 0 ? offset - length : 0;
       appearsAlbums = Album.find({
-        $and: [{ artists: artistId }, { 'artists.0': { $ne: artistId } }]
+        $and: [
+          { artists: artistId, released: true },
+          { 'artists.0': { $ne: artistId } }
+        ]
       })
         .populate('artists', '_id displayName images')
         .populate('genres')
-        .select('-tracks -genres -released -release_date')
+        .select('-tracks -genres -release_date')
         .limit(limit - length)
         .skip(secondskip);
     } else appearsAlbums = Promise.resolve([]);
     let appearslength = Album.countDocuments({
-      $and: [{ artists: artistId }, { 'artists.0': { $ne: artistId } }]
+      $and: [
+        { artists: artistId, released: true },
+        { 'artists.0': { $ne: artistId } }
+      ]
     });
     [appearsAlbums, appearslength] = await Promise.all([
       appearsAlbums,
