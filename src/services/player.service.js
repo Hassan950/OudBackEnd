@@ -169,6 +169,8 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
     queue = await queueService.getQueueById(queues[0], { selectDetails: true });
   }
 
+  if (!queue) return player;
+
   if (offset.position !== undefined) {
     // shuffle mode
     if (queue.shuffleList && queue.shuffleList.length) {
