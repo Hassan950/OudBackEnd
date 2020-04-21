@@ -56,9 +56,8 @@ exports.uploadImage = upload.single('image');
  * @throws AppError 404 Not found if the album doesn't exist
  */
 exports.getAlbum = async (req, res, next) => {
-  const album = await albumService.findAlbum(req.params.id);
-  if (!album)
-    return next(new AppError('The requested resource was not found', 404));
+  const album = await albumService.findAlbum(req.params.id, req.user);
+  if (album instanceof AppError) return next(album);
   res.status(200).json(album);
 };
 
@@ -73,7 +72,7 @@ exports.getAlbum = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 exports.getAlbums = async (req, res, next) => {
-  const albums = await albumService.findAlbums(req.query.ids);
+  const albums = await albumService.findAlbums(req.query.ids, req.user);
   res.status(200).json({ albums: albums });
 };
 
@@ -121,12 +120,14 @@ exports.findAlbumTracks = async (req, res, next) => {
   const tracks = await albumService.findTracksOfAlbum(
     req.params.id,
     req.query.limit,
-    req.query.offset
+    req.query.offset,
+    req.user
   );
 
-  if (!tracks)
-    return next(new AppError('The requested resource is not found', 404));
-  res.status(200).json({
+  if (tracks instanceof(AppError))
+    return next(tracks);
+    
+    res.status(200).json({
     items: tracks[0],
     limit: req.query.limit,
     offset: req.query.offset,

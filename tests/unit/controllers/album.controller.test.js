@@ -46,6 +46,7 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOne')
         .toReturn([{ _id: album._id, tracks: 2 }], 'aggregate');
       req.params.id = albumIds[0];
+      req.user = { _id: artistIds[0] };
       await albumsController.getAlbum(req, res, next);
       expect(res.json.mock.calls[0][0]).toMatchObject(album);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -94,6 +95,7 @@ describe('Albums Controller', () => {
       mockingoose(Album).toReturn(album, 'findOne');
       req.params.id = album._id;
       req.query = { limit: 20, offset: 0 };
+      req.user = { _id: artistIds[0] };
       await albumsController.findAlbumTracks(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('items');
       expect(res.status.mock.calls[0][0]).toBe(200);

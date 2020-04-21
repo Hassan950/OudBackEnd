@@ -10,10 +10,11 @@ const AppError = require('../utils/AppError');
  * @author Mohamed Abo-Bakr
  * @summary gets an album
  * @param {String} id ID of the album to be retrieved
+ * @param {object} user the user object if authenticated
  * @returns album if the album was found
  * @returns null if the album was not found
  */
-exports.findAlbum = async id => {
+exports.findAlbum = async (id, user) => {
   let album = Album.findById(id)
     .lean({ virtuals: true })
     .populate('artists', 'displayName images')
@@ -33,13 +34,22 @@ exports.findAlbum = async id => {
 
   [album, lengthObj] = await Promise.all([album, lengthObj]);
   if (album) {
+    if (
+      !album.released &&
+      (!user || String(user._id) !== String(album.artists[0]._id))
+    )
+      return new AppError(
+        "You don't have the permission to perform this action",
+        403
+      );
+
     album.tracks = {
       limit: 50,
       offset: 0,
       total: lengthObj[0].tracks,
       items: album.tracks
     };
-  }
+  } else return new AppError('The request resource is not found', 404);
   return album;
 };
 
@@ -74,9 +84,10 @@ exports.findAlbumUtil = async id => {
  * @author Mohamed Abo-Bakr
  * @summary Get list of albums
  * @param {Array<String>} ids - List of ID's of albums to be retrieved
+ * @param {object} user the user object if authenticated
  * @returns {Array} An array containing the albums with nulls against unmatched ID's
  */
-exports.findAlbums = async ids => {
+exports.findAlbums = async (ids, user) => {
   let result = Album.find({ _id: ids })
     .lean({ virtuals: true })
     .populate('artists', 'displayName images')
@@ -98,6 +109,12 @@ exports.findAlbums = async ids => {
   const albums = ids.map(id => {
     let val = result.find(album => String(album._id) == id);
     if (val) {
+      if (
+        !val.released &&
+        (!user || String(user._id) !== String(val.artists[0]._id))
+      )
+        return null;
+
       length = lengthArray.find(
         albumTno => String(albumTno._id) === String(id)
       );
@@ -162,10 +179,11 @@ exports.deleteAlbum = async id => {
  * @param {String} id - ID of the album containing the tracks
  * @param {Number} limit The maximum number of tracks to return
  * @param {Nuumber} offset The index of the first track to return starting from 0
+ * @param {object} user the user object if authenticated
  * @returns {Array} An array containing the tracks of the album
  * @returns null if the album was not found
  */
-exports.findTracksOfAlbum = async (id, limit, offset) => {
+exports.findTracksOfAlbum = async (id, limit, offset, user) => {
   let result = Album.findById(id)
     .populate({
       path: 'tracks',
@@ -173,7 +191,7 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
       populate: { path: 'artists', select: 'displayName images' },
       options: { limit: limit, skip: offset }
     })
-    .select('tracks');
+    .select('tracks released artists');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -181,7 +199,15 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
   ]);
 
   [result, lengthObj] = await Promise.all([result, lengthObj]);
-  if (!result) return null;
+  if (!result) return new AppError('The requested resource is not found', 404);
+  if (
+    !result.released &&
+    (!user || String(user._id) !== String(result.artists[0]._id))
+  )
+    return new AppError(
+      "You don't have the permission to perform this action",
+      403
+    );
   return [result.tracks, lengthObj[0].tracks];
 };
 

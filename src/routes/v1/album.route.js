@@ -10,7 +10,7 @@ const authMiddleware = require('../../middlewares/auth');
 router
   .route('/:id')
   .get(
-    validate(authMiddleware.optionalAuth),
+    catchAsync(authMiddleware.optionalAuth),
     validate(albumValidation.oneAlbum),
     catchAsync(albumsController.getAlbum)
   )
@@ -30,7 +30,7 @@ router
 router
   .route('/')
   .get(
-    validate(authMiddleware.optionalAuth),
+    catchAsync(authMiddleware.optionalAuth),
     validate(albumValidation.severalAlbums),
     catchAsync(albumsController.getAlbums)
   )
@@ -44,7 +44,7 @@ router
 router
   .route('/:id/tracks')
   .get(
-    validate(authMiddleware.optionalAuth),
+    catchAsync(authMiddleware.optionalAuth),
     validate(albumValidation.albumTracks),
     catchAsync(albumsController.findAlbumTracks)
   )
