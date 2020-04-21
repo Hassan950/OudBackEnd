@@ -1,7 +1,6 @@
 const { Player } = require('../models/player.model');
 const { Track } = require('../models/track.model');
 const queueService = require('./queue.service');
-const trackService = require('./track.service');
 const deviceService = require('./device.service');
 
 /**
@@ -234,7 +233,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
   player.progressMs = progressMs;
 
   if (!track)
-    track = await trackService.findTrack(player.item);
+    track = await Track.findById(player.item);
 
   // if position >= track duration go to next
   if (track && progressMs >= track.duration) {
