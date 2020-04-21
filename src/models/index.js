@@ -7,6 +7,7 @@ const { Category, categorySchema } = require('./category.model');
 const { Playlist, playlistSchema } = require('./playlist.model');
 const { Genre, genreSchema } = require('./genre.model');
 const { Device, deviceSchema } = require('./device.model');
+const { likedTracks, likedTracksSchema , likedAlbums, likedAlbumsSchema} = require('./library.model');
 const { Player, playerSchema } = require('./player.model');
 const { PlayHistory, playHistorySchema } = require('./playHistory.model');
 const { Queue, queueSchema } = require('./queue.model');
@@ -38,6 +39,10 @@ module.exports = {
   genreSchema,
   Device,
   deviceSchema,
+  likedTracks,
+  likedTracksSchema,
+  likedAlbums,
+  likedAlbumsSchema,
   Player,
   playerSchema,
   PlayHistory,
