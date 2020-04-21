@@ -15,7 +15,18 @@ const fs = require('fs').promises;
  */
 
 exports.getPlaylist = async params => {
-  const playlist = await Playlist.findById(params.id).populate('tracks');
+  const playlist = await Playlist.findById(params.id).populate({
+    path:'tracks',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images name',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    }
+  })
   return playlist;
 };
 
@@ -61,7 +72,18 @@ exports.changePlaylist = async (params, body, image) => {
       image: image
     },
     { new: true }
-  ).populate('tracks');
+  ).populate({
+    path:'tracks',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images name',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    }
+  })
   return playlist;
 };
 
@@ -113,6 +135,17 @@ exports.getTracks = async (params, query) => {
     return { tracks, total };
   }
   const trackPromise = Track.find({ _id: { $in: playlist.tracks } })
+    .populate(
+      {
+        path: 'artists album',
+        select: '-tracks -genres -released -release_date',
+        select:'displayName images type name',
+        populate: {
+          path:'artists',
+          select:'type displayName images'
+        }
+      }
+      )
     .skip(query.offset)
     .limit(query.limit)
     .exec();
@@ -139,7 +172,21 @@ exports.getTracks = async (params, query) => {
 exports.getUserPlaylists = async (id, query, publicity) => {
   const playlistPromise = PlaylistFollowings.find({ userId: id })
     .where(publicity)
-    .populate('playlistId')
+    .populate(
+      {
+        path: 'playlistId',
+        populate: { path: 'tracks' ,
+        populate: {
+          path: 'album artists',
+          select: '-tracks -genres -released -release_date',
+          select: 'type displayName images name album_type',
+          populate: {
+            path:'artists',
+            select:'type displayName images'
+          }
+        }
+      }
+      })
     .select('playlistId')
     .select('-_id')
     .skip(query.offset)
@@ -214,7 +261,7 @@ exports.createUserPlaylist = async (params, body, image) => {
     owner: params.id,
     image: image
   });
-  return playlist;
+  return playlist.populate('tracks');
 };
 
 /**
