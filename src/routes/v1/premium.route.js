@@ -8,7 +8,6 @@ const catchAsync = require('../../utils/catchAsync');
 const router = express.Router();
 
 // all routes need authentication
-router.use(catchAsync(authMiddleware.authenticate));
 router.use(catchAsync(authMiddleware.authorize('free', 'premium')));
 
 router
