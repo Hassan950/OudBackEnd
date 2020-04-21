@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const couponSchema = mongoose.Schema({
   value: {
-    type: mongoose.Types.ObjectId,
+    type: Number,
     ref: 'User',
     required: true
   },
