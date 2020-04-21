@@ -4044,6 +4044,35 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    Ad:
+      type: object
+      description: advertisement
+      properties:
+        _id:
+          type: string
+        image:
+          type: string
+          example: https://imgr.com/img.jpg
+          description: Ad Image source
+        type:
+          type: string
+          description: object type 'ad'
+          example: 'ad'
+        duration:
+          type: number
+          description: Ad duration in ms
+        audioUrl:
+          type: string
+          description: audio source
+        name:
+          type: string
+          description: Ad name
+          example: 'Pepsi'
+        link:
+          type: string
+          description: Add redirect link
+          example: 'https://www.pepsi.com'
+  
     UserWithToken:
       type: object
       properties:
@@ -4880,7 +4909,9 @@ components:
           description: >-
             The currently playing track. Can be null (e.g. If private session is
             enabled this will be null).
-          $ref: '#/components/schemas/TrackWithAudioUrl'
+          oneOf:
+            - $ref: '#/components/schemas/TrackWithAudioUrl'
+            - $ref: '#/components/schemas/Ad'
         actions:
           description: >-
             Allows to update the user interface based on which playback actions
@@ -4899,7 +4930,9 @@ components:
           description: >-
             The currently playing track. Can be null (e.g. If private session is
             enabled this will be null).
-          $ref: '#/components/schemas/TrackWithAudioUrl'
+          oneOf:
+            - $ref: '#/components/schemas/TrackWithAudioUrl'
+            - $ref: '#/components/schemas/Ad'
         context:
           description: >-
             A Context Object. Can be null (e.g. If private session is enabled
