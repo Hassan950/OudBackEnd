@@ -13,10 +13,6 @@ const httpStatus = require('http-status');
  * @param {Function} next - Express next middleware function
  */
 exports.redeem = async (req, res, next) => {
-  if (req.user.role === 'artist')
-    return next(
-      new AppError('You are already premium, forever.', httpStatus.FORBIDDEN)
-    );
   const result = await premiumService.redeemCoupon(req.body.couponId, req.user);
   if (result instanceof AppError) return next(result);
   res.status(httpStatus.OK).json(result);
@@ -33,10 +29,6 @@ exports.redeem = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 exports.subscribe = async (req, res, next) => {
-  if (req.user.role === 'artist')
-    return next(
-      new AppError('You are already premium, forever.', httpStatus.FORBIDDEN)
-    );
   const result = await premiumService.subscribe(req.user);
   if (result instanceof AppError) return next(result);
   res.status(httpStatus.OK).json(result);

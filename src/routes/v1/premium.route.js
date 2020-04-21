@@ -9,6 +9,7 @@ const router = express.Router();
 
 // all routes need authentication
 router.use(catchAsync(authMiddleware.authenticate));
+router.use(catchAsync(authMiddleware.authorize('free', 'premium')));
 
 router
   .route('/redeem')
@@ -17,10 +18,6 @@ router
     catchAsync(premiumController.redeem)
   );
 
-router
-  .route('/subscribe')
-  .patch(
-    catchAsync(premiumController.subscribe)
-  );
+router.route('/subscribe').patch(catchAsync(premiumController.subscribe));
 
 module.exports = router;

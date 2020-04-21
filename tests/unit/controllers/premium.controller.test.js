@@ -19,12 +19,6 @@ describe('Premium Controller', () => {
     next = jest.fn();
   });
   describe('redeem', () => {
-    it('should return forbidden if the role of user is artist', async () => {
-      req.user = { role: 'artist' };
-      await premiumController.redeem(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(httpStatus.FORBIDDEN);
-    });
-
     it('should return an error if premiumService has returned an AppError instance', async () => {
       req.user = { role: 'free' };
       premiumService.redeemCoupon = jest
@@ -45,12 +39,6 @@ describe('Premium Controller', () => {
   });
 
   describe('subscribe', () => {
-    it('should return forbidden if the role of user is artist', async () => {
-      req.user = { role: 'artist' };
-      await premiumController.subscribe(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(httpStatus.FORBIDDEN);
-    });
-
     it('should return an error if premiumService has returned an AppError instance', async () => {
       req.user = { role: 'free' };
       premiumService.subscribe = jest
