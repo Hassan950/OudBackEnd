@@ -1,11 +1,12 @@
 const { User, Normal } = require('../models');
 const authService = require('./auth.service');
-const queueService = require('./queue.service')
-const fs = require('fs');
+const queueService = require('./queue.service');
+const fs = require('fs').promises;
+const logger = require('../config/logger');
 
 /**
  * A method that find user with the given userData and check password with the given password
- * 
+ *
  * @function
  * @public
  * @async
@@ -18,7 +19,7 @@ const fs = require('fs');
  */
 const findUserAndCheckPassword = async (userData, password) => {
   const user = await User.findOne(userData).select('+password');
-  if (!user || !await authService.checkPassword(password, user.password)) {
+  if (!user || !(await authService.checkPassword(password, user.password))) {
     return null;
   }
   return user;
@@ -26,7 +27,7 @@ const findUserAndCheckPassword = async (userData, password) => {
 
 /**
  * Find user by `userId` and check if `password` is correct
- * 
+ *
  * @function
  * @public
  * @async
@@ -34,12 +35,12 @@ const findUserAndCheckPassword = async (userData, password) => {
  * @param {String} userId - User ID
  * @param {String} password - User password
  * @summary Find user by `userId` and check if `password` is correct
- * @returns {Document} `user` if user found and password is correct 
+ * @returns {Document} `user` if user found and password is correct
  * @returns {null} `null` if user is not found or password is not correct
  */
 const findUserByIdAndCheckPassword = async (userId, password) => {
   const user = await User.findById(userId).select('+password');
-  if (!user || !await authService.checkPassword(password, user.password)) {
+  if (!user || !(await authService.checkPassword(password, user.password))) {
     return null;
   }
   return user;
@@ -47,7 +48,7 @@ const findUserByIdAndCheckPassword = async (userId, password) => {
 
 /**
  * A method that create user with the given data
- * 
+ *
  * @function
  * @public
  * @async
@@ -57,7 +58,7 @@ const findUserByIdAndCheckPassword = async (userId, password) => {
  * @returns {Document} `newUser` if user is created
  * @returns {null} `null` if failed
  */
-const createUser = async (userData) => {
+const createUser = async userData => {
   // create normal user
   const newUser = await Normal.create(userData);
   return newUser;
@@ -132,26 +133,31 @@ const updateImages = async (user, images) => {
       !path
         .split('\\')
         .pop()
-        .match(/^(default-){1,1}.*\.(jpg|png|jpeg)$/)
+        .match(/^(default-){1,1}.*\.(jpg|png|jpeg|svg)$/)
   );
-  paths.forEach(path =>
-    fs.unlink(path, err => {
-      if (err) throw err;
-    })
-  );
-  user = await User.findByIdAndUpdate(
+  const promisesArray = paths.map(path => {
+    return fs.unlink(path);
+  });
+  const promisesResult = await Promise.allSettled(promisesArray);
+  const error = promisesResult.filter(promise => {
+    return promise.status === 'rejected' && promise.reason.code !== 'ENOENT';
+  });
+  if (error.length > 0) {
+    throw error[0].reason;
+  }
+
+  return await User.findByIdAndUpdate(
     user._id,
     {
       images: images
     },
     { new: true }
   );
-  return user;
 };
 
 /**
  * Get user with `userData`
- * 
+ *
  * @function
  * @public
  * @async
@@ -160,26 +166,15 @@ const updateImages = async (user, images) => {
  * @summary Get user with `userData`
  * @returns {Document} `user` with the given `userData`
  */
-const getUser = async (userData) => {
+const getUser = async userData => {
   const user = await User.findOne(userData);
   return user;
 };
 
 
 /**
- * 
- * @param {String} userId 
- * @returns deletedUser
- */
-const deleteUserById = async (userId) => {
-  const deletedUser = await User.findByIdAndDelete(userId, { select: true });
-  return deletedUser;
-};
-
-
-/**
  * Get user Queues
- * 
+ *
  * @function
  * @public
  * @async
@@ -188,7 +183,7 @@ const deleteUserById = async (userId) => {
  * @summary Get user Queues
  * @returns {Array<String>} `queues`
  */
-const getUserQueues = async (userId) => {
+const getUserQueues = async userId => {
   const user = await User.findById(userId).select('queues');
 
   if (!user) return user;
@@ -200,7 +195,7 @@ const getUserQueues = async (userId) => {
 
 /**
  * Add `queue` to user `queues`
- * 
+ *
  * @function
  * @public
  * @async
@@ -231,7 +226,6 @@ module.exports = {
   createUser,
   getUserById,
   getUser,
-  deleteUserById,
   editProfile,
   updateImages,
   getUserQueues,

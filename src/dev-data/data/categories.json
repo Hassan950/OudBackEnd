@@ -2,7 +2,7 @@
   { 
     "_id": "5e69f73d4a52204a9c896560",
     "name":"Top Lists",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\toplists.jpg",
     "playlists":[
       "5e6dea511e17a305285ba610",
       "5e6dea511e17a305285ba611"
@@ -11,7 +11,7 @@
   {
     "_id": "5e69f73d4a52204a9c896561",
     "name":"Mood",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\mood.jpg",
     "playlists":[
       "5e6dea511e17a305285ba612"
     ]
@@ -19,7 +19,7 @@
   {
     "_id": "5e69f73d4a52204a9c896562",
     "name":"Party",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\party.jpg",
     "playlists":[
       "5e6dea511e17a305285ba613"
     ]
@@ -27,7 +27,7 @@
   {
     "_id": "5e69f73d4a52204a9c896563",
     "name":"Pop",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\pop.jpg",
     "playlists":[
       "5e6dea511e17a305285ba614"
     ]
@@ -35,7 +35,7 @@
   {
     "_id": "5e69f73d4a52204a9c896564",
     "name":"Workout",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\workout.jpg",
     "playlists":[
       "5e6dea511e17a305285ba615"
     ]
@@ -43,7 +43,7 @@
   { 
     "_id": "5e69f73d4a52204a9c896565",
     "name":"Hip-Hop",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\hip.jpg",
     "playlists":[
       "5e6dea511e17a305285ba616"
     ]
@@ -51,7 +51,7 @@
   {
     "_id": "5e69f73d4a52204a9c896566",
     "name":"Rock",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\rock.jpg",
     "playlists":[
       "5e6dea511e17a305285ba617"
     ]
@@ -59,7 +59,7 @@
   {
     "_id": "5e69f73d4a52204a9c896567",
     "name":"Electronic/Dance",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\emd.jpg",
     "playlists":[
       "5e6dea511e17a305285ba618"
     ]
@@ -67,7 +67,7 @@
   {
     "_id": "5e69f73d4a52204a9c896568",
     "name":"Wellness",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\wellness.jpeg",
     "playlists":[
       "5e6dea511e17a305285ba619"
     ]
@@ -75,7 +75,7 @@
   {
     "_id": "5e69f73d4a52204a9c896569",
     "name":"Chill",
-    "icon": "uploads\\default.jpg",
+    "icon": "uploads\\categories\\chill.jpg",
     "playlists":[
       "5e6dea511e17a305285ba620",
       "5e6dea511e17a305285ba621"

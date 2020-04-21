@@ -1,12 +1,21 @@
 const { artistController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 const requestMocks = require('../../utils/request.mock');
-const { Artist, User, Track, Album } = require('../../../src/models');
+const {
+  Artist,
+  User,
+  Track,
+  Album,
+  Request,
+  Genre
+} = require('../../../src/models');
+let fs = require('fs').promises;
+let { emailService } = require('../../../src/services');
 
 trackIds = [
-  '5e6c8ebb8b40fc5508fe8b32',
-  '5e6f6a7fac1d6d06f40706f2',
-  '5e6c8ebb8b40fc5518fe8b32'
+  { _id: '5e6c8ebb8b40fc5508fe8b32' },
+  { _id: '5e6f6a7fac1d6d06f40706f2' },
+  { _id: '5e6c8ebb8b40fc5518fe8b32' }
 ];
 
 describe('Artists Controller', () => {
@@ -17,17 +26,26 @@ describe('Artists Controller', () => {
   let artists;
   beforeEach(() => {
     artist = new Artist({
-      user: '5e6c8ebb8b40fc5518fe8b32',
-      genres: ['5e6c8ebb8b40fc5518fe8b32'],
-      images: ['lol.jpg', 'default.png'],
-      name: 'loool',
-      popularSongs: trackIds
+      displayName: 'Test artist',
+      password: '12341234',
+      passwordConfirm: '12341234',
+      email: 'testing@gmail.com',
+      username: 'test-man',
+      country: 'EG',
+      genres: [{ _id: '5e6c8ebb8b40fc5518fe8b32' }],
+      images: [
+        'uploads\\users\\default-Profile.jpg',
+        'uploads\\users\\default-Cover.jpg'
+      ],
+      popularSongs: trackIds,
+      bio: 'I am not a real artist I am just here for testing.'
     });
     artists = [artist, artist];
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
     Artist.schema.path('popularSongs', Object);
+    Artist.schema.path('genres', Object);
   });
   describe('getArtist', () => {
     it('Should return the artist with status code 200', async () => {
@@ -56,14 +74,16 @@ describe('Artists Controller', () => {
   });
   describe('getAlbums', () => {
     it('Should return the albums in a paging object with status code 200', async () => {
-      mockingoose(Album).toReturn(
-        [
-          {
-            artists: [{ _id: artist._id }]
-          }
-        ],
-        'find'
-      ).toReturn(1,'countDocuments');
+      mockingoose(Album)
+        .toReturn(
+          [
+            {
+              artists: [{ _id: artist._id }]
+            }
+          ],
+          'find'
+        )
+        .toReturn(1, 'countDocuments');
       req.params = { id: String(artist._id) };
       req.query = { offset: 0, limit: 20 };
       await artistController.getAlbums(req, res, next);
@@ -81,10 +101,7 @@ describe('Artists Controller', () => {
   });
   describe('getPopularSongs', () => {
     it('Should return array of popular songs of the artist with status code 200', async () => {
-      mockingoose(User).toReturn(
-        artist,
-        'findOne'
-      );
+      mockingoose(User).toReturn(artist, 'findOne');
       req.params = { id: artist._id };
       await artistController.getTracks(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -129,6 +146,150 @@ describe('Artists Controller', () => {
       req.params = { id: artist._id };
       await artistController.relatedArtists(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+  });
+  describe('updateArtist', () => {
+    it('Should return updated artist if provided a valid bio', async () => {
+      req.body = { bio: 'A valid bio' };
+      artist.bio = req.body.bio;
+      req.user = artist;
+      mockingoose(Artist).toReturn(artist, 'save');
+      await artistController.updateArtist(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].artist).toMatchObject({
+        bio: artist.bio
+      });
+    });
+    it('Should return updated artist if provided a valid list of tracks', async () => {
+      req.body = { tracks: artist.popularSongs };
+      req.user = artist;
+      mockingoose(Artist).toReturn(artist, 'save');
+      mockingoose(Track).toReturn(artist.popularSongs, 'find');
+      await artistController.updateArtist(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+      expect(res.json.mock.calls[0][0].artist).toMatchObject({
+        _id: artist._id
+      });
+    });
+    it("Should throw an error with status code 400 if the tracks doesn't belong to this artist or doesn't exist", async () => {
+      req.body = { tracks: artist.popularSongs };
+      req.user = artist;
+      mockingoose(Artist).toReturn(artist, 'save');
+      mockingoose(Track).toReturn([], 'find');
+      await artistController.updateArtist(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+  });
+  describe('Request functions', () => {
+    let request;
+    beforeEach(() => {
+      request = new Request({
+        displayName: 'Test artist',
+        email: 'testing@gmail.com',
+        name: 'test-man',
+        genres: ['5e6c8ebb8b40fc5518fe8b32'],
+        attachment: 'default.jpg',
+        country: 'EG',
+        popularSongs: trackIds,
+        bio: 'I am not a real artist I am just here for testing.'
+      });
+    });
+    describe('artistRequest', () => {
+      it('Should return the id of the request with status code 200 if valid', async () => {
+        mockingoose(Request).toReturn(request, 'save');
+        mockingoose(Genre).toReturn(request.genres, 'find');
+        req.body = {
+          displayName: 'Test artist',
+          email: 'testing@gmail.com',
+          name: 'test-man',
+          genres: ['5e6c8ebb8b40fc5518fe8b32'],
+          attachment: 'default.jpg',
+          country: 'EG',
+          popularSongs: trackIds,
+          bio: 'I am not a real artist I am just here for testing.'
+        };
+        await artistController.artistRequest(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0]).toMatchObject({ id: request._id });
+      });
+      it("Should throw an error with status code 400 if the genres doesn't exist", async () => {
+        mockingoose(Request).toReturn(request, 'save');
+        mockingoose(Genre).toReturn([], 'find');
+        req.body = {
+          displayName: 'Test artist',
+          email: 'testing@gmail.com',
+          name: 'test-man',
+          genres: ['5e6c8ebb8b40fc5518fe8b32'],
+          attachment: 'default.jpg',
+          country: 'EG',
+          popularSongs: trackIds,
+          bio: 'I am not a real artist I am just here for testing.'
+        };
+        await artistController.artistRequest(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+    });
+    describe('setAttach', () => {
+      it('Should return status code 204 if the request exist and the image is uploaded', async () => {
+        req.file = 'path.jpg';
+        mockingoose(Request).toReturn(request, 'findOne');
+        await artistController.setAttach(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(204);
+      });
+      it('Should throw an error with status code 400 if the file was not uploaded', async () => {
+        req.file = undefined;
+        mockingoose(Request).toReturn(request, 'findOne');
+        fs.unlink = jest.fn().mockResolvedValue();
+        await artistController.setAttach(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+      it('Should throw an error with status code 404 if the request was not found', async () => {
+        req.file = 'path.jpg';
+        mockingoose(Request).toReturn(null, 'findOne');
+        fs.unlink = jest.fn().mockResolvedValue();
+        await artistController.setAttach(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
+      });
+      it('Should throw an error with status code 403 if the request has an attachment', async () => {
+        req.file = 'path.jpg';
+        mockingoose(Request).toReturn(request, 'findOne');
+        request.attachment = 'uploads\\requests\\oldpath.jpg';
+        fs.unlink = jest.fn().mockResolvedValue();
+        await artistController.setAttach(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(403);
+      });
+    });
+    describe('handleRequest', () => {
+      it('Should return 204 if the request is fulfilled by acceptance', async () => {
+        mockingoose(Artist).toReturn(artist, 'save');
+        emailService.sendEmail = jest.fn().mockResolvedValue();
+        mockingoose(Request)
+          .toReturn(request, 'findOneAndDelete')
+          .toReturn(request, 'findOne');
+        req.body = { accept: true };
+        await artistController.handleRequest(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(204);
+      });
+      it('Should return 204 if the request is fulfilled by refusal', async () => {
+        mockingoose(Artist).toReturn(artist, 'save');
+        emailService.sendEmail = jest.fn().mockResolvedValue();
+        mockingoose(Request)
+          .toReturn(request, 'findOneAndDelete')
+          .toReturn(request, 'findOne');
+        req.body = { accept: false };
+        await artistController.handleRequest(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(204);
+      });
+      it("Should throw an error with status code 404 if the request doesn't exist", async () => {
+        mockingoose(Artist).toReturn(artist, 'save');
+        emailService.sendEmail = jest.fn().mockResolvedValue();
+        mockingoose(Request)
+          .toReturn(request, 'findOneAndDelete')
+          .toReturn(null, 'findOne');
+        req.body = { accept: true };
+        await artistController.handleRequest(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(404);
+      });
     });
   });
 });

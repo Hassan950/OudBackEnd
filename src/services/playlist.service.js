@@ -1,7 +1,7 @@
 const { Playlist, Track, User, PlaylistFollowings } = require('../models');
 const _ = require('lodash');
 const move = require('lodash-move');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 /**
  * A method that gets a playlist by it's ID
@@ -15,7 +15,18 @@ const fs = require('fs');
  */
 
 exports.getPlaylist = async params => {
-  const playlist = await Playlist.findById(params.id);
+  const playlist = await Playlist.findById(params.id).populate({
+    path:'tracks',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images name',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    }
+  })
   return playlist;
 };
 
@@ -48,10 +59,12 @@ exports.changePlaylist = async (params, body, image) => {
   if (!playlist) return playlist;
   if (!image) return playlist;
   const path = playlist.image;
-  if (path != image && path != 'uploads\\default.jpg') {
-    fs.unlink(`${path}`, err => {
-      if (err) throw err;
-    });
+  if (path != image && path != 'uploads\\playlists\\default.svg') {
+    try {
+      await fs.unlink(path);
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
   }
   playlist = await Playlist.findByIdAndUpdate(
     params.id,
@@ -59,7 +72,18 @@ exports.changePlaylist = async (params, body, image) => {
       image: image
     },
     { new: true }
-  );
+  ).populate({
+    path:'tracks',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images name',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    }
+  })
   return playlist;
 };
 
@@ -79,10 +103,12 @@ exports.uploadImage = async (params, image) => {
   let playlist = await Playlist.findById(params.id);
   if (!playlist) return playlist;
   const path = playlist.image;
-  if (path != image && path != 'uploads\\default.jpg') {
-    fs.unlink(`${path}`, err => {
-      if (err) throw err;
-    });
+  if (path != image && path != 'uploads\\playlists\\default.svg') {
+    try {
+      await fs.unlink(path);
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
   }
   playlist.image = image;
   await playlist.save();
@@ -109,6 +135,17 @@ exports.getTracks = async (params, query) => {
     return { tracks, total };
   }
   const trackPromise = Track.find({ _id: { $in: playlist.tracks } })
+    .populate(
+      {
+        path: 'artists album',
+        select: '-tracks -genres -released -release_date',
+        select:'displayName images type name',
+        populate: {
+          path:'artists',
+          select:'type displayName images'
+        }
+      }
+      )
     .skip(query.offset)
     .limit(query.limit)
     .exec();
@@ -119,9 +156,8 @@ exports.getTracks = async (params, query) => {
   return { tracks, total };
 };
 
-
 /**
- * A method that get Followedplaylists of a user 
+ * A method that get Followedplaylists of a user
  *
  * @function
  * @author Ahmed Magdy
@@ -136,7 +172,21 @@ exports.getTracks = async (params, query) => {
 exports.getUserPlaylists = async (id, query, publicity) => {
   const playlistPromise = PlaylistFollowings.find({ userId: id })
     .where(publicity)
-    .populate('playlistId')
+    .populate(
+      {
+        path: 'playlistId',
+        populate: { path: 'tracks' ,
+        populate: {
+          path: 'album artists',
+          select: '-tracks -genres -released -release_date',
+          select: 'type displayName images name album_type',
+          populate: {
+            path:'artists',
+            select:'type displayName images'
+          }
+        }
+      }
+      })
     .select('playlistId')
     .select('-_id')
     .skip(query.offset)
@@ -158,30 +208,28 @@ exports.getUserPlaylists = async (id, query, publicity) => {
   return { playlists, total };
 };
 
-
 /**
- * A method that get tracks of a given urls and its helping to other functions  
+ * A method that get tracks of a given urls and its helping to other functions
  *
  * @function
  * @author Ahmed Magdy
- * @summary get tracks 
+ * @summary get tracks
  * @param {array} uris array of uris
  * @returns {array} array of tracks if the tracks was found
  * @returns null if the tracks was not found
  */
 
-exports.getTracksId = async uris => {
-  const tracks = await Track.find({ audioUrl: { $in: uris } });
+exports.getTracksId = async Ids => {
+  const tracks = await Track.find({ _id: { $in: Ids } });
   return tracks;
 };
 
-
 /**
- * A method that get tracks of a given urls and its helping to other functions  
+ * A method that get tracks of a given urls and its helping to other functions
  *
  * @function
  * @author Ahmed Magdy
- * @summary get user 
+ * @summary get user
  * @param {string} id id of user
  * @returns user if the user was found
  * @returns null if the user was not found
@@ -193,7 +241,7 @@ exports.checkUser = async id => {
 };
 
 /**
- * A method that create playlist 
+ * A method that create playlist
  *
  * @function
  * @author Ahmed Magdy
@@ -201,9 +249,8 @@ exports.checkUser = async id => {
  * @param {object} params An object containing parameter values parsed from the URL path
  * @param {object} body An object that holds parameters that are sent up from the client in the request
  * @param {string} image new image of playlist
- * @returns playlist 
+ * @returns playlist
  */
-
 
 exports.createUserPlaylist = async (params, body, image) => {
   const playlist = await Playlist.create({
@@ -214,12 +261,11 @@ exports.createUserPlaylist = async (params, body, image) => {
     owner: params.id,
     image: image
   });
-  return playlist;
+  return playlist.populate('tracks');
 };
 
-
 /**
- * A method that deletes tracks in a playlist 
+ * A method that deletes tracks in a playlist
  *
  * @function
  * @author Ahmed Magdy
@@ -240,7 +286,7 @@ exports.deleteTracks = async (params, tracks) => {
 };
 
 /**
- * A method that adds tracks in a playlist 
+ * A method that adds tracks in a playlist
  *
  * @function
  * @author Ahmed Magdy
@@ -279,7 +325,7 @@ exports.addTracks = async (params, tracks, position) => {
 };
 
 /**
- * A method that reorder tracks in a playlist 
+ * A method that reorder tracks in a playlist
  *
  * @function
  * @author Ahmed Magdy

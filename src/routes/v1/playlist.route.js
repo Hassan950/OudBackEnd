@@ -6,7 +6,6 @@ const { playlistValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router({ mergeParams: true });
-router.use(catchAsync(authMiddleware.authenticate));
 
 router
   .route('/')
@@ -15,6 +14,7 @@ router
     catchAsync(playlistController.getUserPlaylists)
   )
   .post(
+    catchAsync(authMiddleware.authenticate),
     playlistController.uploadImage,
     validate(playlistValidation.createUserPlaylist),
     catchAsync(playlistController.createUserPlaylist)
@@ -26,6 +26,7 @@ router
     catchAsync(playlistController.getPlaylist)
   )
   .put(
+    catchAsync(authMiddleware.authenticate),
     playlistController.uploadImage,
     validate(playlistValidation.changePlaylist),
     catchAsync(playlistController.changePlaylist)
@@ -37,14 +38,17 @@ router
     catchAsync(playlistController.getTracks)
   )
   .post(
+    catchAsync(authMiddleware.authenticate),
     validate(playlistValidation.addTracks),
     catchAsync(playlistController.addTracks)
   )
   .put(
+    catchAsync(authMiddleware.authenticate),
     validate(playlistValidation.reorderTracks),
     catchAsync(playlistController.reorderTracks)
   )
   .delete(
+    catchAsync(authMiddleware.authenticate),
     validate(playlistValidation.deleteTracks),
     catchAsync(playlistController.deleteTracks)
   );
@@ -55,6 +59,7 @@ router
     catchAsync(playlistController.getImage)
   )
   .put(
+    catchAsync(authMiddleware.authenticate),
     playlistController.uploadImage,
     validate(playlistValidation.uploadImage),
     catchAsync(playlistController.uploadImageRoute)
@@ -62,6 +67,7 @@ router
 router
   .route('/:id/tracks/Replace')
   .put(
+    catchAsync(authMiddleware.authenticate),
     validate(playlistValidation.replaceTracks),
     catchAsync(playlistController.replaceTracks)
   );
