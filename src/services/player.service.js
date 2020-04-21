@@ -1,5 +1,6 @@
 const { Player } = require('../models/player.model');
 const { Track } = require('../models/track.model');
+const { Ad } = require('../models/ad.model');
 
 /**
  * Get `player` with the given `userId`
@@ -132,18 +133,46 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
   // handle ads counter
-  if (player.adsCounter !== undefined) {
+  if (player.adsCounter !== undefined && player.item !== track) {
     player.adsCounter++;
   }
-  // play the track
-  player.item = track;
-  player.progressMs = 0;
-  player.isPlaying = true;
-  player.currentlyPlayingType = 'track';
-  player.onModel = 'Track';
-  // add context to player
-  if (context && context.type) {
-    player.context = context;
+
+  if (player.adsCounter >= 3) {
+    // play ad
+    player.adsCounter = 0;
+    player.progressMs = 0;
+    player.isPlaying = true;
+    player.currentlyPlayingType = 'ad';
+    player.onModel = 'Ad';
+    player.context = { type: 'unknown' };
+    player.actions = {
+      interrupting_playback: true,
+      pausing: true,
+      resuming: true,
+      seeking: true,
+      skipping_next: true,
+      skipping_prev: true,
+      toggling_repeat_context: true,
+      toggling_shuffle: true,
+      toggling_repeat_track: true,
+      transferring_playback: true
+    };
+    // play random ad
+    const ad = Ad.aggregate([
+      { $sample: { size: 1 } }
+    ]);
+    player.item = ad;
+  } else {
+    // play the track
+    player.item = track;
+    player.progressMs = 0;
+    player.isPlaying = true;
+    player.currentlyPlayingType = 'track';
+    player.onModel = 'Track';
+    // add context to player
+    if (context && context.type) {
+      player.context = context;
+    }
   }
 };
 
