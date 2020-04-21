@@ -1,5 +1,5 @@
 const express = require('express');
-const { authController , userController } = require('../../controllers');
+const { authController, userController } = require('../../controllers');
 const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
@@ -15,7 +15,7 @@ const router = express.Router();
 
 
 // all routes need authentication
-//router.use(catchAsync(authMiddleware.authenticate));
+router.use(catchAsync(authMiddleware.authenticate));
 
 // /me/player router
 router.use('/player', playerRouter);

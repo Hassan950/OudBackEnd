@@ -140,6 +140,7 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
   player.progressMs = 0;
   player.isPlaying = true;
   player.currentlyPlayingType = 'track';
+  player.onModel = 'Track';
   // add context to player
   if (context && context.type) {
     player.context = context;
@@ -315,6 +316,7 @@ const setPlayerToDefault = (player) => {
   player.repeatState = 'off';
   player.isPlaying = false;
   player.currentlyPlayingType = 'unknown';
+  player.onModel = 'Track';
   player.actions = undefined;
 };
 
