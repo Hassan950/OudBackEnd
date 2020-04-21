@@ -1995,7 +1995,7 @@ paths:
           in: query
           description: >-
             A comma-separated list of item types to search across. Valid types
-            are album ,user, artist, playlist, and track. Search results include hits
+            are album ,User, Artist, playlist, and track. Search results include hits
             from all the specified item types.Its optional if not sent search will be on all types.
           schema:
             type: string
