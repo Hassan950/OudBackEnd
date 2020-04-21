@@ -27,19 +27,26 @@ describe('Tracks controller', () => {
       name: 'mohamed',
       audioUrl: 'lol.mp3',
       artists: artistIds,
-      album: { _id: '5e6c8ebb8b40fc7708fe8b32', name: 'lol' },
+      album: {
+        _id: '5e6c8ebb8b40fc7708fe8b32',
+        name: 'lol',
+        artists: artistIds
+      },
       duration: 21000
     };
     tracks = [track, track];
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
+    Track.schema.path('artists', Object);
+    Track.schema.path('album', Object);
   });
   describe('getTracks', () => {
     it("Should return list of tracks with the ID's given with status code 200", async () => {
       mockingoose(Track).toReturn(tracks, 'find');
       // two valid ID's
-      req.query.ids = trackIds[0] + ',' + trackIds[1];
+      req.query.ids = trackIds;
+      req.user = { _id: artistIds[0]._id };
       await tracksController.getTracks(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('tracks');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -56,11 +63,8 @@ describe('Tracks controller', () => {
       tracks = [track];
       mockingoose(Track).toReturn(tracks, 'find');
       // One valid ID and another invalid one each passed twice
-      req.query.ids =
-        trackIds[0] +
-        ',' +
-        trackIds[0] +
-        ',5e6c8ebb8b40fc5508fe8b31,5e6c8ebb8b40fc5508fe8b31';
+      req.query.ids = [trackIds[0], trackIds[0], 'invalid', 'invalid'];
+      req.user = { _id: artistIds[0]._id };
       await tracksController.getTracks(req, res, next);
       result = res.json.mock.calls;
       expect(result[0][0].tracks[0]).toEqual(result[0][0].tracks[1]);
@@ -75,10 +79,9 @@ describe('Tracks controller', () => {
         .toReturn(track, 'findOne');
       fs.unlink = jest.fn();
       mockingoose(Artist).toReturn(track.artists, 'find');
-      track.artists[0] = artistIds[1];
       // A valid ID that belongs to an object
       req.params.id = trackIds[1];
-      req.user = { _id: artistIds[1]._id };
+      req.user = { _id: artistIds[0]._id };
       await tracksController.deleteTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -108,6 +111,7 @@ describe('Tracks controller', () => {
     it('Should return the track with the given ID with status code of 200', async () => {
       mockingoose(Track).toReturn(track, 'findOne');
       req.params.id = trackIds[0];
+      req.user = { _id: artistIds[0]._id };
       await tracksController.getTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
       expect(res.status.mock.calls[0][0]).toBe(200);

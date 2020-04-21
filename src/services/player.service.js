@@ -238,7 +238,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
   player.progressMs = progressMs;
 
   if (!track)
-    track = await trackService.findTrack(player.item);
+    track = await trackService.findTrackUtil(player.item);
 
   // if position >= track duration go to next
   if (track && progressMs >= track.duration) {

@@ -545,7 +545,7 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
   let tracks = [];
   for (let i = 0; i < uris.length; i++) {
     const trackId = uris[i].split(':')[2];
-    const track = await trackService.findTrack(trackId);
+    const track = await trackService.findTrackUtil(trackId);
     if (track)
       tracks.push(trackId);
   }

@@ -95,9 +95,8 @@ exports.setTrack = async (req, res, next) => {
  * @throws AppError 404 Not found if the track doesn't exist
  */
 exports.getTrack = async (req, res, next) => {
-  const track = await trackService.findTrack(req.params.id);
-  if (!track)
-    return next(new AppError('The requested resource is not found', 404));
+  const track = await trackService.findTrack(req.params.id, req.user);
+  if (track instanceof AppError) return next(track);
   res.status(200).json(track);
 };
 
@@ -112,7 +111,7 @@ exports.getTrack = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 exports.getTracks = async (req, res, next) => {
-  const tracks = await trackService.findTracks(req.query.ids);
+  const tracks = await trackService.findTracks(req.query.ids, req.user);
   res.status(200).json({
     tracks: tracks
   });
@@ -131,7 +130,7 @@ exports.getTracks = async (req, res, next) => {
  * @throws AppError 403 forbidden if the artist is not the track's main artist
  */
 exports.deleteTrack = async (req, res, next) => {
-  const track = await trackService.findTrack(req.params.id);
+  const track = await trackService.findTrackUtil(req.params.id);
   if (!track)
     return next(new AppError('The requested resource is not found', 404));
   if (String(track.artists[0]._id) !== String(req.user._id))
@@ -160,7 +159,7 @@ exports.deleteTrack = async (req, res, next) => {
  * @throws AppError 403 forbidden if the artist is not the track's main artist
  */
 exports.updateTrack = async (req, res, next) => {
-  let track = await trackService.findTrack(req.params.id);
+  let track = await trackService.findTrackUtil(req.params.id);
   if (!track)
     return next(new AppError('The requested resource is not found', 404));
   if (String(track.artists[0]._id) !== String(req.user._id))
@@ -194,14 +193,13 @@ exports.updateTrack = async (req, res, next) => {
  * @throws AppError 404 Not found if the track doesn't exist
  * @throws AppError 400 bad request if any of the new data is invalid
  * @throws AppError 403 forbidden if the user is not premium
-*/
+ */
 exports.downloadTrack = async (req, res, next) => {
   const trackId = req.params.id;
 
   const audioUrl = await trackService.getTrackAudioUrl(trackId);
 
-  if (!audioUrl)
-    return next(new AppError('Track is not found', 404));
+  if (!audioUrl) return next(new AppError('Track is not found', 404));
 
   res.download(audioUrl);
 };

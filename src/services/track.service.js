@@ -1,7 +1,7 @@
 const { Track } = require('../models/track.model');
 const _ = require('lodash');
 const fs = require('fs').promises;
-const logger = require('../config/logger');
+const AppError = require('../utils/AppError');
 
 /**
  * A method that gets array of tracks By their ID's
@@ -12,7 +12,7 @@ const logger = require('../config/logger');
  * @param {Array<String>} ids - List of ID's of tracks to be retrieved
  * @returns {Array} An array containing the tracks with nulls against unmatched ID's
  */
-exports.findTracks = async ids => {
+exports.findTracks = async (ids, user) => {
   const result = await Track.find({ _id: ids })
     .lean({ virtuals: true })
     .populate({
@@ -21,15 +21,19 @@ exports.findTracks = async ids => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date -album_group',
+      select: '-tracks -genres -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
-  if (result.length == ids.length) return result;
-  const tracks = [];
-  for (let i = 0, n = ids.length; i < n; i++) {
-    const val = result.find(track => String(track._id) === ids[i]);
-    tracks[i] = val ? val : null;
-  }
+  let val;
+  const tracks = ids.map(id => {
+    val = result.find(track => String(track._id) === id);
+    if (!val) return null;
+    if (!val.album.released) {
+      if (!user || String(user._id) !== String(val.album.artists[0]._id))
+        return null;
+    }
+    return val;
+  });
   return tracks;
 };
 
@@ -75,10 +79,11 @@ exports.deleteTracks = async ids => {
  * @author Mohamed Abo-Bakr
  * @summary gets a track
  * @param {String} id ID of the track to be retrieved
+ * @param {object} user The object of the user if authenticated
  * @returns track if the track was found
  * @returns null the track was not found
  */
-exports.findTrack = async id => {
+exports.findTrack = async (id, user) => {
   const track = await Track.findById(id)
     .lean({ virtuals: true })
     .populate({
@@ -87,9 +92,20 @@ exports.findTrack = async id => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date -album_group',
+      select: '-tracks -genres -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
+
+  if (!track) return new AppError('The request resource was not found', 404);
+
+  if (!track.album.released) {
+    if (!user || String(user._id) !== String(track.album.artists[0]._id))
+      return new AppError(
+        "You don't have the permission to perform this action",
+        403
+      );
+  }
+
   return track;
 };
 
@@ -233,20 +249,19 @@ exports.artistTracksExist = async (artistId, tracksIds) => {
   return null;
 };
 
-
 /**
  * Get Track Audio Url
- * 
+ *
  * @function
  * @public
  * @async
  * @param {String} trackId Track ID
- * @returns {String} `audioUrl` Audio Url 
+ * @returns {String} `audioUrl` Audio Url
  * @returns {null} `null` if track is not found or audioUrl is not found
  * @summary Get Track Audio Url
  * @author Abdelrahman Tarek
  */
-exports.getTrackAudioUrl = async (trackId) => {
+exports.getTrackAudioUrl = async trackId => {
   const track = await Track.findById(trackId).select('+audioUrl');
 
   if (!track || !track.audioUrl) return null;
