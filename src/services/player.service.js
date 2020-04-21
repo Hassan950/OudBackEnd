@@ -161,7 +161,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
     const ad = await Ad.aggregate([
       { $sample: { size: 1 } }
     ]);
-    player.item = ad;
+    player.item = ad[0]._id;
   } else {
     // play the track
     player.item = track;
