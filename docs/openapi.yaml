@@ -275,6 +275,9 @@ paths:
                         type:
                           type: string
                           description: The object type "album"
+                        released:
+                          type: boolean
+                          description: determines if the album is released for public or private
                     description: The requested Albums.
                   limit:
                     type: integer
@@ -4147,6 +4150,9 @@ components:
         type:
           type: string
           description: The object type "album"
+        released:
+          type: boolean
+          description: determines if the album is released for public or private
     Track:
       type: object
       description: Track Full Object
