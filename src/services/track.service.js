@@ -245,7 +245,7 @@ exports.checkFile = async id => {
  * @returns true if they belong to him null if they don't belong to him or doesn't exist
  */
 exports.artistTracksExist = async (artistId, tracksIds) => {
-  const tracks = await Track.find({
+  let tracks = await Track.find({
     _id: tracksIds,
     'artists.0': artistId
   }).populate('album');
@@ -262,7 +262,23 @@ exports.artistTracksExist = async (artistId, tracksIds) => {
         400
       );
   }
-  return true;
+  if (tracksIds.length < 5) {
+    tracks = await Track.find({
+      _id: { $nin: tracksIds },
+      'artists.0': artistId
+    })
+      .populate('album')
+      .sort({ views: -1 });
+
+    for (let i = 0, n = tracks.length; i < n; i++) {
+      if (tracks[i].album.released) {
+        tracksIds.push(tracks[i]._id);
+        if (tracksIds.length >= 5) break;
+      }
+    }
+  }
+
+  return tracksIds;
 };
 
 /**

@@ -78,14 +78,7 @@ exports.getPopularSongs = async artistId => {
     .select('popularSongs');
 
   if (!artist) return null;
-  if (artist.popularSongs.length === 0) {
-    artist.popularSongs = await Track.find({ 'artists.0': artistId })
-      .sort({
-        views: -1
-      })
-      .populate({ path: 'album', select: '-tracks -genres' })
-      .limit(10);
-  }
+  
   return artist.popularSongs;
 };
 
@@ -158,13 +151,13 @@ exports.artistsExist = async (artistIds, artistId) => {
 exports.update = async (artist, newData) => {
   if (newData.bio) artist.bio = newData.bio;
   if (newData.tracks) {
-    const exist = await trackService.artistTracksExist(
+    const newList = await trackService.artistTracksExist(
       artist._id,
       newData.tracks
     );
 
-    if (exist instanceof AppError) return exist;
-    artist.popularSongs = newData.tracks;
+    if (newList instanceof AppError) return newList;
+    artist.popularSongs = newList;
   }
   await Promise.all([
     artist.save(),

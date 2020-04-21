@@ -2,6 +2,7 @@ const { Album } = require('../models/album.model');
 const mongoose = require('mongoose');
 const fs = require('fs').promises;
 const AppError = require('../utils/AppError');
+const _ = require('lodash');
 
 /**
  * A method that gets an album by it's ID
@@ -470,10 +471,11 @@ exports.removeTrack = async (albumId, trackId) => {
  * @author Mohamed Abo-Bakr
  * @summary Releases an album
  * @param {object} album
+ * @param {object} user
  * @returns Updated album if successful
  * @returns null if the album didn't match the specifications of released albums
  */
-exports.releaseAlbum = async album => {
+exports.releaseAlbum = async (album, user) => {
   if (album.image) {
     for (let i = 0, n = album.tracks.length; i < n; i++) {
       if (!album.tracks[i].audioUrl)
@@ -491,14 +493,17 @@ exports.releaseAlbum = async album => {
     return new AppError('Single albums must have exactly one track', 400);
 
   album.released = true;
+  if (user.popularSongs.length < 5)
+    user.popularSongs = _.concat(user.popularSongs, _.slice(album.tracks, 0, 5));
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(album._id) } },
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
 
-  [, album, lengthObj] = await Promise.all([
+  [, ,album, lengthObj] = await Promise.all([
     album.save(),
+    user.save(),
     album
       .populate('artists', 'displayName images')
       .populate('genres')

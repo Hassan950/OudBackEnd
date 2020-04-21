@@ -114,13 +114,6 @@ describe('Artists Controller', () => {
       await artistController.getTracks(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
-    it('Should throw an error with status code 404 if the artist has no popular songs', async () => {
-      artist.popularSongs = [];
-      mockingoose(User).toReturn(artist, 'findOne');
-      req.params = { id: artist._id };
-      await artistController.getTracks(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
   });
   describe('relatedArtists', () => {
     it('Should return the list of artists with status code 200', async () => {

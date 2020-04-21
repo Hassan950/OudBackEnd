@@ -188,7 +188,7 @@ exports.releaseAlbum = async (req, res, next) => {
     return next(new AppError('The requested resource is not found', 404));
   if (album.released || String(album.artists[0]) !== String(req.user._id))
     return next(new AppError('Forbidden.', 403));
-  album = await albumService.releaseAlbum(album);
+  album = await albumService.releaseAlbum(album, req.user);
   if (album instanceof AppError) return next(album);
   res.status(200).json(album);
 };
