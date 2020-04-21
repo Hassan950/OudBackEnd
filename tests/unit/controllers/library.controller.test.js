@@ -45,7 +45,7 @@ describe('library controllers', () => {
       libraryService.checkTracks = async()=>{
         return [true];
       }
-      await libraryController.check(req, res, next);
+      await libraryController.likedOrNot(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('should return array of boolean where track is saved or not', async () => {
@@ -58,8 +58,8 @@ describe('library controllers', () => {
       libraryService.checkTracks = async()=>{
         return [true];
       }
-      await libraryController.check(req, res, next);
-      const check = res.json.mock.calls[0][0].isFound;
+      await libraryController.likedOrNot(req, res, next);
+      const check = res.send.mock.calls[0][0];
       expect(check).toEqual([true]);
     });
   });  
@@ -74,7 +74,7 @@ describe('library controllers', () => {
       libraryService.checkAlbums = async()=>{
         return [true];
       }
-      await libraryController.check(req, res, next);
+      await libraryController.likedOrNot(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('should return array of boolean where album is saved or not', async () => {
@@ -87,8 +87,8 @@ describe('library controllers', () => {
       libraryService.checkAlbums = async()=>{
         return [true];
       }
-      await libraryController.check(req, res, next);
-      const check = res.json.mock.calls[0][0].isFound;
+      await libraryController.likedOrNot(req, res, next);
+      const check = res.send.mock.calls[0][0];
       expect(check).toEqual([true]);
     });  
   });
@@ -100,9 +100,11 @@ describe('library controllers', () => {
         id:userId
       } 
       libraryService.getAlbums = async()=>{
-        return savedAlbums;
+        const total =1;
+        const albums = savedAlbums;
+        return {albums, total };
       }
-      await libraryController.get(req, res, next);
+      await libraryController.getLikedItems(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('should return array of savedAlbumss', async () => {
@@ -112,9 +114,11 @@ describe('library controllers', () => {
         id:userId
       } 
       libraryService.getAlbums = async()=>{
-        return savedAlbums;
+        const total =1;
+        const albums = savedAlbums;
+        return {albums, total };
       }
-      await libraryController.get(req, res, next);
+      await libraryController.getLikedItems(req, res, next);
       const check = res.json.mock.calls[0][0].items;
       expect(check).toEqual(savedAlbums);
     });  
@@ -127,9 +131,11 @@ describe('library controllers', () => {
         id:userId
       } 
       libraryService.getTracks = async()=>{
-        return savedTracks;
+        const total =1;
+        const tracks = savedTracks;
+        return {tracks, total };
       }
-      await libraryController.get(req, res, next);
+      await libraryController.getLikedItems(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
     it('should return array of savedAlbumss', async () => {
@@ -139,9 +145,11 @@ describe('library controllers', () => {
         id:userId
       } 
       libraryService.getTracks = async()=>{
-        return savedTracks;
+        const total =1;
+        const tracks = savedTracks;
+        return {tracks, total };
       }
-      await libraryController.get(req, res, next);
+      await libraryController.getLikedItems(req, res, next);
       const check = res.json.mock.calls[0][0].items;
       expect(check).toEqual(savedTracks);
     });  
@@ -157,7 +165,7 @@ describe('library controllers', () => {
       libraryService.saveTracks = async()=>{
         return ;
       }
-      await libraryController.put(req, res, next);
+      await libraryController.likeItems(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(201);
     });  
   });
@@ -172,7 +180,7 @@ describe('library controllers', () => {
       libraryService.saveAlbums = async()=>{
         return ;
       }
-      await libraryController.put(req, res, next);
+      await libraryController.likeItems(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(201);
     });  
   });
@@ -187,7 +195,7 @@ describe('library controllers', () => {
       libraryService.deleteSavedTracks = async()=>{
         return ;
       }
-      await libraryController.delete(req, res, next);
+      await libraryController.unlikeItems(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });  
   });
@@ -202,7 +210,7 @@ describe('library controllers', () => {
       libraryService.deleteSavedAlbums = async()=>{
         return ;
       }
-      await libraryController.delete(req, res, next);
+      await libraryController.unlikeItems(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(204);
     });  
   });  

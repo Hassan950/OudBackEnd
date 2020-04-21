@@ -15,7 +15,18 @@ describe('library service', () => {
   let savedTracks;
   let savedAlbums;
   let savedAlbum;
+  let album;
   beforeEach(() => {
+    album = new Album({
+      album_type: 'single',
+      album_group: 'compilation',
+      artists: userId,
+      genres: ['5e6c8ebb8b40fc5518fe8b32'],
+      image: 'example.jpg',
+      name: 'The Begining',
+      release_date: '12-06-1999',
+      tracks: [albumId[0]]
+    });
     savedTrack = new likedTracks({
       userId: userId,
       track: trackId[0],
@@ -47,7 +58,7 @@ describe('library service', () => {
       req.user = { id: userId };
       likedAlbums.select = jest.fn().mockReturnThis();
       mockingoose(likedAlbums).toReturn(savedAlbums, 'find');
-      const check = await libraryService.checkAlbums(req.user,trackId);
+      const check = await libraryService.checkAlbums(req.user,albumId);
       expect(check).toEqual([true,false]);
     });
   });
@@ -64,7 +75,7 @@ describe('library service', () => {
       likedTracks.limit = jest.fn().mockReturnThis();
       mockingoose(likedTracks).toReturn(savedTracks, 'find');
       const tracks = await libraryService.getTracks(req.user,req.query);
-      expect(tracks.toString).toBe(savedTracks.toString);
+      expect(tracks.tracks.toString).toBe(savedTracks.toString);
     });
   });
   describe('getSavedAlbums - test', () => {
@@ -78,9 +89,10 @@ describe('library service', () => {
       likedAlbums.populate = jest.fn().mockReturnThis();
       likedAlbums.skip = jest.fn().mockReturnThis();
       likedAlbums.limit = jest.fn().mockReturnThis();
+      savedAlbums[0].album = album;
       mockingoose(likedAlbums).toReturn(savedAlbums, 'find');
       const albums = await libraryService.getAlbums(req.user,req.query);
-      expect(albums.toString).toBe(savedAlbums.toString);
+      expect(albums.albums.toString).toBe(savedAlbums.toString);
     });
   });
   describe('SaveAlbum - test', () => {

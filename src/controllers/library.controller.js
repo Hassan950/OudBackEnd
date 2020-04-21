@@ -61,7 +61,7 @@ const checkSavedTracks = async(req ,res,next)=>{
 
 const checkSavedAlbums = async(req ,res,next)=>{
   //sent the logged in user and the passed ids to this function to check if its liked or not
-  const check = await libraryService.checkAlbums(req.user,ids);
+  const check = await libraryService.checkAlbums(req.user,req.query.ids);
   return check;
 }
 
@@ -177,8 +177,6 @@ exports.likeItems = async(req, res , next)=>{
  */
 
 const saveTracks = async(req ,res,next)=>{
-  //ids sent in query as a comma separated ids so i put them in a regular array
-  //let ids = req.query.ids.split(',');
   // calls this functions which makes the action to user to like tracks
   await libraryService.saveTracks(req.user,req.query.ids);
 }
@@ -195,10 +193,8 @@ const saveTracks = async(req ,res,next)=>{
  */
 
 const saveAlbums = async(req ,res,next)=>{
-  //ids sent in query as a comma separated ids so i put them in a regular array
-  let ids = req.query.ids.split(',');
   // calls this functions which makes the action to user to like albums
-  await libraryService.saveAlbums(req.user,ids);
+  await libraryService.saveAlbums(req.user,req.query.ids);
 }
 
 /**
