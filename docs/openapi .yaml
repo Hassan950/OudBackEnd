@@ -2029,15 +2029,15 @@ paths:
                   previous, next and limit that can be useful in future calls.
                 type: object
                 properties:
-                  Tracks:
+                  tracks:
                     type: array
                     items:
                       $ref: '#/components/schemas/Track'
-                  Albums:
+                  albums:
                     type: array
                     items:
                       $ref: '#/components/schemas/AlbumSimple'
-                  Artists:
+                  artists:
                     type: array
                     items:
                       $ref: '#/components/schemas/Artist'
@@ -4579,7 +4579,7 @@ components:
           type: array
           description: Information about the tracks of the Playlist
           items:
-            $ref: '#/components/schemas/PlaylistTrack'
+            $ref: '#/components/schemas/Track'
         image:
           type: string
           description: The image of the playlist
