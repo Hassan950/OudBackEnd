@@ -221,7 +221,7 @@ exports.checkFile = async id => {
  *
  * @function
  * @author Mohamed Abo-Bakr
- * @summary Get list of tracks of a specific artsit
+ * @summary Get list of tracks of a specific artist
  * @param {String} artistId - ID of the artist
  * @returns {Array} An array containing the tracks of the artist
  */
@@ -236,4 +236,43 @@ exports.findArtistTracks = async artistId => {
       select: '-tracks -genres -released -release_date',
       populate: { path: 'artists', select: 'displayName images' }
     });
+};
+
+/**
+ * A method that Checks if the tracksIds provided belong to the artist.
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Checks if the tracks belong to the artist
+ * @param {String} artistId - ID of the artist
+ * @param {Array<objectID>} tracksIds ID's of the tracks to check
+ * @returns true if they belong to him null if they don't belong to him or doesn't exist
+ */
+exports.artistTracksExist = async (artistId, tracksIds) => {
+  const tracks = await Track.find({ 'artists.0': artistId });
+  if (tracks.length === tracksIds.length) return true;
+  return null;
+};
+
+
+/**
+ * Get Track Audio Url
+ * 
+ * @function
+ * @public
+ * @async
+ * @param {String} trackId Track ID
+ * @returns {String} `audioUrl` Audio Url 
+ * @returns {null} `null` if track is not found or audioUrl is not found
+ * @summary Get Track Audio Url
+ * @author Abdelrahman Tarek
+ */
+exports.getTrackAudioUrl = async (trackId) => {
+  const track = await Track.findById(trackId).select('+audioUrl');
+
+  if (!track || !track.audioUrl) return null;
+
+  const audioUrl = track.audioUrl;
+
+  return audioUrl;
 };

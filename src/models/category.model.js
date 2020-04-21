@@ -20,6 +20,14 @@ const categorySchema = new mongoose.Schema({
 
 categorySchema.virtual('type').get(function () {
   return 'category';
+},
+{
+  toJSON: {
+    virtuals: true
+  },
+  toObject: {
+    virtuals: true
+  }
 });
 
 const Category = mongoose.model('Category', categorySchema);

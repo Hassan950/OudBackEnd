@@ -5,7 +5,7 @@ const moment = require('moment');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
-    imgs.push('uploads\\users\\default-Profile.jpg');
+    imgs.push('uploads\\users\\default-Profile.svg');
   }
   if (imgs.length == 1) {
     imgs.push('uploads\\users\\default-Cover.jpg');
@@ -67,11 +67,11 @@ const userSchema = mongoose.Schema(
       type: [
         {
           type: String,
-          match: /((^(uploads\\users\\)(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg)$)|(^.*-([a-f\d]{24})-[0-9]*\.(jpg|jpeg|png)))/
+          match: /((^(uploads(\\|\/)users(\\|\/))(default-){1,1}[a-zA-Z]+\.(jpg|png|jpeg|svg)$)|(^.*-([a-f\d]{24})-[0-9]*\.(jpg|jpeg|png)))/
         }
       ],
       default: [
-        'uploads\\users\\default-Profile.jpg',
+        'uploads\\users\\default-Profile.svg',
         'uploads\\users\\default-Cover.jpg'
       ],
       validate: {
@@ -200,5 +200,6 @@ userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
 };
 
 const User = mongoose.model('User', userSchema);
+
 
 module.exports = { User, userSchema };
