@@ -163,7 +163,7 @@ exports.update = async (artist, newData) => {
       newData.tracks
     );
 
-    if (!exist) return null;
+    if (exist instanceof AppError) return exist;
     artist.popularSongs = newData.tracks;
   }
   await Promise.all([
@@ -173,7 +173,7 @@ exports.update = async (artist, newData) => {
         path: 'popularSongs',
         populate: {
           path: 'album artists',
-          select: 'album_type artists image name displayName images',
+          select: 'album_type released artists image name displayName images',
           populate: { path: 'artists', select: 'displayName images' }
         }
       })

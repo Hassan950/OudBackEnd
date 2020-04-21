@@ -245,9 +245,24 @@ exports.checkFile = async id => {
  * @returns true if they belong to him null if they don't belong to him or doesn't exist
  */
 exports.artistTracksExist = async (artistId, tracksIds) => {
-  const tracks = await Track.find({ 'artists.0': artistId });
-  if (tracks.length === tracksIds.length) return true;
-  return null;
+  const tracks = await Track.find({
+    _id: tracksIds,
+    'artists.0': artistId
+  }).populate('album');
+
+  if (tracks.length !== tracksIds.length)
+    return new AppError(
+      "The track ID's given doesn't exist or doesn't belong to this artist",
+      400
+    );
+  for (let i = 0, n = tracks.length; i < n; i++) {
+    if (!tracks[i].album.released)
+      return new AppError(
+        `The track ${tracks[i]._id} is not released, please make sure the tracks are released before adding them to top tracks`,
+        400
+      );
+  }
+  return true;
 };
 
 /**

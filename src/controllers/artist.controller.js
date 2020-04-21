@@ -153,13 +153,7 @@ exports.relatedArtists = async (req, res, next) => {
 exports.updateArtist = async (req, res, next) => {
   const artist = await artistService.update(req.user, req.body);
 
-  if (!artist)
-    return next(
-      new AppError(
-        "The tracks given do not exist or doesn't belong to this artist",
-        400
-      )
-    );
+  if (artist instanceof AppError) return next(artist);
   res.status(200).json({
     artist: artist
   });

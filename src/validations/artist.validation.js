@@ -91,6 +91,7 @@ exports.updatePopularSongs = {
     tracks: Joi.array()
       .items(Joi.objectId())
       .min(1)
+      .max(10)
       .required()
   })
 };

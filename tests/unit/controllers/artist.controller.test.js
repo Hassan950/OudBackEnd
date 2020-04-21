@@ -13,9 +13,9 @@ let fs = require('fs').promises;
 let { emailService } = require('../../../src/services');
 
 trackIds = [
-  { _id: '5e6c8ebb8b40fc5508fe8b32' },
-  { _id: '5e6f6a7fac1d6d06f40706f2' },
-  { _id: '5e6c8ebb8b40fc5518fe8b32' }
+  { _id: '5e6c8ebb8b40fc5508fe8b32', album: { released: true } },
+  { _id: '5e6f6a7fac1d6d06f40706f2', album: { released: true } },
+  { _id: '5e6c8ebb8b40fc5518fe8b32', album: { released: true } }
 ];
 
 describe('Artists Controller', () => {
@@ -46,6 +46,7 @@ describe('Artists Controller', () => {
     next = jest.fn();
     Artist.schema.path('popularSongs', Object);
     Artist.schema.path('genres', Object);
+    Track.schema.path('album', Object);
   });
   describe('getArtist', () => {
     it('Should return the artist with status code 200', async () => {
