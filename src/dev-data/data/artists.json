@@ -156,8 +156,10 @@
     "passwordConfirm": "12341234",
     "country": "EG",
     "username": "madfagea",
-    "genres": ["5e962e04da7d8d40d02a9973"],
-    "bio":"I know it"
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "bio": "I know it"
   },
   {
     "_id": "5e907db0a0645f4571607606",
@@ -174,9 +176,13 @@
     "passwordConfirm": "12341234",
     "country": "GB",
     "username": "dlipa",
-    "genres": ["5e9083c24c798428f45b322c","5e9083c24c798428f45b322f","5e9083c24c798428f45b3232"],
-    "bio":"arrived in style in 2015 with her self-titled, chart topping debut album which eclipsed 4 million sales worldwide with single sales reaching over 40 million."
-    },
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "bio": "arrived in style in 2015 with her self-titled, chart topping debut album which eclipsed 4 million sales worldwide with single sales reaching over 40 million."
+  },
   {
     "_id": "5e907db0a0645f4581607605",
     "role": "artist",
@@ -200,8 +206,8 @@
     "_id": "5e907db0a0645f4581607606",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads/users/Eminem-5e907db0a0645f4581607606-1587357983886.jpeg",
+      "uploads/users/Eminem-5e907db0a0645f4581607606-1587357983891.jpeg"
     ],
     "verified": false,
     "queues": [],
@@ -259,8 +265,8 @@
     "_id": "5e907db0a0645f4581607608",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads/users/Adele-5e907db0a0645f4581607608-1587358108772.jpeg",
+      "uploads/users/Adele-5e907db0a0645f4581607608-1587358108790.jpeg"
     ],
     "verified": false,
     "queues": [],
@@ -278,6 +284,12 @@
     "bio": "Never mind, I'll find someone like you I wish nothing but the best for you too"
   },
   {
+    "_id": "5e9cbac42ec0720eecbb92a1",
+    "role": "artist",
+    "images": [
+      "uploads\\users\\default-Profile.svg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
     "verified": true,
     "queues": [],
     "displayName": "Hamza Namira",
@@ -356,8 +368,8 @@
     "_id": "5e907db0a0645f558160760b",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads/users/Ellie Goulding-5e907db0a0645f558160760b-1587358061854.jpeg",
+      "uploads/users/Ellie Goulding-5e907db0a0645f558160760b-1587358061889.jpeg"
     ],
     "verified": true,
     "queues": [],
@@ -382,8 +394,8 @@
     "_id": "5e907db0a0645f558160760c",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads/users/Travis Scott-5e907db0a0645f558160760c-1587358426961.jpeg",
+      "uploads/users/Travis Scott-5e907db0a0645f558160760c-1587358426964.jpeg"
     ],
     "verified": true,
     "queues": [],
@@ -402,8 +414,8 @@
     "_id": "5e907db0a0645f558160760d",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads/users/Marwan Moussa-5e907db0a0645f558160760d-1587358362017.jpeg",
+      "uploads/users/Marwan Moussa-5e907db0a0645f558160760d-1587358362018.jpeg"
     ],
     "verified": true,
     "queues": [],
@@ -423,8 +435,8 @@
     "_id": "5e907db0a0645f558160760e",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads/users/Abyusif-5e907db0a0645f558160760e-1587358319602.jpeg",
+      "uploads/users/Abyusif-5e907db0a0645f558160760e-1587358319605.jpeg"
     ],
     "verified": true,
     "queues": [],
@@ -444,7 +456,7 @@
     "_id": "5e907db0a0645f558160760f",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
+      "uploads/users/Abd El Basset Hamouda-5e907db0a0645f558160760f-1587358258426.jpeg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -464,8 +476,8 @@
     "_id": "5e907db0a0645f5581607610",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads/users/Sadat-5e907db0a0645f5581607610-1587358146898.jpeg",
+      "uploads/users/Sadat-5e907db0a0645f5581607610-1587358146901.jpeg"
     ],
     "verified": true,
     "queues": [],
@@ -640,5 +652,27 @@
       "5e962e04da7d8d80d03a997d"
     ],
     "bio": "Championed by fellow rapper Drake and The Fader magazine before he released his first full-length project.."
+  },
+  {
+    "_id": "5e9cedfe57e0fb2db8591034",
+    "role": "artist",
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "bio": "",
+    "popularSongs": [],
+    "images": [
+      "uploads\\users\\default-Profile.svg",
+      "uploads\\users\\default-Cover.jpg"
+    ],
+    "verified": true,
+    "queues": [],
+    "type": "Artist",
+    "displayName": "Omar Kamal",
+    "email": "o_kamal18@gmail.com",
+    "password": "12341234",
+    "passwordConfirm": "12341234",
+    "country": "EG",
+    "username": "kamal123123"
   }
 ]
