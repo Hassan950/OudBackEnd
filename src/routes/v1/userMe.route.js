@@ -13,6 +13,11 @@ const playlistRouter = require('./playlist.route');
 
 const router = express.Router();
 
+// /me/playlists router
+router.use('/playlists', playlistRouter);
+
+// /me/artist router
+router.use('/artists', artistRoute);
 
 // all routes need authentication
 router.use(catchAsync(authMiddleware.authenticate));
@@ -21,11 +26,7 @@ router.use(catchAsync(authMiddleware.authenticate));
 router.use('/player', playerRouter);
 router.use('/tracks', libraryRouter);
 router.use('/albums', libraryRouter);
-// /me/playlists router
-router.use('/playlists', playlistRouter);
 
-// /me/artist router
-router.use('/artists', artistRoute);
 
 // /me/queue
 router.use('/queue', queueRouter);
