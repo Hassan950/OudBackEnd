@@ -47,6 +47,12 @@ const playerSchema = mongoose.Schema({
     id: {
       type: mongoose.Types.ObjectId
     }
+  },
+  adsCounter: {
+    type: Number
+  },
+  actions: {
+    type: Object
   }
 }, {
   toJSON: {

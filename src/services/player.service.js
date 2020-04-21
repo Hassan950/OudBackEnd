@@ -131,6 +131,10 @@ const createPlayer = async (userId) => {
 const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
+  // handle ads counter
+  if (player.adsCounter !== undefined) {
+    player.adsCounter++;
+  }
   // play the track
   player.item = track;
   player.progressMs = 0;
@@ -311,6 +315,7 @@ const setPlayerToDefault = (player) => {
   player.repeatState = 'off';
   player.isPlaying = false;
   player.currentlyPlayingType = 'unknown';
+  player.actions = undefined;
 };
 
 module.exports = {
