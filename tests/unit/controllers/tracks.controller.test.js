@@ -254,4 +254,39 @@ describe('Tracks controller', () => {
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });
+
+  describe('Download Track', () => {
+    let req;
+    let res;
+    let next;
+    const trackService = require('../../../src/services/track.service');
+    beforeEach(() => {
+      req = requestMocks.mockRequest();
+      req.params = {};
+      req.params.id = '1';
+      res = requestMocks.mockResponse();
+      next = jest.fn();
+      res.download = jest.fn();
+    });
+
+    it('should call Get Track AudioUrl', async () => {
+      trackService.getTrackAudioUrl = jest.fn().mockResolvedValue('audio');
+      await tracksController.downloadTrack(req, res, next);
+      expect(trackService.getTrackAudioUrl).toBeCalled();
+      expect(trackService.getTrackAudioUrl).toBeCalledWith(req.params.id);
+    });
+
+    it('should return 404 if audioUrl is not found', async () => {
+      trackService.getTrackAudioUrl = jest.fn().mockResolvedValue(null);
+      await tracksController.downloadTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should download the track', async () => {
+      trackService.getTrackAudioUrl = jest.fn().mockResolvedValue('audio');
+      await tracksController.downloadTrack(req, res, next);
+      expect(res.download).toBeCalled();
+      expect(res.download).toBeCalledWith('audio');
+    });
+  });
 });

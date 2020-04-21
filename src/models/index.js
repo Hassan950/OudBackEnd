@@ -17,6 +17,7 @@ const {
   PlaylistFollowings
 } = require('./follow.model');
 const { Request, requestSchema } = require('./request.model');
+const { Coupon, couponSchema } = require('./coupon.model');
 
 module.exports = {
   User,
@@ -50,5 +51,7 @@ module.exports = {
   playlistSchema,
   Playlist,
   Request,
-  requestSchema
+  requestSchema,
+  Coupon,
+  couponSchema
 };

@@ -7,6 +7,7 @@ const catchAsync = require('../../utils/catchAsync');
 const playerRouter = require('./player.route');
 const queueRouter = require('./queue.route');
 const artistRoute = require('./artist.route');
+const premiumRouter = require('./premium.route');
 const playlistRouter = require('./playlist.route');
 
 const router = express.Router();
@@ -24,7 +25,8 @@ router.use('/artists', artistRoute);
 
 // /me/queue
 router.use('/queue', queueRouter);
-
+// /me
+router.use('/', premiumRouter);
 
 router
   .route('/updatePassword')

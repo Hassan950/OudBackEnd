@@ -232,3 +232,26 @@ exports.artistTracksExist = async (artistId, tracksIds) => {
   if (tracks.length === tracksIds.length) return true;
   return null;
 };
+
+
+/**
+ * Get Track Audio Url
+ * 
+ * @function
+ * @public
+ * @async
+ * @param {String} trackId Track ID
+ * @returns {String} `audioUrl` Audio Url 
+ * @returns {null} `null` if track is not found or audioUrl is not found
+ * @summary Get Track Audio Url
+ * @author Abdelrahman Tarek
+ */
+exports.getTrackAudioUrl = async (trackId) => {
+  const track = await Track.findById(trackId).select('+audioUrl');
+
+  if (!track || !track.audioUrl) return null;
+
+  const audioUrl = track.audioUrl;
+
+  return audioUrl;
+};
