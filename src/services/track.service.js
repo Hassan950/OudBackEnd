@@ -110,7 +110,8 @@ exports.findTrack = async (id, user) => {
 };
 
 /**
- * A method that gets a track by it's ID with its audioUrl it (helper used in other services)
+ * A method that gets a track by it's ID with its audioUrl it (helper used in other services
+ * as it returns a mongoose document not just a json object)
  *
  * @function
  * @author Mohamed Abo-Bakr
