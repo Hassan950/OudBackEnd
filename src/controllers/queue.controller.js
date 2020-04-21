@@ -85,6 +85,9 @@ exports.repeatQueue = async (req, res, next) => {
     return next(new AppError('Player is not found', 404));
   }
 
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot repeat while the ad is playing', 403));
+
   if (deviceId) {
     player = await playerService.addDeviceToPlayer(player, deviceId);
     if (!player)
@@ -200,6 +203,9 @@ exports.editPosition = async (req, res, next) => {
     return next(new AppError('Player is not found', 404));
   }
 
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot edit position while the ad is playing', 403));
+
   if (!queues || !queues.length) {
     return next(new AppError('Queue is not found', 404));
   }
@@ -297,6 +303,9 @@ exports.deleteTrack = async (req, res, next) => {
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
+
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot delete while the ad is playing', 403));
 
   if (!queues || !queues.length) {
     return next(new AppError('Queue is not found', 404));
@@ -422,6 +431,9 @@ exports.shuffleQueue = async (req, res, next) => {
     return next(new AppError('Player is not found', 404));
   }
 
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot shuffle while the ad is playing', 403));
+
   if (!queues || !queues.length) {
     return next(new AppError('Queue is not found', 404));
   }
@@ -503,7 +515,8 @@ exports.nextTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  queue = await queueService.goNext(queue, player, queues);
+  if (player.currentlyPlayingType !== 'ad')
+    queue = await queueService.goNext(queue, player, queues);
 
   await playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 
@@ -567,7 +580,8 @@ exports.previousTrack = async (req, res, next) => {
     return next(new AppError('Queue is not found', 404));
   }
 
-  queue = await queueService.goPrevious(queue, player, queues);
+  if (player.currentlyPlayingType !== 'ad')
+    queue = await queueService.goPrevious(queue, player, queues);
 
   await playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context); // add the next track to player item
 

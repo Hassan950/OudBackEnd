@@ -103,6 +103,9 @@ exports.pausePlayer = async (req, res, next) => {
     return next(new AppError('Player is not found', 404));
   }
 
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot pause while the ad is playing', 403));
+
   player.isPlaying = false;
 
   if (deviceId) {
@@ -151,6 +154,9 @@ exports.resumePlayer = async (req, res, next) => {
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
+
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot resume while the ad is playing', 403));
 
   let queue;
 
@@ -248,6 +254,9 @@ exports.seekPlayer = async (req, res, next) => {
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
+
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot seek while the ad is playing', 403));
 
   if (deviceId) {
     player = await playerService.addDeviceToPlayer(player, deviceId);
