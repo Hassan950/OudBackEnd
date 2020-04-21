@@ -196,6 +196,16 @@ describe('Optional Authenticate test', () => {
     expect(req.user).toBe(user);
   });
 
+  it('should change premium user back to free plan if the plan has expired', async () => {
+    user.plan = new Date().valueOf() - 10000;
+    user.role = 'premium'
+    await authMiddleware.authenticate(req, res, next);
+    expect(user.role).toBe('free');
+    expect(user.plan).toBeUndefined();
+    expect(req.user).toBeDefined();
+    expect(req.user).toBe(user);
+  });
+
   it('should call next if valid', async () => {
     await authMiddleware.optionalAuth(req, res, next);
     expect(next.mock.calls.length).toBe(1);
