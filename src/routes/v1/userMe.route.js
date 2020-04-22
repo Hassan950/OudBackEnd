@@ -32,6 +32,8 @@ router.use('/playlists', playlistRouter);
 // /me/queue
 router.use('/queue', queueRouter);
 
+// /me/premium
+router.use('/premium', premiumRouter);
 
 router
   .route('/updatePassword')
@@ -55,7 +57,5 @@ router
   .route('/profilePicture')
   .patch(userController.uploadImages, catchAsync(userController.updateImages));
 
-// /me
-router.use('/', premiumRouter);
 
 module.exports = router;

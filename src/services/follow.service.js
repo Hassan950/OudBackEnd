@@ -17,7 +17,7 @@ const _ = require('lodash');
  */
 
 exports.checkUser = async id => {
-  return await User.findById(id);
+  return await User.findById(id).select('id').lean();
 };
 
 /**
@@ -225,7 +225,7 @@ exports.unfollowUser = async (ids, type, user) => {
  */
 
 exports.followPlaylist = async (playlistId, publicity, user) => {
-  playlist = await Playlist.findById(playlistId).select('id');
+  const playlist = await Playlist.findById(playlistId).select('id').lean();
   if (!playlist) return null;
   await PlaylistFollowings.create({
     playlistId: playlistId,
@@ -247,7 +247,7 @@ exports.followPlaylist = async (playlistId, publicity, user) => {
  */
 
 exports.unfollowPlaylist = async (playlistId, user) => {
-  playlist = await Playlist.findById(playlistId).select('id');
+  const playlist = await Playlist.findById(playlistId).select('id').lean();
   if (!playlist) return null;
   await PlaylistFollowings.deleteOne({
     playlistId: playlistId,
