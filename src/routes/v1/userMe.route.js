@@ -1,9 +1,10 @@
 const express = require('express');
-const { authController, userController } = require('../../controllers');
+const { authController , userController } = require('../../controllers');
 const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
+
 const playerRouter = require('./player.route');
 const libraryRouter = require('./library.route');
 const queueRouter = require('./queue.route');
@@ -12,6 +13,7 @@ const premiumRouter = require('./premium.route');
 const playlistRouter = require('./playlist.route');
 
 const router = express.Router();
+
 
 // /me/artist router
 router.use('/artists', artistRoute);
