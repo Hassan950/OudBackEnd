@@ -31,8 +31,9 @@ router.use('/playlists', playlistRouter);
 
 // /me/queue
 router.use('/queue', queueRouter);
-// /me
-router.use('/', premiumRouter);
+
+// /me/premium
+router.use('/premium', premiumRouter);
 
 router
   .route('/updatePassword')
