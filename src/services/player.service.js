@@ -68,18 +68,18 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   let currentlyPlaying = await Player.findOne({ userId: userId })
     .populate({
       path: 'item',
-      select: '+audioUrl',
+      select: '+audioUrl -__v',
       populate: {
         path: 'artists album',
+        select: '-__v'
       }
     })
-    .select('item context')
-    .lean()
+    .lean({ virtuals: true })
     ;
 
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
-  if (currentlyPlaying) {
+  if (currentlyPlaying && currentlyPlaying.item) {
     if (ops && ops.link) {
       // Add host link
       let audio = currentlyPlaying.item.audioUrl.replace(/\\\\/g, "/"); // convert \\ to /
