@@ -161,7 +161,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
     const ad = await Ad.aggregate([
       { $sample: { size: 1 } }
     ]);
-    player.item = ad[0]._id;
+    player.item = ad.length ? ad[0]._id : null;
   } else {
     // play the track
     player.item = track;
@@ -169,6 +169,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
     player.isPlaying = true;
     player.currentlyPlayingType = 'track';
     player.onModel = 'Track';
+    player.actions = null;
     // add context to player
     if (context && context.type) {
       player.context = context;
