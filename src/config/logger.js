@@ -15,15 +15,17 @@ const transports = [
   })
 ];
 
-if (config.get('NODE_ENV') === 'production') {
-  transports.push(
-    new Loggly({
+if (config.get('NODE_ENV') === 'production' && config.get('LOGGY_TOKEN') && config.get('LOGGY_SUBDOMAIN')) {
+  try {
+    const loggly = new Loggly({
       token: config.get('LOGGY_TOKEN'),
       subdomain: config.get('LOGGY_SUBDOMAIN'),
       tags: ["Winston-NodeJS"],
       json: true
-    })
-  );
+    });
+
+    transports.push(loggly);
+  } catch (err) { }
 }
 
 const logger = winston.createLogger({
