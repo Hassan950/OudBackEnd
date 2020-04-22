@@ -8,6 +8,7 @@ const playerRouter = require('./player.route');
 const queueRouter = require('./queue.route');
 const artistRoute = require('./artist.route');
 const playlistRouter = require('./playlist.route');
+const searchRouter = require('./search.route');
 
 const router = express.Router();
 
@@ -18,7 +19,8 @@ router.use(catchAsync(authMiddleware.authenticate));
 router.use('/player', playerRouter);
 // /me/playlists router
 router.use('/playlists', playlistRouter);
-
+// /me/recentSearch
+router.use('/search',searchRouter);
 // /me/artist router
 router.use('/artists', artistRoute);
 

@@ -169,6 +169,7 @@ userSchema.post('save', async function (doc) {
   if (doc.newUser) {
     const { Player } = require('../models/player.model');
     const { Playlist } = require('../models/playlist.model');
+    const { Recent } = require('../models/recent.model'); 
     try {
       await Player.create({
         userId: doc._id
@@ -180,7 +181,11 @@ userSchema.post('save', async function (doc) {
       name: 'Liked Songs',
       owner: doc._id
     });
-
+    await Recent.create({
+      userId: doc._id,
+      items:[],
+      types:[]
+    });
     doc.newUser = undefined;
   }
 });

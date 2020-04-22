@@ -16,6 +16,7 @@ const {
   playlistFollowingsSchema,
   PlaylistFollowings
 } = require('./follow.model');
+const { Recent,recentSchema } = require('./recent.model');
 
 module.exports = {
   User,
@@ -47,5 +48,7 @@ module.exports = {
   playlistFollowingsSchema,
   PlaylistFollowings,
   playlistSchema,
-  Playlist
+  Playlist,
+  Recent,
+  recentSchema
 };

@@ -1,49 +1,42 @@
-const { Album, Playlist,Artist,User,Track } = require('../models');
+const { Album, Playlist, Artist, User, Track, Recent } = require('../models');
+const _ = require('lodash');
 const mongoose = require('mongoose');
 
 module.exports.search = async (query)=> {
-  const offset = query.offset ;
-  const limit = query.limit;
   let total = 0;
-  if(!(query.type))
-  {
-    let playlists = await getPLaylists(query.q,query.offset,query.limit,total);
-    let tracks = await getTracks(query.q,query.offset,query.limit,total);
-    let albums = await getAlbums(query.q,query.offset,query.limit,total);
-    let users = await getUsers(query.q,query.offset,query.limit,total);
-    let artists = await getArtists(query.q,query.offset,query.limit,total);
-    [playlists,tracks,albums,users,artists] = await Promise.all([playlists, tracks,albums,users,artists]);
-    return {  playlists , albums, tracks, users , artists };
+  switch(query.type){
+    case 'playlist':{
+      let playlists = await searchForPlaylists(query.q,query.offset,query.limit,total);
+      return playlists;
+    }
+    case 'track':{
+      let tracks = await searchForTracks(query.q,query.offset,query.limit,total);
+      return tracks ;
+    }
+    case 'album':{
+      let albums = await searchForAlbums(query.q,query.offset,query.limit,total);
+      return albums ;
+    }
+    case 'Artist':{
+      let artists = await searchForArtists(query.q,query.offset,query.limit,total);
+      return artists ;
+    }
+    case 'User':{
+      let users = await searchForUsers(query.q,query.offset,query.limit,total);
+      return users;
+    }
+    default:{
+      let playlists = await searchForPlaylists(query.q,query.offset,query.limit,total);
+      let tracks = await searchForTracks(query.q,query.offset,query.limit,total);
+      let albums = await searchForAlbums(query.q,query.offset,query.limit,total);
+      let users = await searchForUsers(query.q,query.offset,query.limit,total);
+      let artists = await searchForArtists(query.q,query.offset,query.limit,total);
+      [playlists,tracks,albums,users,artists] = await Promise.all([playlists, tracks,albums,users,artists]);
+      return {  playlists , albums, tracks, users , artists };
+    }
   }
-  else if ((query.type)=='playlist')
-  {
-    let playlists = await getPLaylists(query.q,query.offset,query.limit,total);
-    return playlists;
-  }
-  else if ((query.type)=='track')
-  {
-    let tracks = await getTracks(query.q,query.offset,query.limit,total);
-    return tracks ;
-  }
-  else if ((query.type)=='album')
-  {
-    let albums = await getAlbums(query.q,query.offset,query.limit,total);
-    return albums ;
-  }
-  else if ((query.type)=='Artist')
-  {
-    let artists = await getArtists(query.q,query.offset,query.limit,total);
-    return artists ;
-  }
-  else if ((query.type)=='User')
-  {
-    let users = await getUsers(query.q,query.offset,query.limit,total);
-    return users;
-  }
-
 };
-
-const getPLaylists = async(q,offset,limit,total)=>{
+const searchForPlaylists = async(q,offset,limit,total)=>{
   let playlists = await Playlist.find({ name: { $regex:  q , $options: 'i'}})
   .skip(offset)
   .limit(limit)
@@ -64,7 +57,7 @@ const getPLaylists = async(q,offset,limit,total)=>{
   return {  playlists ,offset,limit, total };
 }
 
-const getTracks = async(q,offset,limit,total)=>{
+const searchForTracks = async(q,offset,limit,total)=>{
   let tracks = await Track.find({ name: { $regex:  q , $options: 'i'}})
   .skip(offset)
   .limit(limit)
@@ -83,7 +76,7 @@ const getTracks = async(q,offset,limit,total)=>{
   return { tracks,offset,limit, total };
 }
 
-const getAlbums = async(q,offset,limit,total)=>{
+const searchForAlbums = async(q,offset,limit,total)=>{
   let albums = await Album.find({ name: { $regex:  q , $options: 'i'}})
   .select('-tracks -genres -released -release_date')
   .skip(offset)
@@ -98,7 +91,7 @@ const getAlbums = async(q,offset,limit,total)=>{
   return {  albums,offset,limit,total };
 }
 
-const getArtists = async(q,offset,limit,total)=>{
+const searchForArtists = async(q,offset,limit,total)=>{
   let artists = await Artist.find({ displayName: { $regex:  q , $options: 'i'}})
   .skip(offset)
   .limit(limit)
@@ -123,7 +116,7 @@ const getArtists = async(q,offset,limit,total)=>{
   return {  artists,offset,limit,total };
 }
 
-const getUsers = async(q,offset,limit,total)=>{
+const searchForUsers = async(q,offset,limit,total)=>{
   let users = await User.find({ displayName: { $regex:  q , $options: 'i'}})
   .select('displayName images verified lastLogin type')
   .skip(offset)
@@ -132,4 +125,129 @@ const getUsers = async(q,offset,limit,total)=>{
   total = await User.countDocuments({ displayName: { $regex:  q , $options: 'i'}}).exec();
   [users,total] = await Promise.all([users,total]);
   return {  users,offset,limit,total };;
+}
+
+module.exports.addToRecent = async(user,body)=>{
+  await Recent.find({userId: user.id})
+  .updateOne({
+      $push: {
+        items: {
+          $each: [body.id],
+          $position: 0
+        },
+        types: {
+          $each: [body.type],
+          $position: 0
+        }
+      }
+    }
+  );
+}
+
+module.exports.getRecent = async (user,query)=>{
+  let recent = await Recent.findOne({userId: user.id});
+  let i =0 ;
+  let items = _.slice(recent.items,query.offset, query.offset+ query.limit);
+  let types = _.slice(recent.types,query.offset, query.offset+ query.limit);
+  items =await Promise.all( _.map(items , async(itemInRecent)=>
+  {
+    switch(types[i]){
+      case 'playlist':{
+        i++;
+        const item = await getPlaylist(itemInRecent);
+        return item;
+      }
+      case 'track':{
+        i++;
+        const item = await getTrack(itemInRecent);
+        return item;
+      }
+      case 'album':{
+        const item = await getAlbum(itemInRecent);
+        return item;
+      }
+      case 'Artist':{
+        const item = await getArtist(itemInRecent);
+        return item;
+      }
+      case 'User':{
+        const item = await getUser(itemInRecent);
+        return item;
+      }
+    }
+  }))
+  const offset = query.offset;
+  const limit  = query.limit;
+  let total = await Recent.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(recent._id) } },
+    { $project: { count: { $size: '$items' } } }]);
+  total = total[0].count;  
+  return { items , offset , limit , total };
+}
+
+const getPlaylist = async(id)=>{
+  let playlist = await Playlist.findById(id)
+  .populate({
+    path:'tracks',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images name',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    }
+  })
+  return playlist ;
+}
+
+const getTrack = async(id)=>{
+  let track = await Track.findById(id)
+  .populate(
+    {
+      path: 'artists album',
+      select: '-tracks -genres -released -release_date',
+      select:'displayName images type name',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    })
+  return track ;
+}
+const getAlbum = async(id)=>{
+  let album = await Album.findById(id)
+  .select('-tracks -genres -released -release_date')
+  .populate({
+    path:'artists',
+    select: 'displayName type images _id',
+  })
+  return album;
+}
+
+const getArtist = async(id)=>{
+  let artist = await Artist.findById(id)
+  .populate(
+    {
+      path: 'genres popularSongs',
+      select: ' name artists image album ',
+      populate:{
+        path: ' artists album',
+        select: '-tracks -genres -released -release_date',
+        select:'displayName images type name',
+        populate: {
+          path:'artists',
+          select:'type displayName images'
+        }
+      }
+    }
+  )
+  return artist ;
+}
+
+const getUser = async(id)=>{
+  let user = await User.findById(id)
+  .select('displayName images verified lastLogin type')
+  return user;
 }
