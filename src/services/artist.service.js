@@ -2,6 +2,7 @@ const { Artist, User, Track, Request } = require('../models');
 const _ = require('lodash');
 const { trackService, emailService } = require('../services');
 const logger = require('../config/logger');
+const AppError = require('../utils/AppError');
 
 /**
  * A method that gets an artist by it's ID
@@ -15,10 +16,14 @@ const logger = require('../config/logger');
  */
 exports.findArtist = async id => {
   const artist = await User.findById(id)
-    .select('displayName images genres bio popularSongs type')
+    .select('displayName images genres bio popularSongs')
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .populate('genres');
 
@@ -35,10 +40,14 @@ exports.findArtist = async id => {
  */
 exports.findArtists = async ids => {
   const result = await User.find({ _id: ids })
-    .select('displayName images genres bio popularSongs type')
+    .select('displayName images genres bio popularSongs')
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .populate('genres');
   const artists = ids.map(id => {
@@ -60,19 +69,16 @@ exports.getPopularSongs = async artistId => {
   const artist = await User.findById(artistId)
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type released artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .select('popularSongs');
 
   if (!artist) return null;
-  if (artist.popularSongs.length === 0) {
-    artist.popularSongs = await Track.find({ 'artists.0': artistId })
-      .sort({
-        views: -1
-      })
-      .populate({ path: 'album', select: '-tracks -genres' })
-      .limit(10);
-  }
+  
   return artist.popularSongs;
 };
 
@@ -93,11 +99,15 @@ exports.relatedArtists = async artistId => {
   const artists = await User.find({
     genres: { $in: artist.genres }
   })
-    .select('displayName images genres bio popularSongs type')
     .limit(20)
+    .select('displayName images genres bio popularSongs')
     .populate({
       path: 'popularSongs',
-      populate: { path: 'album', select: '-tracks' }
+      populate: {
+        path: 'album artists',
+        select: 'album_type released artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
     })
     .populate('genres');
   return artists;
@@ -113,9 +123,18 @@ exports.relatedArtists = async artistId => {
  * @returns true if they exist
  * @returns false if they don't exist
  */
-exports.artistsExist = async artistIds => {
+exports.artistsExist = async (artistIds, artistId) => {
   const artists = await Artist.find({ _id: artistIds });
-  if (artistIds.length !== artists.length) return false;
+  if (artistIds.length !== artists.length)
+    return new AppError(
+      "The artist ID's given are invalid or doesn't exist",
+      400
+    );
+  if (String(artistIds[0]) !== String(artistId))
+    return new AppError(
+      'The main album artist should be the first in the list',
+      400
+    );
   return true;
 };
 
@@ -132,20 +151,24 @@ exports.artistsExist = async artistIds => {
 exports.update = async (artist, newData) => {
   if (newData.bio) artist.bio = newData.bio;
   if (newData.tracks) {
-    const exist = await trackService.artistTracksExist(
+    const newList = await trackService.artistTracksExist(
       artist._id,
       newData.tracks
     );
 
-    if (!exist) return null;
-    artist.popularSongs = newData.tracks;
+    if (newList instanceof AppError) return newList;
+    artist.popularSongs = newList;
   }
   await Promise.all([
     artist.save(),
     artist
       .populate({
         path: 'popularSongs',
-        populate: { path: 'album', select: '-tracks' }
+        populate: {
+          path: 'album artists',
+          select: 'album_type released artists image name displayName images',
+          populate: { path: 'artists', select: 'displayName images' }
+        }
       })
       .populate('genres')
       .execPopulate()
@@ -223,7 +246,7 @@ exports.setAttachment = async (request, path) => {
  * @param {object} request The request
  * @returns created artist
  */
-exports.acceptRequest = async request => {
+exports.acceptRequest = async (request, host) => {
   const artist = await Artist.create({
     displayName: request.displayName,
     username: request.name,
@@ -240,13 +263,14 @@ exports.acceptRequest = async request => {
     `you can now log in to Oud website with: <br> email: ${artist.email} <br> password: <code style="background-color: #f1f1f1; padding-left: 4px; padding-right: 4px;">12341234</code> <br> ` +
     `You can then change your password and let the world hear you.`;
 
+  const loginURL = `${host}/login`;
   emailService
     .sendEmail({
       email: request.email,
       subject: 'Your request to be an artist',
       message,
       button: 'Home',
-      link: 'https://oud-zerobase.me/login'
+      link: loginURL
     })
     .then()
     .catch(error => {
@@ -262,9 +286,10 @@ exports.acceptRequest = async request => {
  * @summary Handles refused requests
  * @param {object} request The request
  */
-exports.refuseRequest = async request => {
+exports.refuseRequest = async (request, host) => {
   await this.deleteRequest(request._id);
   const message = `We are sorry to inform you that your request has been refused as your data doesn't match our specifications for an artist`;
+  const loginURL = `${host}/login`;
 
   emailService
     .sendEmail({
@@ -272,7 +297,7 @@ exports.refuseRequest = async request => {
       subject: 'Your request to be an artist',
       message,
       button: 'Home',
-      link: 'https://oud-zerobase.me/login'
+      link: loginURL
     })
     .then()
     .catch(error => {
