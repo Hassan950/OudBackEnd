@@ -215,7 +215,7 @@ describe('library service', () => {
     });
   })
   describe('addToRecent - test', () => {
-    it('should return array of recent searched items ', async () => {
+    it('should pass and add to recent ', async () => {
       user = {
         id:'5e909be7cfe5b521a0ccf3ee'
       }
@@ -228,7 +228,7 @@ describe('library service', () => {
     });
   })
   describe('getRecent - test', () => {
-    it('should return array of users ', async () => {
+    it('should return array of recently searched items ', async () => {
       recent.items.push('5e909be7cfe5b521a0ccf3ee');
       recent.types.push('track');
       recent.items.push('5e909be7cfe5b521a0ccf3bb');
