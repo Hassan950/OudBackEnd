@@ -132,7 +132,7 @@ paths:
                     description: total number of documents available in the database
         '400':
           $ref: '#/components/responses/InvalidId'        
-  /me/redeem:
+  /me/premium/redeem:
     patch:
       tags:
         - Premium
@@ -165,7 +165,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  /me/subscribe:
+  /me/premium/subscribe:
     patch:
       tags:
         - Premium
