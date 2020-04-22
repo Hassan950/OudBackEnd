@@ -1920,7 +1920,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-  /me/recentSearch:
+  /me/search/recent:
     put:
       tags:
         - Search
