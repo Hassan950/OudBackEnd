@@ -16,7 +16,8 @@
       "5e909be7cfe5b521a0ccf3ae",
       "5e909be7cfe5b521a0ccf3af"
     ],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e2-5e907dafa0645f4571607602-1587377068366.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e2-5e907dafa0645f4571607602-1587377068366.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e3",
@@ -34,7 +35,8 @@
       "5e909be7cfe5b521a0ccf3cd",
       "5e909be7cfe5b521a0ccf3ce"
     ],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e3-5e907dafa0645f4571607600-1587378003829.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e3-5e907dafa0645f4571607600-1587378003829.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e4",
@@ -52,7 +54,8 @@
       "5e909be7cfe5b521a0ccf3bd",
       "5e909be7cfe5b521a0ccf3be"
     ],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e4-5e907dafa0645f45716075ff-1587378518893.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e4-5e907dafa0645f45716075ff-1587378518893.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e5",
@@ -66,7 +69,8 @@
       "5e909be7cfe5b521a0ccf331",
       "5e909be7cfe5b521a0ccf332"
     ],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e5-5e907dafa0645f4571607601-1587380065168.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e5-5e907dafa0645f4571607601-1587380065168.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e6",
@@ -80,7 +84,8 @@
     "name": "Mesh Baqy Menny (Maharagan)",
     "release_date": "20-05-2009",
     "tracks": ["5e909be7cfe5b521a0ccf3f0"],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e6-5e907dafa0645f4571607603-1587380753866.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e6-5e907dafa0645f4571607603-1587380753866.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf4e6",
@@ -94,7 +99,8 @@
     "name": "Sa'alt Nafsy Keteer",
     "release_date": "23-08-2013",
     "tracks": ["5e909be7cfe5b521a0ccf4f0"],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e6-5e907dafa0645f4571607603-1587381180342.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e6-5e907dafa0645f4571607603-1587381180342.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf4e1",
@@ -108,7 +114,8 @@
     "name": "مسحراتي",
     "release_date": "06-05-2019",
     "tracks": ["5e909be7cfe5b521a0ccf4f1"],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e1-5e907dafa0645f4571607603-1587381220389.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e1-5e907dafa0645f4571607603-1587381220389.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf6e7",
@@ -122,7 +129,8 @@
     "name": "Ya Ahl El Arab W El Tarab",
     "release_date": "14-04-2012",
     "tracks": ["5e909be7cfe5b521a0ccf3f1", "5e909be7cfe5b521a0cdf3f1"],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf6e7-5e907db0a0645f4571607604-1587382636021.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf6e7-5e907db0a0645f4571607604-1587382636021.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e7",
@@ -136,7 +144,8 @@
     "name": "ازاي",
     "release_date": "06-02-2011",
     "tracks": ["5e909be7cfe5b521a0ccf6f1"],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e7-5e907db0a0645f4571607604-1587382696628.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e7-5e907db0a0645f4571607604-1587382696628.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e8",
@@ -146,7 +155,8 @@
     "name": "كفا حبيبي بكفا",
     "release_date": "05-11-2013",
     "tracks": ["5e909be7cfe5b521a0ccf3f2"],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e8-5e907db0a0645f4571607605-1587385278324.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e8-5e907db0a0645f4571607605-1587385278324.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccd3e8",
@@ -156,7 +166,8 @@
     "name": "مولد المدفعجية",
     "release_date": "09-01-2013",
     "tracks": ["5e909be7cfe5b521a0ccd3f2"],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccd3e8-5e907db0a0645f4571607605-1587385314197.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccd3e8-5e907db0a0645f4571607605-1587385314197.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0cce3e8",
@@ -166,7 +177,8 @@
     "name": "الناس",
     "release_date": "09-06-2013",
     "tracks": ["5e909be7cfe5b521a0cdf3f2"],
-    "image": "uploads/albums/5e909be7cfe5b521a0cce3e8-5e907db0a0645f4571607605-1587385338271.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0cce3e8-5e907db0a0645f4571607605-1587385338271.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e9",
@@ -184,6 +196,7 @@
       "5e909be7cfe5b521a0cdf3f3",
       "5e909be7cfe5b521a0cef3f3"
     ],
-    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e9-5e907db0a0645f4571607606-1587386142605.jpeg"
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e9-5e907db0a0645f4571607606-1587386142605.jpeg",
+    "released": true
   }
 ]
