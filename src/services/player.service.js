@@ -22,17 +22,14 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
 
   if (ops && ops.populate) {
     player = await Player.findOne({ userId: userId })
-      .select('-__v ')
       .populate({
         path: 'item',
-        select: '+audioUrl -__v',
+        select: '+audioUrl',
         populate: {
           path: 'artists album',
-          select: '-__v'
         }
       })
       .populate('device')
-      .lean({ virtuals: true })
       ;
 
     if (player && player.item) {
