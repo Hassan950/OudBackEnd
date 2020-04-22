@@ -4928,6 +4928,65 @@ components:
           default: unknwon
         id:
           type: string
+    SmallArtist:
+      type: object
+      description: Small artist
+      properties:
+        _id:
+          type: string
+        displayName:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+          
+    SmallAlbum:
+      type: object
+      description: Small album
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        image:
+          type: string
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/SmallArtist'
+            
+          
+    SmallPlaylist:
+      type: object
+      description: Small artist
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        image:
+          type: string
+      
+    PlayHistoryContext:
+      type: object
+      description: Context Object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          enum:
+            - Album
+            - Artist
+            - Playlist
+        item:
+          oneOf:
+            - $ref: '#/components/schemas/SmallArtist'
+            - $ref: '#/components/schemas/SmallPlaylist'
+            - $ref: '#/components/schemas/SmallAlbum'
+        
     CurrentlyPlayingContext:
       type: object
       description: Current Playing Context
@@ -5017,7 +5076,7 @@ components:
                 format: date-time
               context:
                 description: The context the track was played from.
-                $ref: '#/components/schemas/Context'
+                $ref: '#/components/schemas/PlayHistoryContext'
         limit:
           description: >-
             The maximum number of items in the response (as set in the query or
