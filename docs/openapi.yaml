@@ -423,6 +423,22 @@ paths:
                       $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
+  /artists/random:
+    get:
+      tags:
+        - Artists
+      summary: Get some Artists
+      description: Get information for some artists without specifing anything about them.
+      responses:
+        '200':
+          description: >-
+            the response body contains an array of artist objects in JSON format. 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artist'
   /me/following/contains:
     get:
       tags:
