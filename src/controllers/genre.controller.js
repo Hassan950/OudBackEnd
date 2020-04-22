@@ -54,12 +54,8 @@ exports.getGenres = async (req, res, next) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
- * @throws AppError 404 Not found if the genre doesn't exist
  */
 exports.getGenreArtists = async (req, res, next) => {
   const artists = await genreService.findGenreArtists(req.params.id);
-  if (!artists)
-    return next(new AppError('The requested resource was not found', 404));
-
   res.status(200).json(artists);
 };
