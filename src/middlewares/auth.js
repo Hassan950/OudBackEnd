@@ -3,10 +3,11 @@ const config = require('config');
 const AppError = require('../utils/AppError');
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 /**
  * Authentication middleware
- * 
+ *
  * @version 1.0.0
  * @throws AppError 401 if no/wrong token passed
  * @author Abdelrahman Tarek
@@ -44,6 +45,14 @@ exports.authenticate = async (req, res, next) => {
         401
       )
     );
+
+  // checking if the monthly premium subscription has ended
+  if (user.role === 'premium' && moment().isAfter(user.plan)) {
+    user.role = 'free';
+    user.plan = undefined;
+    await user.save();
+  }
+  
   // check if user changed password
   if (user.changedPasswordAfter(payload.iat)) {
     return next(

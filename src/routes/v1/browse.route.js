@@ -15,10 +15,10 @@ router
   );
 router
   .route('/categories/:id')
-  .get(catchAsync(authMiddleware.authenticate),validate(browseValidation.getCategory), catchAsync(browseController.getCategory));
+  .get(validate(browseValidation.getCategory), catchAsync(browseController.getCategory));
 router
   .route('/categories/:id/playlists')
-  .get(catchAsync(authMiddleware.authenticate),validate(browseValidation.categoryPlaylist),  catchAsync(browseController.categoryPlaylists));
+  .get(validate(browseValidation.categoryPlaylist),  catchAsync(browseController.categoryPlaylists));
 router
   .route('/new-releases')
   .get(

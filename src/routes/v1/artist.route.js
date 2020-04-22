@@ -4,6 +4,7 @@ const catchAsync = require('../../utils/catchAsync');
 const { artistController } = require('../../controllers');
 const validate = require('../../middlewares/validate');
 const { artistValidation } = require('../../validations');
+const authMiddleware = require('../../middlewares/auth');
 
 const router = express.Router();
 
@@ -43,4 +44,45 @@ router
     validate(artistValidation.oneArtist),
     catchAsync(artistController.relatedArtists)
   );
+
+router
+  .route('/bio')
+  .patch(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(artistValidation.updateBio),
+    catchAsync(artistController.updateArtist)
+  );
+
+router
+  .route('/top-tracks')
+  .patch(
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('artist'),
+    validate(artistValidation.updatePopularSongs),
+    catchAsync(artistController.updateArtist)
+  );
+
+router
+  .route('/requests')
+  .post(
+    validate(artistValidation.artistRequest),
+    catchAsync(artistController.artistRequest)
+  );
+
+router
+  .route('/requests/:id/attachments')
+  .post(
+    validate(artistValidation.oneArtist),
+    artistController.uploadImage,
+    catchAsync(artistController.setAttach)
+  );
+
+router
+  .route('/requests/:id/handle')
+  .post(
+    validate(artistValidation.requestHandle),
+    catchAsync(artistController.handleRequest)
+  );
+
 module.exports = router;

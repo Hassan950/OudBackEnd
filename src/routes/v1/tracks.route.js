@@ -33,6 +33,15 @@ router
   );
 
 router
+  .route('/:id/download')
+  .get(
+    validate(trackValidation.oneTrack),
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('premium', 'artist'),
+    catchAsync(tracksController.downloadTrack)
+  )
+
+router
   .route('/')
   .get(
     validate(trackValidation.getSeveral),

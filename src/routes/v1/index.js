@@ -15,7 +15,7 @@ const searchRoute = require('./search.route');
 const router = express.Router();
 
 router.use('/', homeRoute);
-router.use('/users', userRoute);;
+router.use('/users', userRoute);
 router.use('/browse',browseRoute);
 router.use('/search',searchRoute);
 router.use('/me', userMeRoute)

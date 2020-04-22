@@ -1,4 +1,5 @@
 exports.authValidation = require('./auth.validation');
+exports.libraryValidation = require('./library.validation');
 exports.playlistValidation = require('./playlist.validations');
 exports.browseValidation = require('./browse.validation');
 exports.trackValidation = require('./track.validation');
@@ -11,4 +12,5 @@ exports.playerValidation = require('./player.validation');
 exports.queueValidation = require('./queue.validation');
 exports.followValidation = require('./follow.validation');
 exports.searchValidation = require('./search.validation');
+exports.premiumValidation = require('./premium.validation');
 

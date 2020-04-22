@@ -35,7 +35,8 @@ describe('Authenticate test', () => {
         'uploads\\users\\default-Profile.jpg',
         'uploads\\users\\default-Cover.jpg'
       ],
-      _id: mongoose.Types.ObjectId()
+      _id: mongoose.Types.ObjectId(),
+      type: 'User'
     });
     changeTime = 0;
     user.changedPasswordAfter = jest.fn((time) => {
@@ -90,6 +91,16 @@ describe('Authenticate test', () => {
 
   it('should add user to req.user if valid', async () => {
     await authMiddleware.authenticate(req, res, next);
+    expect(req.user).toBeDefined();
+    expect(req.user).toBe(user);
+  });
+
+  it('should change premium user back to free plan if the plan has expired', async () => {
+    user.plan = new Date().valueOf() - 10000;
+    user.role = 'premium'
+    await authMiddleware.authenticate(req, res, next);
+    expect(user.role).toBe('free');
+    expect(user.plan).toBeUndefined();
     expect(req.user).toBeDefined();
     expect(req.user).toBe(user);
   });

@@ -3,6 +3,7 @@ exports.userService = require('./user.service');
 exports.browseService = require('./browse.service');
 exports.trackService = require('./track.service');
 exports.emailService = require('./mail.service');
+exports.libraryService = require('./library.service');
 exports.playlistService = require('./playlist.service');
 exports.deviceService = require('./device.service');
 exports.playerService = require('./player.service');
@@ -14,3 +15,4 @@ exports.artistService = require('./artist.service');
 exports.genreService = require('.//genre.service');
 exports.searchService = require('./search.service');
 
+exports.premiumService = require('./premium.service');

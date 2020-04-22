@@ -44,7 +44,6 @@ const upload = multer({
  */
 exports.uploadImages = upload.array('images');
 
-
 /**
  * A middleware that gets the profile of the user
  *
@@ -59,7 +58,12 @@ exports.uploadImages = upload.array('images');
 
 exports.getProfile = async (req, res, next) => {
   if (!req.user) {
-    return next(new AppError('Please Authenticate first', httpStatus.INTERNAL_SERVER_ERROR));
+    return next(
+      new AppError(
+        'Please Authenticate first',
+        httpStatus.INTERNAL_SERVER_ERROR
+      )
+    );
   }
   res.status(httpStatus.OK).send(req.user);
 };
@@ -83,7 +87,6 @@ exports.getUser = async (req, res, next) => {
   res.status(httpStatus.OK).send(user);
 };
 
-
 /**
  * A middleware that edits the user's profile
  *
@@ -102,15 +105,16 @@ exports.editProfile = async (req, res, next) => {
     req.body.passwordConfirm
   );
   if (!user) {
-    return next(new AppError(
-      "The password you entered doesn't match your password. Please try again.",
-      httpStatus.BAD_REQUEST
-    ));
+    return next(
+      new AppError(
+        "The password you entered doesn't match your password. Please try again.",
+        httpStatus.BAD_REQUEST
+      )
+    );
   }
   const profile = await userService.editProfile(req.user, req.body);
   res.status(httpStatus.OK).send(profile);
 };
-
 
 /**
  * A middleware that is called after multer has put images on the server side.
@@ -124,6 +128,8 @@ exports.editProfile = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 exports.updateImages = async (req, res, next) => {
+  if (!req.files)
+    return next(new AppError('Please upload a file!', httpStatus.BAD_REQUEST));
   const user = await userService.updateImages(
     req.user,
     req.files.map(file => file.path)

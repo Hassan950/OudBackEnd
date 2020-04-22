@@ -1,8 +1,5 @@
 const { Player } = require('../models/player.model');
 const { Track } = require('../models/track.model');
-const queueService = require('./queue.service');
-const trackService = require('./track.service');
-const deviceService = require('./device.service');
 
 /**
  * Get `player` with the given `userId`
@@ -37,7 +34,8 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
     if (player && player.item) {
       if (ops.link) {
         // Add host link
-        const audio = player.item.audioUrl.split('/');
+        let audio = player.item.audioUrl.replace(/\\\\/g, "/"); // convert \\ to /
+        audio = audio.split('/');
         player.item.audioUrl = ops.link + audio[audio.length - 1];
       } else
         player.item.audioUrl = undefined;
@@ -83,7 +81,8 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   if (currentlyPlaying) {
     if (ops && ops.link) {
       // Add host link
-      const audio = currentlyPlaying.item.audioUrl.split('/');
+      let audio = currentlyPlaying.item.audioUrl.replace(/\\\\/g, "/"); // convert \\ to /
+      audio = audio.split('/');
       currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
     } else
       currentlyPlaying.item.audioUrl = undefined;
@@ -165,9 +164,12 @@ const addTrackToPlayer = (player, track, context = { type: undefined, id: undefi
  * @returns {Document} player
  */
 const startPlayingFromOffset = async (player, queue, offset, queues) => {
+  const queueService = require('./queue.service');
   if (!queue) {
     queue = await queueService.getQueueById(queues[0], { selectDetails: true });
   }
+
+  if (!queue) return player;
 
   if (offset.position !== undefined) {
     // shuffle mode
@@ -231,23 +233,24 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
  * @returns {Document} player
  */
 const changePlayerProgress = async (player, progressMs, queues, track = null) => {
+  const queueService = require('./queue.service');
   player.progressMs = progressMs;
 
   if (!track)
-    track = await trackService.findTrack(player.item);
+    track = await Track.findById(player.item);
 
   // if position >= track duration go to next
   if (track && progressMs >= track.duration) {
     if (player.repeatState !== 'track') {
       let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
-      if (!queue || !queue.tracks) {
+      if (!queue || !queue.tracks || !queue.tracks.length) {
         return null;
       }
       // go next
       queueService.goNext(queue, player, queues);
       // add next track to player
-      playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
+      addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
       queue.save(); // save the queue
     } else player.progressMs = 0;
   }
@@ -273,6 +276,7 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
  * @returns {Null} if not found a device with deviceId
  */
 const addDeviceToPlayer = async (player, deviceId) => {
+  const deviceService = require('./device.service');
   const device = await deviceService.getDevice(deviceId);
   if (!device) {
     return null;
