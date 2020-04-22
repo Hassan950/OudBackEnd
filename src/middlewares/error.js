@@ -11,6 +11,7 @@ const errorConverter = (err, req, res, next) => {
   }
 
   if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+  if (error.code === 'ENOENT') error = handleFileDoesNotExistError(error);
   if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
   if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
   if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(error);
@@ -23,6 +24,10 @@ const errorConverter = (err, req, res, next) => {
     error = new AppError(message, statusCode, false, err.stack);
   }
   next(error);
+};
+
+const handleFileDoesNotExistError = err => {
+  return new AppError('File Does Not exist', 404);
 };
 
 const handleOAuthError = err => {
