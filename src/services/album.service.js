@@ -1,7 +1,8 @@
 const { Album } = require('../models/album.model');
 const mongoose = require('mongoose');
 const fs = require('fs').promises;
-const logger = require('../config/logger');
+const AppError = require('../utils/AppError');
+const _ = require('lodash');
 
 /**
  * A method that gets an album by it's ID
@@ -10,10 +11,11 @@ const logger = require('../config/logger');
  * @author Mohamed Abo-Bakr
  * @summary gets an album
  * @param {String} id ID of the album to be retrieved
+ * @param {object} user the user object if authenticated
  * @returns album if the album was found
  * @returns null if the album was not found
  */
-exports.findAlbum = async id => {
+exports.findAlbum = async (id, user) => {
   let album = Album.findById(id)
     .lean({ virtuals: true })
     .populate('artists', 'displayName images')
@@ -23,7 +25,8 @@ exports.findAlbum = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -32,13 +35,22 @@ exports.findAlbum = async id => {
 
   [album, lengthObj] = await Promise.all([album, lengthObj]);
   if (album) {
+    if (
+      !album.released &&
+      (!user || String(user._id) !== String(album.artists[0]._id))
+    )
+      return new AppError(
+        "You don't have the permission to perform this action",
+        403
+      );
+
     album.tracks = {
       limit: 50,
       offset: 0,
       total: lengthObj[0].tracks,
       items: album.tracks
     };
-  }
+  } else return new AppError('The request resource is not found', 404);
   return album;
 };
 
@@ -61,7 +73,8 @@ exports.findAlbumUtil = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
   return album;
 };
 
@@ -72,9 +85,10 @@ exports.findAlbumUtil = async id => {
  * @author Mohamed Abo-Bakr
  * @summary Get list of albums
  * @param {Array<String>} ids - List of ID's of albums to be retrieved
+ * @param {object} user the user object if authenticated
  * @returns {Array} An array containing the albums with nulls against unmatched ID's
  */
-exports.findAlbums = async ids => {
+exports.findAlbums = async (ids, user) => {
   let result = Album.find({ _id: ids })
     .lean({ virtuals: true })
     .populate('artists', 'displayName images')
@@ -84,7 +98,8 @@ exports.findAlbums = async ids => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthArray = Album.aggregate([
     { $match: { _id: { $in: ids.map(id => mongoose.Types.ObjectId(id)) } } },
@@ -95,6 +110,12 @@ exports.findAlbums = async ids => {
   const albums = ids.map(id => {
     let val = result.find(album => String(album._id) == id);
     if (val) {
+      if (
+        !val.released &&
+        (!user || String(user._id) !== String(val.artists[0]._id))
+      )
+        return null;
+
       length = lengthArray.find(
         albumTno => String(albumTno._id) === String(id)
       );
@@ -130,7 +151,8 @@ exports.deleteAlbum = async id => {
       options: { limit: 50, offset: 0 },
       select: '-album',
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -158,10 +180,11 @@ exports.deleteAlbum = async id => {
  * @param {String} id - ID of the album containing the tracks
  * @param {Number} limit The maximum number of tracks to return
  * @param {Nuumber} offset The index of the first track to return starting from 0
+ * @param {object} user the user object if authenticated
  * @returns {Array} An array containing the tracks of the album
  * @returns null if the album was not found
  */
-exports.findTracksOfAlbum = async (id, limit, offset) => {
+exports.findTracksOfAlbum = async (id, limit, offset, user) => {
   let result = Album.findById(id)
     .populate({
       path: 'tracks',
@@ -169,7 +192,7 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
       populate: { path: 'artists', select: 'displayName images' },
       options: { limit: limit, skip: offset }
     })
-    .select('tracks');
+    .select('tracks released artists');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -177,7 +200,15 @@ exports.findTracksOfAlbum = async (id, limit, offset) => {
   ]);
 
   [result, lengthObj] = await Promise.all([result, lengthObj]);
-  if (!result) return null;
+  if (!result) return new AppError('The requested resource is not found', 404);
+  if (
+    !result.released &&
+    (!user || String(user._id) !== String(result.artists[0]._id))
+  )
+    return new AppError(
+      "You don't have the permission to perform this action",
+      403
+    );
   return [result.tracks, lengthObj[0].tracks];
 };
 
@@ -201,7 +232,8 @@ exports.update = async (id, newAlbum) => {
       select: '-album',
       options: { limit: 50, offset: 0 },
       populate: { path: 'artists', select: 'displayName images' }
-    });
+    })
+    .select('-album_group');
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
@@ -231,6 +263,7 @@ exports.update = async (id, newAlbum) => {
  * @returns Updated album
  */
 exports.setImage = async (album, path) => {
+  path = path.replace(/\\/g, '/');
   album.image = path;
 
   let lengthObj = Album.aggregate([
@@ -240,7 +273,7 @@ exports.setImage = async (album, path) => {
 
   [, lengthObj] = await Promise.all([album.save(), lengthObj]);
   album = album.toJSON();
-
+  album.album_group = undefined;
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -264,9 +297,9 @@ exports.createAlbum = async newAlbum => {
     .populate('artists', 'displayName images')
     .populate('genres')
     .execPopulate();
-  album.album_group = undefined;
-  album = album.toJSON();
 
+  album = album.toJSON();
+  album.album_group = undefined;
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -310,6 +343,7 @@ exports.addTrack = async (album, track) => {
   ]);
 
   album = album.toJSON();
+  album.album_group = undefined;
   album.tracks = {
     limit: 50,
     offset: 0,
@@ -327,19 +361,73 @@ exports.addTrack = async (album, track) => {
  * @param {String} artistId Id of the artist
  * @param {Number} limit Maximum number of albums to be retrieved
  * @param {Number} offset index of the first album (starting from 0)
+ * @param {Array<string>} groups the required album groups
+ * @param {object} user
  * @returns {Array<Object>} array of albums of the artist
  * @returns {Number} the length of the array
  * @returns null if the artist has no albums or the ID doesn't belong to any artist
  */
-exports.findArtistAlbums = async (artistId, limit, offset) => {
-  let result = Album.find({ artists: artistId })
+exports.findArtistAlbums = async (artistId, limit, offset, groups, user) => {
+  let types = ['single', 'album', 'compilation'];
+  let appears = true;
+  let released = [true];
+  if (user && String(user._id) === String(artistId)) {
+    released = [true, false];
+  }
+  if (groups) {
+    types = groups.filter(group => group !== 'appears_on');
+    appears = groups.includes('appears_on');
+  }
+  let result = Album.find({
+    'artists.0': artistId,
+    album_type: types,
+    released: released
+  })
     .populate('artists', '_id displayName images')
     .populate('genres')
-    .select('-tracks')
+    .select('-tracks -genres -release_date')
     .limit(limit)
     .skip(offset);
-  let length = Album.countDocuments({ artists: artistId });
-  return await Promise.all([result, length]);
+  let length = Album.countDocuments({
+    'artists.0': artistId,
+    album_type: types,
+    released: released
+  });
+  [result, length] = await Promise.all([result, length]);
+
+  if (appears) {
+    let appearsAlbums;
+    if (limit - result.length !== 0) {
+      let secondskip = offset - length > 0 ? offset - length : 0;
+      appearsAlbums = Album.find({
+        $and: [
+          { artists: artistId, released: true },
+          { 'artists.0': { $ne: artistId } }
+        ]
+      })
+        .populate('artists', '_id displayName images')
+        .populate('genres')
+        .select('-tracks -genres -release_date')
+        .limit(limit - length)
+        .skip(secondskip);
+    } else appearsAlbums = Promise.resolve([]);
+    let appearslength = Album.countDocuments({
+      $and: [
+        { artists: artistId, released: true },
+        { 'artists.0': { $ne: artistId } }
+      ]
+    });
+    [appearsAlbums, appearslength] = await Promise.all([
+      appearsAlbums,
+      appearslength
+    ]);
+    appearsAlbums.forEach(album => {
+      album.album_group = 'appears_on';
+    });
+    length += appearslength;
+    result = result.concat(appearsAlbums);
+  }
+  return [result, length];
 };
 
 /**
@@ -352,11 +440,11 @@ exports.findArtistAlbums = async (artistId, limit, offset) => {
  */
 
 exports.deleteImage = async image => {
-  if (image !== 'default.jpg') {
+  if (image) {
     try {
       await fs.unlink(image);
     } catch (err) {
-      logger.error(err.message);
+      if (err.code !== 'ENOENT') throw err;
     }
   }
 };
@@ -373,4 +461,88 @@ exports.deleteImage = async image => {
 
 exports.removeTrack = async (albumId, trackId) => {
   await Album.findByIdAndUpdate(albumId, { $pull: { tracks: trackId } });
+};
+
+/**
+ * A method that releases an album if it has an image and all of its
+ * tracks have files. and returns the updated album.
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Releases an album
+ * @param {object} album
+ * @param {object} user
+ * @returns Updated album if successful
+ * @returns null if the album didn't match the specifications of released albums
+ */
+exports.releaseAlbum = async (album, user) => {
+  if (album.image) {
+    for (let i = 0, n = album.tracks.length; i < n; i++) {
+      if (!album.tracks[i].audioUrl)
+        return new AppError(
+          'All tracks of the album must have files before releasing',
+          400
+        );
+    }
+  } else
+    return new AppError(
+      'An album should have an image before being released',
+      400
+    );
+  if (album.album_type === 'single' && album.tracks.length !== 1)
+    return new AppError('Single albums must have exactly one track', 400);
+
+  album.released = true;
+  if (user.popularSongs.length < 5)
+    user.popularSongs = _.concat(user.popularSongs, _.slice(album.tracks, 0, 5));
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(album._id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [, ,album, lengthObj] = await Promise.all([
+    album.save(),
+    user.save(),
+    album
+      .populate('artists', 'displayName images')
+      .populate('genres')
+      .populate({
+        path: 'tracks',
+        select: '-album',
+        options: { limit: 50, offset: 0 },
+        populate: { path: 'artists', select: 'displayName images' }
+      })
+      .execPopulate(),
+    lengthObj
+  ]);
+
+  album = album.toJSON();
+  album.album_group = undefined;
+  album.tracks = {
+    limit: 50,
+    offset: 0,
+    total: lengthObj[0].tracks,
+    items: album.tracks
+  };
+  return album;
+};
+
+/**
+ * A method that gets an album by it's ID with the tracks containing
+ * their audioUrl's for the use with releaseAlbum and not to return to
+ * the client
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets an album
+ * @param {String} id ID of the album to be retrieved
+ * @returns album if the album was found
+ * @returns null if the album was not found
+ */
+exports.findAlbumPrivate = async id => {
+  return await Album.findById(id).populate({
+    path: 'tracks',
+    select: 'audioUrl'
+  });
 };

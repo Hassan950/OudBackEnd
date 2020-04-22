@@ -12,31 +12,40 @@
       "5e962e04da7d8d40d02a9977"
     ],
     "name": "This is acting",
-    "release_date": "12-02-2016",
+    "release_date": "29-01-2016",
     "tracks": [
-      "5e909be7cfe5b521a0ccf3ed"
-    ]
+      "5e909be7cfe5b521a0ccf3ad",
+      "5e909be7cfe5b521a0ccf3ae",
+      "5e909be7cfe5b521a0ccf3af"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e2-5e907dafa0645f4571607602-1587377068366.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e3",
     "album_type": "album",
     "artists": [
-      "5e907dafa0645f4571607600"
+      "5e907dafa0645f4571607600",
+      "5e907dafa0645f4571607601"
     ],
     "genres": [
       "5e9083c24c798428f45b322c",
       "5e9083c24c798428f45b322f",
       "5e9083c24c798428f45b3230"
     ],
-    "name": "1989",
-    "release_date": "25-08-2019",
+    "name": "Reputation",
+    "release_date": "10-11-2017",
     "tracks": [
-      "5e909be7cfe5b521a0ccf3ec"
-    ]
+      "5e909be7cfe5b521a0ccf3cc",
+      "5e909be7cfe5b521a0ccf3cd",
+      "5e909be7cfe5b521a0ccf3ce"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e3-5e907dafa0645f4571607600-1587378003829.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e4",
-    "album_type": "single",
+    "album_type": "album",
     "artists": [
       "5e907dafa0645f45716075ff"
     ],
@@ -46,14 +55,18 @@
       "5e9083c24c798428f45b3230"
     ],
     "name": "Bangerz",
-    "release_date": "03-04-2020",
+    "release_date": "04-10-2013",
     "tracks": [
-      "5e909be7cfe5b521a0ccf3ee"
-    ]
+      "5e909be7cfe5b521a0ccf3bc",
+      "5e909be7cfe5b521a0ccf3bd",
+      "5e909be7cfe5b521a0ccf3be"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e4-5e907dafa0645f45716075ff-1587378518893.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e5",
-    "album_type": "single",
+    "album_type": "album",
     "artists": [
       "5e907dafa0645f4571607601"
     ],
@@ -61,11 +74,15 @@
       "5e9083c24c798428f45b322f",
       "5e9083c24c798428f45b3232"
     ],
-    "release_date": "05-06-2015",
+    "release_date": "03-03-2017",
     "name": "÷",
     "tracks": [
-      "5e909be7cfe5b521a0ccf3ef"
-    ]
+      "5e909be7cfe5b521a0ccf32f",
+      "5e909be7cfe5b521a0ccf331",
+      "5e909be7cfe5b521a0ccf332"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e5-5e907dafa0645f4571607601-1587380065168.jpeg",
+    "released": true
   },
   {
     "_id": "5e909be7cfe5b521a0ccf3e6",
@@ -78,60 +95,13 @@
       "5e962e04da7d8d40d02a9976",
       "5e9083c24c798428f45b322e"
     ],
-    "name": "Best of Ahmed Saad",
-    "release_date": "12-07-2007",
+    "name": "Mesh Baqy Menny (Maharagan)",
+    "release_date": "20-05-2009",
     "tracks": [
       "5e909be7cfe5b521a0ccf3f0"
-    ]
-  },
-  {
-    "_id": "5e909be7cfe5b521a0ccf3e7",
-    "album_type": "single",
-    "artists": [
-      "5e907db0a0645f4571607604"
     ],
-    "genres": [
-      "5e9083c24c798428f45b322e",
-      "5e9083c24c798428f45b3235",
-      "5e962e04da7d8d40d02a9979"
-    ],
-    "name": "Ya Ahl El Arab W El Tarab",
-    "release_date": "08-12-2018",
-    "tracks": [
-      "5e909be7cfe5b521a0ccf3f1"
-    ]
-  },
-  {
-    "_id": "5e909be7cfe5b521a0ccf3e8",
-    "album_type": "single",
-    "artists": [
-      "5e907db0a0645f4571607605"
-    ],
-    "genres": [
-      "5e962e04da7d8d40d02a9973"
-    ],
-    "name": "El Rahaen",
-    "release_date": "21-05-2019",
-    "tracks": [
-      "5e909be7cfe5b521a0ccf3f2"
-    ]
-  },
-  {
-    "_id": "5e909be7cfe5b521a0ccf3e9",
-    "album_type": "single",
-    "artists": [
-      "5e907db0a0645f4571607606"
-    ],
-    "genres": [
-      "5e9083c24c798428f45b322c",
-      "5e9083c24c798428f45b322f",
-      "5e9083c24c798428f45b3232"
-    ],
-    "name": "Dua Lipa",
-    "release_date": "21-08-2019",
-    "tracks": [
-      "5e909be7cfe5b521a0ccf3f3"
-    ]
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e6-5e907dafa0645f4571607603-1587380753866.jpeg",
+    "released": true
   },
   {
     "_id": "5e98bd8d2c7baf48ebe7888a",
@@ -148,7 +118,8 @@
     "tracks": [
       "5e98bdad2c7baf48ebe7888b"
     ],
-    "image": "uploads/albums/5e98bd8d2c7baf48ebe7888a-5e907db0a0645f4581607606-1587353544423.jpeg"
+    "image": "uploads/albums/5e98bd8d2c7baf48ebe7888a-5e907db0a0645f4581607606-1587353544423.jpeg",
+    "released": true
   },
   {
     "_id": "5e9887ee2344f83a2900c2db",
@@ -165,7 +136,8 @@
     "tracks": [
       "5e9888bc2344f83a2900c2dc"
     ],
-    "image": "uploads/albums/5e9887ee2344f83a2900c2db-5e907db0a0645f4581607606-1587353593051.jpeg"
+    "image": "uploads/albums/5e9887ee2344f83a2900c2db-5e907db0a0645f4581607606-1587353593051.jpeg",
+    "released": true
   },
   {
     "_id": "5e98bf312c7baf48ebe7888e",
@@ -183,7 +155,8 @@
       "5e98bf4b2c7baf48ebe7888f",
       "5e98f1442c7baf48ebe78893"
     ],
-    "image": "uploads/albums/5e98bf312c7baf48ebe7888e-5e907db0a0645f4581607606-1587353627403.jpeg"
+    "image": "uploads/albums/5e98bf312c7baf48ebe7888e-5e907db0a0645f4581607606-1587353627403.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b32340f27b613b44fba23",
@@ -201,7 +174,8 @@
     "tracks": [
       "5e9b32c40f27b613b44fba24"
     ],
-    "image": "uploads/albums/5e9b32340f27b613b44fba23-5e907db0a0645f5581607610-1587354167478.jpeg"
+    "image": "uploads/albums/5e9b32340f27b613b44fba23-5e907db0a0645f5581607610-1587354167478.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b370d0f27b613b44fba26",
@@ -219,7 +193,8 @@
       "5e9b37660f27b613b44fba27",
       "5e9b37d50f27b613b44fba29"
     ],
-    "image": "uploads/albums/5e9b370d0f27b613b44fba26-5e907db0a0645f5581607610-1587354199812.jpeg"
+    "image": "uploads/albums/5e9b370d0f27b613b44fba26-5e907db0a0645f5581607610-1587354199812.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b38be0f27b613b44fba2b",
@@ -236,7 +211,8 @@
     "tracks": [
       "5e9b39050f27b613b44fba2c"
     ],
-    "image": "uploads/albums/5e9b38be0f27b613b44fba2b-5e907db0a0645f5581607610-1587354225832.jpeg"
+    "image": "uploads/albums/5e9b38be0f27b613b44fba2b-5e907db0a0645f5581607610-1587354225832.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b3c710f27b613b44fba2e",
@@ -253,7 +229,8 @@
     "tracks": [
       "5e9b3d310f27b613b44fba2f"
     ],
-    "image": "uploads/albums/5e9b3c710f27b613b44fba2e-5e907db0a0645f558160760d-1587354386270.jpeg"
+    "image": "uploads/albums/5e9b3c710f27b613b44fba2e-5e907db0a0645f558160760d-1587354386270.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b407a0f27b613b44fba31",
@@ -270,7 +247,8 @@
     "tracks": [
       "5e9b40b80f27b613b44fba32"
     ],
-    "image": "uploads/albums/5e9b407a0f27b613b44fba31-5e907db0a0645f558160760d-1587354412168.jpeg"
+    "image": "uploads/albums/5e9b407a0f27b613b44fba31-5e907db0a0645f558160760d-1587354412168.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b41630f27b613b44fba34",
@@ -287,7 +265,8 @@
     "tracks": [
       "5e9b41d70f27b613b44fba35"
     ],
-    "image": "uploads/albums/5e9b41630f27b613b44fba34-5e907db0a0645f558160760d-1587354443479.jpeg"
+    "image": "uploads/albums/5e9b41630f27b613b44fba34-5e907db0a0645f558160760d-1587354443479.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b44a00f27b613b44fba37",
@@ -304,7 +283,8 @@
     "tracks": [
       "5e9b44fb0f27b613b44fba38"
     ],
-    "image": "uploads/albums/5e9b44a00f27b613b44fba37-5e907db0a0645f558160760e-1587354641364.jpeg"
+    "image": "uploads/albums/5e9b44a00f27b613b44fba37-5e907db0a0645f558160760e-1587354641364.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b46020f27b613b44fba3a",
@@ -321,7 +301,8 @@
     "tracks": [
       "5e9b46610f27b613b44fba3b"
     ],
-    "image": "uploads/albums/5e9b46020f27b613b44fba3a-5e907db0a0645f558160760e-1587354692528.jpeg"
+    "image": "uploads/albums/5e9b46020f27b613b44fba3a-5e907db0a0645f558160760e-1587354692528.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b47470f27b613b44fba3d",
@@ -338,7 +319,8 @@
     "tracks": [
       "5e9b47be0f27b613b44fba3e"
     ],
-    "image": "uploads/albums/5e9b47470f27b613b44fba3d-5e907db0a0645f558160760e-1587354717930.jpeg"
+    "image": "uploads/albums/5e9b47470f27b613b44fba3d-5e907db0a0645f558160760e-1587354717930.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b48d20f27b613b44fba40",
@@ -356,7 +338,8 @@
     "tracks": [
       "5e9b49440f27b613b44fba41"
     ],
-    "image": "uploads/albums/5e9b48d20f27b613b44fba40-5e907db0a0645f4581607608-1587354885937.jpeg"
+    "image": "uploads/albums/5e9b48d20f27b613b44fba40-5e907db0a0645f4581607608-1587354885937.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b48d20f27b613b44fba41",
@@ -374,7 +357,8 @@
     "tracks": [
       "5e9b49440f27b613b44fba42"
     ],
-    "image": "uploads/albums/5e9b48d20f27b613b44fba41-5e907db0a0645f4581607608-1587354914539.jpeg"
+    "image": "uploads/albums/5e9b48d20f27b613b44fba41-5e907db0a0645f4581607608-1587354914539.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b48d20f27b613b44fba42",
@@ -392,7 +376,8 @@
     "tracks": [
       "5e9b49440f27b613b44fba43"
     ],
-    "image": "uploads/albums/5e9b48d20f27b613b44fba42-5e907db0a0645f4581607608-1587354939675.jpeg"
+    "image": "uploads/albums/5e9b48d20f27b613b44fba42-5e907db0a0645f4581607608-1587354939675.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b4b3d0f27b613b44fba43",
@@ -414,7 +399,8 @@
     "tracks": [
       "5e9b4b9b0f27b613b44fba44"
     ],
-    "image": "uploads/albums/5e9b4b3d0f27b613b44fba43-5e907db0a0645f558160760b-1587355106112.jpeg"
+    "image": "uploads/albums/5e9b4b3d0f27b613b44fba43-5e907db0a0645f558160760b-1587355106112.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b4b3d0f27b613b44fba44",
@@ -436,7 +422,8 @@
     "tracks": [
       "5e9b4b9b0f27b613b44fba45"
     ],
-    "image": "uploads/albums/5e9b4b3d0f27b613b44fba44-5e907db0a0645f558160760b-1587355226017.jpeg"
+    "image": "uploads/albums/5e9b4b3d0f27b613b44fba44-5e907db0a0645f558160760b-1587355226017.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b4b3d0f27b613b44fba45",
@@ -458,7 +445,8 @@
     "tracks": [
       "5e9b4b9b0f27b613b44fba46"
     ],
-    "image": "uploads/albums/5e9b4b3d0f27b613b44fba45-5e907db0a0645f558160760b-1587355263807.jpeg"
+    "image": "uploads/albums/5e9b4b3d0f27b613b44fba45-5e907db0a0645f558160760b-1587355263807.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b4dad0f27b613b44fba46",
@@ -474,7 +462,8 @@
     "tracks": [
       "5e9b4df40f27b613b44fba47"
     ],
-    "image": "uploads/albums/5e9b4dad0f27b613b44fba46-5e907db0a0645f558160760c-1587355411915.jpeg"
+    "image": "uploads/albums/5e9b4dad0f27b613b44fba46-5e907db0a0645f558160760c-1587355411915.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b4dad0f27b613b44fba47",
@@ -491,7 +480,8 @@
       "5e9b4df40f27b613b44fba48",
       "5e9b4df40f27b613b44fba49"
     ],
-    "image": "uploads/albums/5e9b4dad0f27b613b44fba47-5e907db0a0645f558160760c-1587355438724.jpeg"
+    "image": "uploads/albums/5e9b4dad0f27b613b44fba47-5e907db0a0645f558160760c-1587355438724.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b4dad0f27b613b44fba48",
@@ -508,7 +498,8 @@
       "5e9b4df40f27b613b44fba50",
       "5e9b4df40f27b613b44fba51"
     ],
-    "image": "uploads/albums/5e9b4dad0f27b613b44fba48-5e907db0a0645f558160760f-1587355935919.jpeg"
+    "image": "uploads/albums/5e9b4dad0f27b613b44fba48-5e907db0a0645f558160760f-1587355935919.jpeg",
+    "released": true
   },
   {
     "_id": "5e9b4dad0f27b613b44fba49",
@@ -524,7 +515,8 @@
     "tracks": [
       "5e9b4df40f27b613b44fba52"
     ],
-    "image": "uploads/albums/5e9b4dad0f27b613b44fba49-5e907db0a0645f558160760f-1587355962401.jpeg"
+    "image": "uploads/albums/5e9b4dad0f27b613b44fba49-5e907db0a0645f558160760f-1587355962401.jpeg",
+    "released": true
   },
   {
     "_id": "5e9cc2c6111e012d183ddec4",
@@ -538,10 +530,10 @@
       "5e962e04da7d8d40d02a997b"
     ],
     "image": "uploads\\albums\\5e9cc2c6111e012d183ddec4-5e907db0a0645f458160760a-1587333704889.jpeg",
-    "released": false,
     "name": "Free",
     "album_type": "single",
-    "release_date": "30-10-2019"
+    "release_date": "30-10-2019",
+    "released": true
   },
   {
     "_id": "5e9cc4cc111e012d183ddec7",
@@ -555,10 +547,10 @@
       "5e962e04da7d8d40d02a997b"
     ],
     "image": "uploads\\albums\\5e9cc4cc111e012d183ddec7-5e907db0a0645f458160760a-1587334884750.jpeg",
-    "released": false,
     "name": "El Gemeza",
     "album_type": "single",
-    "release_date": "01-06-2019"
+    "release_date": "01-06-2019",
+    "released": true
   },
   {
     "_id": "5e9cc704111e012d183ddeca",
@@ -572,10 +564,10 @@
       "5e962e04da7d8d40d02a997b"
     ],
     "image": "uploads\\albums\\5e9cc704111e012d183ddeca-5e907db0a0645f458160760a-1587334923028.jpeg",
-    "released": false,
     "name": "3ayz Fin",
     "album_type": "single",
-    "release_date": "25-04-2018"
+    "release_date": "25-04-2018",
+    "released": true
   },
   {
     "_id": "5e9cd032111e012d183ddecd",
@@ -589,10 +581,10 @@
       "5e962e04da7d8d40d02a997b"
     ],
     "image": "uploads\\albums\\5e9cd032111e012d183ddecd-5e907db0a0645f4581607609-1587335886131.jpeg",
-    "released": false,
     "name": "دورك جي",
     "album_type": "single",
-    "release_date": "15-03-2020"
+    "release_date": "15-03-2020",
+    "released": true
   },
   {
     "_id": "5e9cd132111e012d183dded0",
@@ -607,10 +599,10 @@
       "5e962e04da7d8d40d02a997b"
     ],
     "image": "uploads\\albums\\5e9cd132111e012d183dded0-5e907db0a0645f4581607609-1587335946763.jpeg",
-    "released": false,
     "name": "باظت",
     "album_type": "single",
-    "release_date": "03-06-2019"
+    "release_date": "03-06-2019",
+    "released": true
   },
   {
     "_id": "5e9cd23a111e012d183dded3",
@@ -622,10 +614,10 @@
       "5e962e04da7d8d40d02a997b"
     ],
     "image": "uploads\\albums\\5e9cd23a111e012d183dded3-5e907db0a0645f4581607609-1587335987262.jpeg",
-    "released": false,
     "name": "علي بابا",
     "album_type": "single",
-    "release_date": "17-02-2020"
+    "release_date": "17-02-2020",
+    "released": true
   },
   {
     "_id": "5e9cdaa3111e012d183dded6",
@@ -641,10 +633,10 @@
       "5e962e04da7d8d40d02a997c"
     ],
     "image": "uploads\\albums\\5e9cdaa3111e012d183dded6-5e907db0a0645f4581607607-1587338011819.jpeg",
-    "released": false,
     "name": "The Ugly Ducklings",
     "album_type": "album",
-    "release_date": "21-03-2019"
+    "release_date": "21-03-2019",
+    "released": true
   },
   {
     "_id": "5e9cdd46111e012d183dded9",
@@ -661,10 +653,10 @@
       "5e962e04da7d8d40d02a997c"
     ],
     "image": "uploads\\albums\\5e9cdd46111e012d183dded9-5e907db0a0645f4581607607-1587338601548.jpeg",
-    "released": false,
     "name": "El Sekka Shemal",
     "album_type": "album",
-    "release_date": "03-07-2015"
+    "release_date": "03-07-2015",
+    "released": true
   },
   {
     "_id": "5e9cde31111e012d183ddedc",
@@ -682,10 +674,10 @@
       "5e962e04da7d8d40d02a997c"
     ],
     "image": "uploads\\albums\\5e9cde31111e012d183ddedc-5e907db0a0645f4581607607-1587338828988.jpeg",
-    "released": false,
     "name": "مطلوب زعيم Matloob Zaeem",
     "album_type": "album",
-    "release_date": "10-01-2014"
+    "release_date": "10-01-2014",
+    "released": true
   },
   {
     "_id": "5e9ce1ea111e012d183ddee5",
@@ -701,10 +693,10 @@
       "5e962e04da7d8d40d02a997c"
     ],
     "image": "uploads\\albums\\5e9ce1ea111e012d183ddee5-5e907db0a0645f4581607607-1587339780133.jpeg",
-    "released": false,
     "name": "أتجنن Etganen (Seeb Nafsak)",
     "album_type": "single",
-    "release_date": "31-01-2014"
+    "release_date": "31-01-2014",
+    "released": true
   },
   {
     "_id": "5e9ce4a0ee7376379c0960fa",
@@ -722,10 +714,10 @@
       "5e962e04da7d8d40d02a997c"
     ],
     "image": "uploads\\albums\\5e9ce4a0ee7376379c0960fa-5e9cbac42ec0720eecbb92a1-1587340588735.jpeg",
-    "released": false,
     "name": "Insan",
     "album_type": "album",
-    "release_date": "12-07-2011"
+    "release_date": "12-07-2011",
+    "released": true
   },
   {
     "_id": "5e9ce9e8ee7376379c096101",
@@ -741,10 +733,10 @@
       "5e962e04da7d8d40d02a997c"
     ],
     "image": "uploads\\albums\\5e9ce9e8ee7376379c096101-5e9cbac42ec0720eecbb92a1-1587341846329.jpeg",
-    "released": false,
     "name": "Dari Ya Alby",
     "album_type": "single",
-    "release_date": "08-02-2018"
+    "release_date": "08-02-2018",
+    "released": true
   },
   {
     "_id": "5e9ceadaee7376379c096104",
@@ -761,10 +753,10 @@
       "5e962e04da7d8d40d02a997c"
     ],
     "image": "uploads\\albums\\5e9ceadaee7376379c096104-5e9cbac42ec0720eecbb92a1-1587342074546.jpeg",
-    "released": false,
     "name": "Dream With Me - Ehlam Ma'aya",
     "album_type": "album",
-    "release_date": "15-01-2009"
+    "release_date": "15-01-2009",
+    "released": true
   },
   {
     "_id": "5e9cef963e578911e4c5c1bc",
@@ -779,10 +771,10 @@
       "5e962e04da7d8d40d02a9973"
     ],
     "image": "uploads\\albums\\5e9cef963e578911e4c5c1bc-5e907db0a0645f4581607605-1587343289397.jpeg",
-    "released": false,
     "name": "Oud Al batal",
     "album_type": "single",
-    "release_date": "03-03-2020"
+    "release_date": "03-03-2020",
+    "released": true
   },
   {
     "_id": "5e9cf0683e578911e4c5c1bf",
@@ -797,10 +789,10 @@
       "5e962e04da7d8d40d02a9973"
     ],
     "image": "uploads\\albums\\5e9cf0683e578911e4c5c1bf-5e907db0a0645f4581607605-1587343512586.jpeg",
-    "released": false,
     "name": "Mahragan Bent El Geran",
     "album_type": "single",
-    "release_date": "27-01-2020"
+    "release_date": "27-01-2020",
+    "released": true
   },
   {
     "_id": "5e9cf1123e578911e4c5c1c2",
@@ -815,10 +807,10 @@
       "5e962e04da7d8d40d02a9973"
     ],
     "image": "uploads\\albums\\5e9cf1123e578911e4c5c1c2-5e907db0a0645f4581607605-1587343658059.jpeg",
-    "released": false,
     "name": "Bonbony Sa2et Fi Nutella",
     "album_type": "single",
-    "release_date": "05-03-2020"
+    "release_date": "05-03-2020",
+    "released": true
   },
   {
     "_id": "5e9cf4813e578911e4c5c1c5",
@@ -833,10 +825,10 @@
       "5e962e04da7d8d40d02a9979"
     ],
     "image": "uploads\\albums\\5e9cf4813e578911e4c5c1c5-5e907db0a0645f4571707606-1587344536173.jpeg",
-    "released": false,
     "name": "Ana Aslan Gamed",
     "album_type": "single",
-    "release_date": "01-01-2014"
+    "release_date": "01-01-2014",
+    "released": true
   },
   {
     "_id": "5e9cf5193e578911e4c5c1c8",
@@ -853,10 +845,10 @@
       "5e962e04da7d8d40d02a9979"
     ],
     "image": "uploads\\albums\\5e9cf5193e578911e4c5c1c8-5e907db0a0645f4571707606-1587344697830.jpeg",
-    "released": false,
     "name": "Oka Wi Ortega",
     "album_type": "album",
-    "release_date": "11-03-2015"
+    "release_date": "11-03-2015",
+    "released": true
   },
   {
     "_id": "5e9cf63c3e578911e4c5c1cf",
@@ -871,10 +863,10 @@
       "5e962e04da7d8d40d02a9979"
     ],
     "image": "uploads\\albums\\5e9cf63c3e578911e4c5c1cf-5e907db0a0645f4571707606-1587344972977.jpeg",
-    "released": false,
     "name": "العب يلا",
     "album_type": "single",
-    "release_date": "19-09-2017"
+    "release_date": "19-09-2017",
+    "released": true
   },
   {
     "_id": "5e9cf98a3e578911e4c5c1d2",
@@ -892,10 +884,10 @@
       "5e9083c24c798428f45b3230"
     ],
     "image": "uploads\\albums\\5e9cf98a3e578911e4c5c1d2-5e907db0a0645f458160760b-1587345842642.jpeg",
-    "released": false,
     "name": "My Everything",
     "album_type": "album",
-    "release_date": "25-08-2014"
+    "release_date": "25-08-2014",
+    "released": true
   },
   {
     "_id": "5e9cfb6d3e578911e4c5c1d9",
@@ -911,9 +903,158 @@
       "5e9083c24c798428f45b3230"
     ],
     "image": "uploads\\albums\\5e9cfb6d3e578911e4c5c1d9-5e907db0a0645f458160760b-1587346327087.jpeg",
-    "released": false,
     "name": "Dangerous Woman",
     "album_type": "album",
-    "release_date": "20-05-2016"
+    "release_date": "20-05-2016",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4e6",
+    "album_type": "single",
+    "artists": [
+      "5e907dafa0645f4571607603"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a9976",
+      "5e9083c24c798428f45b322e"
+    ],
+    "name": "Sa'alt Nafsy Keteer",
+    "release_date": "23-08-2013",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf4f0"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e6-5e907dafa0645f4571607603-1587381180342.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4e1",
+    "album_type": "single",
+    "artists": [
+      "5e907dafa0645f4571607603"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a9976",
+      "5e9083c24c798428f45b322e"
+    ],
+    "name": "مسحراتي",
+    "release_date": "06-05-2019",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf4f1"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e1-5e907dafa0645f4571607603-1587381220389.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf6e7",
+    "album_type": "album",
+    "artists": [
+      "5e907db0a0645f4571607604"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322e",
+      "5e9083c24c798428f45b3235",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "name": "Ya Ahl El Arab W El Tarab",
+    "release_date": "14-04-2012",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf3f1",
+      "5e909be7cfe5b521a0cdf3f1"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf6e7-5e907db0a0645f4571607604-1587382636021.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e7",
+    "album_type": "single",
+    "artists": [
+      "5e907db0a0645f4571607604"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322e",
+      "5e9083c24c798428f45b3235",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "name": "ازاي",
+    "release_date": "06-02-2011",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf6f1"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e7-5e907db0a0645f4571607604-1587382696628.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e8",
+    "album_type": "single",
+    "artists": [
+      "5e907db0a0645f4571607605"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "name": "كفا حبيبي بكفا",
+    "release_date": "05-11-2013",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf3f2"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e8-5e907db0a0645f4571607605-1587385278324.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccd3e8",
+    "album_type": "single",
+    "artists": [
+      "5e907db0a0645f4571607605"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "name": "مولد المدفعجية",
+    "release_date": "09-01-2013",
+    "tracks": [
+      "5e909be7cfe5b521a0ccd3f2"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccd3e8-5e907db0a0645f4571607605-1587385314197.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cce3e8",
+    "album_type": "single",
+    "artists": [
+      "5e907db0a0645f4571607605"
+    ],
+    "genres": [
+      "5e962e04da7d8d40d02a9973"
+    ],
+    "name": "الناس",
+    "release_date": "09-06-2013",
+    "tracks": [
+      "5e909be7cfe5b521a0cdf3f2"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0cce3e8-5e907db0a0645f4571607605-1587385338271.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e9",
+    "album_type": "album",
+    "artists": [
+      "5e907db0a0645f4571607606"
+    ],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "name": "Future Nostalgia",
+    "release_date": "27-03-2020",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf3f3",
+      "5e909be7cfe5b521a0cdf3f3",
+      "5e909be7cfe5b521a0cef3f3"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e9-5e907db0a0645f4571607606-1587386142605.jpeg",
+    "released": true
   }
 ]

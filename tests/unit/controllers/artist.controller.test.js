@@ -13,9 +13,9 @@ let fs = require('fs').promises;
 let { emailService } = require('../../../src/services');
 
 trackIds = [
-  { _id: '5e6c8ebb8b40fc5508fe8b32' },
-  { _id: '5e6f6a7fac1d6d06f40706f2' },
-  { _id: '5e6c8ebb8b40fc5518fe8b32' }
+  { _id: '5e6c8ebb8b40fc5508fe8b32', album: { released: true } },
+  { _id: '5e6f6a7fac1d6d06f40706f2', album: { released: true } },
+  { _id: '5e6c8ebb8b40fc5518fe8b32', album: { released: true } }
 ];
 
 describe('Artists Controller', () => {
@@ -46,6 +46,7 @@ describe('Artists Controller', () => {
     next = jest.fn();
     Artist.schema.path('popularSongs', Object);
     Artist.schema.path('genres', Object);
+    Track.schema.path('album', Object);
   });
   describe('getArtist', () => {
     it('Should return the artist with status code 200', async () => {
@@ -88,7 +89,7 @@ describe('Artists Controller', () => {
       req.query = { offset: 0, limit: 20 };
       await artistController.getAlbums(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
-      expect(res.json.mock.calls[0][0].total).toBe(1);
+      expect(res.json.mock.calls[0][0].total).toBe(2);
     });
     it('Should return an empty array if no tracks are found', async () => {
       mockingoose(Album).toReturn([], 'find');
@@ -109,13 +110,6 @@ describe('Artists Controller', () => {
     });
     it('Should throw an error with status code 404 if the artist was not found', async () => {
       mockingoose(User).toReturn(null, 'findOne');
-      req.params = { id: artist._id };
-      await artistController.getTracks(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(404);
-    });
-    it('Should throw an error with status code 404 if the artist has no popular songs', async () => {
-      artist.popularSongs = [];
-      mockingoose(User).toReturn(artist, 'findOne');
       req.params = { id: artist._id };
       await artistController.getTracks(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
@@ -267,6 +261,7 @@ describe('Artists Controller', () => {
           .toReturn(request, 'findOneAndDelete')
           .toReturn(request, 'findOne');
         req.body = { accept: true };
+        req.get = jest.fn();
         await artistController.handleRequest(req, res, next);
         expect(res.status.mock.calls[0][0]).toBe(204);
       });
@@ -277,6 +272,7 @@ describe('Artists Controller', () => {
           .toReturn(request, 'findOneAndDelete')
           .toReturn(request, 'findOne');
         req.body = { accept: false };
+        req.get = jest.fn();
         await artistController.handleRequest(req, res, next);
         expect(res.status.mock.calls[0][0]).toBe(204);
       });
