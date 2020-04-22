@@ -39,7 +39,34 @@ tags:
     description: Endpoints for queue
   - name: Genres
     description: Endpoints for genres
+  - name: Notifications
+    description: Endpoints for notifications
 paths:
+  /me/notifications/:
+    put:
+      tags:
+        - Notifications
+      summary: Updates the registration token of a user
+      description: Updates the registration token that is used to send nofications to the user via Firebase Cloud Messaging(FCM).
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: The registration token of the user
+      responses:
+        '204':
+          description: the resources are updated and the response body is empty.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   /genres/{id}:
     get:
       tags:
