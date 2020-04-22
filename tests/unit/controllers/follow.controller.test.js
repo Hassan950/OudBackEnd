@@ -372,7 +372,7 @@ describe('Following controller', () => {
       };
       mockingoose(User).toReturn([user]);
       await followController.followUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
     it('Should return no content 204 when it follow artist successfully in query', async () => {
       req.query = {
@@ -381,7 +381,7 @@ describe('Following controller', () => {
       };
       mockingoose(Artist).toReturn([artist]);
       await followController.followUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
 
     it('Should return not found 404 if there is at least one invalid userId in body', async () => {
@@ -415,7 +415,7 @@ describe('Following controller', () => {
       }
       mockingoose(User).toReturn([user]);
       await followController.followUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
     it('Should return no content 204 when it follow artist successfully in body', async () => {
       req.query = {
@@ -426,7 +426,7 @@ describe('Following controller', () => {
       }
       mockingoose(Artist).toReturn([artist]);
       await followController.followUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
   });
 
@@ -496,7 +496,7 @@ describe('Following controller', () => {
       };
       mockingoose(User).toReturn([user]);
       await followController.unfollowUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
     it('Should return no content 204 when it unfollow artist successfully in query', async () => {
       req.query = {
@@ -505,7 +505,7 @@ describe('Following controller', () => {
       };
       mockingoose(Artist).toReturn([artist]);
       await followController.unfollowUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
     it('Should return no content 204 when it unfollow user successfully in body', async () => {
       req.query = {
@@ -516,7 +516,7 @@ describe('Following controller', () => {
       };
       mockingoose(User).toReturn([user]);
       await followController.unfollowUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
     it('Should return no content 204 when it unfollow artist successfully in body', async () => {
       req.query = {
@@ -527,7 +527,7 @@ describe('Following controller', () => {
       };
       mockingoose(Artist).toReturn([artist]);
       await followController.unfollowUser(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
   });
 
@@ -563,7 +563,7 @@ describe('Following controller', () => {
         public: true
       };
       await followController.followPlaylist(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
   });
 
@@ -593,7 +593,7 @@ describe('Following controller', () => {
         playlistId: playlist._id
       };
       await followController.unfollowPlaylist(req, res, next);
-      expect(res.status.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
+      expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
   });
 });
