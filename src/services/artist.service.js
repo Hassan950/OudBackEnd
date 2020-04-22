@@ -78,7 +78,7 @@ exports.getPopularSongs = async artistId => {
     .select('popularSongs');
 
   if (!artist) return null;
-  
+
   return artist.popularSongs;
 };
 
@@ -303,4 +303,27 @@ exports.refuseRequest = async (request, host) => {
     .catch(error => {
       logger.error(`${error.code} :${error.message}`);
     });
+};
+
+/**
+ * A method that gets artists
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets random artists
+ * @returns artists list of random artists
+ */
+exports.findRandomArtists = async id => {
+  return await Artist.find()
+    .limit(16)
+    .select('displayName images genres bio popularSongs')
+    .populate({
+      path: 'popularSongs',
+      populate: {
+        path: 'album artists',
+        select: 'album_type released artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
+    })
+    .populate('genres');
 };

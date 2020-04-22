@@ -20,10 +20,4 @@ router
     catchAsync(genreController.getGenres)
   );
 
-router
-  .route('/:id/artists')
-  .get(
-    validate(genreValidation.oneGenre),
-    catchAsync(genreController.getGenreArtists)
-  );
 module.exports = router;

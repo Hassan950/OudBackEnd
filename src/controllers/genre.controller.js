@@ -45,17 +45,3 @@ exports.getGenres = async (req, res, next) => {
   });
 };
 
-/**
- * A middleware that gets the artists of the genre with the given ID
- *
- * @function
- * @author Mohamed Abo-Bakr
- * @summary Gets artists of a specific genre
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-exports.getGenreArtists = async (req, res, next) => {
-  const artists = await genreService.findGenreArtists(req.params.id);
-  res.status(200).json(artists);
-};
