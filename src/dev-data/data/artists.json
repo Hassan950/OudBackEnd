@@ -187,7 +187,7 @@
     "_id": "5e907db0a0645f4581607605",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
+      "uploads\\users\\Hassan Shakosh-5e907db0a0645f4581607605-1587343122497.jpeg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -238,14 +238,18 @@
     "genres": [
       "5e962e04da7d8d40d02a9973",
       "5e962e04da7d8d40d02a9979"
+    ],
+    "images": [
+      "uploads\\users\\Oka Wi Ortega-5e907db0a0645f4571707606-1587344020556.jpeg",
+      "uploads\\users\\default-Cover.jpg"
     ]
   },
   {
     "_id": "5e907db0a0645f4581607607",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads\\users\\Cairokee-5e907db0a0645f4581607607-1587337573183.jpeg",
+      "uploads\\users\\Cairokee-5e907db0a0645f4581607607-1587337573184.jpeg"
     ],
     "verified": true,
     "queues": [],
@@ -287,7 +291,7 @@
     "_id": "5e9cbac42ec0720eecbb92a1",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
+      "uploads\\users\\Hamza Namira-5e9cbac42ec0720eecbb92a1-1587340112172.jpeg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -309,7 +313,7 @@
     "_id": "5e907db0a0645f4581607609",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
+      "uploads\\users\\Wegz-5e907db0a0645f4581607609-1587335122135.jpeg",
       "uploads\\users\\default-Cover.jpg"
     ],
     "verified": true,
@@ -328,8 +332,8 @@
     "_id": "5e907db0a0645f458160760a",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads\\users\\Marwan Pablo-5e907db0a0645f458160760a-1587334786988.jpeg",
+      "uploads\\users\\Marwan Pablo-5e907db0a0645f458160760a-1587334786989.jpeg"
     ],
     "verified": true,
     "queues": [],
@@ -347,8 +351,8 @@
     "_id": "5e907db0a0645f458160760b",
     "role": "artist",
     "images": [
-      "uploads\\users\\default-Profile.svg",
-      "uploads\\users\\default-Cover.jpg"
+      "uploads\\users\\Ariana Grande-5e907db0a0645f458160760b-1587395906187.jpeg",
+      "uploads\\users\\Ariana Grande-5e907db0a0645f458160760b-1587395906204.jpeg"
     ],
     "verified": true,
     "queues": [],
