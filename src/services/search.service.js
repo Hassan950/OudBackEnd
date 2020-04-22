@@ -37,7 +37,7 @@ module.exports.search = async (query)=> {
   }
 };
 const searchForPlaylists = async(q,offset,limit,total)=>{
-  let playlists = await Playlist.find({ name: { $regex:  q , $options: 'i'}})
+  let playlists = await Playlist.find({ name: { $regex:  q , $options: 'i'}}, { public: true} )
   .skip(offset)
   .limit(limit)
   .populate({
@@ -77,7 +77,7 @@ const searchForTracks = async(q,offset,limit,total)=>{
 }
 
 const searchForAlbums = async(q,offset,limit,total)=>{
-  let albums = await Album.find({ name: { $regex:  q , $options: 'i'}})
+  let albums = await Album.find({ name: { $regex:  q , $options: 'i'}},{  released: true})
   .select('-tracks -genres -released -release_date')
   .skip(offset)
   .limit(limit)
@@ -163,14 +163,17 @@ module.exports.getRecent = async (user,query)=>{
         return item;
       }
       case 'album':{
+        i++;
         const item = await getAlbum(itemInRecent);
         return item;
       }
       case 'Artist':{
+        i++;
         const item = await getArtist(itemInRecent);
         return item;
       }
       case 'User':{
+        i++;
         const item = await getUser(itemInRecent);
         return item;
       }
