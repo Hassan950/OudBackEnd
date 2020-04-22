@@ -71,7 +71,7 @@ exports.getPopularSongs = async artistId => {
       path: 'popularSongs',
       populate: {
         path: 'album artists',
-        select: 'album_type artists image name displayName images',
+        select: 'album_type released artists image name displayName images',
         populate: { path: 'artists', select: 'displayName images' }
       }
     })
@@ -105,7 +105,7 @@ exports.relatedArtists = async artistId => {
       path: 'popularSongs',
       populate: {
         path: 'album artists',
-        select: 'album_type artists image name displayName images',
+        select: 'album_type released artists image name displayName images',
         populate: { path: 'artists', select: 'displayName images' }
       }
     })

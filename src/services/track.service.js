@@ -128,7 +128,7 @@ exports.findTrackUtil = async id => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date -album_group',
+      select: '-tracks -genres -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
   return track;
@@ -155,7 +155,7 @@ exports.update = async (id, newTrack) => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date -album_group',
+      select: '-tracks -genres -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     });
 
@@ -179,7 +179,7 @@ exports.createTrack = async (albumId, newTrack) => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date -album_group',
+      select: '-tracks -genres -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     })
     .execPopulate();
@@ -206,7 +206,7 @@ exports.setTrack = async (track, url, duration) => {
     })
     .populate({
       path: 'album',
-      select: '-tracks -genres -released -release_date -album_group',
+      select: '-tracks -genres -release_date -album_group',
       populate: { path: 'artists', select: 'displayName images' }
     })
     .execPopulate();
