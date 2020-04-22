@@ -4936,6 +4936,8 @@ components:
           type: string
         displayName:
           type: string
+        type:
+          type: string
         images:
           type: array
           items:
@@ -4950,6 +4952,8 @@ components:
         name:
           type: string
         image:
+          type: string
+        type:
           type: string
         artists:
           type: array
@@ -4966,6 +4970,8 @@ components:
         name:
           type: string
         image:
+          type: string
+        type:
           type: string
       
     PlayHistoryContext:
