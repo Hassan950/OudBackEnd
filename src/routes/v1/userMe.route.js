@@ -15,7 +15,7 @@ const router = express.Router();
 
 
 // all routes need authentication
-//router.use(catchAsync(authMiddleware.authenticate));
+router.use(catchAsync(authMiddleware.authenticate));
 
 // /me/player router
 router.use('/player', playerRouter);

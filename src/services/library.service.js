@@ -240,7 +240,7 @@ module.exports.deleteSavedTracks = async(user,ids)=>{
           } 
         })
   //delete tracks to be unliked by user from model and playlist that holds the liked tracks
-  await likedTracks.deleteMany({userId: user.id},{track: {$in: ids}});
+  await likedTracks.deleteMany({track: {$in: ids}},{userId: user.id});
 }
 
 /**
@@ -255,6 +255,6 @@ module.exports.deleteSavedTracks = async(user,ids)=>{
 
 module.exports.deleteSavedAlbums = async(user,ids)=>{
   //delete albums to be unliked by user from model that holds the liked albums
-  await likedAlbums.deleteMany({userId: user.id},{track: {$in: ids}});
+  await likedAlbums.deleteMany({album: {$in: ids}},{userId: user.id});
 }
 
