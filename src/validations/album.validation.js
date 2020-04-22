@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { idsArray } = require('./custom.validation');
-const { Artist, Genre } = require('../models');
 
 /**
  * Schema that checks that the request is valid for endpoints that requires one album
@@ -89,7 +88,7 @@ exports.release = {
  * @summary Schema for a req for createAlbum endpoint
  * @namespace
  * @property {object} body An object that holds parameters that are sent up from the client in the post request
- * @property {string} body.name Name of the album 
+ * @property {string} body.name Name of the album
  * @property {string[]} body.artists list of ID's of artists of the album
  * @property {string[]} body.genres list of ID's of the genres of the album
  * @property {string} body.album_type type of the album (one of "album", "single", "compilation")
@@ -114,9 +113,6 @@ exports.createAlbum = {
     album_type: Joi.string()
       .valid('single', 'compilation', 'album')
       .required(),
-    album_group: Joi.string()
-      .valid('single', 'compilation', 'album', 'appears_on')
-      .required(),
     release_date: Joi.string()
       .regex(
         /^([0-2][0-9]|(3)[0-1])(-)(((0)[0-9])|((1)[0-2]))(-)((1)[5-9]\d{2}|(2)(0)[0-1][0-9]|2020)$/
@@ -135,7 +131,7 @@ exports.createAlbum = {
  * @property {object} params An object containing parameter values parsed from the URL path
  * @property {string} params.id Id of the album
  * @property {object} body An object that holds parameters that are sent up from the client in the post request
- * @property {string} body.name Name of the album 
+ * @property {string} body.name Name of the album
  * @property {string[]} body.artists list of ID's of artists of the album
  * @property {string[]} body.genres list of ID's of the genres of the album
  * @property {string} body.album_type type of the album (one of "album", "single", "compilation")
@@ -159,12 +155,6 @@ exports.updateAlbum = {
         .items(Joi.objectId())
         .min(1),
       album_type: Joi.string().valid('single', 'compilation', 'album'),
-      album_group: Joi.string().valid(
-        'single',
-        'compilation',
-        'album',
-        'appears_on'
-      ),
       release_date: Joi.string()
         .regex(
           /^([0-2][0-9]|(3)[0-1])(-)(((0)[0-9])|((1)[0-2]))(-)((1)[5-9]\d{2}|(2)(0)[0-1][0-9]|2020)$/
@@ -183,7 +173,7 @@ exports.updateAlbum = {
  * @property {object} params An object containing parameter values parsed from the URL path
  * @property {string} params.id Id of the album
  * @property {object} body An object that holds parameters that are sent up from the client in the post request
- * @property {string} body.name Name of the track 
+ * @property {string} body.name Name of the track
  * @property {string[]} body.artists list of ID's of artists of the track
  */
 exports.createTrack = {

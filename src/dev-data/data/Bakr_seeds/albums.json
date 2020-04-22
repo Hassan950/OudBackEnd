@@ -1,0 +1,202 @@
+[
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e2",
+    "album_type": "album",
+    "artists": ["5e907dafa0645f4571607602"],
+    "genres": [
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b322c",
+      "5e962e04da7d8d40d02a9975",
+      "5e962e04da7d8d40d02a9977"
+    ],
+    "name": "This is acting",
+    "release_date": "29-01-2016",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf3ad",
+      "5e909be7cfe5b521a0ccf3ae",
+      "5e909be7cfe5b521a0ccf3af"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e2-5e907dafa0645f4571607602-1587377068366.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e3",
+    "album_type": "album",
+    "artists": ["5e907dafa0645f4571607600", "5e907dafa0645f4571607601"],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "name": "Reputation",
+    "release_date": "10-11-2017",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf3cc",
+      "5e909be7cfe5b521a0ccf3cd",
+      "5e909be7cfe5b521a0ccf3ce"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e3-5e907dafa0645f4571607600-1587378003829.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e4",
+    "album_type": "album",
+    "artists": ["5e907dafa0645f45716075ff"],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3230"
+    ],
+    "name": "Bangerz",
+    "release_date": "04-10-2013",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf3bc",
+      "5e909be7cfe5b521a0ccf3bd",
+      "5e909be7cfe5b521a0ccf3be"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e4-5e907dafa0645f45716075ff-1587378518893.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e5",
+    "album_type": "album",
+    "artists": ["5e907dafa0645f4571607601"],
+    "genres": ["5e9083c24c798428f45b322f", "5e9083c24c798428f45b3232"],
+    "release_date": "03-03-2017",
+    "name": "÷",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf32f",
+      "5e909be7cfe5b521a0ccf331",
+      "5e909be7cfe5b521a0ccf332"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e5-5e907dafa0645f4571607601-1587380065168.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e6",
+    "album_type": "single",
+    "artists": ["5e907dafa0645f4571607603"],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a9976",
+      "5e9083c24c798428f45b322e"
+    ],
+    "name": "Mesh Baqy Menny (Maharagan)",
+    "release_date": "20-05-2009",
+    "tracks": ["5e909be7cfe5b521a0ccf3f0"],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e6-5e907dafa0645f4571607603-1587380753866.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4e6",
+    "album_type": "single",
+    "artists": ["5e907dafa0645f4571607603"],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a9976",
+      "5e9083c24c798428f45b322e"
+    ],
+    "name": "Sa'alt Nafsy Keteer",
+    "release_date": "23-08-2013",
+    "tracks": ["5e909be7cfe5b521a0ccf4f0"],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e6-5e907dafa0645f4571607603-1587381180342.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4e1",
+    "album_type": "single",
+    "artists": ["5e907dafa0645f4571607603"],
+    "genres": [
+      "5e962e04da7d8d40d02a9979",
+      "5e962e04da7d8d40d02a9976",
+      "5e9083c24c798428f45b322e"
+    ],
+    "name": "مسحراتي",
+    "release_date": "06-05-2019",
+    "tracks": ["5e909be7cfe5b521a0ccf4f1"],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf4e1-5e907dafa0645f4571607603-1587381220389.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf6e7",
+    "album_type": "album",
+    "artists": ["5e907db0a0645f4571607604"],
+    "genres": [
+      "5e9083c24c798428f45b322e",
+      "5e9083c24c798428f45b3235",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "name": "Ya Ahl El Arab W El Tarab",
+    "release_date": "14-04-2012",
+    "tracks": ["5e909be7cfe5b521a0ccf3f1", "5e909be7cfe5b521a0cdf3f1"],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf6e7-5e907db0a0645f4571607604-1587382636021.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e7",
+    "album_type": "single",
+    "artists": ["5e907db0a0645f4571607604"],
+    "genres": [
+      "5e9083c24c798428f45b322e",
+      "5e9083c24c798428f45b3235",
+      "5e962e04da7d8d40d02a9979"
+    ],
+    "name": "ازاي",
+    "release_date": "06-02-2011",
+    "tracks": ["5e909be7cfe5b521a0ccf6f1"],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e7-5e907db0a0645f4571607604-1587382696628.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e8",
+    "album_type": "single",
+    "artists": ["5e907db0a0645f4571607605"],
+    "genres": ["5e962e04da7d8d40d02a9973"],
+    "name": "كفا حبيبي بكفا",
+    "release_date": "05-11-2013",
+    "tracks": ["5e909be7cfe5b521a0ccf3f2"],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e8-5e907db0a0645f4571607605-1587385278324.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccd3e8",
+    "album_type": "single",
+    "artists": ["5e907db0a0645f4571607605"],
+    "genres": ["5e962e04da7d8d40d02a9973"],
+    "name": "مولد المدفعجية",
+    "release_date": "09-01-2013",
+    "tracks": ["5e909be7cfe5b521a0ccd3f2"],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccd3e8-5e907db0a0645f4571607605-1587385314197.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cce3e8",
+    "album_type": "single",
+    "artists": ["5e907db0a0645f4571607605"],
+    "genres": ["5e962e04da7d8d40d02a9973"],
+    "name": "الناس",
+    "release_date": "09-06-2013",
+    "tracks": ["5e909be7cfe5b521a0cdf3f2"],
+    "image": "uploads/albums/5e909be7cfe5b521a0cce3e8-5e907db0a0645f4571607605-1587385338271.jpeg",
+    "released": true
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3e9",
+    "album_type": "album",
+    "artists": ["5e907db0a0645f4571607606"],
+    "genres": [
+      "5e9083c24c798428f45b322c",
+      "5e9083c24c798428f45b322f",
+      "5e9083c24c798428f45b3232"
+    ],
+    "name": "Future Nostalgia",
+    "release_date": "27-03-2020",
+    "tracks": [
+      "5e909be7cfe5b521a0ccf3f3",
+      "5e909be7cfe5b521a0cdf3f3",
+      "5e909be7cfe5b521a0cef3f3"
+    ],
+    "image": "uploads/albums/5e909be7cfe5b521a0ccf3e9-5e907db0a0645f4571607606-1587386142605.jpeg",
+    "released": true
+  }
+]

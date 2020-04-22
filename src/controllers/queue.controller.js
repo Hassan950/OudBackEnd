@@ -151,7 +151,7 @@ exports.addToQueue = async (req, res, next) => {
     player.save();
   }
 
-  const track = await trackService.findTrack(trackId);
+  const track = await trackService.findTrackUtil(trackId);
 
   if (!track) {
     return next(new AppError('Track is not found', 404));
