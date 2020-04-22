@@ -1,4 +1,5 @@
-const { Genre } = require('../models');
+const { Genre, User } = require('../models');
+const mongoose = require('mongoose');
 
 /**
  * A method that gets an genre by it's ID
@@ -46,4 +47,28 @@ exports.genresExist = async genreIds => {
   const genres = await Genre.find({ _id: genreIds });
   if (genreIds.length !== genres.length) return false;
   return true;
+};
+
+/**
+ * A method that gets all artists that have this genre
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets all artists belonging to a genre
+ * @param {String} id ID of the genre to be retrieved
+ * @returns artists list of all artists having this genre
+ * @returns null if the genre was not found
+ */
+exports.findGenreArtists = async id => {
+  return await User.find({ genres: mongoose.Types.ObjectId(id) })
+    .select('displayName images genres bio popularSongs')
+    .populate({
+      path: 'popularSongs',
+      populate: {
+        path: 'album artists',
+        select: 'album_type released artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
+    })
+    .populate('genres');
 };

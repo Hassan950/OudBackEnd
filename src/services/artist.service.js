@@ -21,7 +21,7 @@ exports.findArtist = async id => {
       path: 'popularSongs',
       populate: {
         path: 'album artists',
-        select: 'album_type artists image name displayName images',
+        select: 'album_type released artists image name displayName images',
         populate: { path: 'artists', select: 'displayName images' }
       }
     })
@@ -45,7 +45,7 @@ exports.findArtists = async ids => {
       path: 'popularSongs',
       populate: {
         path: 'album artists',
-        select: 'album_type artists image name displayName images',
+        select: 'album_type released artists image name displayName images',
         populate: { path: 'artists', select: 'displayName images' }
       }
     })
