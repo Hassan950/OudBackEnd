@@ -124,7 +124,7 @@ exports.findAlbumTracks = async (req, res, next) => {
     req.user
   );
 
-  if (tracks instanceof(AppError))
+  if (tracks instanceof AppError)
     return next(tracks);
     
     res.status(200).json({
