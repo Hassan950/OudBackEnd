@@ -15,7 +15,7 @@ const transports = [
   })
 ];
 
-if (config.get('NODE_ENV') === 'production' && config.get('LOGGY_TOKEN') && config.get('LOGGY_SUBDOMAIN')) {
+if (config.get('NODE_ENV') === 'production' && config.has('LOGGY_TOKEN') && config.has('LOGGY_SUBDOMAIN')) {
   try {
     const loggly = new Loggly({
       token: config.get('LOGGY_TOKEN'),
