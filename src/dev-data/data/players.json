@@ -179,7 +179,8 @@
     "shuffleState": false,
     "repeatState": "off",
     "currentlyPlayingType": "unknown",
-    "userId": "5e907db0a0645f457160760e"
+    "userId": "5e907db0a0645f457160760e",
+    "adsCounter": 0
   },
   {
     "_id": "5e90f5d59f9c887828eec168",
@@ -191,7 +192,8 @@
     "shuffleState": false,
     "repeatState": "off",
     "currentlyPlayingType": "unknown",
-    "userId": "5e907db0a0645f457160760f"
+    "userId": "5e907db0a0645f457160760f",
+    "adsCounter": 0
   },
   {
     "_id": "5e90f5d59f9c887828eec169",
@@ -205,6 +207,7 @@
     "repeatState": "off",
     "currentlyPlayingType": "track",
     "userId": "5e907db0a0645f4571607610",
+    "adsCounter": 0,
     "item": "5e909be7cfe5b521a0ccf3f6"
   },
   {
@@ -219,6 +222,7 @@
     "repeatState": "off",
     "currentlyPlayingType": "track",
     "userId": "5e907db0a0645f4571607611",
+    "adsCounter": 0,
     "item": "5e909be7cfe5b521a0ccf3f3"
   },
   {
@@ -233,6 +237,7 @@
     "repeatState": "off",
     "currentlyPlayingType": "track",
     "userId": "5e907db0a0645f4571607612",
+    "adsCounter": 0,
     "item": "5e909be7cfe5b521a0ccf3f2"
   }
 ]

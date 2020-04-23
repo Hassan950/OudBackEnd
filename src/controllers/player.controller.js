@@ -31,6 +31,10 @@ exports.getPlayer = async (req, res, next) => {
     return res.end();
   }
 
+  player.itemModel = undefined;
+  player.adsCounter = undefined;
+  player.__v = undefined;
+
   res.status(200).json({
     player: player
   });
@@ -100,6 +104,9 @@ exports.pausePlayer = async (req, res, next) => {
     return next(new AppError('Player is not found', 404));
   }
 
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot pause while the ad is playing', 403));
+
   player.isPlaying = false;
 
   if (deviceId) {
@@ -149,6 +156,9 @@ exports.resumePlayer = async (req, res, next) => {
     return next(new AppError('Player is not found', 404));
   }
 
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot resume while the ad is playing', 403));
+
   let queue;
 
   // Change player state
@@ -176,7 +186,6 @@ exports.resumePlayer = async (req, res, next) => {
     }
 
     playerService.setPlayerToDefault(player);
-    playerService.addTrackToPlayer(player, queue.tracks[0], context);
   }
   // add current track
   if (uris && uris.length) {
@@ -200,6 +209,10 @@ exports.resumePlayer = async (req, res, next) => {
         next(new AppError('Queue is not found', 404));
     }
   }
+
+  if (queue && queue.tracks && queue.tracks.length)
+    await playerService.addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
+
   if (!player.item) {
     return next(new AppError('Nothing to be played', 404));
   }
@@ -242,6 +255,9 @@ exports.seekPlayer = async (req, res, next) => {
   if (!player) {
     return next(new AppError('Player is not found', 404));
   }
+
+  if (player.currentlyPlayingType === 'ad')
+    return next(new AppError('You cannot seek while the ad is playing', 403));
 
   if (deviceId) {
     player = await playerService.addDeviceToPlayer(player, deviceId);

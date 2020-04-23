@@ -1,4 +1,4 @@
-const { Coupon, Normal } = require('../models');
+const { Coupon, Normal, Player } = require('../models');
 const moment = require('moment');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
@@ -35,6 +35,11 @@ exports.subscribe = async user => {
       httpStatus.BAD_REQUEST
     );
   }
+
+  // set player ads to undefined
+  await Player.findOneAndUpdate({ userId: user._id }, { $set: { adsCounter: undefined } });
+
+  // Update User
   return await Normal.findOneAndUpdate(
     { _id: user._id },
     {

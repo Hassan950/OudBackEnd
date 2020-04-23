@@ -14,6 +14,7 @@ const routes = require('./routes/v1');
 
 const app = express();
 
+// logger format
 if (config.get('NODE_ENV') !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);

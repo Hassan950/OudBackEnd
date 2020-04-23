@@ -36,7 +36,12 @@ const playerSchema = mongoose.Schema({
   },
   item: {
     type: mongoose.Types.ObjectId,
-    ref: 'Track'
+    refPath: 'itemModel'
+  },
+  itemModel: {
+    type: String,
+    enum: ['Track', 'Ad'],
+    default: 'Track'
   },
   context: {
     type: {
@@ -47,6 +52,12 @@ const playerSchema = mongoose.Schema({
     id: {
       type: mongoose.Types.ObjectId
     }
+  },
+  adsCounter: {
+    type: Number
+  },
+  actions: {
+    type: Object
   }
 }, {
   toJSON: {

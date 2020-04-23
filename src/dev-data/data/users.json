@@ -2,7 +2,7 @@
   {
     "_id": "5e907db0a0645f4571607609",
     "role": "premium",
-    "plan": null,
+    "plan": "2030-12-12",
     "images": [
       "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
@@ -19,7 +19,7 @@
   {
     "_id": "5e907db0a0645f457160760a",
     "role": "premium",
-    "plan": null,
+    "plan": "2030-12-12",
     "images": [
       "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
@@ -38,7 +38,7 @@
   {
     "_id": "5e907db0a0645f457160760b",
     "role": "premium",
-    "plan": null,
+    "plan": "2030-12-12",
     "images": [
       "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
@@ -57,7 +57,7 @@
   {
     "_id": "5e907db0a0645f457160760c",
     "role": "premium",
-    "plan": null,
+    "plan": "2030-12-12",
     "images": [
       "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
@@ -74,7 +74,7 @@
   {
     "_id": "5e907db0a0645f457160760d",
     "role": "premium",
-    "plan": null,
+    "plan": "2030-12-12",
     "images": [
       "uploads\\users\\default-Profile.svg",
       "uploads\\users\\default-Cover.jpg"
