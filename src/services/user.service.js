@@ -171,7 +171,6 @@ const getUser = async userData => {
   return user;
 };
 
-
 /**
  * Get user Queues
  *
@@ -220,6 +219,26 @@ const addQueue = (queue, queues) => {
   return queues;
 };
 
+/**
+ * Sets the value of privateSession of the user
+ *
+ * @function
+ * @public
+ * @async
+ * @author Hassan Mohamed
+ * @param {String} id - Queue
+ * @param {Boolean} privateSession - The value of privateSession
+ * @summary Sets the value of privateSession of the user
+ * @returns {Document} The new user after updating
+ */
+const setPrivateSession = async (id, privateSession) => {
+  return await User.findByIdAndUpdate(
+    id,
+    { $set: { privateSession: privateSession } },
+    { new: true }
+  );
+};
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
@@ -229,5 +248,6 @@ module.exports = {
   editProfile,
   updateImages,
   getUserQueues,
-  addQueue
+  addQueue,
+  setPrivateSession
 };

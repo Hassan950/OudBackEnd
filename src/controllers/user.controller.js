@@ -136,3 +136,22 @@ exports.updateImages = async (req, res, next) => {
   );
   res.status(httpStatus.OK).send(user);
 };
+
+
+/**
+ * A middleware that sets the value of privateSession in user's model
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Updates the paths of images of the user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.setPrivateSession = async (req, res, next) => {
+  const user = await userService.setPrivateSession(
+    req.user._id,
+    req.body.privateSession
+  );
+  res.status(httpStatus.OK).send(user);
+};
