@@ -1,6 +1,5 @@
 const { Queue, Album, Playlist, Artist, Track } = require('../models');
 const trackService = require('./track.service');
-const playerService = require('./player.service');
 const _ = require('lodash');
 
 /**
@@ -139,6 +138,8 @@ const createQueueWithContext = async (contextUri) => {
     if (!artist) return null;
 
     tracks = await getArtistTopTracksQueue(artist);
+
+    if (!tracks) return null;
   }
 
   const queue = await Queue.create({
@@ -170,6 +171,8 @@ const getArtistTopTracksQueue = async (artist) => {
       views: -1
     })
     .limit(10);
+
+  if (!topTracks) return null;
   // select only _id
   topTracks = topTracks.map(track => track._id);
   // if popularSongs is empty use top tracks
@@ -330,6 +333,7 @@ const goNextShuffle = async (queue, player, queues) => {
     } else {
       // create a queue similar to the current queue
       const userService = require('./user.service');
+      const playerService = require('./player.service');
 
       let newQueue = await createSimilarQueue(queue);
 
@@ -373,6 +377,7 @@ const goNextNormal = async (queue, player, queues) => {
     } else {
       // create a queue similar to the current queue
       const userService = require('./user.service');
+      const playerService = require('./player.service');
 
       let newQueue = await createSimilarQueue(queue);
 
@@ -437,10 +442,12 @@ const goPreviousShuffle = async (queue, player, queues) => {
       queue.shuffleIndex = queue.tracks.length - 1; // return to the last track
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // convert shuffleIndex to real index
     } else {
+      const playerService = require('./player.service');
+
       // play the last queue
       if (queues && queues.length > 1) {
         queues.reverse();
-        queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+        queue = await getQueueById(queues[0], { selectDetails: true });
         setQueueToDefault(queue);
         playerService.setPlayerToDefault(player);
       }
@@ -475,6 +482,7 @@ const goPreviousNormal = async (queue, player, queues) => {
     if (player.repeatState === 'context') {
       queue.currentIndex = queue.tracks.length - 1; // return to the last track
     } else {
+      const playerService = require('./player.service');
       // play the last queue
       if (queues && queues.length > 1) {
         queues.reverse();
@@ -532,10 +540,12 @@ const goPrevious = async (queue, player, queues) => {
  * @returns {Document} `queue` 
  */
 const fillQueueFromTracksUris = async (uris, queues, player) => {
+  const trackService = require('./track.service');
+  const playerService = require('./player.service');
   let tracks = [];
   for (let i = 0; i < uris.length; i++) {
     const trackId = uris[i].split(':')[2];
-    const track = await trackService.findTrack(trackId);
+    const track = await trackService.findTrackUtil(trackId);
     if (track)
       tracks.push(trackId);
   }
@@ -577,7 +587,7 @@ const setQueueToDefault = (queue) => {
  * Create queue similar to the current queue 
  * 
  * @function
- * @private
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {Document} queue 
@@ -611,7 +621,7 @@ const createSimilarQueue = async (queue) => {
  * Create queue from related artists
  * 
  * @function
- * @private
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} artistId 
@@ -638,6 +648,7 @@ const createQueueFromRelatedArtists = async (artistId) => {
   // get artist top tracks to create the queue with
   const tracks = await getArtistTopTracksQueue(artist);
 
+
   if (!tracks || !tracks.length) return null;
 
   // create new queue
@@ -654,7 +665,7 @@ const createQueueFromRelatedArtists = async (artistId) => {
  * Create queue from related Albums
  * 
  * @function
- * @private
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} albumId 
@@ -707,7 +718,7 @@ const createQueueFromRelatedAlbums = async (albumId) => {
  * Create queue from related Playlists
  * 
  * @function
- * @private
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {String} playlistId Playlist ID
@@ -755,7 +766,7 @@ const createQueueFromRelatedPlaylists = async (playlistId) => {
  * Create queue from list of tracks
  * 
  * @function
- * @private
+ * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {Array<String>} tracks Tracks array
@@ -810,5 +821,10 @@ module.exports = {
   goPreviousShuffle,
   goPrevious,
   setQueueToDefault,
-  goPrevious
+  goPrevious,
+  createQueueFromRelatedArtists,
+  createQueueFromListOfTracks,
+  createQueueFromRelatedPlaylists,
+  createQueueFromRelatedAlbums,
+  createSimilarQueue
 };

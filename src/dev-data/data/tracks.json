@@ -1,50 +1,801 @@
 [
   {
-    "_id":"5e909be7cfe5b521a0ccf3ec",
-    "name":"Bad Blood",
-    "artists":["5e907dafa0645f4571607600"],
-    "album":"5e909be7cfe5b521a0ccf3e3"
+    "_id": "5e9888bc2344f83a2900c2dc",
+    "name": "Killshot",
+    "artists": [
+      "5e907db0a0645f4581607606"
+    ],
+    "audioUrl": "uploads/tracks/5e9888bc2344f83a2900c2dc-5e907db0a0645f4581607606-1587345675388.mp3",
+    "duration": 253649,
+    "album": "5e9887ee2344f83a2900c2db"
   },
   {
-    "_id":"5e909be7cfe5b521a0ccf3ed",
-    "name":"The greatest",
-    "artists":["5e907dafa0645f4571607602"],
-    "album":"5e909be7cfe5b521a0ccf3e2"
+    "_id": "5e98bdad2c7baf48ebe7888b",
+    "name": "Infinite",
+    "artists": [
+      "5e907db0a0645f4581607606"
+    ],
+    "audioUrl": "uploads/tracks/5e98bdad2c7baf48ebe7888b-5e907db0a0645f4581607606-1587345819598.mp3",
+    "duration": 251768,
+    "album": "5e98bd8d2c7baf48ebe7888a"
   },
   {
-    "_id":"5e909be7cfe5b521a0ccf3ee",
-    "name":"Wrecking ball",
-    "artists":["5e907dafa0645f45716075ff"],
-    "album":"5e909be7cfe5b521a0ccf3e4"
+    "_id": "5e98bf4b2c7baf48ebe7888f",
+    "name": "Lucky You",
+    "artists": [
+      "5e907db0a0645f4581607606"
+    ],
+    "audioUrl": "uploads/tracks/5e98bf4b2c7baf48ebe7888f-5e907db0a0645f4581607606-1587345942159.mp3",
+    "duration": 244741,
+    "album": "5e98bf312c7baf48ebe7888e"
   },
   {
-    "_id":"5e909be7cfe5b521a0ccf3ef",
-    "name":"Shape of you",
-    "artists":["5e907dafa0645f4571607601"],
-    "album":"5e909be7cfe5b521a0ccf3e5"
+    "_id": "5e98f1442c7baf48ebe78893",
+    "name": "The Ringer",
+    "artists": [
+      "5e907db0a0645f4581607606"
+    ],
+    "audioUrl": "uploads/tracks/5e98f1442c7baf48ebe78893-5e907db0a0645f4581607606-1587346059556.mp3",
+    "duration": 337998,
+    "album": "5e98bf312c7baf48ebe7888e"
   },
   {
-    "_id":"5e909be7cfe5b521a0ccf3f0",
-    "name":"Mesh Baqy Meny",
-    "artists":["5e907dafa0645f4571607603"],
-    "album":"5e909be7cfe5b521a0ccf3e6"
+    "_id": "5e9b32c40f27b613b44fba24",
+    "name": "خربان",
+    "artists": [
+      "5e907db0a0645f5581607610",
+      "5e907db0a0645f4581607609"
+    ],
+    "audioUrl": "uploads/tracks/5e9b32c40f27b613b44fba24-5e907db0a0645f5581607610-1587346270875.mp3",
+    "duration": 206890,
+    "album": "5e9b32340f27b613b44fba23"
   },
   {
-    "_id":"5e909be7cfe5b521a0ccf3f1",
-    "name":"Ya Ahl El Arab",
-    "artists":["5e907db0a0645f4571607604"],
-    "album":"5e909be7cfe5b521a0ccf3e7"
+    "_id": "5e9b37660f27b613b44fba27",
+    "name": "مسرحية",
+    "artists": [
+      "5e907db0a0645f5581607610"
+    ],
+    "audioUrl": "uploads/tracks/5e9b37660f27b613b44fba27-5e907db0a0645f5581607610-1587346353448.mp3",
+    "duration": 190537,
+    "album": "5e9b370d0f27b613b44fba26"
   },
   {
-    "_id":"5e909be7cfe5b521a0ccf3f2",
-    "name":"Khaenah",
-    "artists":["5e907db0a0645f4571607605"],
-    "album":"5e909be7cfe5b521a0ccf3e8"
+    "_id": "5e9b37d50f27b613b44fba29",
+    "name": "الصيت ولا الغنا",
+    "artists": [
+      "5e907db0a0645f5581607610",
+      "5e907db0a0645f4581607609"
+    ],
+    "audioUrl": "uploads/tracks/5e9b37d50f27b613b44fba29-5e907db0a0645f5581607610-1587346395320.mp3",
+    "duration": 254668,
+    "album": "5e9b370d0f27b613b44fba26"
   },
   {
-    "_id":"5e909be7cfe5b521a0ccf3f3",
-    "name":"New Rules",
-    "artists":["5e907db0a0645f4571607606"],
-    "album":"5e909be7cfe5b521a0ccf3e9"
+    "_id": "5e9b39050f27b613b44fba2c",
+    "name": "Drakola",
+    "artists": [
+      "5e907db0a0645f5581607610"
+    ],
+    "audioUrl": "uploads/tracks/5e9b39050f27b613b44fba2c-5e907db0a0645f5581607610-1587347045843.mp3",
+    "duration": 180140,
+    "album": "5e9b38be0f27b613b44fba2b"
+  },
+  {
+    "_id": "5e9b3d310f27b613b44fba2f",
+    "name": "نهاية العالم",
+    "artists": [
+      "5e907db0a0645f558160760d"
+    ],
+    "audioUrl": "uploads/tracks/5e9b3d310f27b613b44fba2f-5e907db0a0645f558160760d-1587347166254.mp3",
+    "duration": 222067,
+    "album": "5e9b3c710f27b613b44fba2e"
+  },
+  {
+    "_id": "5e9b40b80f27b613b44fba32",
+    "name": "البوصلة ضاعت",
+    "artists": [
+      "5e907db0a0645f558160760d"
+    ],
+    "audioUrl": "uploads/tracks/5e9b40b80f27b613b44fba32-5e907db0a0645f558160760d-1587347295787.mp3",
+    "duration": 210051,
+    "album": "5e9b407a0f27b613b44fba31"
+  },
+  {
+    "_id": "5e9b41d70f27b613b44fba35",
+    "name": "أبطال",
+    "artists": [
+      "5e907db0a0645f558160760d"
+    ],
+    "audioUrl": "uploads/tracks/5e9b41d70f27b613b44fba35-5e907db0a0645f558160760d-1587347387089.mp3",
+    "duration": 230661,
+    "album": "5e9b41630f27b613b44fba34"
+  },
+  {
+    "_id": "5e9b44fb0f27b613b44fba38",
+    "name": "Basha E3temed",
+    "artists": [
+      "5e907db0a0645f558160760e"
+    ],
+    "audioUrl": "uploads/tracks/5e9b44fb0f27b613b44fba38-5e907db0a0645f558160760e-1587347670159.mp3",
+    "duration": 157623,
+    "album": "5e9b44a00f27b613b44fba37"
+  },
+  {
+    "_id": "5e9b46610f27b613b44fba3b",
+    "name": "Wtwat",
+    "artists": [
+      "5e907db0a0645f558160760e"
+    ],
+    "audioUrl": "uploads/tracks/5e9b46610f27b613b44fba3b-5e907db0a0645f558160760e-1587347771809.mp3",
+    "duration": 205531,
+    "album": "5e9b46020f27b613b44fba3a"
+  },
+  {
+    "_id": "5e9b47be0f27b613b44fba3e",
+    "name": "Yatawaghal Yatasarab",
+    "artists": [
+      "5e907db0a0645f558160760e"
+    ],
+    "audioUrl": "uploads/tracks/5e9b47be0f27b613b44fba3e-5e907db0a0645f558160760e-1587347934057.mp3",
+    "duration": 186828,
+    "album": "5e9b47470f27b613b44fba3d"
+  },
+  {
+    "_id": "5e9b49440f27b613b44fba41",
+    "name": "Someone Like You",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "audioUrl": "uploads/tracks/5e9b49440f27b613b44fba41-5e907db0a0645f4581607608-1587348091737.mp3",
+    "duration": 285074,
+    "album": "5e9b48d20f27b613b44fba40"
+  },
+  {
+    "_id": "5e9b49440f27b613b44fba42",
+    "name": "Hello",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "audioUrl": "uploads/tracks/5e9b49440f27b613b44fba42-5e907db0a0645f4581607608-1587348201947.mp3",
+    "duration": 295576,
+    "album": "5e9b48d20f27b613b44fba41"
+  },
+  {
+    "_id": "5e9b49440f27b613b44fba43",
+    "name": "Skyfall",
+    "artists": [
+      "5e907db0a0645f4581607608"
+    ],
+    "audioUrl": "uploads/tracks/5e9b49440f27b613b44fba43-5e907db0a0645f4581607608-1587348364680.mp3",
+    "duration": 286537,
+    "album": "5e9b48d20f27b613b44fba42"
+  },
+  {
+    "_id": "5e9b4b9b0f27b613b44fba44",
+    "name": "Love Me Like You Do",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4b9b0f27b613b44fba44-5e907db0a0645f558160760b-1587348542902.mp3",
+    "duration": 252604,
+    "album": "5e9b4b3d0f27b613b44fba43"
+  },
+  {
+    "_id": "5e9b4b9b0f27b613b44fba45",
+    "name": "Sixteen",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4b9b0f27b613b44fba45-5e907db0a0645f558160760b-1587348628649.mp3",
+    "duration": 201143,
+    "album": "5e9b4b3d0f27b613b44fba44"
+  },
+  {
+    "_id": "5e9b4b9b0f27b613b44fba46",
+    "name": "Still Falling For You",
+    "artists": [
+      "5e907db0a0645f558160760b"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4b9b0f27b613b44fba46-5e907db0a0645f558160760b-1587348743041.mp3",
+    "duration": 240927,
+    "album": "5e9b4b3d0f27b613b44fba45"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba47",
+    "name": "HIGHEST IN THE ROOM",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4df40f27b613b44fba47-5e907db0a0645f558160760c-1587350409002.mp3",
+    "duration": 175778,
+    "album": "5e9b4dad0f27b613b44fba46"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba48",
+    "name": "SICKO MODE",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4df40f27b613b44fba48-5e907db0a0645f558160760c-1587350493300.mp3",
+    "duration": 312895,
+    "album": "5e9b4dad0f27b613b44fba47"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba49",
+    "name": "BUTTERFLY EFFECT",
+    "artists": [
+      "5e907db0a0645f558160760c"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4df40f27b613b44fba49-5e907db0a0645f558160760c-1587350549103.mp3",
+    "duration": 190616,
+    "album": "5e9b4dad0f27b613b44fba47"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba50",
+    "name": "El Gaw Hady",
+    "artists": [
+      "5e907db0a0645f558160760f"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4df40f27b613b44fba50-5e907db0a0645f558160760f-1587350638215.mp3",
+    "duration": 258638,
+    "album": "5e9b4dad0f27b613b44fba48"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba51",
+    "name": "Salefny Dehketak",
+    "artists": [
+      "5e907db0a0645f558160760f"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4df40f27b613b44fba51-5e907db0a0645f558160760f-1587350704008.mp3",
+    "duration": 316238,
+    "album": "5e9b4dad0f27b613b44fba48"
+  },
+  {
+    "_id": "5e9b4df40f27b613b44fba52",
+    "name": "Edeny Albak",
+    "artists": [
+      "5e907db0a0645f558160760f"
+    ],
+    "audioUrl": "uploads/tracks/5e9b4df40f27b613b44fba52-5e907db0a0645f558160760f-1587350762005.mp3",
+    "duration": 630309,
+    "album": "5e9b4dad0f27b613b44fba49"
+  },
+  {
+    "_id": "5e9cc40f111e012d183ddec5",
+    "artists": [
+      "5e907db0a0645f458160760a"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cc40f111e012d183ddec5-5e907db0a0645f458160760a-1587332717595.mp3",
+    "duration": "218436",
+    "views": "0",
+    "name": "Free",
+    "album": "5e9cc2c6111e012d183ddec4"
+  },
+  {
+    "_id": "5e9cc500111e012d183ddec8",
+    "artists": [
+      "5e907db0a0645f458160760a"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cc500111e012d183ddec8-5e907db0a0645f458160760a-1587332678079.mp3",
+    "duration": "179043",
+    "views": "0",
+    "name": "El Gemeza",
+    "album": "5e9cc4cc111e012d183ddec7"
+  },
+  {
+    "_id": "5e9cc720111e012d183ddecb",
+    "artists": [
+      "5e907db0a0645f458160760a"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cc720111e012d183ddecb-5e907db0a0645f458160760a-1587332919025.mp3",
+    "duration": "212506",
+    "views": "0",
+    "name": "3ayz Fin",
+    "album": "5e9cc704111e012d183ddeca"
+  },
+  {
+    "_id": "5e9cd053111e012d183ddece",
+    "artists": [
+      "5e907db0a0645f4581607609"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cd053111e012d183ddece-5e907db0a0645f4581607609-1587335644008.mp3",
+    "duration": "258011",
+    "views": "0",
+    "name": "دورك جي",
+    "album": "5e9cd032111e012d183ddecd"
+  },
+  {
+    "_id": "5e9cd14e111e012d183dded1",
+    "artists": [
+      "5e907db0a0645f4581607609"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cd14e111e012d183dded1-5e907db0a0645f4581607609-1587335661060.mp3",
+    "duration": "161176",
+    "views": "0",
+    "name": "باظت",
+    "album": "5e9cd132111e012d183dded0"
+  },
+  {
+    "_id": "5e9cd288111e012d183dded4",
+    "artists": [
+      "5e907db0a0645f4581607609"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cd288111e012d183dded4-5e907db0a0645f4581607609-1587336062373.mp3",
+    "duration": "201273",
+    "views": "0",
+    "name": "علي بابا",
+    "album": "5e9cd23a111e012d183dded3"
+  },
+  {
+    "_id": "5e9cdbbe111e012d183dded7",
+    "artists": [
+      "5e907db0a0645f4581607607",
+      "5e907db0a0645f5581607614"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cdbbe111e012d183dded7-5e907db0a0645f4581607607-1587338220779.mp3",
+    "duration": "225411",
+    "views": "0",
+    "name": "Kan Lak Ma'aya",
+    "album": "5e9cdaa3111e012d183dded6"
+  },
+  {
+    "_id": "5e9cddaf111e012d183ddeda",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cddaf111e012d183ddeda-5e907db0a0645f4581607607-1587338725992.mp3",
+    "duration": "196310",
+    "views": "0",
+    "name": "El Sekka Shemal",
+    "album": "5e9cdd46111e012d183dded9"
+  },
+  {
+    "_id": "5e9cde79111e012d183ddedd",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cde79111e012d183ddedd-5e907db0a0645f4581607607-1587338914800.mp3",
+    "duration": "260075",
+    "views": "0",
+    "name": "مطلوب زعيم Matloob Zaeem",
+    "album": "5e9cde31111e012d183ddedc"
+  },
+  {
+    "_id": "5e9cdedc111e012d183ddedf",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cdedc111e012d183ddedf-5e907db0a0645f4581607607-1587339248057.mp3",
+    "duration": "281078",
+    "views": "0",
+    "name": "يالميدان Yalmidan",
+    "album": "5e9cde31111e012d183ddedc"
+  },
+  {
+    "_id": "5e9ce02b111e012d183ddee1",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ce02b111e012d183ddee1-5e907db0a0645f4581607607-1587339337349.mp3",
+    "duration": "267076",
+    "views": "0",
+    "name": "غريب فى بلاد غريبة Ghareeb",
+    "album": "5e9cde31111e012d183ddedc"
+  },
+  {
+    "_id": "5e9ce143111e012d183ddee3",
+    "artists": [
+      "5e907db0a0645f4581607607",
+      "5e907db0a0645f558160760f"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ce143111e012d183ddee3-5e907db0a0645f4581607607-1587339607313.mp3",
+    "duration": "265456",
+    "views": "0",
+    "name": "Ghareeb Fi Belad Ghareeba",
+    "album": "5e9cdd46111e012d183dded9"
+  },
+  {
+    "_id": "5e9ce23a111e012d183ddee6",
+    "artists": [
+      "5e907db0a0645f4581607607"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ce23a111e012d183ddee6-5e907db0a0645f4581607607-1587339856102.mp3",
+    "duration": "186070",
+    "views": "0",
+    "name": "أتجنن Etganen (Seeb Nafsak)",
+    "album": "5e9ce1ea111e012d183ddee5"
+  },
+  {
+    "_id": "5e9ce565ee7376379c0960fb",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ce565ee7376379c0960fb-5e9cbac42ec0720eecbb92a1-1587340682321.mp3",
+    "duration": "211252",
+    "views": "0",
+    "name": "Insan",
+    "album": "5e9ce4a0ee7376379c0960fa"
+  },
+  {
+    "_id": "5e9ce5adee7376379c0960fd",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ce5adee7376379c0960fd-5e9cbac42ec0720eecbb92a1-1587340751153.mp3",
+    "duration": "275722",
+    "views": "0",
+    "name": "El-Midan",
+    "album": "5e9ce4a0ee7376379c0960fa"
+  },
+  {
+    "_id": "5e9ce7edee7376379c0960ff",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ce7edee7376379c0960ff-5e9cbac42ec0720eecbb92a1-1587341315969.mp3",
+    "duration": "245603",
+    "views": "0",
+    "name": "Balady Ya Balady",
+    "album": "5e9ce4a0ee7376379c0960fa"
+  },
+  {
+    "_id": "5e9cea40ee7376379c096102",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cea40ee7376379c096102-5e9cbac42ec0720eecbb92a1-1587341912698.mp3",
+    "duration": "270315",
+    "views": "0",
+    "name": "Dari Ya Alby",
+    "album": "5e9ce9e8ee7376379c096101"
+  },
+  {
+    "_id": "5e9ceb24ee7376379c096105",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ceb24ee7376379c096105-5e9cbac42ec0720eecbb92a1-1587342142152.mp3",
+    "duration": "213473",
+    "views": "0",
+    "name": "Dream With Me - Ehlam Ma'aya",
+    "album": "5e9ceadaee7376379c096104"
+  },
+  {
+    "_id": "5e9ceb80ee7376379c096107",
+    "artists": [
+      "5e9cbac42ec0720eecbb92a1"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9ceb80ee7376379c096107-5e9cbac42ec0720eecbb92a1-1587342228770.mp3",
+    "duration": "249835",
+    "views": "0",
+    "name": "The Swing - Morgiha",
+    "album": "5e9ceadaee7376379c096104"
+  },
+  {
+    "_id": "5e9cefe63e578911e4c5c1bd",
+    "artists": [
+      "5e907db0a0645f4581607605",
+      "5e9cedfe57e0fb2db8591034"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cefe63e578911e4c5c1bd-5e907db0a0645f4581607605-1587343360359.mp3",
+    "duration": "192183",
+    "views": "0",
+    "name": "Oud Al batal",
+    "album": "5e9cef963e578911e4c5c1bc"
+  },
+  {
+    "_id": "5e9cf0b53e578911e4c5c1c0",
+    "artists": [
+      "5e907db0a0645f4581607605",
+      "5e9cedfe57e0fb2db8591034"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf0b53e578911e4c5c1c0-5e907db0a0645f4581607605-1587343558987.mp3",
+    "duration": "183092",
+    "views": "0",
+    "name": "Mahragan Bent El Geran",
+    "album": "5e9cf0683e578911e4c5c1bf"
+  },
+  {
+    "_id": "5e9cf1643e578911e4c5c1c3",
+    "artists": [
+      "5e907db0a0645f4581607605",
+      "5e9cedfe57e0fb2db8591034"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf1643e578911e4c5c1c3-5e907db0a0645f4581607605-1587343761354.mp3",
+    "duration": "266501",
+    "views": "0",
+    "name": "Bonbony Sa2et Fi Nutella",
+    "album": "5e9cf1123e578911e4c5c1c2"
+  },
+  {
+    "_id": "5e9cf4c03e578911e4c5c1c6",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf4c03e578911e4c5c1c6-5e907db0a0645f4571707606-1587344605674.mp3",
+    "duration": "289881",
+    "views": "0",
+    "name": "Ana Aslan Gamed",
+    "album": "5e9cf4813e578911e4c5c1c5"
+  },
+  {
+    "_id": "5e9cf54f3e578911e4c5c1c9",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf54f3e578911e4c5c1c9-5e907db0a0645f4571707606-1587344791671.mp3",
+    "duration": "255190",
+    "views": "0",
+    "name": "Eh Ya Ragel Enta Da",
+    "album": "5e9cf5193e578911e4c5c1c8"
+  },
+  {
+    "_id": "5e9cf5b33e578911e4c5c1cb",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf5b33e578911e4c5c1cb-5e907db0a0645f4571707606-1587344853057.mp3",
+    "duration": "209580",
+    "views": "0",
+    "name": "El Aalba El Dahbya",
+    "album": "5e9cf5193e578911e4c5c1c8"
+  },
+  {
+    "_id": "5e9cf5e83e578911e4c5c1cd",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf5e83e578911e4c5c1cd-5e907db0a0645f4571707606-1587344892068.mp3",
+    "duration": "269531",
+    "views": "0",
+    "name": "Khody Bosa Ya Bet",
+    "album": "5e9cf5193e578911e4c5c1c8"
+  },
+  {
+    "_id": "5e9cf8203e578911e4c5c1d0",
+    "artists": [
+      "5e907db0a0645f4571707606"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf8203e578911e4c5c1d0-5e907db0a0645f4571707606-1587345458364.mp3",
+    "duration": "188108",
+    "views": "0",
+    "name": "العب يلا",
+    "album": "5e9cf63c3e578911e4c5c1cf"
+  },
+  {
+    "_id": "5e9cf9f73e578911e4c5c1d3",
+    "artists": [
+      "5e907db0a0645f458160760b"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cf9f73e578911e4c5c1d3-5e907db0a0645f458160760b-1587345937503.mp3",
+    "duration": "197329",
+    "views": "0",
+    "name": "One Last Time",
+    "album": "5e9cf98a3e578911e4c5c1d2"
+  },
+  {
+    "_id": "5e9cfa663e578911e4c5c1d5",
+    "artists": [
+      "5e907db0a0645f458160760b"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cfa663e578911e4c5c1d5-5e907db0a0645f458160760b-1587346045599.mp3",
+    "duration": "199393",
+    "views": "0",
+    "name": "Bang Bang",
+    "album": "5e9cf98a3e578911e4c5c1d2"
+  },
+  {
+    "_id": "5e9cfaf73e578911e4c5c1d7",
+    "artists": [
+      "5e907db0a0645f458160760b"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cfaf73e578911e4c5c1d7-5e907db0a0645f458160760b-1587346182670.mp3",
+    "duration": "193985",
+    "views": "0",
+    "name": "Problem",
+    "album": "5e9cf98a3e578911e4c5c1d2"
+  },
+  {
+    "_id": "5e9cfbbe3e578911e4c5c1da",
+    "artists": [
+      "5e907db0a0645f458160760b"
+    ],
+    "audioUrl": "uploads\\tracks\\5e9cfbbe3e578911e4c5c1da-5e907db0a0645f458160760b-1587346387089.mp3",
+    "duration": "226220",
+    "views": "0",
+    "name": "Side To Side",
+    "album": "5e9cfb6d3e578911e4c5c1d9"
+  },  {
+    "_id": "5e909be7cfe5b521a0ccf3cc",
+    "name": "End Game",
+    "artists": ["5e907dafa0645f4571607600", "5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e3",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3cc-5e907dafa0645f4571607600-1587378071750.mp3",
+    "duration": "244898"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3cd",
+    "name": "Delicate",
+    "artists": ["5e907dafa0645f4571607600"],
+    "album": "5e909be7cfe5b521a0ccf3e3",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3cd-5e907dafa0645f4571607600-1587378102072.mp3",
+    "duration": "232307"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3ce",
+    "name": "Ready For It",
+    "artists": ["5e907dafa0645f4571607600"],
+    "album": "5e909be7cfe5b521a0ccf3e3",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3ce-5e907dafa0645f4571607600-1587378127166.mp3",
+    "duration": "208248"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3ad",
+    "name": "Bird Set Free",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3ad-5e907dafa0645f4571607602-1587377252791.mp3",
+    "duration": "252500",
+    "artists": ["5e907dafa0645f4571607602"],
+    "album": "5e909be7cfe5b521a0ccf3e2"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3ae",
+    "name": "Move Your Body",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3ae-5e907dafa0645f4571607602-1587377213697.mp3",
+    "duration": "247275",
+    "artists": ["5e907dafa0645f4571607602"],
+    "album": "5e909be7cfe5b521a0ccf3e2"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3af",
+    "name": "Unstoppable",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3af-5e907dafa0645f4571607602-1587377282954.mp3",
+    "duration": "217809",
+    "artists": ["5e907dafa0645f4571607602"],
+    "album": "5e909be7cfe5b521a0ccf3e2"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3bc",
+    "name": "Wrecking ball",
+    "artists": ["5e907dafa0645f45716075ff"],
+    "album": "5e909be7cfe5b521a0ccf3e4",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3bc-5e907dafa0645f45716075ff-1587378603140.mp3",
+    "duration": "221414"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3bd",
+    "name": "Adore You",
+    "artists": ["5e907dafa0645f45716075ff"],
+    "album": "5e909be7cfe5b521a0ccf3e4",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3bd-5e907dafa0645f45716075ff-1587378625777.mp3",
+    "duration": "278805"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3be",
+    "name": "We Can't Stop",
+    "artists": ["5e907dafa0645f45716075ff"],
+    "album": "5e909be7cfe5b521a0ccf3e4",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3be-5e907dafa0645f45716075ff-1587378641509.mp3",
+    "duration": "231314"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf32f",
+    "name": "Shape of you",
+    "artists": ["5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e5",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf32f-5e907dafa0645f4571607601-1587380143018.mp3",
+    "duration": "233770"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf331",
+    "name": "Galway Girl",
+    "artists": ["5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e5",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf331-5e907dafa0645f4571607601-1587380176285.mp3",
+    "duration": "170893"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf332",
+    "name": "Perfect",
+    "artists": ["5e907dafa0645f4571607601"],
+    "album": "5e909be7cfe5b521a0ccf3e5",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf332-5e907dafa0645f4571607601-1587380201741.mp3",
+    "duration": "263471"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f0",
+    "name": "Mesh Baqy Meny",
+    "artists": ["5e907dafa0645f4571607603"],
+    "album": "5e909be7cfe5b521a0ccf3e6",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f0-5e907dafa0645f4571607603-1587380790306.mp3",
+    "duration": "375928"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4f0",
+    "name": "Sa'alt Nafsy Keteer",
+    "artists": ["5e907dafa0645f4571607603"],
+    "album": "5e909be7cfe5b521a0ccf4e6",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf4f0-5e907dafa0645f4571607603-1587381193274.mp3",
+    "duration": "210155"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf4f1",
+    "name": "مسحراتي",
+    "artists": ["5e907dafa0645f4571607603"],
+    "album": "5e909be7cfe5b521a0ccf4e1",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf4f1-5e907dafa0645f4571607603-1587381237643.mp3",
+    "duration": "154932"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f1",
+    "name": "Ya Ahl El Arab",
+    "artists": ["5e907db0a0645f4571607604"],
+    "album": "5e909be7cfe5b521a0ccf6e7",
+    "duration": 210678,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f1-5e907db0a0645f4571607604-1587382878753.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cdf3f1",
+    "name": "Ya Hamaam",
+    "artists": ["5e907db0a0645f4571607604"],
+    "album": "5e909be7cfe5b521a0ccf6e7",
+    "duration": 284473,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cdf3f1-5e907db0a0645f4571607604-1587383125314.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf6f1",
+    "name": "ازاي",
+    "artists": ["5e907db0a0645f4571607604"],
+    "album": "5e909be7cfe5b521a0ccf3e7",
+    "duration": 182988,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf6f1-5e907db0a0645f4571607604-1587383207156.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f2",
+    "name": "كفا حبيبي بكفا",
+    "artists": ["5e907db0a0645f4571607605"],
+    "album": "5e909be7cfe5b521a0ccf3e8",
+    "duration": 219716,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f2-5e907db0a0645f4571607605-1587385688199.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccd3f2",
+    "name": "مولد المدفعجية",
+    "artists": ["5e907db0a0645f4571607605"],
+    "album": "5e909be7cfe5b521a0ccd3e8",
+    "duration": 22491,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccd3f2-5e907db0a0645f4571607605-1587385775103.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cdf3f2",
+    "name": "الناس",
+    "artists": ["5e907db0a0645f4571607605"],
+    "album": "5e909be7cfe5b521a0cce3e8",
+    "duration": 231184,
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cdf3f2-5e907db0a0645f4571607605-1587385969712.mp3"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0ccf3f3",
+    "name": "Cool",
+    "artists": ["5e907db0a0645f4571607606"],
+    "album": "5e909be7cfe5b521a0ccf3e9",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0ccf3f3-5e907db0a0645f4571607606-1587386174475.mp3",
+    "duration": "209659"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cdf3f3",
+    "name": "Physical",
+    "artists": ["5e907db0a0645f4571607606"],
+    "album": "5e909be7cfe5b521a0ccf3e9",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cdf3f3-5e907db0a0645f4571607606-1587386214553.mp3",
+    "duration": "193907"
+  },
+  {
+    "_id": "5e909be7cfe5b521a0cef3f3",
+    "name": "Levitating",
+    "artists": ["5e907db0a0645f4571607606"],
+    "album": "5e909be7cfe5b521a0ccf3e9",
+    "audioUrl": "uploads/tracks/5e909be7cfe5b521a0cef3f3-5e907db0a0645f4571607606-1587386233070.mp3",
+    "duration": "203886"
   }
 ]

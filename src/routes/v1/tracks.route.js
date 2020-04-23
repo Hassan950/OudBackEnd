@@ -9,6 +9,7 @@ const authMiddleware = require('../../middlewares/auth');
 router
   .route('/:id')
   .get(
+    catchAsync(authMiddleware.optionalAuth),
     validate(trackValidation.oneTrack),
     catchAsync(tracksController.getTrack)
   )
@@ -33,8 +34,18 @@ router
   );
 
 router
+  .route('/:id/download')
+  .get(
+    validate(trackValidation.oneTrack),
+    catchAsync(authMiddleware.authenticate),
+    authMiddleware.authorize('premium', 'artist'),
+    catchAsync(tracksController.downloadTrack)
+  );
+
+router
   .route('/')
   .get(
+    catchAsync(authMiddleware.optionalAuth),
     validate(trackValidation.getSeveral),
     catchAsync(tracksController.getTracks)
   );

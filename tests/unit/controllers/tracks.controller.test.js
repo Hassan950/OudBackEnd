@@ -4,7 +4,6 @@ let { Track, Artist, Genre } = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 let fs = require('fs').promises;
 jest.mock('get-mp3-duration', () => () => 21000);
-let { albumValidation } = require('../../../src/validations');
 
 artistIds = [
   { _id: '5e6c8ebb8b40fc5508fe8b32' },
@@ -28,21 +27,26 @@ describe('Tracks controller', () => {
       name: 'mohamed',
       audioUrl: 'lol.mp3',
       artists: artistIds,
-      album: { _id: '5e6c8ebb8b40fc7708fe8b32', name: 'lol' },
+      album: {
+        _id: '5e6c8ebb8b40fc7708fe8b32',
+        name: 'lol',
+        artists: artistIds
+      },
       duration: 21000
     };
     tracks = [track, track];
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
+    Track.schema.path('artists', Object);
     Track.schema.path('album', Object);
-    Track.schema.path('artist', Object);
   });
   describe('getTracks', () => {
     it("Should return list of tracks with the ID's given with status code 200", async () => {
       mockingoose(Track).toReturn(tracks, 'find');
       // two valid ID's
-      req.query.ids = trackIds[0] + ',' + trackIds[1];
+      req.query.ids = trackIds;
+      req.user = { _id: artistIds[0]._id };
       await tracksController.getTracks(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('tracks');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -59,11 +63,8 @@ describe('Tracks controller', () => {
       tracks = [track];
       mockingoose(Track).toReturn(tracks, 'find');
       // One valid ID and another invalid one each passed twice
-      req.query.ids =
-        trackIds[0] +
-        ',' +
-        trackIds[0] +
-        ',5e6c8ebb8b40fc5508fe8b31,5e6c8ebb8b40fc5508fe8b31';
+      req.query.ids = [trackIds[0], trackIds[0], 'invalid', 'invalid'];
+      req.user = { _id: artistIds[0]._id };
       await tracksController.getTracks(req, res, next);
       result = res.json.mock.calls;
       expect(result[0][0].tracks[0]).toEqual(result[0][0].tracks[1]);
@@ -76,12 +77,11 @@ describe('Tracks controller', () => {
       mockingoose(Track)
         .toReturn(track, 'findOneAndDelete')
         .toReturn(track, 'findOne');
-      fs.unlink = jest.fn().mockRejectedValue(false);
+      fs.unlink = jest.fn();
       mockingoose(Artist).toReturn(track.artists, 'find');
-      track.artists[0] = artistIds[1];
       // A valid ID that belongs to an object
       req.params.id = trackIds[1];
-      req.user = { _id: artistIds[1]._id };
+      req.user = { _id: artistIds[0]._id };
       await tracksController.deleteTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -111,6 +111,7 @@ describe('Tracks controller', () => {
     it('Should return the track with the given ID with status code of 200', async () => {
       mockingoose(Track).toReturn(track, 'findOne');
       req.params.id = trackIds[0];
+      req.user = { _id: artistIds[0]._id };
       await tracksController.getTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -146,9 +147,9 @@ describe('Tracks controller', () => {
       // An ID of a track object
       mockingoose(Artist).toReturn(track.artists, 'find');
       req.params.id = trackIds[0];
-      req.user = { _id: artistIds[0]._id };
+      req.user = { _id: track.artists[0]._id };
       req.body = {
-        artists: track.artists
+        artists: [artistIds[0]._id, artistIds[1]._id, artistIds[2]._id]
       };
       await tracksController.updateTrack(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -158,13 +159,12 @@ describe('Tracks controller', () => {
         .toReturn(track, 'findOne')
         .toReturn(track, 'findOneAndUpdate');
       mockingoose(Artist).toReturn(track.artists, 'find');
-      track.artists[0] = artistIds[2];
       // An ID of a track object
       req.params.id = trackIds[2];
-      req.user = { _id: artistIds[2]._id };
+      req.user = { _id: track.artists[0]._id };
       req.body = {
         name: 'both are updated',
-        artists: track.artists
+        artists: [artistIds[0]._id, artistIds[1]._id, artistIds[2]._id]
       };
       await tracksController.updateTrack(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
@@ -223,7 +223,7 @@ describe('Tracks controller', () => {
       req.file = {
         path: 'lol.mp3'
       };
-      fs.unlink = jest.fn().mockRejectedValue(false);
+      fs.unlink = jest.fn();
       fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
@@ -256,6 +256,41 @@ describe('Tracks controller', () => {
       fs.readFile = jest.fn();
       await tracksController.setTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
+  });
+
+  describe('Download Track', () => {
+    let req;
+    let res;
+    let next;
+    const trackService = require('../../../src/services/track.service');
+    beforeEach(() => {
+      req = requestMocks.mockRequest();
+      req.params = {};
+      req.params.id = '1';
+      res = requestMocks.mockResponse();
+      next = jest.fn();
+      res.download = jest.fn();
+    });
+
+    it('should call Get Track AudioUrl', async () => {
+      trackService.getTrackAudioUrl = jest.fn().mockResolvedValue('audio');
+      await tracksController.downloadTrack(req, res, next);
+      expect(trackService.getTrackAudioUrl).toBeCalled();
+      expect(trackService.getTrackAudioUrl).toBeCalledWith(req.params.id);
+    });
+
+    it('should return 404 if audioUrl is not found', async () => {
+      trackService.getTrackAudioUrl = jest.fn().mockResolvedValue(null);
+      await tracksController.downloadTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+
+    it('should download the track', async () => {
+      trackService.getTrackAudioUrl = jest.fn().mockResolvedValue('audio');
+      await tracksController.downloadTrack(req, res, next);
+      expect(res.download).toBeCalled();
+      expect(res.download).toBeCalledWith('audio');
     });
   });
 });

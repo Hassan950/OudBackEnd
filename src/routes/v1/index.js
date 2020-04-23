@@ -14,7 +14,7 @@ const followRoute = require('./follow.route');
 const router = express.Router();
 
 router.use('/', homeRoute);
-router.use('/users', userRoute);;
+router.use('/users', userRoute);
 router.use('/browse',browseRoute);
 router.use('/me', userMeRoute)
 router.use('/playlists', playlistRoute);

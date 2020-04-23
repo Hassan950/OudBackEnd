@@ -169,6 +169,8 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
     queue = await queueService.getQueueById(queues[0], { selectDetails: true });
   }
 
+  if (!queue) return player;
+
   if (offset.position !== undefined) {
     // shuffle mode
     if (queue.shuffleList && queue.shuffleList.length) {
@@ -232,11 +234,10 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
  */
 const changePlayerProgress = async (player, progressMs, queues, track = null) => {
   const queueService = require('./queue.service');
-  const trackService = require('./track.service');
   player.progressMs = progressMs;
 
   if (!track)
-    track = await trackService.findTrack(player.item);
+    track = await Track.findById(player.item);
 
   // if position >= track duration go to next
   if (track && progressMs >= track.duration) {
