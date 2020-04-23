@@ -13,11 +13,8 @@ const {
   Queue,
   PlayHistory,
   Normal,
-<<<<<<< HEAD
-  Ad
-=======
+  Ad,
   Coupon
->>>>>>> dev
 } = require('../../models');
 
 const DB = config.get('db');
