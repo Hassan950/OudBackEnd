@@ -1053,7 +1053,7 @@ paths:
     put:
       tags:
         - Users Profile
-      summary: Edit user's profile
+      summary: Start or End a Private Session
       security:
         - bearerAuth: []
       requestBody:
