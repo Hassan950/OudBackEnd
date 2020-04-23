@@ -53,7 +53,7 @@ exports.likeItems = {
 exports.getLikedItems = {
   query: Joi.object().keys({
     offset: Joi.number().default(0),//offset should be a number but it is optional so if not sent its default value is zero
-    limit: Joi.number()//offset should be a number  (optional)
+    limit: Joi.number()//limit should be a number  (optional)
       .min(1)// if sent its minimum should be 1
       .max(50)// if sent its maximum should be 50
       .default(20)//it is optional so if not sent its default value is zero
