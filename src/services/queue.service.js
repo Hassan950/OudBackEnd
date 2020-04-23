@@ -1,5 +1,4 @@
 const { Queue, Album, Playlist, Artist, Track } = require('../models');
-const trackService = require('./track.service');
 const _ = require('lodash');
 
 /**

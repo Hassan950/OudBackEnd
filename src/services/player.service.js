@@ -37,7 +37,7 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
     if (player && player.item) {
       if (ops.link) {
         // Add host link
-        let audio = player.item.audioUrl.replace(/\\\\/g, "/"); // convert \\ to /
+        let audio = player.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
         audio = audio.split('/');
         player.item.audioUrl = ops.link + audio[audio.length - 1];
       } else
@@ -84,7 +84,7 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   if (currentlyPlaying && currentlyPlaying.item) {
     if (ops && ops.link) {
       // Add host link
-      let audio = currentlyPlaying.item.audioUrl.replace(/\\\\/g, "/"); // convert \\ to /
+      let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
       audio = audio.split('/');
       currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
     } else
