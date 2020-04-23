@@ -60,7 +60,8 @@ const handleENOENTError = err => {
  * @returns {Object} AppError object
  */
 const handleOAuthError = err => {
-  return new AppError(err.message, err.oauthError.statusCode);
+
+  return new AppError(err.message, err.oauthError.statusCode ? err.oauthError.statusCode : err.oauthError);
 };
 
 /**

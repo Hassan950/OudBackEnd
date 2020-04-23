@@ -7,8 +7,8 @@ const createFakePlayHistory = () => {
     user: mongoose.Types.ObjectId(),
     track: mongoose.Types.ObjectId(),
     context: {
-      type: 'album',
-      id: mongoose.Types.ObjectId()
+      type: 'Album',
+      item: mongoose.Types.ObjectId()
     },
     playedAt: Date.now()
   });

@@ -98,12 +98,10 @@ const userSchema = mongoose.Schema(
       required: [true, 'Please Enter your Country!']
     },
     facebook_id: {
-      type: String,
-      select: false
+      type: String
     },
     google_id: {
-      type: String,
-      select: false
+      type: String
     },
     verifyToken: {
       type: String,
