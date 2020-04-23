@@ -263,11 +263,12 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
  * @param {Number} progressMs progress in m Second 
  * @param {Array<String>} queues queues IDs array
  * @param {Document} [track] Currently playing track
+ * @param {Document} [queue] Currently playing queue
  * @description Set player.progressMs to the given progressMs and if progressMs >= track duration (go next if repeat state != track else start the track from zero second)
  * @summary Chnage player progress
  * @returns {Document} player
  */
-const changePlayerProgress = async (player, progressMs, queues, track = null) => {
+const changePlayerProgress = async (player, progressMs, queues, track = null, queue = null) => {
   const queueService = require('./queue.service');
   player.progressMs = progressMs;
 
@@ -277,7 +278,8 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
   // if position >= track duration go to next
   if (track && progressMs >= track.duration) {
     if (player.repeatState !== 'track') {
-      let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+      if (!queue)
+        queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
       if (!queue || !queue.tracks || !queue.tracks.length) {
         return null;

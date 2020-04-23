@@ -212,11 +212,11 @@ exports.resumePlayer = async (req, res, next) => {
   // change position
   if (player.item && positionMs) {
     player.progressMs = positionMs;
-    const track = await trackService.findTrack(player.item);
+    const track = await trackService.findTrackUtil(player.item);
     // if position >= track duration go to next
     if (track && positionMs >= track.duration) {
 
-      player = await playerService.changePlayerProgress(player, positionMs, queues);
+      player = await playerService.changePlayerProgress(player, positionMs, queues, queue);
 
       if (!player)
         next(new AppError('Queue is not found', 404));
