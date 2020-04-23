@@ -145,6 +145,7 @@ exports.resumePlayer = async (req, res, next) => {
   const id = req.user._id;
 
   const deviceId = req.query.deviceId;
+  const queueIndex = req.query.queueIndex || 0;
   // TODO
   // get player and queues
   let [player, queues] = await Promise.all([
@@ -159,7 +160,19 @@ exports.resumePlayer = async (req, res, next) => {
   if (player.currentlyPlayingType === 'ad')
     return next(new AppError('You cannot resume while the ad is playing', 403));
 
+  if (queueIndex) {
+    if (queues.length < 2) {
+      return next(new AppError('No queue with queueIndex=1', 400));
+    }
+
+    queues.reverse();
+  }
+
   let queue;
+
+  // if user has queue get it
+  if (queues.length)
+    queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
   // Change player state
   player.isPlaying = true;
@@ -222,7 +235,7 @@ exports.resumePlayer = async (req, res, next) => {
   // add queues to user
   req.user.queues = queues;
   // save
-  await Promise.all([req.user.save({ validateBeforeSave: false }), player.save()]);
+  await Promise.all([req.user.save({ validateBeforeSave: false }), player.save(), queue.save()]);
   // return 204
   res.status(204).end();
 };
