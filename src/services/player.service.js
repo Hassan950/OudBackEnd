@@ -143,7 +143,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
     player.progressMs = 0;
     player.isPlaying = true;
     player.currentlyPlayingType = 'ad';
-    player.onModel = 'Ad';
+    player.itemModel = 'Ad';
     player.context = { type: 'unknown' };
     player.actions = {
       interrupting_playback: true,
@@ -168,7 +168,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
     player.progressMs = 0;
     player.isPlaying = true;
     player.currentlyPlayingType = 'track';
-    player.onModel = 'Track';
+    player.itemModel = 'Track';
     player.actions = null;
     // add context to player
     if (context && context.type) {
@@ -343,7 +343,7 @@ const setPlayerToDefault = (player) => {
   player.repeatState = 'off';
   player.isPlaying = false;
   player.currentlyPlayingType = 'unknown';
-  player.onModel = 'Track';
+  player.itemModel = 'Track';
   player.actions = undefined;
 };
 

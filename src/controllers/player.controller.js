@@ -31,7 +31,7 @@ exports.getPlayer = async (req, res, next) => {
     return res.end();
   }
 
-  player.onModel = undefined;
+  player.itemModel = undefined;
   player.adsCounter = undefined;
 
   res.status(200).json({

@@ -36,9 +36,9 @@ const playerSchema = mongoose.Schema({
   },
   item: {
     type: mongoose.Types.ObjectId,
-    refPath: 'onModel'
+    refPath: 'itemModel'
   },
-  onModel: {
+  itemModel: {
     type: String,
     enum: ['Track', 'Ad'],
     default: 'Track'

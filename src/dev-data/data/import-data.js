@@ -71,7 +71,7 @@ const importData = async () => {
     await Category.create(categories);
     await Playlist.create(playlists);
     await Queue.create(queues);
-    //await PlayHistory.create(playhistories);
+    await PlayHistory.create(playhistories);
     await Ad.create(ads);
     console.log('Data successfully loaded!');
   } catch (err) {
