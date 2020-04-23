@@ -3559,7 +3559,7 @@ paths:
         - bearerAuth: []
       tags:
         - Queue
-      description: Delete a track from Queue
+      description: Delete a track from Queue. If the deleted track was the playing track the queue will play the first track if found and if not it will play the last queue if found
       parameters:
         - name: queueIndex
           in: query
@@ -3752,7 +3752,9 @@ paths:
         - bearerAuth: []
       tags:
         - Queue
-      description: Skip User’s Playback To Previous Track
+      description: >-
+        Skip User’s Playback To Previous Track.
+        If the repeat state in player is `context` and the playing track is the first track it will go to the last track in the queue. If the repeat state in player is not `context` and the playing track is the first track it will play will play the last queue if found.
       parameters:
         - name: deviceId
           in: query
@@ -3774,7 +3776,10 @@ paths:
         - bearerAuth: []
       tags:
         - Queue
-      description: Skip User’s Playback To Next Track
+      description: >-
+        Skip User’s Playback To Next Track.
+        If the repeat state in player is `context` and the playing track is the last track it will go to the first track in the queue. If the repeat state in player is not `context` and the playing track is the last track it will create a new queue similar to the playing queue.
+                  
       parameters:
         - name: deviceId
           in: query
@@ -3948,7 +3953,7 @@ paths:
         - bearerAuth: []
       tags:
         - Queue
-      description: Start/Resume a User's Playback
+      description: Start/Resume a User's Playback. if the user is a free user every 3 tracks 1 ad will be played
       parameters:
         - name: deviceId
           in: query
@@ -3973,13 +3978,9 @@ paths:
           application/json:
             schema:
               description: >-
-                Only one of either contextUri or uris can be specified. If
-                neither is present, calling /play will resume playback. If both
-                are present the request will return 400 BAD REQUEST.If
-                contextUri is a Playlist or Album, or when uris is provided,
-                then offset can be added to specify starting track in the
-                context.If the provided contextUri corresponds to an album or
-                playlist object, an offset can be specified either by track uri
+                ContextUri or uris can be specified to create a new queue. If
+                neither is present, calling /play will resume playback.
+                an offset can be specified either by track uri
                 OR position. If both are present the request will return 400 BAD
                 REQUEST. If incorrect values are provided for position or uri,
                 the request may be accepted but with an unpredictable resulting
@@ -3991,9 +3992,9 @@ paths:
                   format: uri
                   description: >-
                     Optional. Oud URI of the context to play. Valid contexts are
-                    albums, artists, playlists.
-                  example:
-                    context_uri: 'oud:album:1Je1IMUlBXcx1Fz0WE7oPT'
+                    album, artist, playlist.
+                  example: 'oud:album:4iV5W9uYEdYUVa79Axb7Rh'
+                    
                 uris:
                   description: Optional. A JSON array of the Oud track URIs to play
                   example:
@@ -4987,6 +4988,8 @@ components:
             - Album
             - Artist
             - Playlist
+        id:
+          type: string
         item:
           oneOf:
             - $ref: '#/components/schemas/SmallArtist'
@@ -5017,7 +5020,7 @@ components:
           description: 'off, track, context'
           type: string
           enum:
-            - 'off'
+            - off
             - track
             - context
         currentlyPlayingType:
