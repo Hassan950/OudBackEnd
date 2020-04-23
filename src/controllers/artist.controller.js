@@ -240,16 +240,16 @@ exports.handleRequest = async (req, res, next) => {
 };
 
 /**
- * A middleware that gets artists randomly
+ * A middleware that gets some artists 
  *
  * @function
  * @author Mohamed Abo-Bakr
- * @summary Gets artists randomly
+ * @summary Gets some artists 
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.getRandomArtists = async (req, res, next) => {
-  const artists = await artistService.findRandomArtists();
+exports.getSomeArtists = async (req, res, next) => {
+  const artists = await artistService.findSomeArtists();
   res.status(200).json(artists);
 };

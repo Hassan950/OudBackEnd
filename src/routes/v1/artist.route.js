@@ -11,10 +11,10 @@ const router = express.Router();
 router.use('/albums', albumRoute);
 
 router
-  .route('/random')
+  .route('/some')
   .get(
     validate(artistValidation.empty),
-    catchAsync(artistController.getRandomArtists)
+    catchAsync(artistController.getSomeArtists)
   );
 
 router

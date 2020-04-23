@@ -310,10 +310,10 @@ exports.refuseRequest = async (request, host) => {
  *
  * @function
  * @author Mohamed Abo-Bakr
- * @summary gets random artists
- * @returns artists list of random artists
+ * @summary gets Some artists
+ * @returns artists list of Some artists
  */
-exports.findRandomArtists = async id => {
+exports.findSomeArtists = async id => {
   return await Artist.find()
     .limit(16)
     .select('displayName images genres bio popularSongs')
