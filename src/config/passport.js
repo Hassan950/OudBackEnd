@@ -3,6 +3,7 @@ const FacebookTokenStrategy = require('passport-facebook-token');
 const GooglePlusTokenStrategy = require('passport-google-plus-token');
 const config = require('config');
 const { passportController } = require('../controllers');
+const catchAsync = require('../utils/catchAsync');
 
 passport.use('facebook-token', new FacebookTokenStrategy({
   clientID: config.get('FBClientID'),
