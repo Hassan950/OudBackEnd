@@ -1,4 +1,4 @@
-const { artistService, albumService, genreService } = require('../services');
+const { artistService, albumService, genreService, notifyService } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const fs = require('fs').promises;

@@ -29,11 +29,18 @@ router.use('/albums', libraryRouter);
 // /me/playlists router
 router.use('/playlists', playlistRouter);
 
+// /me/notifications
+router.route('/notifications').put(
+  validate(userValidation.notification),
+  catchAsync(userController.setToken)
+)
+
 // /me/queue
 router.use('/queue', queueRouter);
 
 // /me/premium
 router.use('/premium', premiumRouter);
+
 
 router
   .route('/updatePassword')

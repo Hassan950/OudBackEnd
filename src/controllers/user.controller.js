@@ -143,7 +143,7 @@ exports.updateImages = async (req, res, next) => {
  *
  * @function
  * @author Hassan Mohamed
- * @summary Updates the paths of images of the user
+ * @summary Sets the value of privateSession in user's model
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
@@ -154,4 +154,21 @@ exports.setPrivateSession = async (req, res, next) => {
     req.body.privateSession
   );
   res.status(httpStatus.OK).send(user);
+};
+
+
+/**
+ * A middleware that Updates the FCM registration token of the user
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Updates the FCM registration token of the user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
+exports.setToken = async (req, res, next) => {
+  await userService.updateToken(req.user, req.body.token);
+  return res.status(httpStatus.NO_CONTENT).send();
 };

@@ -1,6 +1,7 @@
-const { followService } = require('../services');
+const { followService, notifyService } = require('../services');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
+const _ = require('lodash');
 
 /**
  * A middleware to Check to see if the current user is following one or more artists or other users.
@@ -79,7 +80,7 @@ exports.getUserFollowed = async (req, res, next) => {
   const list = await followService.getUserFollowed(
     req.query,
     req.params.userId
-    );
+  );
   res.status(httpStatus.OK).json({
     items: list.result,
     limit: req.query.limit,
@@ -124,17 +125,29 @@ exports.getUserFollowers = async (req, res, next) => {
  */
 
 exports.followUser = async (req, res, next) => {
-  const ids = req.body.ids ? req.body.ids : req.query.ids;
+  let ids = req.body.ids ? req.body.ids : req.query.ids;
+
   if (!ids) {
     return next(
       new AppError('ids should be in query or body', httpStatus.BAD_REQUEST)
     );
   }
+  ids = _.uniq(ids);
   const result = await followService.followUser(ids, req.query.type, req.user);
   if (!result) {
     return next(
       new AppError('At least one of the ids is not found', httpStatus.NOT_FOUND)
     );
+  }
+  let tokens = await followService.getTokens(ids);
+  notifyService.followNotification(
+    tokens,
+    req.user.images[0],
+    req.user.displayName,
+    req.get('host')
+  );
+  if (req.query.type === 'Artist') {
+    await notifyService.subscribeManyTopics(ids, req.user._id);
   }
   res.sendStatus(httpStatus.NO_CONTENT);
 };
