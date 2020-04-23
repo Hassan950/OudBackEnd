@@ -15,11 +15,11 @@ const transports = [
   })
 ];
 
-if (config.get('NODE_ENV') === 'production' && config.has('LOGGY_TOKEN') && config.has('LOGGY_SUBDOMAIN')) {
+if (config.get('NODE_ENV') === 'production' && config.has('LOGGLY_TOKEN') && config.has('LOGGLY_SUBDOMAIN')) {
   try {
     const loggly = new Loggly({
-      token: config.get('LOGGY_TOKEN'),
-      subdomain: config.get('LOGGY_SUBDOMAIN'),
+      token: config.get('LOGGLY_TOKEN'),
+      subdomain: config.get('LOGGLY_SUBDOMAIN'),
       tags: ["Winston-NodeJS"],
       json: true
     });
