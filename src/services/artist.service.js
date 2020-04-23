@@ -97,7 +97,7 @@ exports.relatedArtists = async artistId => {
   if (!artist) return null;
 
   const artists = await User.find({
-    genres: { $in: artist.genres }
+    $and: [{ genres: { $in: artist.genres } }, { _id: { $ne: artistId } }]
   })
     .limit(20)
     .select('displayName images genres bio popularSongs')
