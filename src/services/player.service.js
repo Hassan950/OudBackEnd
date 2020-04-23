@@ -1,5 +1,6 @@
 const { Player } = require('../models/player.model');
 const { Track } = require('../models/track.model');
+const { Ad } = require('../models/ad.model');
 
 /**
  * Get `player` with the given `userId`
@@ -23,12 +24,14 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
     player = await Player.findOne({ userId: userId })
       .populate({
         path: 'item',
-        select: '+audioUrl',
+        select: '+audioUrl -__v',
         populate: {
           path: 'artists album',
+          select: '_id images displayName id name image album_type'
         }
       })
       .populate('device')
+      .lean({ virtuals: true })
       ;
 
     if (player && player.item) {
@@ -67,18 +70,18 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
   let currentlyPlaying = await Player.findOne({ userId: userId })
     .populate({
       path: 'item',
-      select: '+audioUrl',
+      select: '+audioUrl -__v',
       populate: {
         path: 'artists album',
+        select: '_id images displayName id name image album_type'
       }
     })
-    .select('item context')
-    .lean()
+    .lean({ virtuals: true })
     ;
 
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
-  if (currentlyPlaying) {
+  if (currentlyPlaying && currentlyPlaying.item) {
     if (ops && ops.link) {
       // Add host link
       let audio = currentlyPlaying.item.audioUrl.replace(/\\\\/g, "/"); // convert \\ to /
@@ -128,17 +131,51 @@ const createPlayer = async (userId) => {
  * increase track views
  * @summary Add track to player
  */
-const addTrackToPlayer = (player, track, context = { type: undefined, id: undefined }) => {
+const addTrackToPlayer = async (player, track, context = { type: undefined, id: undefined }) => {
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
-  // play the track
-  player.item = track;
-  player.progressMs = 0;
-  player.isPlaying = true;
-  player.currentlyPlayingType = 'track';
-  // add context to player
-  if (context && context.type) {
-    player.context = context;
+  // handle ads counter
+  if (player.adsCounter !== undefined && player.item !== track) {
+    player.adsCounter++;
+  }
+
+  if (player.adsCounter >= 3) {
+    // play ad
+    player.adsCounter = 0;
+    player.progressMs = 0;
+    player.isPlaying = true;
+    player.currentlyPlayingType = 'ad';
+    player.itemModel = 'Ad';
+    player.context = { type: 'unknown' };
+    player.actions = {
+      interrupting_playback: true,
+      pausing: true,
+      resuming: true,
+      seeking: true,
+      skipping_next: true,
+      skipping_prev: true,
+      toggling_repeat_context: true,
+      toggling_shuffle: true,
+      toggling_repeat_track: true,
+      transferring_playback: true
+    };
+    // play random ad
+    const ad = await Ad.aggregate([
+      { $sample: { size: 1 } }
+    ]);
+    player.item = ad.length ? ad[0]._id : null;
+  } else {
+    // play the track
+    player.item = track;
+    player.progressMs = 0;
+    player.isPlaying = true;
+    player.currentlyPlayingType = 'track';
+    player.itemModel = 'Track';
+    player.actions = null;
+    // add context to player
+    if (context && context.type) {
+      player.context = context;
+    }
   }
 };
 
@@ -189,7 +226,6 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   } else if (offset.uri) {
     const trackId = offset.uri.split(':')[2];
     let pos = await queueService.getTrackPosition(queues[0], trackId);
@@ -211,7 +247,6 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
     }
 
-    addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context) // set player item
   }
 
   return player;
@@ -249,9 +284,8 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
       }
       // go next
       queueService.goNext(queue, player, queues);
-      // add next track to player
-      addTrackToPlayer(player, queue.tracks[queue.currentIndex], queue.context);
-      queue.save(); // save the queue
+
+      await queue.save(); // save the queue
     } else player.progressMs = 0;
   }
 
@@ -311,6 +345,8 @@ const setPlayerToDefault = (player) => {
   player.repeatState = 'off';
   player.isPlaying = false;
   player.currentlyPlayingType = 'unknown';
+  player.itemModel = 'Track';
+  player.actions = undefined;
 };
 
 module.exports = {

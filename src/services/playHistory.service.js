@@ -1,5 +1,5 @@
 const { PlayHistory } = require('../models');
-
+const _ = require('lodash');
 
 /**
  * Get History with the given `userId` and `ops`
@@ -23,7 +23,17 @@ const getHistory = async (userId, ops = {
 }) => {
   const history = PlayHistory.find({ user: userId })
     .limit(ops.limit)
-    .sort({ playedAt: -1 });
+    .sort({ playedAt: -1 })
+    .select('-_id -__v')
+    .populate({
+      path: 'context.item',
+      select: 'image images name _id displayName artists',
+      populate: {
+        path: 'artists',
+        select: 'images name _id, displayName'
+      }
+    })
+    .lean({ virtuals: true })
 
   if (ops.after)
     history.gt('playedAt', new Date(ops.after));
@@ -56,11 +66,15 @@ const addToHistory = async (userId, context = {
 }) => {
   const query = {
     user: userId,
-    context: context
+    context: {
+      type: _.capitalize(context.type),
+      item: context.id,
+      onModel: _.capitalize(context.type)
+    }
   };
 
   // if no context or context type is unknown don't add it to history
-  if (!context || context.type === 'unknown') return;
+  if (!context || context.type === 'unknown' || context.id === undefined) return;
 
   let history = await PlayHistory.findOne(query);
 

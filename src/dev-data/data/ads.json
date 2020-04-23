@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Pepsi",
+    "link": "https://www.pepsi.com/",
+    "audioUrl": "ad.mp3",
+    "duration": 3000,
+    "image": "https://pepsicom-us-website-2017-production-public2.s3.us-east-2.amazonaws.com/en-us/uploads/01_PZS_12oz_can.png"
+  }
+]

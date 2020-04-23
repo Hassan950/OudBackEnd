@@ -154,5 +154,20 @@
     "tracks": [
       "5e909be7cfe5b521a0ccf3f6"
     ]
+  },
+  {
+    "_id": "5e6dea511e17a305285ba622",
+    "name": "Best Of Eminem",
+    "description": "Best Songs Of eminem",
+    "public": true,
+    "collabrative": false,
+    "owner": "5e907db0a0645f4581607606",
+    "image": "uploads/users/Eminem-5e907db0a0645f4581607606-1587357983886.jpeg",
+    "tracks": [
+      "5e9888bc2344f83a2900c2dc",
+      "5e98bdad2c7baf48ebe7888b",
+      "5e98bf4b2c7baf48ebe7888f",
+      "5e98f1442c7baf48ebe78893"
+    ]
   }
 ]
