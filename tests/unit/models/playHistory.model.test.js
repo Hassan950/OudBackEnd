@@ -17,8 +17,8 @@ describe('PlayHistory model', () => {
   });
 
   describe('PlayHistory model - context.type', () => {
-    it('should be [album, artist, playlist, unknown] only', () => {
-      const args = ['album', 'artist', 'playlist', 'unknown'];
+    it('should be [Album, Artist, Playlist] only', () => {
+      const args = ['Album', 'Artist', 'Playlist'];
       args.forEach(a => {
         playHistory.context.type = a;
         const error = playHistory.validateSync();

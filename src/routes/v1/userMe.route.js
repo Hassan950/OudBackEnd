@@ -1,5 +1,5 @@
 const express = require('express');
-const { authController , userController } = require('../../controllers');
+const { authController, userController } = require('../../controllers');
 const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
@@ -31,8 +31,9 @@ router.use('/playlists', playlistRouter);
 
 // /me/queue
 router.use('/queue', queueRouter);
-// /me
-router.use('/', premiumRouter);
+
+// /me/premium
+router.use('/premium', premiumRouter);
 
 router
   .route('/updatePassword')
@@ -55,5 +56,6 @@ router
 router
   .route('/profilePicture')
   .patch(userController.uploadImages, catchAsync(userController.updateImages));
+
 
 module.exports = router;

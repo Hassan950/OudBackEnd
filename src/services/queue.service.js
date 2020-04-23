@@ -1,5 +1,4 @@
 const { Queue, Album, Playlist, Artist, Track } = require('../models');
-const trackService = require('./track.service');
 const _ = require('lodash');
 
 /**
@@ -170,7 +169,8 @@ const getArtistTopTracksQueue = async (artist) => {
     .sort({
       views: -1
     })
-    .limit(10);
+    .limit(10)
+    .lean();
 
   if (!topTracks) return null;
   // select only _id
@@ -275,7 +275,7 @@ const createQueueFromTracks = async (tracks) => {
  * @returns {Number} `pos` track postion if `-1` track is not found
  */
 const getTrackPosition = async (id, trackId) => {
-  const queue = await Queue.findById(id);
+  const queue = await Queue.findById(id).lean();
 
   if (!queue || !queue.tracks) return -1;
 
@@ -540,12 +540,11 @@ const goPrevious = async (queue, player, queues) => {
  * @returns {Document} `queue` 
  */
 const fillQueueFromTracksUris = async (uris, queues, player) => {
-  const trackService = require('./track.service');
   const playerService = require('./player.service');
   let tracks = [];
   for (let i = 0; i < uris.length; i++) {
     const trackId = uris[i].split(':')[2];
-    const track = await trackService.findTrackUtil(trackId);
+    const track = await Track.findById(trackId).lean();
     if (track)
       tracks.push(trackId);
   }
@@ -558,7 +557,6 @@ const fillQueueFromTracksUris = async (uris, queues, player) => {
     queues.push(queue._id);
 
     playerService.setPlayerToDefault(player);
-    playerService.addTrackToPlayer(player, queue.tracks[0]);
   }
 
   return queue;
@@ -628,7 +626,7 @@ const createSimilarQueue = async (queue) => {
  * @returns {Document} queue
  */
 const createQueueFromRelatedArtists = async (artistId) => {
-  let artist = await Artist.findById(artistId);
+  let artist = await Artist.findById(artistId).lean();
 
   if (!artist) return null;
 
@@ -672,7 +670,7 @@ const createQueueFromRelatedArtists = async (artistId) => {
  * @returns {Document} queue
  */
 const createQueueFromRelatedAlbums = async (albumId) => {
-  let album = await Album.findById(albumId);
+  let album = await Album.findById(albumId).lean();
 
   if (!album) return null;
 
@@ -725,7 +723,7 @@ const createQueueFromRelatedAlbums = async (albumId) => {
  * @returns {Document} queue
  */
 const createQueueFromRelatedPlaylists = async (playlistId) => {
-  let playlist = await Playlist.findById(playlistId);
+  let playlist = await Playlist.findById(playlistId).lean();
 
   if (!playlist) return null;
 
