@@ -1,4 +1,5 @@
-const { Genre } = require('../models');
+const { Genre, User } = require('../models');
+const mongoose = require('mongoose');
 
 /**
  * A method that gets an genre by it's ID
@@ -47,3 +48,5 @@ exports.genresExist = async genreIds => {
   if (genreIds.length !== genres.length) return false;
   return true;
 };
+
+

@@ -14,22 +14,13 @@ const _ = require('lodash');
  */
 
 module.exports.checkTracks = async(user , ids)=>{
-  let found = [];
   //get liked tracks of the user that has ids as the ids sent
-  const tracks = await likedTracks.find({track: {$in: ids }},{userId: user.id}).select('track');
-  let i =0;
-  _.map(ids , (id) =>{ 
-    if(!tracks[i]||(tracks[i].track != id))//if track not found then add false to array that will be returned
-    {
-      found.push(false);
-    }
-    else if(tracks[i].track == id)//if track is found then add true to array that will be returned
-    {
-      found.push(true);
-      i++;
-    }
+  let tracks = await likedTracks.find({track: {$in: ids }},{userId: '5e907dafa0645f45716075ff'}).select('track');
+  const checks = _.map(ids , (id) =>{ 
+    val = tracks.find(like => String(like.track) === id);
+    return val !==undefined ;
   });
-  return found;
+  return checks;
 }
 
 /**
@@ -44,22 +35,14 @@ module.exports.checkTracks = async(user , ids)=>{
  */
 
 module.exports.checkAlbums = async(user,ids)=>{
-  let found = [];
   //get liked albums of the user that has ids as the ids sent
   const albums = await likedAlbums.find({album: {$in:ids}},{userId: user.id}).select('album');
   let i = 0;
-  _.map(ids , id =>{
-    if(!albums[i]||(albums[i].album != id))//if album not found then add false to array that will be returned
-    {
-      found.push(false);
-    }
-    else if(albums[i].album == id)//if album is found then add true to array that will be returned
-    {
-      found.push(true);
-      i++;
-    }
+  const checks = _.map(ids , (id) =>{ 
+    val = albums.find(like => String(like.album) === id);
+    return val !==undefined ;
   });
-  return found;
+  return checks;
 }
 
 /**
