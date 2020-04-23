@@ -1049,6 +1049,35 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /me/privateSession:
+    put:
+      tags:
+        - Users Profile
+      summary: Edit user's profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: The Value of Private Session to be set
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - privateSession
+              properties:
+                privateSession:
+                  type: boolean
+      responses:
+        '200':
+          description: the response body contains a user object in JSON format after changing the value of privateSession.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPrivate'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /users/{userId}:
     get:
       tags:
@@ -4414,6 +4443,9 @@ components:
           type: string
           format: date
           nullable: true
+        privateSession:
+          type: boolean
+          default: false
         gender:
           type: string
           enum:
