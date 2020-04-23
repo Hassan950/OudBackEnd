@@ -4,7 +4,6 @@ describe('PlayHistory model', () => {
   let playHistory;
   beforeEach(() => {
     playHistory = playHistoryMocks.createFakePlayHistory();
-    console.log(playHistory);
   });
   describe('PlayHistory model - user', () => {
     it('should be required', () => {
