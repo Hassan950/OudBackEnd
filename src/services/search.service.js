@@ -68,7 +68,8 @@ module.exports.search = async (query)=> {
 
 const searchForPlaylists = async(q,offset,limit,total)=>{
   //get all playlists that their name match what usr types and which is public (case insensitive)
-  let playlists = await Playlist.find({ name: { $regex:  q , $options: 'i'}}, { public: true} )
+  let playlists = Playlist.fuzzySearch(q)
+  .where({  public: true })
   .skip(offset)//skips first offset number in array
   .limit(limit)//gets limit number of items
   .populate({//get tracks details inside every playlist
@@ -83,7 +84,7 @@ const searchForPlaylists = async(q,offset,limit,total)=>{
       }
     }
   }).exec()
-  total = await Playlist.countDocuments({ name: { $regex:  q , $options: 'i'}}).exec();// total of playlists found
+  total = Playlist.fuzzySearch(q).countDocuments({  public: true }).exec();//total of playlists found
   [playlists,total] = await Promise.all([playlists,total]);
   return {  playlists ,offset,limit, total };
 }
@@ -103,7 +104,7 @@ const searchForPlaylists = async(q,offset,limit,total)=>{
 
 const searchForTracks = async(q,offset,limit,total)=>{
   //get all tracks that their name match what usr types (case insensitive)
-  let tracks = await Track.find({ name: { $regex:  q , $options: 'i'}})
+  let tracks = Track.fuzzySearch(q)
   .skip(offset)//skips first offset number in array
   .limit(limit)//gets limit number of items
   .populate(//get artists and albums details inside every track
@@ -116,7 +117,7 @@ const searchForTracks = async(q,offset,limit,total)=>{
         select:'type displayName images'
       }
     }).exec();
-  total = await Track.countDocuments({ name: { $regex:  q , $options: 'i'}}).exec();// total of tarcks found
+  total = Track.fuzzySearch(q).countDocuments().exec();//total of tracks found
   [tracks,total] = await Promise.all([tracks,total]);
   return { tracks,offset,limit, total };
 }
@@ -131,9 +132,10 @@ const searchForTracks = async(q,offset,limit,total)=>{
  * @param {Number} limit Maximum number of elements in the response
  * @returns {Array} array of albums that their name match what user types
  */
-const searchForAlbums = async(q,offset,limit,total)=>{
+const searchForAlbums = async (q,offset,limit,total) => {
   //get all albums that their name match what usr types (case insensitive) and is released
-  let albums = await Album.find({ name: { $regex:  q , $options: 'i'}},{  released: true})
+  let albums = Album.fuzzySearch(q)
+  .where({ released: true} )
   .select('-tracks -genres -released -release_date')// unselect tracks,genres,released,released_date
   .skip(offset)//skips first offset number in array
   .limit(limit)//gets limit number of items
@@ -142,7 +144,7 @@ const searchForAlbums = async(q,offset,limit,total)=>{
     select: 'displayName type images _id',
   })
   .exec();
-  total = await Album.countDocuments({ name: { $regex:  q , $options: 'i'}}).exec();// total of albums found
+  total = Album.fuzzySearch(q).countDocuments({ released: true} ).exec();//total of albums found
   [albums,total] = await Promise.all([albums,total]);
   return {  albums,offset,limit,total };
 }
@@ -157,10 +159,8 @@ const searchForAlbums = async(q,offset,limit,total)=>{
  * @param {Number} limit Maximum number of elements in the response
  * @returns {Array} array of artists that their name match what user types
  */
-const searchForArtists = async(q,offset,limit,total)=>{
-  //get all artists that their displayName match what usr types (case insensitive)
-  let artists = await Artist.find({ displayName: { $regex:  q , $options: 'i'}})
-  .skip(offset)//skips first offset number in array
+const searchForArtists = async (q,offset,limit,total) => {
+  let artists = Artist.fuzzySearch(q).skip(offset)//skips first offset number in array
   .limit(limit)//gets limit number of items
   .populate(//get genres, popularSongs inside every artist
     {
@@ -176,9 +176,8 @@ const searchForArtists = async(q,offset,limit,total)=>{
         }
       }
     }
-  )
-  .exec();
-  total = await Artist.countDocuments({ displayName: { $regex:  q , $options: 'i'}}).exec();//total of artists found
+  ).exec();
+  total = Artist.fuzzySearch(q).countDocuments().exec();//total of artists found
   [artists,total] = await Promise.all([artists,total]);
   return {  artists,offset,limit,total };
 }
@@ -195,12 +194,13 @@ const searchForArtists = async(q,offset,limit,total)=>{
  */
 const searchForUsers = async(q,offset,limit,total)=>{
   //get all users that their displayName match what usr types (case insensitive)
-  let users = await User.find({ displayName: { $regex:  q , $options: 'i'}})
+  let users = User.fuzzySearch(q)
+  .where({role: {$ne: 'artist'} })
   .select('displayName images verified lastLogin type')//select displayName , images ,verified, lastlogin,type
   .skip(offset)//skips first offset number in array
   .limit(limit)//gets limit number of items
   .exec();
-  total = await User.countDocuments({ displayName: { $regex:  q , $options: 'i'}}).exec();// total of users found
+  total = User.fuzzySearch(q).countDocuments({role: {$ne: 'artist'} }).exec();//total of users found
   [users,total] = await Promise.all([users,total]);
   return {  users,offset,limit,total };;
 }

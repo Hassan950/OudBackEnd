@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { User } = require('./user.model');
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 const artistSchema = new mongoose.Schema(
   {
@@ -35,8 +36,9 @@ const artistSchema = new mongoose.Schema(
     discriminatorKey: 'type'
   }
 );
-
+artistSchema.index({ displayName: "text"});
 artistSchema.plugin(mongooseLeanVirtuals);
+artistSchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'displayName', minSize: 1}] });
 
 const Artist = User.discriminator('Artist', artistSchema);
 

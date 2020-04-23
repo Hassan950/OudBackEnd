@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 const categorySchema = new mongoose.Schema({
   name: {
@@ -29,6 +30,9 @@ categorySchema.virtual('type').get(function () {
     virtuals: true
   }
 });
+
+
+categorySchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'name', minSize: 1}] });
 
 const Category = mongoose.model('Category', categorySchema);
 module.exports = { Category, categorySchema };

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 const playlistSchema = new mongoose.Schema(
   {
@@ -53,6 +54,8 @@ const playlistSchema = new mongoose.Schema(
 playlistSchema.virtual('type').get(function() {
   return 'playlist';
 });
+
+playlistSchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'name', minSize: 1}] });
 
 const Playlist = mongoose.model('Playlist', playlistSchema);
 module.exports = { Playlist, playlistSchema };

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 const albumSchema = new mongoose.Schema(
   {
@@ -62,6 +63,7 @@ albumSchema.virtual('type').get(function() {
 
 
 albumSchema.plugin(mongooseLeanVirtuals);
+albumSchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'name', minSize: 1}] });
 
 const Album = mongoose.model('Album', albumSchema);
 

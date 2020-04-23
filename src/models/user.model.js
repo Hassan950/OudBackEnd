@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -203,6 +204,8 @@ userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
 
   return false;
 };
+
+userSchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'displayName', minSize: 1}] });
 
 const User = mongoose.model('User', userSchema);
 

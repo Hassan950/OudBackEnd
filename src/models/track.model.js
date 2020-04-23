@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 const trackSchema = new mongoose.Schema(
   {
@@ -60,6 +61,7 @@ trackSchema.virtual('albumId').get(function() {
 });
 
 trackSchema.plugin(mongooseLeanVirtuals)
+trackSchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'name', minSize: 1}] });
 
 const Track = mongoose.model('Track', trackSchema);
 
