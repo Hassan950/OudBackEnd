@@ -423,7 +423,7 @@ paths:
                       $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
-  /artists/random:
+  /artists/some:
     get:
       tags:
         - Artists
