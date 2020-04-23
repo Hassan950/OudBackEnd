@@ -33,6 +33,7 @@ exports.getPlayer = async (req, res, next) => {
 
   player.itemModel = undefined;
   player.adsCounter = undefined;
+  player.__v = undefined;
 
   res.status(200).json({
     player: player

@@ -24,12 +24,14 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
     player = await Player.findOne({ userId: userId })
       .populate({
         path: 'item',
-        select: '+audioUrl',
+        select: '+audioUrl -__v',
         populate: {
           path: 'artists album',
+          select: '_id images displayName id name image album_type'
         }
       })
       .populate('device')
+      .lean({ virtuals: true })
       ;
 
     if (player && player.item) {
@@ -71,7 +73,7 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
       select: '+audioUrl -__v',
       populate: {
         path: 'artists album',
-        select: '-__v'
+        select: '_id images displayName id name image album_type'
       }
     })
     .lean({ virtuals: true })
