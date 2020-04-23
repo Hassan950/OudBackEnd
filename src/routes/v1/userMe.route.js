@@ -57,5 +57,9 @@ router
   .route('/profilePicture')
   .patch(userController.uploadImages, catchAsync(userController.updateImages));
 
+router
+  .route('/privateSession')
+  .put(validate(userValidation.setPrivateSession), catchAsync(userController.setPrivateSession));
+
 
 module.exports = router;
