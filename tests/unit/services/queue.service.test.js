@@ -117,12 +117,6 @@ describe('Queue Service', () => {
       expect(playerService.setPlayerToDefault).toBeCalled();
       expect(playerService.setPlayerToDefault).toBeCalledWith(player);
     });
-
-    it('should call add track to player if queues is empty', async () => {
-      playerService.addTrackToPlayer = jest.fn();
-      const result = await queueService.fillQueueFromTracksUris(uris, [], player);
-      expect(playerService.addTrackToPlayer).toBeCalled();
-    });
   });
 
   describe('Set queue to default', () => {

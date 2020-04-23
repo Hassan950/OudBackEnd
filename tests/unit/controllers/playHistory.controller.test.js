@@ -44,7 +44,7 @@ describe('PlayHistory controller', () => {
       await playHistoryController.recentlyPlayed(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0].limit).toBe(req.query.limit || 20);
-      expect(res.json.mock.calls[0][0].items).toEqual([playHistory]);
+      expect(res.json.mock.calls[0][0].items.length).toBe(1);
     });
 
     it('should return 204 if history is null or empty', async () => {
@@ -61,7 +61,7 @@ describe('PlayHistory controller', () => {
       await playHistoryController.recentlyPlayed(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0].limit).toBe(req.query.limit || 20);
-      expect(res.json.mock.calls[0][0].items).toEqual([playHistory]);
+      expect(res.json.mock.calls[0][0].items.length).toBe(1);
     });
 
     it('should be valid if before is passed', async () => {
@@ -69,7 +69,7 @@ describe('PlayHistory controller', () => {
       await playHistoryController.recentlyPlayed(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0].limit).toBe(req.query.limit || 20);
-      expect(res.json.mock.calls[0][0].items).toEqual([playHistory]);
+      expect(res.json.mock.calls[0][0].items.length).toBe(1);
     });
   });
 });

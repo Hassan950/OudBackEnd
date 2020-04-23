@@ -4,6 +4,7 @@ const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
 const catchAsync = require('../../utils/catchAsync');
+
 const playerRouter = require('./player.route');
 const libraryRouter = require('./library.route');
 const queueRouter = require('./queue.route');
@@ -13,6 +14,7 @@ const playlistRouter = require('./playlist.route');
 const searchRouter = require('./search.route');
 
 const router = express.Router();
+
 
 // /me/artist router
 router.use('/artists', artistRoute);
@@ -34,8 +36,9 @@ router.use('/artists', artistRoute);
 
 // /me/queue
 router.use('/queue', queueRouter);
-// /me
-router.use('/', premiumRouter);
+
+// /me/premium
+router.use('/premium', premiumRouter);
 
 router
   .route('/updatePassword')
@@ -58,5 +61,6 @@ router
 router
   .route('/profilePicture')
   .patch(userController.uploadImages, catchAsync(userController.updateImages));
+
 
 module.exports = router;

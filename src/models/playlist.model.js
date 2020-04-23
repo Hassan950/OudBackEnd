@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const playlistSchema = new mongoose.Schema(
   {
@@ -50,9 +51,11 @@ const playlistSchema = new mongoose.Schema(
   }
 );
 
-playlistSchema.virtual('type').get(function() {
+playlistSchema.virtual('type').get(function () {
   return 'playlist';
 });
+
+playlistSchema.plugin(mongooseLeanVirtuals);
 
 const Playlist = mongoose.model('Playlist', playlistSchema);
 module.exports = { Playlist, playlistSchema };

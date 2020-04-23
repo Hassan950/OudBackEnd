@@ -68,12 +68,12 @@ npm install
 1. Clear database
 
 ```sh
-node ./src/dev-data/data/import-data.js --delete
+npm run delete
 ```
 
 2. Import Seeds
 ```sh
-node ./src/dev-data/data/import-data.js --import
+npm run import
 ```
  
  ### Environmental Variables

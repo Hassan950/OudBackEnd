@@ -170,9 +170,11 @@ userSchema.post('save', async function (doc) {
     const { Player } = require('../models/player.model');
     const { Playlist } = require('../models/playlist.model');
     const { Recent } = require('../models/recent.model'); 
+    const adsCounter = (doc.role === 'free') ? 0 : undefined;
     try {
       await Player.create({
-        userId: doc._id
+        userId: doc._id,
+        adsCounter: adsCounter
       });
     } catch (error) {
       // if the user has player already

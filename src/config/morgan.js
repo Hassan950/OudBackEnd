@@ -4,9 +4,9 @@ const logger = require('./logger');
 
 morgan.token('message', (req, res) => res.locals.errorMessage || '');
 
-const getIpFormat = () => (config.get('NODE_ENV') === 'production' ? ':remote-addr - ' : '');
-const successResponseFormat = `${getIpFormat()}:method :url :status - :response-time ms`;
-const errorResponseFormat = `${getIpFormat()}:method :url :status - :response-time ms - message: :message`;
+const getIpFormat = () => (config.get('NODE_ENV') === 'production' ? ':remote-addr - :remote-user [:date[clf]]' : '');
+const successResponseFormat = `${getIpFormat()} ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - :response-time ms`;
+const errorResponseFormat = `${getIpFormat()} ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms - message: :message`;
 
 const successHandler = morgan(successResponseFormat, {
   skip: (req, res) => res.statusCode >= 400,

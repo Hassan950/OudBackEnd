@@ -136,7 +136,7 @@ exports.followUser = async (req, res, next) => {
       new AppError('At least one of the ids is not found', httpStatus.NOT_FOUND)
     );
   }
-  res.status(httpStatus.NO_CONTENT).end();
+  res.sendStatus(httpStatus.NO_CONTENT);
 };
 
 /**
@@ -167,7 +167,7 @@ exports.unfollowUser = async (req, res, next) => {
       new AppError('At least one of the ids is not found', httpStatus.NOT_FOUND)
     );
   }
-  res.status(httpStatus.NO_CONTENT).end();
+  res.sendStatus(httpStatus.NO_CONTENT);
 };
 
 /**
@@ -190,7 +190,7 @@ exports.followPlaylist = async (req, res, next) => {
   if (!result) {
     return next(new AppError('Playlist is not found', httpStatus.NOT_FOUND));
   }
-  res.status(httpStatus.NO_CONTENT).end();
+  res.sendStatus(httpStatus.NO_CONTENT);
 };
 
 /**
@@ -212,5 +212,5 @@ exports.unfollowPlaylist = async (req, res, next) => {
   if (!result) {
     return next(new AppError('Playlist is not found', httpStatus.NOT_FOUND));
   }
-  res.status(httpStatus.NO_CONTENT).end();
+  res.sendStatus(httpStatus.NO_CONTENT);
 };

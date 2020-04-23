@@ -41,14 +41,6 @@ describe('Track model', () => {
     track.audioUrl = 'not mp3';
     expect(track.validateSync().errors['audioUrl']).toBeDefined();
   });
-  it('Should throw an error if no audioUrl passed', () => {
-    track.audioUrl = null;
-    expect(track.validateSync().errors['audioUrl']).toBeDefined();
-  });
-  it('Should throw an error if duration is less than 5000 ms', () => {
-    track.duration = 4999;
-    expect(track.validateSync().errors['duration']).toBeDefined();
-  });
   it('Should throw an error if duration is not a number', () => {
     track.duration = '4lol9';
     expect(track.validateSync().errors['duration']).toBeDefined();
