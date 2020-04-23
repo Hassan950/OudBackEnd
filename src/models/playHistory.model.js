@@ -10,11 +10,11 @@ const playHistorySchema = mongoose.Schema({
   context: {
     type: {
       type: String,
-      enum: ['album', 'artist', 'playlist', 'unknown'],
-      default: 'unknown'
+      enum: ['Album', 'Artist', 'Playlist']
     },
-    id: {
-      type: mongoose.Types.ObjectId
+    item: {
+      type: mongoose.Types.ObjectId,
+      refPath: 'context.type'
     }
   },
   playedAt: {
