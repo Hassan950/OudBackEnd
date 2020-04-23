@@ -44,3 +44,4 @@ exports.getGenres = async (req, res, next) => {
     items: genres[0]
   });
 };
+

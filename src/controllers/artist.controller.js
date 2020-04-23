@@ -238,3 +238,18 @@ exports.handleRequest = async (req, res, next) => {
   }
   return res.status(204).send();
 };
+
+/**
+ * A middleware that gets some artists 
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Gets some artists 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.getSomeArtists = async (req, res, next) => {
+  const artists = await artistService.findSomeArtists();
+  res.status(200).json(artists);
+};
