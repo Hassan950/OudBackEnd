@@ -13,7 +13,11 @@ const {
   Queue,
   PlayHistory,
   Normal,
+<<<<<<< HEAD
   Ad
+=======
+  Coupon
+>>>>>>> dev
 } = require('../../models');
 
 const DB = config.get('db');
@@ -51,6 +55,10 @@ const playhistories = JSON.parse(
 const queues = JSON.parse(
   fs.readFileSync(`${__dirname}/queues.json`, 'utf-8')
 );
+
+const coupons = JSON.parse(
+  fs.readFileSync(`${__dirname}/coupons.json`, 'utf-8')
+);
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
@@ -73,6 +81,7 @@ const importData = async () => {
     await Queue.create(queues);
     await PlayHistory.create(playhistories);
     await Ad.create(ads);
+    await Coupon.create(coupons)
     console.log('Data successfully loaded!');
   } catch (err) {
     console.log(err);
