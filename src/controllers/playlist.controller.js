@@ -178,20 +178,38 @@ exports.getUserPlaylists = async (req, res, next) => {
   }
   let params;
   let publicity;
+  let playlists;
   if (req.baseUrl.match(/.*users.*/)) {
+    if ((req.query.isOwner !== undefined)) {
+      return next(new AppError('isOwner is not allowed ', 400));
+    }
     params = req.params.id;
     const user = await playlistService.checkUser(params);
     if (!user) return next(new AppError('no user with this id', 404));
     publicity = { public: true };
-  } else {
-    params = req.user.id;
-    publicity = {};
+    playlists = await playlistService.getUserPlaylists(
+      params,
+      req.query,
+      publicity
+    );
   }
-  const playlists = await playlistService.getUserPlaylists(
-    params,
-    req.query,
-    publicity
-  );
+  else {
+    if (req.query.isOwner == undefined) {
+      return next(new AppError('isOwner is required', 400));
+    }
+    else if (req.query.isOwner === false) {
+      params = req.user.id;
+      publicity = {};
+      playlists = await playlistService.getUserPlaylists(
+        params,
+        req.query,
+        publicity
+      );
+    }
+    else { 
+      playlists = await playlistService.getCreatedPlaylists(req.user.id, req.query);
+    }
+  }
   res.status(200).json({
     items: playlists.playlists,
     offset: req.query.offset,
