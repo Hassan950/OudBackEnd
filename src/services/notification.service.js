@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 const config = require('config');
-const { User } = require('../models');
+const { User, Followings, Track } = require('../models');
 
 try {
   const serviceAccount = config.get('Firebase_Service_Acc');
@@ -133,4 +133,23 @@ exports.subscribeManyTopics = async (topics, userId) => {
       this.subscribeTopic(user.regToken, topic);
     })
   );
+};
+
+exports.listenToTrack = async (userId, trackId) => {
+  const user = await User.findById(userId);
+  if (user.type === 'Artist' || user.privateSession) {
+    return;
+  }
+  let followers = Followings.find({ followedId: userId }).populate({
+    path: 'userId',
+    select: 'regToken'
+  });
+  let track = Track.findById(trackId);
+  [track, followers] = await Promise.all([track, followers]);
+  let tokens = followers
+    .filter(follower => follower.regToken)
+    .map(follower => follower.regToken);
+  const host = 'https://oud-zerobase.me';
+  const message = `${user.displayName} has started listening to ${track.name}`;
+  this.manyNotify(tokens, user.images[0], host, message);
 };

@@ -1,15 +1,16 @@
 const { Player } = require('../models/player.model');
 const { Track } = require('../models/track.model');
 const { Ad } = require('../models/ad.model');
+const { notifyService } = require('../services');
 
 /**
  * Get `player` with the given `userId`
- * 
+ *
  * @function
  * @public
  * @async
  * @author Abdelrahman Tarek
- * @param {String} userId User ID 
+ * @param {String} userId User ID
  * @param {Object} [ops] Options Object
  * @param {Boolean} [ops.populate=true] if true will populate (Default `true`)
  * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return `audioUrl` if populate is false nothing happens
@@ -31,33 +32,29 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
         }
       })
       .populate('device')
-      .lean({ virtuals: true })
-      ;
+      .lean({ virtuals: true });
 
     if (player && player.item) {
       if (ops.link) {
         // Add host link
-        let audio = player.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+        let audio = player.item.audioUrl.replace(/\\/g, '/'); // convert \ to /
         audio = audio.split('/');
         player.item.audioUrl = ops.link + audio[audio.length - 1];
-      } else
-        player.item.audioUrl = undefined;
+      } else player.item.audioUrl = undefined;
     }
-
   } else player = await Player.findOne({ userId: userId });
 
   return player;
 };
 
-
 /**
  * Get currently playing track with its context
- * 
+ *
  * @function
  * @public
  * @async
  * @author Abdelrahman Tarek
- * @param {String} userId User ID 
+ * @param {String} userId User ID
  * @param {Object} [ops] Options Object
  * @param {String} [ops.link=undefined] the link of the audio url host if not passed do not return `audioUrl`
  * @returns {Object} `currentlyPlaying` if `player` is found and `player.item` is not `null` \
@@ -76,19 +73,18 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
         select: '_id images displayName id name image album_type'
       }
     })
-    .lean({ virtuals: true })
-    ;
-
-  if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
+    .lean({ virtuals: true });
+  if (currentlyPlaying && !currentlyPlaying.item) {
+    currentlyPlaying = null;
+  }
 
   if (currentlyPlaying && currentlyPlaying.item) {
     if (ops && ops.link) {
       // Add host link
-      let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+      let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, '/'); // convert \ to /
       audio = audio.split('/');
       currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
-    } else
-      currentlyPlaying.item.audioUrl = undefined;
+    } else currentlyPlaying.item.audioUrl = undefined;
   }
 
   return currentlyPlaying;
@@ -96,17 +92,17 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
 
 /**
  * Create player with the given userId
- * 
+ *
  * @function
  * @public
  * @async
  * @author Abdelrahman Tarek
- * @param {String} userId User ID 
+ * @param {String} userId User ID
  * @throws `MongooseError`
  * @returns {Document} `newPlayer` if player is created
  * @summary Create Player
  */
-const createPlayer = async (userId) => {
+const createPlayer = async userId => {
   const newPlayer = await Player.create({
     userId: userId
   });
@@ -116,22 +112,26 @@ const createPlayer = async (userId) => {
 
 /**
  * Add `track` to `player`
- * 
+ *
  * @function
  * @public
  * @author Abdelrahman Tarek
- * @param {Document} player player 
- * @param {String} track track ID 
- * @param {Object} [context] context object 
- * @param {String} [context.type] context type  
- * @param {String} [context.id] context id 
+ * @param {Document} player player
+ * @param {String} track track ID
+ * @param {Object} [context] context object
+ * @param {String} [context.type] context type
+ * @param {String} [context.id] context id
  * @description assign player.item to track, player.progressMs to 0, player.currentlyPlayingType to track \
  * and if context and context.type is defined \
  * assign player.context to context \
  * increase track views
  * @summary Add track to player
  */
-const addTrackToPlayer = async (player, track, context = { type: undefined, id: undefined }) => {
+const addTrackToPlayer = async (
+  player,
+  track,
+  context = { type: undefined, id: undefined }
+) => {
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
   // handle ads counter
@@ -160,12 +160,13 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
       transferring_playback: true
     };
     // play random ad
-    const ad = await Ad.aggregate([
-      { $sample: { size: 1 } }
-    ]);
+    const ad = await Ad.aggregate([{ $sample: { size: 1 } }]);
     player.item = ad.length ? ad[0]._id : null;
   } else {
     // play the track
+    if (player.item !== track) {
+      notifyService.listenToTrack(player.userId, track);
+    }
     player.item = track;
     player.progressMs = 0;
     player.isPlaying = true;
@@ -181,12 +182,12 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
 
 /**
  * Start playing from given offset
- * 
+ *
  * @function
  * @public
  * @async
  * @author Abdelrahman Tarek
- * @param {Document} player Player 
+ * @param {Document} player Player
  * @param {Document} queue Queue
  * @param {Object} offset Offset object
  * @param {Number} [offset.position] Offset postiton
@@ -218,14 +219,14 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
       }
 
       queue.currentIndex = queue.shuffleList[queue.shuffleIndex]; // set current index
-    } else { // normal mode
+    } else {
+      // normal mode
       if (queue.tracks.length <= offset.position) {
         queue.currentIndex = 0;
       } else {
         queue.currentIndex = offset.position;
       }
     }
-
   } else if (offset.uri) {
     const trackId = offset.uri.split(':')[2];
     let pos = await queueService.getTrackPosition(queues[0], trackId);
@@ -246,7 +247,6 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
         queue.currentIndex = pos;
       }
     }
-
   }
 
   return player;
@@ -254,13 +254,13 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
 
 /**
  * Chnage player progress
- * 
+ *
  * @function
  * @public
  * @async
  * @author Abdelrahman Tarek
- * @param {Document} player Player 
- * @param {Number} progressMs progress in m Second 
+ * @param {Document} player Player
+ * @param {Number} progressMs progress in m Second
  * @param {Array<String>} queues queues IDs array
  * @param {Document} [track] Currently playing track
  * @param {Document} [queue] Currently playing queue
@@ -268,18 +268,25 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
  * @summary Chnage player progress
  * @returns {Document} player
  */
-const changePlayerProgress = async (player, progressMs, queues, track = null, queue = null) => {
+const changePlayerProgress = async (
+  player,
+  progressMs,
+  queues,
+  track = null,
+  queue = null
+) => {
   const queueService = require('./queue.service');
   player.progressMs = progressMs;
 
-  if (!track)
-    track = await Track.findById(player.item);
+  if (!track) track = await Track.findById(player.item);
 
   // if position >= track duration go to next
   if (track && progressMs >= track.duration) {
     if (player.repeatState !== 'track') {
       if (!queue)
-        queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+        queue = await queueService.getQueueById(queues[0], {
+          selectDetails: true
+        });
 
       if (!queue || !queue.tracks || !queue.tracks.length) {
         return null;
@@ -296,13 +303,13 @@ const changePlayerProgress = async (player, progressMs, queues, track = null, qu
 
 /**
  * Add Device to player
- * 
+ *
  * @function
  * @public
  * @async
  * @author Abdelrahman Tarek
  * @param {Document} player PLayer
- * @param {String} deviceId Device ID 
+ * @param {String} deviceId Device ID
  * @description if found a device with the given deviceId \
  * assign player.device to deviceId and return player \
  * else \
@@ -324,11 +331,11 @@ const addDeviceToPlayer = async (player, deviceId) => {
 
 /**
  * Set `player` to Default
- * 
+ *
  * @function
  * @public
  * @author Abdelrahman Tarek
- * @param {Document} player Player 
+ * @param {Document} player Player
  * @description Set \
  * player.item = null \
  * player.context = { type: 'unknown' } \
@@ -336,10 +343,10 @@ const addDeviceToPlayer = async (player, deviceId) => {
  * player.shuffleState = false \
  * player.repeatState = 'off' \
  * player.isPlaying = false \
- * player.currentlyPlayingType = 'unknown' 
+ * player.currentlyPlayingType = 'unknown'
  * @summary Set `player` to Default
  */
-const setPlayerToDefault = (player) => {
+const setPlayerToDefault = player => {
   player.item = null;
   player.context = { type: 'unknown' };
   player.progressMs = null;
@@ -361,4 +368,4 @@ module.exports = {
   addDeviceToPlayer,
   setPlayerToDefault,
   addDeviceToPlayer
-}
+};
