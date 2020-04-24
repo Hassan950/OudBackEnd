@@ -169,5 +169,76 @@
       "5e98bf4b2c7baf48ebe7888f",
       "5e98f1442c7baf48ebe78893"
     ]
+  },
+  {
+    "_id": "5e6dea511e17a305285ba623",
+    "name": "Best Of Adele",
+    "description": "Best Songs Of adele",
+    "public": true,
+    "collabrative": false,
+    "owner": "5e907db0a0645f4581607608",
+    "image": "uploads/users/Adele-5e907db0a0645f4581607608-1587358108772.jpeg",
+    "tracks": [
+      "5e9b49440f27b613b44fba41",
+      "5e9b49440f27b613b44fba42",
+      "5e9b49440f27b613b44fba43"
+    ]
+  },
+  {
+    "_id": "5e6dea511e17a305285ba624",
+    "name": "Best Of E.Goulding",
+    "description": "Best Songs Of ellie goulding",
+    "public": true,
+    "collabrative": false,
+    "owner": "5e907db0a0645f558160760b",
+    "image": "uploads/users/Ellie Goulding-5e907db0a0645f558160760b-1587358061854.jpeg",
+    "tracks": [
+      "5e9b4b9b0f27b613b44fba44",
+      "5e9b4b9b0f27b613b44fba45",
+      "5e9b4b9b0f27b613b44fba46"
+    ]
+  },
+  {
+    "_id": "5e6dea511e17a305285ba625",
+    "name": "Best Of Travis Scott",
+    "description": "Best Songs Of travis scott",
+    "public": true,
+    "collabrative": false,
+    "owner": "5e907db0a0645f558160760c",
+    "image": "uploads/users/Travis Scott-5e907db0a0645f558160760c-1587358426961.jpeg",
+    "tracks": [
+      "5e9b4df40f27b613b44fba47",
+      "5e9b4df40f27b613b44fba48",
+      "5e9b4df40f27b613b44fba49"
+    ]
+  },
+  {
+    "_id": "5e6dea511e17a305285ba626",
+    "name": "Best Of Abdelbaset",
+    "description": "Best Songs Of abdelbaset",
+    "public": true,
+    "collabrative": false,
+    "owner": "5e907db0a0645f558160760f",
+    "image": "uploads/albums/5e9b4dad0f27b613b44fba49-5e907db0a0645f558160760f-1587355962401.jpeg",
+    "tracks": [
+      "5e9b4df40f27b613b44fba50",
+      "5e9b4df40f27b613b44fba51",
+      "5e9b4df40f27b613b44fba52"
+    ]
+  },
+  {
+    "_id": "5e6dea511e17a305285ba627",
+    "name": "Best Of El Sadat",
+    "description": "Best Songs Of el sadat",
+    "public": true,
+    "collabrative": false,
+    "owner": "5e907db0a0645f5581607610",
+    "image": "uploads/users/Sadat-5e907db0a0645f5581607610-1587358146898.jpeg",
+    "tracks": [
+      "5e9b32c40f27b613b44fba24",
+      "5e9b37660f27b613b44fba27",
+      "5e9b37d50f27b613b44fba29",
+      "5e9b39050f27b613b44fba2c"
+    ]
   }
 ]
