@@ -81,7 +81,7 @@ const getUserById = async userId => {
     role: 0,
     username: 0,
     password: 0
-  }).populate('artist');
+  }).select('-privateSession').populate('artist');
   return user;
 };
 
