@@ -147,7 +147,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
     player.adsCounter++;
   }
 
-  if (player.adsCounter >= 3) {
+  if (player.adsCounter > 3) {
     // play ad
     player.adsCounter = 0;
     player.progressMs = 0;
