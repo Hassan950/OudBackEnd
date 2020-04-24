@@ -79,7 +79,7 @@ module.exports.search = async query => {
         query.limit
       );
       let tracks;
-      if (((artists.artists[0].displayName).toLowerCase()) === ((query.q).toLowerCase())) {
+      if (artists.artists.length && ((artists.artists[0].displayName).toLowerCase()) === ((query.q).toLowerCase())) {
         tracks = await searchForArtistTracks(
           artists.artists[0]._id,
           query.offset,
