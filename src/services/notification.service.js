@@ -2,18 +2,24 @@ const admin = require('firebase-admin');
 const config = require('config');
 const { User } = require('../models');
 
-const serviceAccount = config.get('Firebase_Service_Acc');
+try {
+  const serviceAccount = config.get('Firebase_Service_Acc');
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://trying-59532.firebaseio.com'
-});
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://trying-59532.firebaseio.com'
+  });
+} catch (err) {
+  if (config.get('NODE_ENV') === 'production') {
+    throw err;
+  }
+}
 
 exports.OneNotify = async (token, image, host, message) => {
   var payload = {
     webpush: {
       notification: {
-        icon: `${host}/api/uploads/users/logo.png`,
+        icon: `${host}/api/${config.get('LOGO_URL')}`,
         title: 'Oud',
         body: message,
         image: `${host}/api/${image}`
@@ -21,7 +27,7 @@ exports.OneNotify = async (token, image, host, message) => {
     },
     android: {
       notification: {
-        icon: `${host}/api/uploads/users/logo.png`,
+        icon: `${host}/api/${config.get('LOGO_URL')}`,
         title: 'Oud',
         body: message,
         image: `${host}/api/${image}`
@@ -45,7 +51,7 @@ exports.manyNotify = (tokens, image, host, message) => {
   var payload = {
     webpush: {
       notification: {
-        icon: `${host}/api/uploads/users/logo.png`,
+        icon: `${host}/api/${config.get('LOGO_URL')}`,
         title: 'Oud',
         body: message,
         image: `${host}/api/${image}`
@@ -53,7 +59,7 @@ exports.manyNotify = (tokens, image, host, message) => {
     },
     android: {
       notification: {
-        icon: `${host}/api/uploads/users/logo.png`,
+        icon: `${host}/api/${config.get('LOGO_URL')}`,
         title: 'Oud',
         body: message,
         image: `${host}/api/${image}`
@@ -76,7 +82,7 @@ exports.manyNotify = (tokens, image, host, message) => {
 exports.topicNotify = (topic, image, host, message) => {
   var payload = {
     notification: {
-      icon: `${host}/api/uploads/users/logo.png`,
+      icon: `${host}/api/${config.get('LOGO_URL')}`,
       title: 'Oud',
       body: message,
       image: `${host}/api/${image}`
