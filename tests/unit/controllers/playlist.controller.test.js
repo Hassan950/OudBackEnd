@@ -361,6 +361,13 @@ describe('playlist controllers', () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it('should throw error 400 when url has users in it but has query Paramter is owner', async () => {
+      req.baseUrl = 'api/v1/users/userid/playlists';
+      req.query.isOwner = true;
+      await playlistController.getUserPlaylists(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
     it('should throw error 404 when invalid id is passed for users url', async () => {
       req.baseUrl = 'api/v1/users/userid/playlists';
       req.params.id = 'invalid';
@@ -402,6 +409,14 @@ describe('playlist controllers', () => {
     it('should return 200 if user with the passed id exists for me url', async () => {
       req.baseUrl = 'api/v1/me/playlists';
       req.user.id = usersIds[0];
+      await playlistController.getUserPlaylists(req, res, next);
+      expect(next.mock.calls.length).toBe(1);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+    it('should return 200 if user with the passed id exists for me url', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      req.query.isOwner = false;
+      req.user.id = usersIds[0];
       PlaylistFollowings.select = jest.fn().mockReturnThis();
       PlaylistFollowings.populate = jest.fn().mockReturnThis();
       PlaylistFollowings.skip = jest.fn().mockReturnThis();
@@ -413,6 +428,7 @@ describe('playlist controllers', () => {
     });
     it('should return Playlist with the passed id exists for me url', async () => {
       req.baseUrl = 'api/v1/me/playlists';
+      req.query.isOwner = false;
       req.user.id = usersIds[0];
       PlaylistFollowings.select = jest.fn().mockReturnThis();
       PlaylistFollowings.populate = jest.fn().mockReturnThis();
@@ -426,6 +442,33 @@ describe('playlist controllers', () => {
         playlistFollowings[0].playlistId,
         playlistFollowings[1].playlistId
       ]);
+    });
+    it('should return 200 if user with the passed id exists for me url', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      req.query.isOwner = true;
+      req.user.id = usersIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      Playlist.populate = jest.fn().mockReturnThis();
+      Playlist.skip = jest.fn().mockReturnThis();
+      Playlist.limit = jest.fn().mockReturnThis();
+      Playlist.where = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlistFollowings, 'find');
+      await playlistController.getUserPlaylists(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('should return Playlist with the passed id exists for me url', async () => {
+      req.baseUrl = 'api/v1/me/playlists';
+      req.query.isOwner = true;
+      req.user.id = usersIds[0];
+      Playlist.select = jest.fn().mockReturnThis();
+      Playlist.populate = jest.fn().mockReturnThis();
+      Playlist.skip = jest.fn().mockReturnThis();
+      Playlist.limit = jest.fn().mockReturnThis();
+      Playlist.where = jest.fn().mockReturnThis();
+      mockingoose(Playlist).toReturn(playlists, 'find');
+      await playlistController.getUserPlaylists(req, res, next);
+      const foundPlaylists = res.json.mock.calls[0][0].items;
+      expect(toString(foundPlaylists)).toEqual(toString(playlists));
     });
   });
   describe('createPlaylist - test', () => {
