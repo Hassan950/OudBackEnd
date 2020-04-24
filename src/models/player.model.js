@@ -54,7 +54,8 @@ const playerSchema = mongoose.Schema({
     }
   },
   adsCounter: {
-    type: Number
+    type: Number,
+    default: undefined
   },
   actions: {
     type: Object
