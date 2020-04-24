@@ -3013,7 +3013,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /me/playlits:
+  /me/playlists:
     get:
       security:
         - bearerAuth: []
@@ -3021,6 +3021,12 @@ paths:
         - Playlists
       summary: Get a List of current User's Playlists
       parameters:
+        - name: isOwner
+          in: query
+          description: if true you will get the playlists created by current user if false you will get the playlists followed by current user
+          required: true
+          schema:
+            type: boolean
         - name: limit
           in: query
           description: The maximum number of playlists to return.
