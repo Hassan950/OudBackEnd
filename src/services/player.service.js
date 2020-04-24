@@ -1,7 +1,6 @@
 const { Player } = require('../models/player.model');
 const { Track } = require('../models/track.model');
 const { Ad } = require('../models/ad.model');
-const { notifyService } = require('../services');
 
 /**
  * Get `player` with the given `userId`
@@ -175,6 +174,7 @@ const addTrackToPlayer = async (
   } else {
     // play the track
     if (player.item !== track) {
+      const { notifyService } = require('../services');
       notifyService.listenToTrack(player.userId, track);
     }
     player.item = track;
