@@ -33,7 +33,7 @@ const playHistorySchema = mongoose.Schema({
   }
 });
 
-playHistorySchema.index({ user: 1, playedAt: 1 });
+playHistorySchema.index({ user: 1, playedAt: -1 });
 playHistorySchema.index({ user: 1, "context.type": 1, "context.item": 1 }, { unique: 1 });
 
 playHistorySchema.virtual('context.id').get(function () {
