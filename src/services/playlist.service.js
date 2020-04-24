@@ -156,6 +156,29 @@ exports.getTracks = async (params, query) => {
   return { tracks, total };
 };
 
+
+exports.getCreatedPlaylists = async (id , query) => {
+  let playlists = Playlist.find({ owner: id })
+    .skip(query.offset)
+    .limit(query.limit)
+    .populate({
+      path:'tracks',
+      populate: {
+        path: 'album artists',
+        select: '-tracks -genres -released -release_date',
+        select: 'type displayName images name',
+        populate: {
+          path:'artists',
+          select:'type displayName images'
+        }
+      }
+    })
+    .exec();
+  let total = Playlist.countDocuments({ owner: id }).exec();
+  [playlists, total] = await Promise.all([playlists, total]);
+  return { playlists, total };
+}
+
 /**
  * A method that get Followedplaylists of a user
  *
@@ -168,7 +191,6 @@ exports.getTracks = async (params, query) => {
  * @returns {object} contains array of playlists and total of playlists found if the user was found
  * @returns null and total of zero if the user was not found
  */
-
 exports.getUserPlaylists = async (id, query, publicity) => {
   const playlistPromise = PlaylistFollowings.find({ userId: id })
     .where(publicity)

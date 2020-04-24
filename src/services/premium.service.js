@@ -37,7 +37,7 @@ exports.subscribe = async user => {
   }
 
   // set player ads to undefined
-  await Player.findOneAndUpdate({ userId: user._id }, { $set: { adsCounter: undefined } });
+  await Player.findOneAndUpdate({ userId: user._id }, { $unset: { adsCounter: undefined } });
 
   // Update User
   return await Normal.findOneAndUpdate(

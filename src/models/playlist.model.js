@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
+const searchPlugin = require('./search.plugin');
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const playlistSchema = new mongoose.Schema(
@@ -55,6 +57,8 @@ playlistSchema.virtual('type').get(function () {
   return 'playlist';
 });
 
+playlistSchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'name', minSize: 1}] });
+playlistSchema.plugin(searchPlugin, 'name');
 playlistSchema.plugin(mongooseLeanVirtuals);
 
 const Playlist = mongoose.model('Playlist', playlistSchema);

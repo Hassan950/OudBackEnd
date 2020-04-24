@@ -11,6 +11,7 @@ const queueRouter = require('./queue.route');
 const artistRoute = require('./artist.route');
 const premiumRouter = require('./premium.route');
 const playlistRouter = require('./playlist.route');
+const searchRouter = require('./search.route');
 
 const router = express.Router();
 
@@ -28,6 +29,10 @@ router.use('/albums', libraryRouter);
 
 // /me/playlists router
 router.use('/playlists', playlistRouter);
+// /me/recentSearch
+router.use('/search',searchRouter);
+// /me/artist router
+router.use('/artists', artistRoute);
 
 // /me/notifications
 router.route('/notifications').put(

@@ -34,13 +34,17 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
       .populate('device')
       .lean({ virtuals: true });
 
-    if (player && player.item) {
+    if (player && player.item && player.item.audioUrl) {
       if (ops.link) {
+        // if it is not a url
         // Add host link
-        let audio = player.item.audioUrl.replace(/\\/g, '/'); // convert \ to /
-        audio = audio.split('/');
-        player.item.audioUrl = ops.link + audio[audio.length - 1];
-      } else player.item.audioUrl = undefined;
+        if (!player.item.audioUrl.startsWith('http')) {
+          let audio = player.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+          audio = audio.split('/');
+          player.item.audioUrl = ops.link + audio[audio.length - 1];
+        }
+      } else
+        player.item.audioUrl = undefined;
     }
   } else player = await Player.findOne({ userId: userId });
 
@@ -78,13 +82,18 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
     currentlyPlaying = null;
   }
 
-  if (currentlyPlaying && currentlyPlaying.item) {
+  if (currentlyPlaying && currentlyPlaying.item && currentlyPlaying.item.audioUrl) {
     if (ops && ops.link) {
+      // if it is not a url
       // Add host link
-      let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, '/'); // convert \ to /
-      audio = audio.split('/');
-      currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
-    } else currentlyPlaying.item.audioUrl = undefined;
+      if (!currentlyPlaying.item.audioUrl.startsWith('http')) {
+        let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+        audio = audio.split('/');
+        currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
+      }
+
+    } else
+      currentlyPlaying.item.audioUrl = undefined;
   }
 
   return currentlyPlaying;
@@ -135,11 +144,12 @@ const addTrackToPlayer = async (
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
   // handle ads counter
+  if (player.adsCounter === null) player.adsCounter = undefined; // fix converting undefined to null in update query
   if (player.adsCounter !== undefined && player.item !== track) {
     player.adsCounter++;
   }
 
-  if (player.adsCounter >= 3) {
+  if (player.adsCounter > 3) {
     // play ad
     player.adsCounter = 0;
     player.progressMs = 0;

@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
+const searchPlugin = require('./search.plugin');
+
 
 const setImages = imgs => {
   if (imgs.length == 0) {
@@ -176,7 +179,8 @@ userSchema.post('save', async function(doc) {
   if (doc.newUser) {
     const { Player } = require('../models/player.model');
     const { Playlist } = require('../models/playlist.model');
-    const adsCounter = doc.role === 'free' ? 0 : undefined;
+    const { Recent } = require('../models/recent.model'); 
+    const adsCounter = (doc.role === 'free') ? 0 : undefined;
     try {
       await Player.create({
         userId: doc._id,
@@ -189,7 +193,11 @@ userSchema.post('save', async function(doc) {
       name: 'Liked Songs',
       owner: doc._id
     });
-
+    await Recent.create({
+      userId: doc._id,
+      items:[],
+      types:[]
+    });
     doc.newUser = undefined;
   }
 });
@@ -206,6 +214,11 @@ userSchema.methods.changedPasswordAfter = function(user, JWTTimestamp) {
 
   return false;
 };
+
+userSchema.plugin(mongoose_fuzzy_searching, {
+  fields: [{ name: 'displayName', minSize: 1 }]
+});
+userSchema.plugin(searchPlugin, 'displayName');
 
 const User = mongoose.model('User', userSchema);
 
