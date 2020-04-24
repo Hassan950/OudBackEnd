@@ -135,6 +135,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
   // handle ads counter
+  if (player.adsCounter === null) player.adsCounter = undefined; // fix converting undefined to null in update query
   if (player.adsCounter !== undefined && player.item !== track) {
     player.adsCounter++;
   }
