@@ -1,12 +1,12 @@
 const Joi = require('@hapi/joi');
-Joi.objectId = require('joi-objectid')(Joi)
+Joi.objectId = require('joi-objectid')(Joi);
 const { ageCheck, countryCheck } = require('./custom.validation');
 
 exports.getUser = {
   params: Joi.object().keys({
     userId: Joi.objectId()
   })
-}
+};
 
 exports.editProfile = {
   body: Joi.object().keys({
@@ -29,5 +29,11 @@ exports.editProfile = {
     displayName: Joi.string()
       .trim()
       .required()
+  })
+};
+
+exports.setPrivateSession = {
+  body: Joi.object().keys({
+    privateSession: Joi.boolean().required()
   })
 };
