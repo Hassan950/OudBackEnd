@@ -153,3 +153,17 @@ exports.requestHandle = {
     accept: Joi.bool().required()
   })
 };
+
+/**
+ * Schema that checks that the request is valid for endpoints that requires empty body
+ *
+ * @author Mohamed Abo-Bakr
+ * @summary Schema for a req for an endpoint that requires empty body
+ * @namespace
+ * @property {object} body An object that holds parameters that are sent up from the client in the post request
+ */
+exports.empty = {
+  body: Joi.object()
+    .keys()
+    .max(0)
+};

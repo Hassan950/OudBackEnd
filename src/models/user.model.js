@@ -51,7 +51,7 @@ const userSchema = mongoose.Schema(
       minlength: [8, 'Please confirm your password!'],
       select: false,
       validate: {
-        validator: function (el) {
+        validator: function(el) {
           return el === this.password;
         },
         message: 'Passwords are not the same'
@@ -60,7 +60,7 @@ const userSchema = mongoose.Schema(
     birthDate: {
       type: Date,
       validate: {
-        validator: function (bd) {
+        validator: function(bd) {
           return moment().diff(bd, 'years') > 10;
         },
         message: 'You must be at least 10 years old'
@@ -78,7 +78,7 @@ const userSchema = mongoose.Schema(
         'uploads\\users\\default-Cover.jpg'
       ],
       validate: {
-        validator: function (imgs) {
+        validator: function(imgs) {
           return imgs && imgs.length > 0;
         }
       },
@@ -100,13 +100,15 @@ const userSchema = mongoose.Schema(
       uppercase: true,
       required: [true, 'Please Enter your Country!']
     },
+    privateSession: {
+      type: Boolean,
+      default: false
+    },
     facebook_id: {
-      type: String,
-      select: false
+      type: String
     },
     google_id: {
-      type: String,
-      select: false
+      type: String
     },
     verifyToken: {
       type: String,
@@ -128,10 +130,12 @@ const userSchema = mongoose.Schema(
       type: Date
     },
     queues: {
-      type: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Queue'
-      }],
+      type: [
+        {
+          type: mongoose.Types.ObjectId,
+          ref: 'Queue'
+        }
+      ],
       select: false
     }
   },
@@ -146,8 +150,7 @@ const userSchema = mongoose.Schema(
   }
 );
 
-
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function(next) {
   if (!this.password || !this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 8);
@@ -156,19 +159,19 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now();
   next();
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function(next) {
   if (this.isNew) this.newUser = true; // if the user is new make newUser to true
   next();
 });
 
-userSchema.post('save', async function (doc) {
+userSchema.post('save', async function(doc) {
   if (doc.newUser) {
     const { Player } = require('../models/player.model');
     const { Playlist } = require('../models/playlist.model');
@@ -195,8 +198,7 @@ userSchema.post('save', async function (doc) {
   }
 });
 
-
-userSchema.methods.changedPasswordAfter = function (user, JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function(user, JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -215,6 +217,5 @@ userSchema.plugin(mongoose_fuzzy_searching, {
 userSchema.plugin(searchPlugin, 'displayName');
 
 const User = mongoose.model('User', userSchema);
-
 
 module.exports = { User, userSchema };

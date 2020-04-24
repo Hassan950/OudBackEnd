@@ -34,12 +34,15 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
       .lean({ virtuals: true })
       ;
 
-    if (player && player.item) {
+    if (player && player.item && player.item.audioUrl) {
       if (ops.link) {
+        // if it is not a url
         // Add host link
-        let audio = player.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
-        audio = audio.split('/');
-        player.item.audioUrl = ops.link + audio[audio.length - 1];
+        if (!player.item.audioUrl.startsWith('http')) {
+          let audio = player.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+          audio = audio.split('/');
+          player.item.audioUrl = ops.link + audio[audio.length - 1];
+        }
       } else
         player.item.audioUrl = undefined;
     }
@@ -81,12 +84,16 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
 
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
-  if (currentlyPlaying && currentlyPlaying.item) {
+  if (currentlyPlaying && currentlyPlaying.item && currentlyPlaying.item.audioUrl) {
     if (ops && ops.link) {
+      // if it is not a url
       // Add host link
-      let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
-      audio = audio.split('/');
-      currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
+      if (!currentlyPlaying.item.audioUrl.startsWith('http')) {
+        let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+        audio = audio.split('/');
+        currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
+      }
+
     } else
       currentlyPlaying.item.audioUrl = undefined;
   }
@@ -135,11 +142,12 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
   // increase track views
   Track.findByIdAndUpdate({ _id: track }, { $inc: { views: 1 } }).exec();
   // handle ads counter
+  if (player.adsCounter === null) player.adsCounter = undefined; // fix converting undefined to null in update query
   if (player.adsCounter !== undefined && player.item !== track) {
     player.adsCounter++;
   }
 
-  if (player.adsCounter >= 3) {
+  if (player.adsCounter > 3) {
     // play ad
     player.adsCounter = 0;
     player.progressMs = 0;
@@ -263,11 +271,12 @@ const startPlayingFromOffset = async (player, queue, offset, queues) => {
  * @param {Number} progressMs progress in m Second 
  * @param {Array<String>} queues queues IDs array
  * @param {Document} [track] Currently playing track
+ * @param {Document} [queue] Currently playing queue
  * @description Set player.progressMs to the given progressMs and if progressMs >= track duration (go next if repeat state != track else start the track from zero second)
  * @summary Chnage player progress
  * @returns {Document} player
  */
-const changePlayerProgress = async (player, progressMs, queues, track = null) => {
+const changePlayerProgress = async (player, progressMs, queues, track = null, queue = null) => {
   const queueService = require('./queue.service');
   player.progressMs = progressMs;
 
@@ -277,7 +286,8 @@ const changePlayerProgress = async (player, progressMs, queues, track = null) =>
   // if position >= track duration go to next
   if (track && progressMs >= track.duration) {
     if (player.repeatState !== 'track') {
-      let queue = await queueService.getQueueById(queues[0], { selectDetails: true });
+      if (!queue)
+        queue = await queueService.getQueueById(queues[0], { selectDetails: true });
 
       if (!queue || !queue.tracks || !queue.tracks.length) {
         return null;

@@ -11,6 +11,13 @@ const router = express.Router();
 router.use('/albums', albumRoute);
 
 router
+  .route('/some')
+  .get(
+    validate(artistValidation.empty),
+    catchAsync(artistController.getSomeArtists)
+  );
+
+router
   .route('/:id')
   .get(
     validate(artistValidation.oneArtist),

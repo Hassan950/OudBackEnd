@@ -2,8 +2,22 @@
   {
     "name": "Pepsi",
     "link": "https://www.pepsi.com/",
-    "audioUrl": "ad.mp3",
-    "duration": 3000,
+    "audioUrl": "https://audiocdn.123rf.com/preview/beanstalkaudio/beanstalkaudio2002/beanstalkaudio200200092_preview.mp3",
+    "duration": 30000,
     "image": "https://pepsicom-us-website-2017-production-public2.s3.us-east-2.amazonaws.com/en-us/uploads/01_PZS_12oz_can.png"
+  },
+  {
+    "name": "CocaCola",
+    "link": "https://www.coca-cola.com/",
+    "audioUrl": "https://audiocdn.123rf.com/preview/beanstalkaudio/beanstalkaudio2002/beanstalkaudio200200092_preview.mp3",
+    "duration": 30000,
+    "image": "https://www.coca-cola.com/content/dam/brands/tw/coca-cola/image/coke-logo.png"
+  },
+  {
+    "name": "BMW",
+    "link": "https://www.bmw.com",
+    "audioUrl": "https://audiocdn.123rf.com/preview/beanstalkaudio/beanstalkaudio2002/beanstalkaudio200200092_preview.mp3",
+    "duration": 30000,
+    "image": "https://www.bmw.com/etc.clientlibs/settings/wcm/designs/bmwcom/base/resources/ci2020/img/logo-en.png"
   }
 ]

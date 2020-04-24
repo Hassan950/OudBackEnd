@@ -1,5 +1,6 @@
 const { PlayHistory } = require('../models');
 const _ = require('lodash');
+const mongoose = require('mongoose');
 
 /**
  * Get History with the given `userId` and `ops`
@@ -68,23 +69,24 @@ const addToHistory = async (userId, context = {
     user: userId,
     context: {
       type: _.capitalize(context.type),
-      item: context.id,
-      onModel: _.capitalize(context.type)
+      item: context.id
     }
+  };
+
+  const update = {
+    playedAt: new Date()
+  };
+
+  const options = {
+    upsert: true,
+    new: true,
+    setDefaultsOnInsert: true
   };
 
   // if no context or context type is unknown don't add it to history
   if (!context || context.type === 'unknown' || context.id === undefined) return;
 
-  let history = await PlayHistory.findOne(query);
-
-  if (!history) {
-    history = await PlayHistory.create(query);
-  } else {
-    history.playedAt = Date.now();
-    await history.save();
-  }
-
+  const history = await PlayHistory.findOneAndUpdate(query, update, options);
 
   return history;
 };

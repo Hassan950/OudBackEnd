@@ -119,4 +119,14 @@ describe('User Controllers', () => {
       }
     });
   });
+
+  describe('privateSession - test', () => {
+    it('should send 200 OK when first entry of user images is updated', async () => {
+      req.user = user;
+      mockingoose(User).toReturn(user, 'findOneAndUpdate');
+      await userController.setPrivateSession(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
+      expect(res.send.mock.calls[0][0]).toBe(user);
+    });
+  });
 });

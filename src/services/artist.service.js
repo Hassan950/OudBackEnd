@@ -21,7 +21,7 @@ exports.findArtist = async id => {
       path: 'popularSongs',
       populate: {
         path: 'album artists',
-        select: 'album_type artists image name displayName images',
+        select: 'album_type released artists image name displayName images',
         populate: { path: 'artists', select: 'displayName images' }
       }
     })
@@ -45,7 +45,7 @@ exports.findArtists = async ids => {
       path: 'popularSongs',
       populate: {
         path: 'album artists',
-        select: 'album_type artists image name displayName images',
+        select: 'album_type released artists image name displayName images',
         populate: { path: 'artists', select: 'displayName images' }
       }
     })
@@ -78,7 +78,7 @@ exports.getPopularSongs = async artistId => {
     .select('popularSongs');
 
   if (!artist) return null;
-  
+
   return artist.popularSongs;
 };
 
@@ -97,7 +97,7 @@ exports.relatedArtists = async artistId => {
   if (!artist) return null;
 
   const artists = await User.find({
-    genres: { $in: artist.genres }
+    $and: [{ genres: { $in: artist.genres } }, { _id: { $ne: artistId } }]
   })
     .limit(20)
     .select('displayName images genres bio popularSongs')
@@ -303,4 +303,27 @@ exports.refuseRequest = async (request, host) => {
     .catch(error => {
       logger.error(`${error.code} :${error.message}`);
     });
+};
+
+/**
+ * A method that gets artists
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets Some artists
+ * @returns artists list of Some artists
+ */
+exports.findSomeArtists = async id => {
+  return await Artist.find()
+    .limit(16)
+    .select('displayName images genres bio popularSongs')
+    .populate({
+      path: 'popularSongs',
+      populate: {
+        path: 'album artists',
+        select: 'album_type released artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
+    })
+    .populate('genres');
 };
