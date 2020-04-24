@@ -63,6 +63,7 @@
     "mockingoose": "^2.13.2",
     "moment": "^2.24.0",
     "mongoose": "^5.7.7",
+    "mongoose-fuzzy-searching": "^1.1.9",
     "mongoose-lean-virtuals": "^0.6.1",
     "mongoose-type-url": "^1.0.6",
     "morgan": "^1.9.1",
