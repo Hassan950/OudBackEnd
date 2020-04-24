@@ -4,9 +4,13 @@
     "name": "Top Lists",
     "icon": "uploads\\categories\\toplists.jpg",
     "playlists": [
+      "5e6dea511e17a305285ba623",
+      "5e6dea511e17a305285ba622",
       "5e6dea511e17a305285ba610",
       "5e6dea511e17a305285ba611",
-      "5e6dea511e17a305285ba622"
+      "5e6dea511e17a305285ba624",
+      "5e6dea511e17a305285ba625",
+      "5e6dea511e17a305285ba626"
     ]
   },
   {
@@ -14,7 +18,10 @@
     "name": "Mood",
     "icon": "uploads\\categories\\mood.jpg",
     "playlists": [
-      "5e6dea511e17a305285ba612"
+      "5e6dea511e17a305285ba612",
+      "5e6dea511e17a305285ba623",
+      "5e6dea511e17a305285ba624",
+      "5e6dea511e17a305285ba626"
     ]
   },
   {
@@ -22,7 +29,8 @@
     "name": "Party",
     "icon": "uploads\\categories\\party.jpg",
     "playlists": [
-      "5e6dea511e17a305285ba613"
+      "5e6dea511e17a305285ba613",
+      "5e6dea511e17a305285ba625"
     ]
   },
   {
@@ -30,7 +38,11 @@
     "name": "Pop",
     "icon": "uploads\\categories\\pop.jpg",
     "playlists": [
-      "5e6dea511e17a305285ba614"
+      "5e6dea511e17a305285ba614",
+      "5e6dea511e17a305285ba623",
+      "5e6dea511e17a305285ba624",
+      "5e6dea511e17a305285ba626",
+      "5e6dea511e17a305285ba627"
     ]
   },
   {
@@ -47,7 +59,8 @@
     "icon": "uploads\\categories\\hip.jpg",
     "playlists": [
       "5e6dea511e17a305285ba616",
-      "5e6dea511e17a305285ba622"
+      "5e6dea511e17a305285ba622",
+      "5e6dea511e17a305285ba625"
     ]
   },
   {
@@ -80,7 +93,8 @@
     "icon": "uploads\\categories\\chill.jpg",
     "playlists": [
       "5e6dea511e17a305285ba620",
-      "5e6dea511e17a305285ba621"
+      "5e6dea511e17a305285ba621",
+      "5e6dea511e17a305285ba623"
     ]
   }
 ]

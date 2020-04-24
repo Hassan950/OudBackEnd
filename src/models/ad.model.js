@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const adSchema = new mongoose.Schema(
   {
@@ -11,8 +12,7 @@ const adSchema = new mongoose.Schema(
     },
     link: {
       type: String,
-      // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-      match: /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
+      validate: validator.isURL
     },
     audioUrl: {
       type: String,
