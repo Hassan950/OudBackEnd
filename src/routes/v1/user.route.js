@@ -21,7 +21,7 @@ router
 
 router
   .route('/:userId')
-  .get(catchAsync(authMiddleware.authenticate), validate(userValidation.getUser), catchAsync(userController.getUser));
+  .get(validate(userValidation.getUser), catchAsync(userController.getUser));
 
 router
   .route('/forgotPassword')
