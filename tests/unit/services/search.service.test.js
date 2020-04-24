@@ -1,6 +1,6 @@
 const requestMocks = require('../../utils/request.mock.js');
 const { searchService } = require('../../../src/services');
-let { Recent , Playlist, Album, Artist,User,Track , Genre} = require('../../../src/models');
+let { Recent , Playlist, Album, Artist,User,Track , Category} = require('../../../src/models');
 const mockingoose = require('mockingoose').default;
 
 describe('library service', () => {
@@ -129,6 +129,10 @@ describe('library service', () => {
       Album.limit = jest.fn().mockReturnThis();
       mockingoose(Album).toReturn(albums, 'find');
       mockingoose(Album).toReturn(1, 'countDocuments');
+      Album.search = async () => {
+        const total = 2;
+        return [albums,total] ; 
+      }
       const found = await searchService.search(query);
       expect(JSON.parse(JSON.stringify(found.albums))).toEqual(JSON.parse(JSON.stringify(albums)));
     });
@@ -170,7 +174,7 @@ describe('library service', () => {
     });
   })
   describe('search - test', () => {
-    it('should return array of items of all types ', async () => {
+    it('should return array of items of all types and q not equal a whole artist name', async () => {
       query = {
         q:'i',
         offset: 0,
@@ -180,6 +184,11 @@ describe('library service', () => {
       User.populate = jest.fn().mockReturnThis();
       User.skip = jest.fn().mockReturnThis();
       User.limit = jest.fn().mockReturnThis();
+      Category.select = jest.fn().mockReturnThis();
+      Category.populate = jest.fn().mockReturnThis();
+      Category.skip = jest.fn().mockReturnThis();
+      Category.limit = jest.fn().mockReturnThis();
+      mockingoose(Category).toReturn(users, 'find');
       mockingoose(User).toReturn(users, 'find');
       mockingoose(User).toReturn(1, 'countDocuments');
       Playlist.select = jest.fn().mockReturnThis();
@@ -214,6 +223,55 @@ describe('library service', () => {
       expect(JSON.parse(JSON.stringify(found.albums.albums))).toEqual(JSON.parse(JSON.stringify(albums)));
     });
   })
+  it('should return array of items of all types and q not equal a whole artist name', async () => {
+    query = {
+      q:'wegz',
+      offset: 0,
+      limit: 1
+    }
+    artists[0].displayName = 'wegz';
+    User.select = jest.fn().mockReturnThis();
+    User.populate = jest.fn().mockReturnThis();
+    User.skip = jest.fn().mockReturnThis();
+    User.limit = jest.fn().mockReturnThis();
+    Category.select = jest.fn().mockReturnThis();
+    Category.populate = jest.fn().mockReturnThis();
+    Category.skip = jest.fn().mockReturnThis();
+    Category.limit = jest.fn().mockReturnThis();
+    mockingoose(Category).toReturn(users, 'find');
+    mockingoose(User).toReturn(users, 'find');
+    mockingoose(User).toReturn(1, 'countDocuments');
+    Playlist.select = jest.fn().mockReturnThis();
+    Playlist.populate = jest.fn().mockReturnThis();
+    Playlist.skip = jest.fn().mockReturnThis();
+    Playlist.limit = jest.fn().mockReturnThis();
+    mockingoose(Playlist).toReturn(playlists, 'find');
+    mockingoose(Playlist).toReturn(1, 'countDocuments');
+    Album.select = jest.fn().mockReturnThis();
+    Album.populate = jest.fn().mockReturnThis();
+    Album.skip = jest.fn().mockReturnThis();
+    Album.limit = jest.fn().mockReturnThis();
+    mockingoose(Album).toReturn(albums, 'find');
+    mockingoose(Album).toReturn(1, 'countDocuments');
+    Artist.select = jest.fn().mockReturnThis();
+    Artist.populate = jest.fn().mockReturnThis();
+    Artist.skip = jest.fn().mockReturnThis();
+    Artist.limit = jest.fn().mockReturnThis();
+    mockingoose(Artist).toReturn(artists, 'find');
+    mockingoose(Artist).toReturn(1, 'countDocuments');
+    Track.select = jest.fn().mockReturnThis();
+    Track.populate = jest.fn().mockReturnThis();
+    Track.skip = jest.fn().mockReturnThis();
+    Track.limit = jest.fn().mockReturnThis();
+    mockingoose(Track).toReturn(tracks, 'find');
+    mockingoose(Track).toReturn(1, 'countDocuments');
+    const found = await searchService.search(query);
+    expect(JSON.parse(JSON.stringify(found.users.users))).toEqual(JSON.parse(JSON.stringify(users)));
+    expect(JSON.parse(JSON.stringify(found.playlists.playlists))).toEqual(JSON.parse(JSON.stringify(playlists)));
+    expect(JSON.parse(JSON.stringify(found.tracks.tracks))).toEqual(JSON.parse(JSON.stringify(tracks)));
+    expect(JSON.parse(JSON.stringify(found.artists.artists))).toEqual(JSON.parse(JSON.stringify(artists)));
+    expect(JSON.parse(JSON.stringify(found.albums.albums))).toEqual(JSON.parse(JSON.stringify(albums)));
+  });
   describe('addToRecent - test', () => {
     it('should pass and add to recent ', async () => {
       user = {

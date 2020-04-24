@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
-
+const searchPlugin = require('./search.plugin');
 const categorySchema = new mongoose.Schema(
   {
     name: {
@@ -42,7 +42,8 @@ categorySchema.virtual('type').get(function() {
 });
 
 
-categorySchema.plugin(mongoose_fuzzy_searching, { fields: [{name: 'name', minSize: 1}] });
+categorySchema.plugin(mongoose_fuzzy_searching, { fields: [{ name: 'name', minSize: 1 }] });
+categorySchema.plugin(searchPlugin, 'name');
 
 const Category = mongoose.model('Category', categorySchema);
 module.exports = { Category, categorySchema };
