@@ -34,12 +34,15 @@ const getPlayer = async (userId, ops = { populate: true, link: undefined }) => {
       .lean({ virtuals: true })
       ;
 
-    if (player && player.item) {
+    if (player && player.item && player.item.audioUrl) {
       if (ops.link) {
+        // if it is not a url
         // Add host link
-        let audio = player.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
-        audio = audio.split('/');
-        player.item.audioUrl = ops.link + audio[audio.length - 1];
+        if (!player.item.audioUrl.startsWith('http')) {
+          let audio = player.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+          audio = audio.split('/');
+          player.item.audioUrl = ops.link + audio[audio.length - 1];
+        }
       } else
         player.item.audioUrl = undefined;
     }
@@ -81,12 +84,16 @@ const getCurrentlyPlaying = async (userId, ops = { link: undefined }) => {
 
   if (currentlyPlaying && !currentlyPlaying.item) { currentlyPlaying = null; }
 
-  if (currentlyPlaying && currentlyPlaying.item) {
+  if (currentlyPlaying && currentlyPlaying.item && currentlyPlaying.item.audioUrl) {
     if (ops && ops.link) {
+      // if it is not a url
       // Add host link
-      let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
-      audio = audio.split('/');
-      currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
+      if (!currentlyPlaying.item.audioUrl.startsWith('http')) {
+        let audio = currentlyPlaying.item.audioUrl.replace(/\\/g, "/"); // convert \ to /
+        audio = audio.split('/');
+        currentlyPlaying.item.audioUrl = ops.link + audio[audio.length - 1];
+      }
+
     } else
       currentlyPlaying.item.audioUrl = undefined;
   }
@@ -140,7 +147,7 @@ const addTrackToPlayer = async (player, track, context = { type: undefined, id: 
     player.adsCounter++;
   }
 
-  if (player.adsCounter >= 3) {
+  if (player.adsCounter > 3) {
     // play ad
     player.adsCounter = 0;
     player.progressMs = 0;

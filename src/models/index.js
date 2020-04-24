@@ -17,6 +17,7 @@ const {
   playlistFollowingsSchema,
   PlaylistFollowings
 } = require('./follow.model');
+const { Recent,recentSchema } = require('./recent.model');
 const { Request, requestSchema } = require('./request.model');
 const { Coupon, couponSchema } = require('./coupon.model');
 const { Ad, adSchema } = require('./ad.model');
@@ -56,6 +57,8 @@ module.exports = {
   PlaylistFollowings,
   playlistSchema,
   Playlist,
+  Recent,
+  recentSchema,
   Request,
   requestSchema,
   Coupon,

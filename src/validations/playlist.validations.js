@@ -163,6 +163,7 @@ exports.getUserPlaylists = {
     id: Joi.objectId()
   }),
   query: Joi.object().keys({
+    isOwner: Joi.boolean(),
     offset: Joi.number().default(0),
     limit: Joi.number()
       .min(1)
