@@ -1,4 +1,12 @@
-const { Album, Playlist, Artist, User, Track, Category, Recent } = require('../models');
+const {
+  Album,
+  Playlist,
+  Artist,
+  User,
+  Track,
+  Category,
+  Recent
+} = require('../models');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 
@@ -26,20 +34,12 @@ module.exports.search = async query => {
     }
     case 'track': {
       // if type is track then call this function that returns tracks that their name match what user typed
-      let tracks = await searchForTracks(
-        query.q,
-        query.offset,
-        query.limit
-      );
+      let tracks = await searchForTracks(query.q, query.offset, query.limit);
       return tracks;
     }
     case 'album': {
       // if type is album then call this function that returns albums that their name match what user typed
-      let albums = await searchForAlbums(
-        query.q,
-        query.offset,
-        query.limit
-      );
+      let albums = await searchForAlbums(query.q, query.offset, query.limit);
       return albums;
     }
     case 'Artist': {
@@ -49,11 +49,7 @@ module.exports.search = async query => {
     }
     case 'User': {
       // if type is User then call this function that returns users that their diplayName match what user typed
-      let users = await searchForUsers(
-        query.q,
-        query.offset,
-        query.limit
-      );
+      let users = await searchForUsers(query.q, query.offset, query.limit);
       return users;
     }
     default: {
@@ -63,42 +59,35 @@ module.exports.search = async query => {
         query.offset,
         query.limit
       );
-      let albums = await searchForAlbums(
-        query.q,
-        query.offset,
-        query.limit
-      );
-      let users = await searchForUsers(
-        query.q,
-        query.offset,
-        query.limit
-      );
-      let artists = await searchForArtists(
-        query.q,
-        query.offset,
-        query.limit
-      );
+      let albums = await searchForAlbums(query.q, query.offset, query.limit);
+      let users = await searchForUsers(query.q, query.offset, query.limit);
+      let artists = await searchForArtists(query.q, query.offset, query.limit);
       let tracks;
-      if (artists.artists.length && ((artists.artists[0].displayName).toLowerCase()) === ((query.q).toLowerCase())) {
+      if (
+        artists.artists.length &&
+        artists.artists[0].displayName.toLowerCase() === query.q.toLowerCase()
+      ) {
         tracks = await searchForArtistTracks(
           artists.artists[0]._id,
           query.offset,
           query.limit
         );
-      }
-      else { 
-        tracks = await searchForTracks(
-          query.q,
-          query.offset,
-          query.limit
-        );
+      } else {
+        tracks = await searchForTracks(query.q, query.offset, query.limit);
       }
       let categories = await searchForCategories(
         query.q,
         query.offset,
         query.limit
       );
-      [playlists, tracks, albums, users, artists , categories] = await Promise.all([
+      [
+        playlists,
+        tracks,
+        albums,
+        users,
+        artists,
+        categories
+      ] = await Promise.all([
         playlists,
         tracks,
         albums,
@@ -106,7 +95,7 @@ module.exports.search = async query => {
         artists,
         categories
       ]);
-      return { playlists, albums, tracks, users, artists , categories};
+      return { playlists, albums, tracks, users, artists, categories };
     }
   }
 };
@@ -124,7 +113,7 @@ module.exports.search = async query => {
 const searchForCategories = async (q, offset, limit) => {
   //options that will be done after getting items of search
   const options = {
-    select: "-playlists",
+    select: '-playlists',
     skip: offset,
     limit: limit
   };
@@ -145,21 +134,21 @@ const searchForCategories = async (q, offset, limit) => {
 const searchForArtistTracks = async (id, offset, limit) => {
   //options that will be done after getting items of search
   let tracks = Track.find({ artists: id })
-    .populate({//get artists inside every track
+    .populate({
+      //get artists inside every track
       path: 'artists album',
-        select: '-tracks -genres -released -release_date',
-        select: 'displayName image images type name',
-        populate: {
-          path: 'artists',
-          select: 'type displayName images'
-        }
-    }).exec();
+      select: '-tracks -genres -released -release_date',
+      select: 'displayName image images type name',
+      populate: {
+        path: 'artists',
+        select: 'type displayName images'
+      }
+    })
+    .exec();
   let total = Track.countDocuments({ artists: id }).exec();
-  [tracks, total] = await Promise.all([tracks , total]);
-  return {  tracks, offset, limit, total }
+  [tracks, total] = await Promise.all([tracks, total]);
+  return { tracks, offset, limit, total };
 };
-
-
 
 /**
  * A method that searches for playlists
@@ -176,12 +165,14 @@ const searchForArtistTracks = async (id, offset, limit) => {
 const searchForPlaylists = async (q, offset, limit) => {
   //options that will be done after getting items of search
   const options = {
-    where: {//playlist should be public
+    where: {
+      //playlist should be public
       public: true
     },
     skip: offset,
     limit: limit,
-    populate: {//get artists inside every track
+    populate: {
+      //get artists inside every track
       path: 'tracks',
       populate: {
         path: 'album artists',
@@ -215,14 +206,15 @@ const searchForTracks = async (q, offset, limit) => {
   const options = {
     skip: offset,
     limit: limit,
-    populate: {//get artists inside every track
+    populate: {
+      //get artists inside every track
       path: 'artists album',
-        select: '-tracks -genres -released -release_date',
-        select: 'displayName image images type name',
-        populate: {
-          path: 'artists',
-          select: 'type displayName images'
-        }
+      select: '-tracks -genres -released -release_date',
+      select: 'displayName image images type name',
+      populate: {
+        path: 'artists',
+        select: 'type displayName images'
+      }
     }
   };
   const [tracks, total] = await Track.search(q, options);
@@ -247,8 +239,9 @@ const searchForAlbums = async (q, offset, limit) => {
     },
     skip: offset,
     limit: limit,
-    select: "-tracks -genres -released",
-    populate: {//get artists inside every album
+    select: '-tracks -genres -released',
+    populate: {
+      //get artists inside every album
       path: 'artists',
       select: 'displayName type images _id'
     }
