@@ -82,9 +82,9 @@ exports.googlePassport = async (req, accessToken, refreshToken, profile, done) =
 
     const newUser = {
       google_id: profile.id,
-      email: profile.emails[0].value,
+      email: profile.emails.length ? profile.emails[0].value : undefined,
       displayName: profile.displayName,
-      images: [profile.photos[0].value],
+      images: profile.photos.length ? [profile.photos[0].value] : undefined,
     };
 
     done(null, newUser);
