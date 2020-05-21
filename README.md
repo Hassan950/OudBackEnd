@@ -101,7 +101,7 @@ npm run import
   > Eg: `60`, `"2 days"`, `"10h"`, `"7d"`. A numeric value is interpreted as a seconds count. If you use a string be sure you provide the time units (days, hours, etc), otherwise milliseconds unit is used by default (`"120"` is equal to `"120ms"`).
 * `FBClientID` and `FBClientSecret`: Are used for signing up with facebook.
 * `GoogleClientID` and `GoogleClientSecret`: Are used for signing up with google.
-* `SENDGRID_API_KEY`: The api key for sending emails through sendgrid.
+* `SENDGRID_API_KEY`: The api key for sending emails through sendgrid
 * `db`: Your database path 
   > Eg: `"mongodb://localhost:27017/YourCollection"` If you're hosting on your localhost server.
 * `PORT`: Your api hosting port
