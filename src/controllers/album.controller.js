@@ -2,7 +2,8 @@ const {
   albumService,
   trackService,
   genreService,
-  artistService
+  artistService,
+  notifyService
 } = require('../services');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
@@ -124,10 +125,9 @@ exports.findAlbumTracks = async (req, res, next) => {
     req.user
   );
 
-  if (tracks instanceof AppError)
-    return next(tracks);
-    
-    res.status(200).json({
+  if (tracks instanceof AppError) return next(tracks);
+
+  res.status(200).json({
     items: tracks[0],
     limit: req.query.limit,
     offset: req.query.offset,
@@ -190,6 +190,7 @@ exports.releaseAlbum = async (req, res, next) => {
     return next(new AppError('Forbidden.', 403));
   album = await albumService.releaseAlbum(album, req.user);
   if (album instanceof AppError) return next(album);
+  notifyService.albumReleaseNotify(req.user, album.image, req.get('host'));
   res.status(200).json(album);
 };
 

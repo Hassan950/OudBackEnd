@@ -10,6 +10,7 @@ const AppError = require('../../../src/utils/AppError');
 const httpStatus = require('http-status');
 const requestMocks = require('../../utils/request.mock');
 const mockingoose = require('mockingoose').default;
+let { notifyService } = require('../../../src/services');
 
 describe('Following controller', () => {
   let req;
@@ -333,15 +334,18 @@ describe('Following controller', () => {
       user = new User({
         displayName: 'test',
         verified: true,
-        images: []
+        images: ['lol.jpg'],
       });
 
       artist = new Artist({
         user: user._id
       });
-      req.user = { _id: user._id };
+      req.user = { _id: user._id, images: user.images, displayName: user.displayName };
       next = jest.fn();
       res.end = jest.fn();
+      req.get = jest.fn();
+      notifyService.followNotification = jest.fn();
+      notifyService.subscribeManyTopics = jest.fn();
     });
     it('Should return bad request 400 if there is no req.query.ids nor req.body.ids', async () => {
       await followController.followUser(req, res, next);
@@ -386,45 +390,46 @@ describe('Following controller', () => {
 
     it('Should return not found 404 if there is at least one invalid userId in body', async () => {
       req.query = {
-        type: 'User',
+        type: 'User'
       };
       req.body = {
         ids: ['invalidId', user._id]
-      }
+      };
       mockingoose(User).toReturn([user]);
       await followController.followUser(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(httpStatus.NOT_FOUND);
     });
     it('Should return not found 404 if there is at least one invalid artistId in body', async () => {
       req.query = {
-        type: 'Artist',
+        type: 'Artist'
       };
       req.body = {
         ids: ['invalidId', artist._id]
-      }
+      };
       mockingoose(Artist).toReturn([artist]);
       await followController.followUser(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(httpStatus.NOT_FOUND);
     });
     it('Should return no content 204 when it follow user successfully in body', async () => {
       req.query = {
-        type: 'User',
+        type: 'User'
       };
       req.body = {
         ids: [user._id]
-      }
+      };
       mockingoose(User).toReturn([user]);
       await followController.followUser(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });
     it('Should return no content 204 when it follow artist successfully in body', async () => {
       req.query = {
-        type: 'Artist',
+        type: 'Artist'
       };
       req.body = {
         ids: [artist._id]
-      }
+      };
       mockingoose(Artist).toReturn([artist]);
+      mockingoose(User).toReturn([user], 'find');
       await followController.followUser(req, res, next);
       expect(res.sendStatus.mock.calls[0][0]).toBe(httpStatus.NO_CONTENT);
     });

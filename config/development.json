@@ -6,7 +6,9 @@
   "GoogleClientID": "1",
   "GoogleClientSecret": "1",
   "SENDGRID_API_KEY": "SG.1",
+  "Firebase_Service_Acc": {},  
   "db": "mongodb://localhost:27017/oud",
   "PORT": "3000",
-  "NODE_ENV": "development"
+  "NODE_ENV": "development",
+  "LOGO_URL":"uploads/users/logo.png"
 }

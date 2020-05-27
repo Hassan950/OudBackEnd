@@ -37,3 +37,11 @@ exports.setPrivateSession = {
     privateSession: Joi.boolean().required()
   })
 };
+
+exports.notification = {
+  body: Joi.object().keys({
+    token: Joi.string()
+      .required()
+      .min(8)
+  })
+};

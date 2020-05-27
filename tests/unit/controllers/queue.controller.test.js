@@ -7,18 +7,19 @@ const { Queue, User, Player, Device, Track } = require('../../../src/models');
 const { queueController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
 const faker = require('faker');
+let { notifyService } = require('../../../src/services');
+notifyService.listenToTrack = jest.fn();
 
 function randomArray(min, max) {
   const len = faker.random.number({ min, max });
-  const array = []
+  const array = [];
 
   for (let i = 0; i < len; ++i) {
     array[i] = faker.random.number();
   }
 
   return array;
-};
-
+}
 
 describe('Queue controller', () => {
   let user;
@@ -45,10 +46,12 @@ describe('Queue controller', () => {
   describe('Get user queue', () => {
     beforeEach(() => {
       req.query.queueIndex = 0;
-      user.queues = [queue._id]
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(user) }
-      ));
+      user.queues = [queue._id];
+      User.findById = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce(user)
+        }));
     });
 
     it('should return 500 status code if not authenticated', async () => {
@@ -157,9 +160,11 @@ describe('Queue controller', () => {
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
       user.queues = [queue._id];
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(user) }
-      ));
+      User.findById = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce(user)
+        }));
       track = new Track({
         name: 'song',
         audioUrl: 'song.mp3',
@@ -174,8 +179,7 @@ describe('Queue controller', () => {
       req.query.queueIndex = 0;
       req.query.deviceId = device._id;
       req.query.trackId = track._id;
-      mockingoose(Track)
-        .toReturn(track, 'findOne');
+      mockingoose(Track).toReturn(track, 'findOne');
     });
 
     it('it should return 500 status code if not authenticated', async () => {
@@ -241,8 +245,7 @@ describe('Queue controller', () => {
     });
 
     it('should return 404 if track is not found', async () => {
-      mockingoose(Track)
-        .toReturn(null, 'findOne');
+      mockingoose(Track).toReturn(null, 'findOne');
       await queueController.addToQueue(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
@@ -276,10 +279,12 @@ describe('Queue controller', () => {
       req.query.trackIndex = 0;
       req.query.trackId = undefined;
       req.query.newIndex = 1;
-      user.queues = [queue._id]
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(user) }
-      ));
+      user.queues = [queue._id];
+      User.findById = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce(user)
+        }));
     });
 
     it('it should return 500 status code if not authenticated', async () => {
@@ -409,10 +414,12 @@ describe('Queue controller', () => {
       req.query.queueIndex = 0;
       req.query.trackIndex = 0;
       req.query.trackId = undefined;
-      user.queues = [queue._id]
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(user) }
-      ));
+      user.queues = [queue._id];
+      User.findById = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce(user)
+        }));
     });
 
     it('it should return 500 status code if not authenticated', async () => {
@@ -532,7 +539,7 @@ describe('Queue controller', () => {
           context: { type: 'album', id: req.user._id },
           currentIndex: 0
         });
-      }, 'findOne')
+      }, 'findOne');
       await queueController.deleteTrack(req, res, next);
       expect(player.item).toBe(tracks[0]);
       expect(player.context).toBeDefined();
@@ -630,10 +637,12 @@ describe('Queue controller', () => {
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.state = true;
       req.query.deviceId = device._id;
-      user.queues = [queue._id]
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(user) }
-      ));
+      user.queues = [queue._id];
+      User.findById = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce(user)
+        }));
     });
 
     it('it should return 500 status code if not authenticated', async () => {
@@ -701,7 +710,9 @@ describe('Queue controller', () => {
       expect(queue.shuffleList).toBeDefined();
       expect(queue.shuffleIndex).toBeDefined();
       expect(queue.shuffleList.length).toBe(queue.tracks.length);
-      expect(queue.shuffleIndex).toBe(queue.shuffleList.indexOf(queue.currentIndex));
+      expect(queue.shuffleIndex).toBe(
+        queue.shuffleList.indexOf(queue.currentIndex)
+      );
     });
 
     it('should save the player', async () => {
@@ -722,10 +733,12 @@ describe('Queue controller', () => {
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.deviceId = device._id;
-      user.queues = [queue._id]
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(user) }
-      ));
+      user.queues = [queue._id];
+      User.findById = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce(user)
+        }));
       queue.tracks = [req.user._id, player._id, queue._id];
     });
 
@@ -826,7 +839,7 @@ describe('Queue controller', () => {
         expect(player.item).toBe(queue.tracks[1]);
       });
 
-      // TODO 
+      // TODO
       // add test to addToHistory
 
       it('should save the queue', async () => {
@@ -864,10 +877,12 @@ describe('Queue controller', () => {
       device = deviceMocks.createFakeDevice();
       mockingoose(Device).toReturn(device, 'findOne');
       req.query.deviceId = device._id;
-      user.queues = [queue._id]
-      User.findById = jest.fn().mockImplementationOnce(() => (
-        { select: jest.fn().mockResolvedValueOnce(user) }
-      ));
+      user.queues = [queue._id];
+      User.findById = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          select: jest.fn().mockResolvedValueOnce(user)
+        }));
       queue.tracks = [req.user._id, player._id, queue._id];
     });
 
@@ -968,7 +983,7 @@ describe('Queue controller', () => {
         expect(player.item).toBe(queue.tracks[0]);
       });
 
-      // TODO 
+      // TODO
       // add test to addToHistory
 
       it('should save the queue', async () => {

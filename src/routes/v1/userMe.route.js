@@ -34,11 +34,18 @@ router.use('/search',searchRouter);
 // /me/artist router
 router.use('/artists', artistRoute);
 
+// /me/notifications
+router.route('/notifications').put(
+  validate(userValidation.notification),
+  catchAsync(userController.setToken)
+)
+
 // /me/queue
 router.use('/queue', queueRouter);
 
 // /me/premium
 router.use('/premium', premiumRouter);
+
 
 router
   .route('/updatePassword')

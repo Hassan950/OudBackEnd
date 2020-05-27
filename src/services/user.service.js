@@ -239,6 +239,23 @@ const setPrivateSession = async (id, privateSession) => {
   );
 };
 
+/**
+ * Updates the FCM registration token of the user
+ *
+ * @function
+ * @public
+ * @async
+ * @author Mohamed Abo-Bakr
+ * @param {Object} user - User document
+ * @param {string} token The new token
+ * @summary Updates the registration token of the user
+ */
+const updateToken = async (user, token) => {
+  await User.findByIdAndUpdate(user._id, {
+    regToken: token
+  });
+};
+
 module.exports = {
   findUserAndCheckPassword,
   findUserByIdAndCheckPassword,
@@ -249,5 +266,6 @@ module.exports = {
   updateImages,
   getUserQueues,
   addQueue,
-  setPrivateSession
+  setPrivateSession,
+  updateToken
 };

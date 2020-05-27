@@ -137,6 +137,10 @@ const userSchema = mongoose.Schema(
         }
       ],
       select: false
+    },
+    regToken: {
+      type: String,
+      select: false
     }
   },
   {

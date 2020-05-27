@@ -1,9 +1,4 @@
-const {
-  Followings,
-  PlaylistFollowings,
-  User,
-  Playlist
-} = require('../models');
+const { Followings, PlaylistFollowings, User, Playlist } = require('../models');
 const _ = require('lodash');
 
 /**
@@ -17,7 +12,9 @@ const _ = require('lodash');
  */
 
 exports.checkUser = async id => {
-  return await User.findById(id).select('id').lean();
+  return await User.findById(id)
+    .select('id')
+    .lean();
 };
 
 /**
@@ -126,7 +123,7 @@ exports.getUserFollowed = async (query, id) => {
     userId: id,
     type: query.type
   }).exec();
-  
+
   const [result, total] = await Promise.all([resultPromise, totalPromise]);
   return { result, total };
 };
@@ -173,7 +170,6 @@ exports.getUserFollowers = async (query, id) => {
  */
 
 exports.followUser = async (ids, type, user) => {
-  ids = _.uniq(ids);
   const users = await User.find({ _id: ids, type: type });
   if (users.length < ids.length) {
     return null;
@@ -203,7 +199,7 @@ exports.followUser = async (ids, type, user) => {
 exports.unfollowUser = async (ids, type, user) => {
   ids = _.uniq(ids);
   const users = await User.find({ _id: ids, type: type });
-  if(!users || users.length < ids.length) return false
+  if (!users || users.length < ids.length) return false;
   await Followings.deleteMany({
     userId: user._id,
     followedId: users,
@@ -225,7 +221,9 @@ exports.unfollowUser = async (ids, type, user) => {
  */
 
 exports.followPlaylist = async (playlistId, publicity, user) => {
-  const playlist = await Playlist.findById(playlistId).select('id').lean();
+  const playlist = await Playlist.findById(playlistId)
+    .select('id')
+    .lean();
   if (!playlist) return null;
   await PlaylistFollowings.create({
     playlistId: playlistId,
@@ -247,11 +245,30 @@ exports.followPlaylist = async (playlistId, publicity, user) => {
  */
 
 exports.unfollowPlaylist = async (playlistId, user) => {
-  const playlist = await Playlist.findById(playlistId).select('id').lean();
+  const playlist = await Playlist.findById(playlistId)
+    .select('id')
+    .lean();
   if (!playlist) return null;
   await PlaylistFollowings.deleteOne({
     playlistId: playlistId,
     userId: user._id
   });
   return true;
+};
+
+/**
+ * A function to get the FCM registration tokens of users with given ID's
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Get registration tokens
+ * @param {String} ids - The ID's of the followed users.
+ * @returns tokens of the users with the given ids
+ */
+
+exports.getTokens = async ids => {
+  let users = await User.find({ _id: ids })
+    .select('regToken')
+    .lean();
+  return users.filter(user => user.regToken).map(user => user.regToken);
 };
