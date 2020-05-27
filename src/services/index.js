@@ -16,3 +16,4 @@ exports.genreService = require('.//genre.service');
 exports.searchService = require('./search.service');
 
 exports.premiumService = require('./premium.service');
+exports.notifyService = require('./notification.service');

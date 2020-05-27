@@ -35,11 +35,11 @@ exports.facebookPassport = async (req, accessToken, refreshToken, profile, done)
 
     const newUser = {
       facebook_id: profile.id,
-      email: profile.emails[0].value,
-      gender: (profile.gender === 'male') ? 'F' : 'M',
+      email: profile.emails.length ? profile.emails[0].value : undefined,
+      gender: (profile.gender) ? ((profile.gender === 'male') ? 'F' : 'M') : undefined,
       displayName: profile.displayName,
-      images: [profile.photos[0].value],
-      birthDate: new Date(profile._json.birthday),
+      images: profile.photos.length ? [profile.photos[0].value] : undefined,
+      birthDate: profile._json.birthday ? new Date(profile._json.birthday) : undefined,
     };
 
     done(null, newUser);
@@ -82,9 +82,9 @@ exports.googlePassport = async (req, accessToken, refreshToken, profile, done) =
 
     const newUser = {
       google_id: profile.id,
-      email: profile.emails[0].value,
+      email: profile.emails.length ? profile.emails[0].value : undefined,
       displayName: profile.displayName,
-      images: [profile.photos[0].value],
+      images: profile.photos.length ? [profile.photos[0].value] : undefined,
     };
 
     done(null, newUser);
