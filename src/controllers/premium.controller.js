@@ -1,4 +1,5 @@
-const { premiumService } = require('../services');
+const { premiumService, emailService } = require('../services');
+const logger = require('../config/logger')
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 
@@ -31,5 +32,26 @@ exports.redeem = async (req, res, next) => {
 exports.subscribe = async (req, res, next) => {
   const result = await premiumService.subscribe(req.user);
   if (result instanceof AppError) return next(result);
+
+  const hostURL = req.get('host');
+
+  const message = `Hello, ${result.displayName}<br>
+  Your Premium subscription will end on ${result.plan}.<br>
+  Until then you will be able to enjoy our premium services.<br>
+  Make Sure to Resubscribe to keep the tunes flowing.`;
+
+  emailService
+    .sendEmail({
+      email: result.email,
+      subject: 'Oud Premium Subscription',
+      message,
+      button: 'ENJOY PREMIUM NOW',
+      link: hostURL
+    })
+    .then()
+    .catch(error => {
+      const { message, code, response } = error;
+      logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
+    });
   res.status(httpStatus.OK).json(result);
 };
