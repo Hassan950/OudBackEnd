@@ -10,7 +10,7 @@ describe('Premium Controller', () => {
   let next;
   let json;
   beforeEach(() => {
-    req = { params: {}, query: {}, body: {} };
+    req = { params: {}, query: {}, body: {}, get: jest.fn().mockReturnThis() };
     res = requestMocks.mockResponse();
     json = jest.fn();
     res.status = jest.fn().mockReturnValue({
