@@ -3,6 +3,17 @@ const moment = require('moment');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 
+/**
+ * A method that redeems a coupon
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Redeem Coupon
+ * @param {string} couponId id of the coupon
+ * @param {object} user The user object
+ * @returns {AppError} If coupon id was invalid or already used
+ * @returns {Object} The new user object after updating
+ */
 
 exports.redeemCoupon = async (couponId, user) => {
   const coupon = await Coupon.findOneAndUpdate(
@@ -27,6 +38,16 @@ exports.redeemCoupon = async (couponId, user) => {
     { new: true }
   );
 };
+
+/**
+ * A method that subscribe user for premium
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Premium Subscription
+ * @param {object} user The user object
+ * @returns {Object} The new user object after updating
+ */
 
 exports.subscribe = async user => {
   if (user.credit < 10) {
