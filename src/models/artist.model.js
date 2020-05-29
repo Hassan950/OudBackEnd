@@ -39,10 +39,6 @@ const artistSchema = new mongoose.Schema(
   }
 );
 artistSchema.plugin(mongooseLeanVirtuals);
-artistSchema.plugin(mongoose_fuzzy_searching, {
-  fields: [{ name: 'displayName', minSize: 1 }]
-});
-artistSchema.plugin(searchPlugin, 'displayName');
 
 const Artist = User.discriminator('Artist', artistSchema);
 

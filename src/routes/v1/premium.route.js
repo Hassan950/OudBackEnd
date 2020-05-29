@@ -19,4 +19,6 @@ router
 
 router.route('/subscribe').patch(catchAsync(premiumController.subscribe));
 
+router.route('/gift').patch(validate(premiumValidation.gift), catchAsync(premiumController.gift));
+
 module.exports = router;
