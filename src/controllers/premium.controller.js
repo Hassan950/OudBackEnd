@@ -55,3 +55,42 @@ exports.subscribe = async (req, res, next) => {
     });
   res.status(httpStatus.OK).json(result);
 };
+
+
+/**
+ * A middleware that is called to gift a subscription to premium
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Gift premium plan
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.gift = async (req, res, next) => {
+  const result = await premiumService.gift(req.user, req.body.userId);
+  if (result instanceof AppError) return next(result);
+
+  const hostURL = req.get('host');
+
+  const message = `Hello, ${result.displayName}<br>
+  A Gift For You From ${req.user.displayName}<br>
+  Your Premium subscription will end on ${result.plan}.<br>
+  Until then you will be able to enjoy our premium services.<br>
+  Make Sure to Resubscribe to keep the tunes flowing.`;
+
+  emailService
+    .sendEmail({
+      email: result.email,
+      subject: 'Oud Premium Subscription',
+      message,
+      button: 'ENJOY PREMIUM NOW',
+      link: hostURL
+    })
+    .then()
+    .catch(error => {
+      const { message, code, response } = error;
+      logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
+    });
+  res.status(httpStatus.OK).json(result);
+};

@@ -58,19 +58,96 @@ exports.subscribe = async user => {
   }
 
   // set player ads to undefined
-  await Player.findOneAndUpdate({ userId: user._id }, { $unset: { adsCounter: undefined } });
+  let player = Player.findOneAndUpdate(
+    { userId: user._id },
+    { $unset: { adsCounter: undefined } }
+  ).exec();
 
   // Update User
-  return await Normal.findOneAndUpdate(
+  let newUser = Normal.findOneAndUpdate(
     { _id: user._id },
     {
       $inc: { credit: -10 },
       $set: {
-        plan: moment(user.plan ? user.plan : undefined)
-          .add(30, 'day'),
+        plan: moment(user.plan ? user.plan : undefined).add(30, 'day'),
         role: 'premium'
       }
     },
     { new: true }
-  ).lean();
+  )
+    .lean()
+    .exec();
+
+  [newUser, player] = await Promise.all([newUser, player]);
+  return newUser;
+};
+
+/**
+ * A method that gift another user a premium subscription
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Gift Premium Subscription
+ * @param {object} user The user object
+ * @param {object} giftedId The gifted user ID
+ * @returns {Object} The new user object after updating
+ */
+
+exports.gift = async (user, giftedId) => {
+  if (user.credit < 10) {
+    return new AppError(
+      'Your Credit is below the subscription price, Please try redeeming some coupons.',
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  let giftedUser = await Normal.findById(giftedId, { plan: 1 }).lean();
+
+  if (!giftedUser) {
+    return new AppError(
+      'There is no normal user associated with this ID',
+      httpStatus.NOT_FOUND
+    );
+  }
+
+  giftedUser = Normal.findOneAndUpdate(
+    { _id: giftedId },
+    {
+      $set: {
+        plan: moment(giftedUser.plan ? giftedUser.plan : undefined).add(
+          30,
+          'day'
+        ),
+        role: 'premium'
+      }
+    },
+    { new: true }
+  )
+    .lean()
+    .exec();
+
+  let newUser = Normal.findOneAndUpdate(
+    { _id: user._id },
+    {
+      $inc: { credit: -10 }
+    },
+    { new: true }
+  )
+    .lean()
+    .exec();
+
+  // set player ads to undefined
+  let player = Player.findOneAndUpdate(
+    { userId: giftedId },
+    { $unset: { adsCounter: undefined } }
+  ).exec();
+
+  [player, newUser, giftedUser] = await Promise.all([
+    player,
+    newUser,
+    giftedUser
+  ]);
+
+  // Update User
+  return giftedUser;
 };

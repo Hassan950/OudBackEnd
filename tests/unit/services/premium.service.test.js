@@ -68,4 +68,35 @@ describe('Premium Service', () => {
       expect(result).toBe(user);
     });
   });
+
+  describe('gift', () => {
+    it('should return bad request if the credit is lower than the premium monthly price', async () => {
+      const result = await premiumService.gift(user, user._id);
+      expect(result.statusCode).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    it('should return the user if everything is ok while plan is undefined', async () => {
+      user.credit = 10000;
+      mockingoose(Normal).toReturn(user, 'findOneAndUpdate')
+        .toReturn(user, 'findOne');
+      const result = await premiumService.gift(user, user._id);
+      expect(result).toBe(user);
+    });
+
+    it('should return an error if the user is not found in normal users', async () => {
+      user.credit = 10000;
+      mockingoose(Normal).toReturn(undefined, 'findOne');
+      const result = await premiumService.gift(user, user._id);
+      expect(result.statusCode).toBe(httpStatus.NOT_FOUND);
+    });
+
+    it('should return the user if everything is ok while plan has a previous value', async () => {
+      user.credit = 10000;
+      user.plan = moment();
+      mockingoose(Normal).toReturn(user, 'findOneAndUpdate')
+        .toReturn(user, 'findOne');
+      const result = await premiumService.gift(user, user._id);
+      expect(result).toBe(user);
+    });
+  });
 });

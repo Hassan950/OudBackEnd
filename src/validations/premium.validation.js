@@ -7,6 +7,13 @@ exports.redeem = {
       couponId: Joi.objectId().required()
     })
     .messages({
-      'string.pattern.name': 'Invalid Coupon Code, Please Check It Before Trying Again.'
+      'string.pattern.name':
+        'Invalid Coupon Code, Please Check It Before Trying Again.'
     })
+};
+
+exports.gift = {
+  body: Joi.object().keys({
+    userId: Joi.objectId().required()
+  })
 };
