@@ -16,3 +16,4 @@ exports.genreController = require('./genre.controller');
 exports.followController = require('./follow.controller');
 exports.searchController = require('./search.controller');
 exports.premiumController = require('./premium.controller');
+exports.commentController = require('./comment.controller');

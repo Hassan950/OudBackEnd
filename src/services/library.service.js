@@ -15,7 +15,7 @@ const _ = require('lodash');
 
 module.exports.checkTracks = async(user , ids)=>{
   //get liked tracks of the user that has ids as the ids sent
-  let tracks = await likedTracks.find({track: {$in: ids }},{userId: '5e907dafa0645f45716075ff'}).select('track');
+  let tracks = await likedTracks.find({track: {$in: ids }},{userId: user.id}).select('track');
   const checks = _.map(ids , (id) =>{ 
     val = tracks.find(like => String(like.track) === id);
     return val !==undefined ;
