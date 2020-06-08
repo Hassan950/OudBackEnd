@@ -7,6 +7,10 @@ const catchAsync = require('../../utils/catchAsync');
 
 const router = express.Router({ mergeParams: true });
 
+const commentRouter = require('./comment.route');
+
+router.use('/:id/comments', commentRouter);
+
 router
   .route('/')
   .get(

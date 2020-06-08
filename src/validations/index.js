@@ -13,4 +13,4 @@ exports.queueValidation = require('./queue.validation');
 exports.followValidation = require('./follow.validation');
 exports.searchValidation = require('./search.validation');
 exports.premiumValidation = require('./premium.validation');
-
+exports.commentValidation = require('./comment.validation');
