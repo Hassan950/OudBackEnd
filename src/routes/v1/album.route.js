@@ -7,6 +7,10 @@ const { albumValidation } = require('../../validations');
 const authMiddleware = require('../../middlewares/auth');
 
 
+const commentRouter = require('./comment.route');
+
+router.use('/:id/comments', commentRouter);
+
 router
   .route('/:id')
   .get(

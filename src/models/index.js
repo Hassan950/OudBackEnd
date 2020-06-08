@@ -21,6 +21,7 @@ const { Recent,recentSchema } = require('./recent.model');
 const { Request, requestSchema } = require('./request.model');
 const { Coupon, couponSchema } = require('./coupon.model');
 const { Ad, adSchema } = require('./ad.model');
+const { PlaylistComments, playlistCommentsSchema, AlbumComments, albumCommentsSchema } = require('./comments.model');
 
 module.exports = {
   User,
@@ -64,5 +65,9 @@ module.exports = {
   Coupon,
   couponSchema,
   Ad,
-  adSchema
+  adSchema,
+  playlistCommentsSchema,
+  PlaylistComments,
+  albumCommentsSchema,
+  AlbumComments
 };
