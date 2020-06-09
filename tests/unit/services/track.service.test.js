@@ -103,23 +103,35 @@ describe('track service', () => {
 
   describe('deleteTrack', () => {
     it('Should throw an error if file system threw an error otherwise ENONET', async () => {
+      check = jest.fn();
       mockingoose(Track).toReturn(track, 'findOneAndDelete');
-      fs.unlink = jest.fn().mockImplementation(lol => {
+      fs.unlink = jest.fn().mockImplementationOnce(lol => {
         throw { code: 'not ENOENT' };
       });
-
-      expect(trackService.deleteTrack(track.id)).rejects.toThrow();
+      try {
+        await trackService.deleteTrack(track.id);
+      } catch (err) {
+        expect(err).toBeDefined();
+        check();
+      }
+      expect(check).toBeCalled();
     });
   });
 
   describe('checkFile', () => {
     it('Should throw an error if file system threw an error otherwise ENONET', async () => {
+      check = jest.fn();
       mockingoose(Track).toReturn(track, 'findOneAndDelete');
-      fs.unlink = jest.fn().mockImplementation(lol => {
+      fs.unlink = jest.fn().mockImplementationOnce(lol => {
         throw { code: 'not ENOENT' };
       });
-
-      expect(trackService.checkFile(track.id)).rejects.toThrow();
+      try {
+        await trackService.checkFile(track.id);
+      } catch (err) {
+        expect(err).toBeDefined();
+        check();
+      }
+      expect(check).toBeCalled();
     });
   });
 

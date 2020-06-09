@@ -411,6 +411,7 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups, user) => {
     
     // New limit & skip is the limit - albums by other groups
     if (limit - result.length !== 0) {
+      console.log(offset - length)
       let secondskip = offset - length > 0 ? offset - length : 0;
       
       // query appears_on albums
