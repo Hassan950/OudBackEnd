@@ -3,6 +3,17 @@ const mongoose = require('mongoose');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 
+
+/**
+ * A method that gets the messages' threads of the user sorted from most frequent modified to least and total number of the threads
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get messages' threads
+ * @param {String} userId - The id of the user
+ * @param {Object} query - Query object has the limit and offset
+ * @returns {Object} object has the thread with total number of the threads
+ */
 exports.getChat = async (userId, query) => {
   let data = Thread.find({ $or: [{ from: userId }, { to: userId }] })
     .slice('messages', 1)
@@ -27,6 +38,18 @@ exports.getChat = async (userId, query) => {
   return { data, total };
 };
 
+/**
+ * A method that gets a specific thread of the user with its messages
+ * wrapped in paging object sorted from most frequent one to least.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Get messages of a thread
+ * @param {String} userId - The id of the user
+ * @param {String} threadId - The id of the thread
+ * @param {Object} query - Query object has the limit and offset
+ * @returns {Object} object has the thread with messages populated wrapped in paging object
+ */
 exports.getThread = async (userId, threadId, query) => {
   let data = Thread.findOne({
     $and: [{ _id: threadId }, { $or: [{ from: userId }, { to: userId }] }]
@@ -87,6 +110,18 @@ exports.getThread = async (userId, threadId, query) => {
   return data;
 };
 
+/**
+ * A method that sends a message to a specific thread of the user.
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Send Message to a Thread
+ * @param {String} userId - The id of the user
+ * @param {String} recId - The id of the recipient
+ * @param {String} message - The content of the message
+ * @returns {true} if done successfully
+ * @returns {AppError} if there is no user with the given recId 
+ */
 exports.sendMessage = async (userId, recId, message) => {
   message = {
     message: message,
@@ -151,6 +186,18 @@ exports.sendMessage = async (userId, recId, message) => {
   return true;
 };
 
+/**
+ * A method that deletes a specific message from a thread
+ *
+ * @function
+ * @author Hassan Mohamed
+ * @summary Delete Message From a Thread
+ * @param {String} userId - The id of the user
+ * @param {String} recId - The id of the recipient
+ * @param {String} messageId - The id of the message
+ * @returns {true} if done successfully
+ * @returns {AppError} if there is no thread or no message with the given ids
+ */
 exports.deleteMessage = async (userId, threadId, messageId) => {
   const thread = await Thread.findOneAndUpdate(
     { _id: threadId, 'messages._id': messageId, 'messages.author': userId },
