@@ -36,6 +36,7 @@ const playHistorySchema = mongoose.Schema({
 playHistorySchema.index({ user: 1, playedAt: -1 });
 playHistorySchema.index({ user: 1, "context.type": 1, "context.item": 1 }, { unique: 1 });
 
+/* istanbul ignore next */
 playHistorySchema.virtual('context.id').get(function () {
   if (this.context.item && this.context.item._id)
     return this.context.item._id;
