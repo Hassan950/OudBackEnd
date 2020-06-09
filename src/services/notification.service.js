@@ -72,7 +72,7 @@ exports.manyNotify = (tokens, image, host, message) => {
     .sendMulticast(payload)
     .then(response => {
       // Response is a message ID string.
-      console.log('Successfully sent message:', response);
+      console.log('Successfully sent message:', response.responses[0].error);
     })
     .catch(error => {
       console.log('Error sending message:', error);
