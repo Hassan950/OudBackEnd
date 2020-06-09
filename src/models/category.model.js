@@ -29,6 +29,7 @@ const categorySchema = new mongoose.Schema(
   }
 );
 
+/* istanbul ignore next */
 categorySchema.virtual('type').get(function() {
   return 'category';
 },

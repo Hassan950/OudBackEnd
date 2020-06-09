@@ -54,6 +54,7 @@ const threadSchema = new mongoose.Schema(
   }
 );
 
+/* istanbul ignore next */
 threadSchema.virtual('type').get(
   function() {
     return 'message';
@@ -72,4 +73,5 @@ threadSchema.index({ from: 1, to: 1 }, { unique: true });
 threadSchema.plugin(mongooseLeanDefaults);
 const Message = mongoose.model('Message', messageSchema);
 const Thread = mongoose.model('Thread', threadSchema);
+
 module.exports = { Thread, threadSchema, Message, messageSchema };

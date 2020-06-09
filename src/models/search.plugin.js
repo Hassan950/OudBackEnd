@@ -1,3 +1,4 @@
+/* istanbul ignore next */
 module.exports = function (schema, options) {
   schema.statics = {
     ...schema.statics,

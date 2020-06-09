@@ -1,4 +1,4 @@
-const { Thread, Message, User } = require('../models');
+const { Thread, User } = require('../models');
 const mongoose = require('mongoose');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
