@@ -154,6 +154,7 @@ exports.updateAlbum = async (req, res, next) => {
     return next(new AppError('The requested resource is not found', 404));
   if (album.released || String(album.artists[0]._id) !== String(req.user._id))
     return next(new AppError('Forbidden.', 403));
+
   if (req.body.artists) {
     const result = await artistService.artistsExist(
       req.body.artists,
