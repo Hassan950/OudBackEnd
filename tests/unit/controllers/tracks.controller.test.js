@@ -229,6 +229,11 @@ describe('Tracks controller', () => {
       expect(res.json.mock.calls[0][0]).toHaveProperty('name');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
+    it('Should throw an error with status code 400 if no files were uploaded', async () => {
+      req.file = undefined;
+      await tracksController.setTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
     it('Should throw an error with status code 404 if the track was not found', async () => {
       mockingoose(Track)
         .toReturn(null, 'findOne')
