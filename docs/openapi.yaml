@@ -165,6 +165,174 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+  /albums/{id}/comments:
+    post:
+      tags:
+        - Albums
+      summary: add comments for the album
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of album to add comment to
+          schema:
+            type: string
+            format: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string    
+      responses:
+        '201':  
+          description: comment added
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      tags:
+        - Albums
+      summary: get comments for the album
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of album to add comment to
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: comments on the album
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  previous, next and limit that can be useful in future calls.
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userName:
+                          type: string
+                        comment:
+                          type: string
+                    description: the Requested releases
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The total number of items available to return
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /playlists/{id}/comments:
+    post:
+      tags:
+        - Playlists
+      summary: add comments for the playlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of playlist to add comment to
+          schema:
+            type: string
+            format: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string    
+      responses:
+        '201':  
+          description: comment added
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      tags:
+        - Playlists
+      summary: get comments for the playlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of playlist to add comment to
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: comments on the playlist
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  previous, next and limit that can be useful in future calls.
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userName:
+                          type: string
+                        comment:
+                          type: string
+                    description: the Requested releases
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The total number of items available to return
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                      
   /me/premium/subscribe:
     patch:
       tags:
