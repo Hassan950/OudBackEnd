@@ -1,5 +1,5 @@
 const express = require('express');
-const { authController , userController } = require('../../controllers');
+const { authController, userController } = require('../../controllers');
 const authMiddleware = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { authValidation, userValidation } = require('../../validations');
@@ -12,9 +12,9 @@ const artistRoute = require('./artist.route');
 const premiumRouter = require('./premium.route');
 const playlistRouter = require('./playlist.route');
 const searchRouter = require('./search.route');
+const chatRoute = require('./chat.route');
 
 const router = express.Router();
-
 
 // /me/artist router
 router.use('/artists', artistRoute);
@@ -30,22 +30,26 @@ router.use('/albums', libraryRouter);
 // /me/playlists router
 router.use('/playlists', playlistRouter);
 // /me/recentSearch
-router.use('/search',searchRouter);
+router.use('/search', searchRouter);
 // /me/artist router
 router.use('/artists', artistRoute);
 
+// /me/chat router
+router.use('/chat', chatRoute);
+
 // /me/notifications
-router.route('/notifications').put(
-  validate(userValidation.notification),
-  catchAsync(userController.setToken)
-)
+router
+  .route('/notifications')
+  .put(
+    validate(userValidation.notification),
+    catchAsync(userController.setToken)
+  );
 
 // /me/queue
 router.use('/queue', queueRouter);
 
 // /me/premium
 router.use('/premium', premiumRouter);
-
 
 router
   .route('/updatePassword')
@@ -71,7 +75,9 @@ router
 
 router
   .route('/privateSession')
-  .put(validate(userValidation.setPrivateSession), catchAsync(userController.setPrivateSession));
-
+  .put(
+    validate(userValidation.setPrivateSession),
+    catchAsync(userController.setPrivateSession)
+  );
 
 module.exports = router;

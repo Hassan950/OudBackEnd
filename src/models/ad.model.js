@@ -36,6 +36,7 @@ const adSchema = new mongoose.Schema(
   }
 );
 
+/* istanbul ignore next */
 adSchema.virtual('type').get(function () {
   return 'ad';
 });
