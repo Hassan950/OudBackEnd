@@ -38,6 +38,7 @@ exports.getChat = async (userId, query) => {
   return { data, total };
 };
 
+
 /**
  * A method that gets a specific thread of the user with its messages
  * wrapped in paging object sorted from most frequent one to least.
@@ -109,6 +110,7 @@ exports.getThread = async (userId, threadId, query) => {
   };
   return data;
 };
+
 
 /**
  * A method that sends a message to a specific thread of the user.
@@ -185,6 +187,7 @@ exports.sendMessage = async (userId, recId, message) => {
   );
   return true;
 };
+
 
 /**
  * A method that deletes a specific message from a thread

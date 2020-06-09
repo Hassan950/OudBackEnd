@@ -23,6 +23,7 @@ exports.getChat = async (req, res, next) => {
   });
 };
 
+
 /**
  * A middleware that gets a specific thread of the user with its messages
  * wrapped in paging object sorted from most frequent one to least.
@@ -46,6 +47,7 @@ exports.getThread = async (req, res, next) => {
   });
 };
 
+
 /**
  * A middleware that sends a message to a specific thread of the user.
  *
@@ -65,7 +67,6 @@ exports.sendMessage = async (req, res, next) => {
   if (result instanceof AppError) return next(result);
   res.sendStatus(httpStatus.CREATED);
 };
-
 
 /**
  * A middleware that deletes a specific message from a thread
