@@ -122,6 +122,13 @@ describe('Tracks controller', () => {
       await tracksController.getTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it("Should throw an error with a status code of 403 if the album of the track is not released", async () => {
+      track.album.released = false;
+      mockingoose(Track).toReturn(track, 'findOne');
+      req.params.id = 'valid id';
+      await tracksController.getTrack(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
   });
   describe('updateTrack', () => {
     it('Should update the name of the track with the given ID with the name sent in the body of the request', async () => {
