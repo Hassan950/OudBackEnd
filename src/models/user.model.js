@@ -109,6 +109,9 @@ const userSchema = mongoose.Schema(
     google_id: {
       type: String
     },
+    github_id: {
+      type: String
+    },
     verifyToken: {
       type: String,
       select: false

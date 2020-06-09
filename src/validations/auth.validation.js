@@ -31,7 +31,8 @@ exports.signup = {
     displayName: Joi.string()
       .required(),
     facebook_id: Joi.string(),
-    google_id: Joi.string()
+    google_id: Joi.string(),
+    github_id: Joi.string()
   })
 };
 
@@ -111,6 +112,19 @@ exports.googleOAuth = {
 };
 
 exports.googleConnect = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+  })
+};
+
+exports.githubOAuth = {
+  body: Joi.object().keys({
+    access_token: Joi.string()
+      .required()
+  })
+};
+
+exports.githubConnect = {
   body: Joi.object().keys({
     access_token: Joi.string()
   })

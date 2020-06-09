@@ -5,6 +5,8 @@
   "FBClientSecret": "1",
   "GoogleClientID": "1",
   "GoogleClientSecret": "1",
+  "GithubClientID": "1",
+  "GithubClientSecret": "1",
   "SENDGRID_API_KEY": "SG.1",
   "Firebase_Service_Acc": {},  
   "db": "mongodb://localhost:27017/oud",
