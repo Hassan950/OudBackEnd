@@ -32,7 +32,12 @@ const {
   AlbumComments,
   albumCommentsSchema
 } = require('./comments.model');
-const { Chat, chatSchema } = require('./chat.model');
+const {
+  Thread,
+  threadSchema,
+  Message,
+  messageSchema
+} = require('./chat.model');
 
 module.exports = {
   User,
@@ -81,6 +86,8 @@ module.exports = {
   PlaylistComments,
   albumCommentsSchema,
   AlbumComments,
-  Chat,
-  chatSchema
+  Thread,
+  threadSchema,
+  Message,
+  messageSchema
 };

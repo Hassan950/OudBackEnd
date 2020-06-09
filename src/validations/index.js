@@ -14,3 +14,4 @@ exports.followValidation = require('./follow.validation');
 exports.searchValidation = require('./search.validation');
 exports.premiumValidation = require('./premium.validation');
 exports.commentValidation = require('./comment.validation');
+exports.chatValidation = require('./chat.validation');
