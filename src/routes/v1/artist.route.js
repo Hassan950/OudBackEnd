@@ -17,6 +17,12 @@ router
     catchAsync(artistController.getSomeArtists)
   );
 
+router.route('/genres/:id').get(
+  // validation for one ID
+  validate(artistValidation.oneArtist),
+  catchAsync(artistController.getArtistByGenre)
+);
+
 router
   .route('/:id')
   .get(

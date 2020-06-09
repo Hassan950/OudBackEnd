@@ -327,3 +327,28 @@ exports.findSomeArtists = async id => {
     })
     .populate('genres');
 };
+
+/**
+ * A method that gets artists by genre
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets artists by genre
+ * @param {String} genreId - ID of the genre
+ * @returns artists list of artists with the given genre
+ */
+exports.artistByGenre = async genreId => {
+  const artists = await Artist.find({ genres: genreId })
+    .select('displayName images genres bio popularSongs')
+    .populate({
+      path: 'popularSongs',
+      populate: {
+        path: 'album artists',
+        select: 'album_type released artists image name displayName images',
+        populate: { path: 'artists', select: 'displayName images' }
+      }
+    })
+    .populate('genres');
+  if (!artists.length) return new AppError('The requested resource is not found', 404);
+  return artists;
+};
