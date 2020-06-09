@@ -147,7 +147,6 @@ exports.gift = async (user, giftedId) => {
     newUser,
     giftedUser
   ]);
-
-  // Update User
-  return giftedUser;
+  
+  return { result: giftedUser, user: newUser};
 };

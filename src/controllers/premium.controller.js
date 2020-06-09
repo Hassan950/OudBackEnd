@@ -1,5 +1,5 @@
 const { premiumService, emailService } = require('../services');
-const logger = require('../config/logger')
+const logger = require('../config/logger');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 
@@ -56,7 +56,6 @@ exports.subscribe = async (req, res, next) => {
   res.status(httpStatus.OK).json(result);
 };
 
-
 /**
  * A middleware that is called to gift a subscription to premium
  *
@@ -68,9 +67,10 @@ exports.subscribe = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 exports.gift = async (req, res, next) => {
-  const result = await premiumService.gift(req.user, req.body.userId);
-  if (result instanceof AppError) return next(result);
-
+  const data = await premiumService.gift(req.user, req.body.userId);
+  if (data instanceof AppError) return next(data);
+  const { result, user } = data;
+  console.log(data);
   const hostURL = req.get('host');
 
   const message = `Hello, ${result.displayName}<br>
@@ -92,5 +92,5 @@ exports.gift = async (req, res, next) => {
       const { message, code, response } = error;
       logger.error(`${code} : ${message}: ${response.body.errors[0].message}`);
     });
-  res.status(httpStatus.OK).json(result);
+  res.status(httpStatus.OK).json(user);
 };
