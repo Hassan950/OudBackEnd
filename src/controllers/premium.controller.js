@@ -70,7 +70,6 @@ exports.gift = async (req, res, next) => {
   const data = await premiumService.gift(req.user, req.body.userId);
   if (data instanceof AppError) return next(data);
   const { result, user } = data;
-  console.log(data);
   const hostURL = req.get('host');
 
   const message = `Hello, ${result.displayName}<br>
