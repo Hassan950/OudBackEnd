@@ -455,4 +455,54 @@ describe('Auth controllers', () => {
       })
     });
   })
+
+  describe('github auth', () => {
+    describe('github auth middleware', () => {
+      it('should return 400 if token is invalid', async () => {
+        req.user = undefined;
+        await authController.githubAuth(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+
+      it('should return user and token with 200 if user already connected to github', async () => {
+        req.user = user;
+        await authController.githubAuth(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].token).toBeDefined();
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc));
+      });
+
+      it('should return user data with 200 if user is not connected to github', async () => {
+        req.user = user;
+        req.user._id = null;
+        await authController.githubAuth(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc));
+      });
+    })
+
+    describe('github Connect middleware', () => {
+      it('should call next if access_token is defined', async () => {
+        req.body.access_token = 'token';
+        await authController.githubConnect(req, res, next);
+        expect(next.mock.calls.length).toBe(1);
+      });
+
+      it('should return 500 if user is not authenticated', async () => {
+        req.user = null;
+        await authController.githubConnect(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(500);
+      });
+
+      it('should disconnect user from github and send it with token with status 200', async () => {
+        user.github_id = 'id';
+        req.user = user;
+        await authController.githubConnect(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].token).toBeDefined();
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc))
+        expect(res.json.mock.calls[0][0].user.github_id).toBeUndefined();
+      })
+    });
+  })
 });
