@@ -557,6 +557,33 @@ paths:
           $ref: '#/components/responses/InvalidId'
         '404':
           $ref: '#/components/responses/NotFound'
+  /artists/genres/{id}:
+    get:
+      tags:
+        - Artists
+      summary: Gets artists of a specific genre
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the genre.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: the response body contains a list of artist objects in JSON format.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artist'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /artists/{artistId}/albums:
     get:
       tags:
@@ -1553,7 +1580,42 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           $ref: '#/components/responses/NotFound'
-      
+  /artists/requests/{id}/handle:
+    post:
+      tags:
+      - Artists
+      summary: Responds to artist requests by accepting or refusing
+      description: >-
+        Determine whether a request to be an artist should by accepted or refused and create an artist if accepted then send informing emails for the applicant.
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accept:
+                  type: boolean
+                  description: true for accepting and false for refusing the request
+              required:
+              - accept
+      responses:
+        '204':
+          description: successful operation and response body is empty
+        '400':
+          description: >-
+            The request could not be understood by the server due to malformed
+            syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /albums/{id}:
     get:
       tags:
