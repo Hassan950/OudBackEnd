@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/library.service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/library.service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { likedTracks, likedAlbums, Track, Album, Playlist } = require('../models');
+const _ = require('lodash');
+
+
+/**
+ * A method that gets array of boolean to check if track is liked or not
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary check if track is liked or not by the logged in user if index has true then the track of this index is liked if false then track of this index is unliked
+ * @param {Object} user the logged in user
+ * @param {Array} ids array of tracks to check if liked or not
+ * @returns {Array} array of boolean to check if track is liked or not 
+ */
+
+module.exports.checkTracks = async(user , ids)=>{
+  //get liked tracks of the user that has ids as the ids sent
+  let tracks = await likedTracks.find({track: {$in: ids }},{userId: user.id}).select('track');
+  const checks = _.map(ids , (id) =>{ 
+    val = tracks.find(like => String(like.track) === id);
+    return val !==undefined ;
+  });
+  return checks;
+}
+
+/**
+ * A method that gets array of boolean to check if album is liked or not
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary check if album is liked or not by the logged in user if index has true then the album of this index is liked if false then album of this index is unliked
+ * @param {Object} user the logged in user
+ * @param {Array} ids array of albums to check if liked or not
+ * @returns {Array} array of boolean to check if track is liked or not 
+ */
+
+module.exports.checkAlbums = async(user,ids)=>{
+  //get liked albums of the user that has ids as the ids sent
+  const albums = await likedAlbums.find({album: {$in:ids}},{userId: user.id}).select('album');
+  let i = 0;
+  const checks = _.map(ids , (id) =>{ 
+    val = albums.find(like => String(like.album) === id);
+    return val !==undefined ;
+  });
+  return checks;
+}
+
+/**
+ * A method that gets array of liked albums
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary gets array of liked albums by the logged in user 
+ * @param {Object} user the logged in user
+ * @param {object} query An object containing the URL query parameters it has offset which is the beginning index to return and has limit which is number of items to return
+ * @returns {Array} array of liked albums 
+ */
+
+module.exports.getAlbums = async(user,query)=>{
+  //find all likedalbums which userId is the same as the id of the logged in user and skips the offset sent and returns items whin the limit 
+  let result = await likedAlbums.find({userId: user.id})
+  .populate({
+    path: 'album',
+    populate: { path: 'tracks artists genres' ,
+    select : 'type displayName images name artists ',
+    populate:{
+      path: 'artists' ,
+      select: 'type displayName images'
+  }
+  }
+  })
+  .select('-userId')
+  .select('-_id')
+  .skip(query.offset)
+  .limit(query.limit);
+  let lengthArray = likedAlbums.aggregate([
+    { $match: { userId: user.id }},
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+  [result, lengthArray] = await Promise.all([result, lengthArray]);
+  const albums = result.map(album => {
+    album.album.tracks = {
+      items: _.slice(album.album.tracks,query.offset, query.offset+ query.limit),
+      offset: query.offset,
+      limit: query.limit,
+      total: album.album.tracks.length
+    }
+    return album
+  })
+  const total = await likedAlbums.countDocuments({ userId: user.id });
+  return { albums , total};
+};
+
+/**
+ * A method that gets array of liked tracks
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary gets array of liked tracks by the logged in user 
+ * @param {Object} user the logged in user
+ * @param {object} query An object containing the URL query parameters it has offset which is the beginning index to return and has limit which is number of items to return
+ * @returns {Array} array of liked tracks 
+ */
+
+module.exports.getTracks = async(user,query)=>{
+  //find all likedtracks which userId is the same as the id of the logged in user and skips the offset sent and returns items whin the limit 
+  let tracks = await likedTracks.find({userId: user.id})
+  .populate({
+    path:'track',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images name album_type',
+      populate: {
+        path:'artists',
+        select:'type displayName images'
+      }
+    }
+  })
+  .select('-userId')
+  .select('-_id')
+  .skip(query.offset)
+  .limit(query.limit);
+  const total = await likedTracks.countDocuments({userId: user.id});
+  return  { tracks,total} ;
+}
+
+/**
+ * A method that like tracks
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary like tracks for the logged in user
+ * @param {Object} user the logged in user
+ * @param {Array} ids array of tracks to like
+ */
+
+module.exports.saveTracks = async(user,ids)=>{
+  _.map(ids,async(id)=>{
+    //get track with the id in this turn
+    const track = await Track.findById(id);
+    if(track)//if track really exits 
+    {
+      //then let the user be able to like this track and also add it to user Liked songs playlist
+      const playlist = await Playlist.findOne//find the liked songs playlist of this user 
+      (
+        {owner: user.id},
+        {name: 'Liked Songs'}
+        )
+        .select('tracks')
+        .updateOne(
+        {
+          $push: //add the liked track to the tracks array in the playlist
+          {
+          tracks: {
+            $each: [id],
+            $position: 0
+          }
+          }
+        }
+      );
+      //save the liked track in model Liked Tracks
+      await likedTracks.create(
+        {
+          userId: user.id,
+          track: id,
+          addedAt: Date.now()
+        }
+      )
+     }
+  });
+}
+
+/**
+ * A method that like albums
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary like albums for the logged in user
+ * @param {Object} user the logged in user
+ * @param {Array} ids array of albums to like
+ */
+
+module.exports.saveAlbums = async(user,ids)=>{
+  _.map(ids,async(id)=>{
+    //get album with the id in this turn
+    const album = await Album.findById(id); 
+    if(album)//if album really exits let the user be able to like track
+    {
+      await likedAlbums.create(
+        {
+          userId: user.id,
+          album: id,
+          addedAt: Date.now()
+        }
+      )
+   }
+  }); 
+}
+
+/**
+ * A method that unlike tracks
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary unlike trackss for the logged in user
+ * @param {Object} user the logged in user
+ * @param {Array} ids array of tracks to unlike
+ */
+
+module.exports.deleteSavedTracks = async(user,ids)=>{
+  await Playlist.findOne//find the liked songs playlist of this user 
+      (
+        {owner: user.id},
+        {name: 'Liked Songs'}
+        )
+        .updateOne(
+        { $pull: //delete tracks with ids like ids of tracks unliked by user
+          { tracks: 
+            {
+               $in: ids 
+            } 
+          } 
+        })
+  //delete tracks to be unliked by user from model and playlist that holds the liked tracks
+  await likedTracks.deleteMany({track: {$in: ids}},{userId: user.id});
+}
+
+/**
+ * A method that unlike albums
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary unlike albums for the logged in user
+ * @param {Object} user the logged in user
+ * @param {Array} ids array of albums to unlike
+ */
+
+module.exports.deleteSavedAlbums = async(user,ids)=>{
+  //delete albums to be unliked by user from model that holds the liked albums
+  await likedAlbums.deleteMany({album: {$in: ids}},{userId: user.id});
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="global.html#addToRecent">addToRecent</a></li><li><a href="global.html#addTracks">addTracks</a></li><li><a href="albumTracks.html">albumTracks</a></li><li><a href="artistAlbums.html">artistAlbums</a></li><li><a href="global.html#artistRequest">artistRequest</a></li><li><a href="categoryPlaylist.html">categoryPlaylist</a></li><li><a href="global.html#changePlaylist">changePlaylist</a></li><li><a href="global.html#createAlbum">createAlbum</a></li><li><a href="global.html#createTrack">createTrack</a></li><li><a href="global.html#createUserPlaylist">createUserPlaylist</a></li><li><a href="global.html#deleteTracks">deleteTracks</a></li><li><a href="empty.html">empty</a></li><li><a href="global.html#getCategories">getCategories</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getComments">getComments</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getLikedItems">getLikedItems</a></li><li><a href="global.html#getPlaylist">getPlaylist</a></li><li><a href="global.html#getRecent">getRecent</a></li><li><a href="getSeveral.html">getSeveral</a></li><li><a href="global.html#getTracks">getTracks</a></li><li><a href="global.html#getUserPlaylists">getUserPlaylists</a></li><li><a href="global.html#likedOrNot">likedOrNot</a></li><li><a href="global.html#likeItems">likeItems</a></li><li><a href="global.html#makeComments">makeComments</a></li><li><a href="newRelease.html">newRelease</a></li><li><a href="oneAlbum.html">oneAlbum</a></li><li><a href="oneArtist.html">oneArtist</a></li><li><a href="oneGenre.html">oneGenre</a></li><li><a href="oneTrack.html">oneTrack</a></li><li><a href="release.html">release</a></li><li><a href="global.html#reorderTracks">reorderTracks</a></li><li><a href="global.html#replaceTracks">replaceTracks</a></li><li><a href="requestHandle.html">requestHandle</a></li><li><a href="global.html#search">search</a></li><li><a href="several.html">several</a></li><li><a href="severalAlbums.html">severalAlbums</a></li><li><a href="severalArtists.html">severalArtists</a></li><li><a href="global.html#unlikeItems">unlikeItems</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateAlbum">updateAlbum</a></li><li><a href="updateBio.html">updateBio</a></li><li><a href="updatePopularSongs.html">updatePopularSongs</a></li><li><a href="global.html#uploadImage">uploadImage</a></li></ul><h3>Classes</h3><ul><li><a href="AppError.html">AppError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#acceptRequest">acceptRequest</a></li><li><a href="global.html#addDeviceToPlayer">addDeviceToPlayer</a></li><li><a href="global.html#addQueue">addQueue</a></li><li><a href="global.html#addToHistory">addToHistory</a></li><li><a href="global.html#addToQueue">addToQueue</a></li><li><a href="global.html#addTORecent">addTORecent</a></li><li><a href="global.html#addTrack">addTrack</a></li><li><a href="global.html#addTrackToPlayer">addTrackToPlayer</a></li><li><a href="global.html#albumReleaseNotify">albumReleaseNotify</a></li><li><a href="global.html#appendToQueue">appendToQueue</a></li><li><a href="global.html#artistByGenre">artistByGenre</a></li><li><a href="global.html#artistsExist">artistsExist</a></li><li><a href="global.html#artistTracksExist">artistTracksExist</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#categoryPlaylists">categoryPlaylists</a></li><li><a href="global.html#changePlayerProgress">changePlayerProgress</a></li><li><a href="global.html#checkAlbums">checkAlbums</a></li><li><a href="global.html#checkFile">checkFile</a></li><li><a href="global.html#checkFollowings">checkFollowings</a></li><li><a href="global.html#checkFollowingsPlaylist">checkFollowingsPlaylist</a></li><li><a href="global.html#checkPassword">checkPassword</a></li><li><a href="global.html#checkSavedAlbums">checkSavedAlbums</a></li><li><a href="global.html#checkSavedTracks">checkSavedTracks</a></li><li><a href="global.html#checkTracks">checkTracks</a></li><li><a href="global.html#checkUser">checkUser</a></li><li><a href="global.html#createPasswordResetToken">createPasswordResetToken</a></li><li><a href="global.html#createPlayer">createPlayer</a></li><li><a href="global.html#createQueueFromListOfTracks">createQueueFromListOfTracks</a></li><li><a href="global.html#createQueueFromRelatedAlbums">createQueueFromRelatedAlbums</a></li><li><a href="global.html#createQueueFromRelatedArtists">createQueueFromRelatedArtists</a></li><li><a href="global.html#createQueueFromRelatedPlaylists">createQueueFromRelatedPlaylists</a></li><li><a href="global.html#createQueueFromTracks">createQueueFromTracks</a></li><li><a href="global.html#createQueueWithContext">createQueueWithContext</a></li><li><a href="global.html#createRequest">createRequest</a></li><li><a href="global.html#createSimilarQueue">createSimilarQueue</a></li><li><a href="global.html#createTokenAndSend">createTokenAndSend</a></li><li><a href="global.html#createUser">createUser</a></li><li><a href="global.html#createVerifyToken">createVerifyToken</a></li><li><a href="global.html#deleteAlbum">deleteAlbum</a></li><li><a href="global.html#deleteImage">deleteImage</a></li><li><a href="global.html#deleteMessage">deleteMessage</a></li><li><a href="global.html#deleteQueueById">deleteQueueById</a></li><li><a href="global.html#deleteRequest">deleteRequest</a></li><li><a href="global.html#deleteSavedAlbums">deleteSavedAlbums</a></li><li><a href="global.html#deleteSavedTracks">deleteSavedTracks</a></li><li><a href="global.html#deleteTrack">deleteTrack</a></li><li><a href="global.html#downloadTrack">downloadTrack</a></li><li><a href="global.html#editPosition">editPosition</a></li><li><a href="global.html#editProfile">editProfile</a></li><li><a href="global.html#errorConverter">errorConverter</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#facebookAuth">facebookAuth</a></li><li><a href="global.html#facebookConnect">facebookConnect</a></li><li><a href="global.html#facebookPassport">facebookPassport</a></li><li><a href="global.html#fillQueueFromTracksUris">fillQueueFromTracksUris</a></li><li><a href="global.html#findAlbum">findAlbum</a></li><li><a href="global.html#findAlbumPrivate">findAlbumPrivate</a></li><li><a href="global.html#findAlbums">findAlbums</a></li><li><a href="global.html#findAlbumTracks">findAlbumTracks</a></li><li><a href="global.html#findAlbumUtil">findAlbumUtil</a></li><li><a href="global.html#findAndDeleteAlbum">findAndDeleteAlbum</a></li><li><a href="global.html#findArtist">findArtist</a></li><li><a href="global.html#findArtistAlbums">findArtistAlbums</a></li><li><a href="global.html#findArtists">findArtists</a></li><li><a href="global.html#findCategories">findCategories</a></li><li><a href="global.html#findCategory">findCategory</a></li><li><a href="global.html#findGenre">findGenre</a></li><li><a href="global.html#findGenres">findGenres</a></li><li><a href="global.html#findSomeArtists">findSomeArtists</a></li><li><a href="global.html#findTrack">findTrack</a></li><li><a href="global.html#findTracks">findTracks</a></li><li><a href="global.html#findTracksOfAlbum">findTracksOfAlbum</a></li><li><a href="global.html#findTrackUtil">findTrackUtil</a></li><li><a href="global.html#findUserAndCheckPassword">findUserAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckPassword">findUserByIdAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckRefreshToken">findUserByIdAndCheckRefreshToken</a></li><li><a href="global.html#followNotification">followNotification</a></li><li><a href="global.html#followPlaylist">followPlaylist</a></li><li><a href="global.html#followUser">followUser</a></li><li><a href="global.html#forgotPassword">forgotPassword</a></li><li><a href="global.html#generateAuthToken">generateAuthToken</a></li><li><a href="global.html#generateRefreshToken">generateRefreshToken</a></li><li><a href="global.html#genresExist">genresExist</a></li><li><a href="global.html#getAlbum">getAlbum</a></li><li><a href="global.html#getAlbumComment">getAlbumComment</a></li><li><a href="global.html#getAlbums">getAlbums</a></li><li><a href="global.html#getArtist">getArtist</a></li><li><a href="global.html#getArtistByGenre">getArtistByGenre</a></li><li><a href="global.html#getArtists">getArtists</a></li><li><a href="global.html#getAvailableDevices">getAvailableDevices</a></li><li><a href="global.html#getChat">getChat</a></li><li><a href="global.html#getCurrentlyPlaying">getCurrentlyPlaying</a></li><li><a href="global.html#getDevice">getDevice</a></li><li><a href="global.html#getFollowedUtil">getFollowedUtil</a></li><li><a href="global.html#getGenre">getGenre</a></li><li><a href="global.html#getGenres">getGenres</a></li><li><a href="global.html#getHashedToken">getHashedToken</a></li><li><a href="global.html#getHistory">getHistory</a></li><li><a href="global.html#getNewReleases">getNewReleases</a></li><li><a href="global.html#getPlayer">getPlayer</a></li><li><a href="global.html#getPlaylistComment">getPlaylistComment</a></li><li><a href="global.html#getPlaylists">getPlaylists</a></li><li><a href="global.html#getPopularSongs">getPopularSongs</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getQueue">getQueue</a></li><li><a href="global.html#getQueueById">getQueueById</a></li><li><a href="global.html#getRequest">getRequest</a></li><li><a href="global.html#getSavedAlbums">getSavedAlbums</a></li><li><a href="global.html#getSavedTracks">getSavedTracks</a></li><li><a href="global.html#getSomeArtists">getSomeArtists</a></li><li><a href="global.html#getThread">getThread</a></li><li><a href="global.html#getTokens">getTokens</a></li><li><a href="global.html#getTrack">getTrack</a></li><li><a href="global.html#getTrackAudioUrl">getTrackAudioUrl</a></li><li><a href="global.html#getTrackPosition">getTrackPosition</a></li><li><a href="global.html#getTracksId">getTracksId</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#getUserDevices">getUserDevices</a></li><li><a href="global.html#getUserFollowed">getUserFollowed</a></li><li><a href="global.html#getUserFollowers">getUserFollowers</a></li><li><a href="global.html#getUserName">getUserName</a></li><li><a href="global.html#getUserQueues">getUserQueues</a></li><li><a href="global.html#gift">gift</a></li><li><a href="global.html#githubAuth">githubAuth</a></li><li><a href="global.html#githubConnect">githubConnect</a></li><li><a href="global.html#githubPassport">githubPassport</a></li><li><a href="global.html#goNext">goNext</a></li><li><a href="global.html#goNextNormal">goNextNormal</a></li><li><a href="global.html#goNextShuffle">goNextShuffle</a></li><li><a href="global.html#googleAuth">googleAuth</a></li><li><a href="global.html#googleConnect">googleConnect</a></li><li><a href="global.html#googlePassport">googlePassport</a></li><li><a href="global.html#goPrevious">goPrevious</a></li><li><a href="global.html#goPreviousNormal">goPreviousNormal</a></li><li><a href="global.html#goPreviousShuffle">goPreviousShuffle</a></li><li><a href="global.html#handleRequest">handleRequest</a></li><li><a href="global.html#listenToTrack">listenToTrack</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#makeAlbumComment">makeAlbumComment</a></li><li><a href="global.html#makePlaylistComment">makePlaylistComment</a></li><li><a href="global.html#manyNotify">manyNotify</a></li><li><a href="global.html#newReleases">newReleases</a></li><li><a href="global.html#newTrack">newTrack</a></li><li><a href="global.html#nextTrack">nextTrack</a></li><li><a href="global.html#OneNotify">OneNotify</a></li><li><a href="global.html#optionalAuth">optionalAuth</a></li><li><a href="global.html#pausePlayer">pausePlayer</a></li><li><a href="global.html#previousTrack">previousTrack</a></li><li><a href="global.html#recentlyPlayed">recentlyPlayed</a></li><li><a href="global.html#redeem">redeem</a></li><li><a href="global.html#redeemCoupon">redeemCoupon</a></li><li><a href="global.html#refreshAccessToken">refreshAccessToken</a></li><li><a href="global.html#refuseRequest">refuseRequest</a></li><li><a href="global.html#rejectRefreshToken">rejectRefreshToken</a></li><li><a href="global.html#relatedArtists">relatedArtists</a></li><li><a href="global.html#releaseAlbum">releaseAlbum</a></li><li><a href="global.html#removeTrack">removeTrack</a></li><li><a href="global.html#repeatQueue">repeatQueue</a></li><li><a href="global.html#requestVerify">requestVerify</a></li><li><a href="global.html#resetPassword">resetPassword</a></li><li><a href="global.html#resumePlayer">resumePlayer</a></li><li><a href="global.html#saveAlbums">saveAlbums</a></li><li><a href="global.html#saveTracks">saveTracks</a></li><li><a href="global.html#searchForAlbums">searchForAlbums</a></li><li><a href="global.html#searchForArtists">searchForArtists</a></li><li><a href="global.html#searchForArtistTracks">searchForArtistTracks</a></li><li><a href="global.html#searchForCategories">searchForCategories</a></li><li><a href="global.html#searchForPlaylists">searchForPlaylists</a></li><li><a href="global.html#searchForTracks">searchForTracks</a></li><li><a href="global.html#searchForUsers">searchForUsers</a></li><li><a href="global.html#seekPlayer">seekPlayer</a></li><li><a href="global.html#sendEmail">sendEmail</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setAttach">setAttach</a></li><li><a href="global.html#setAttachment">setAttachment</a></li><li><a href="global.html#setImage">setImage</a></li><li><a href="global.html#setPlayerToDefault">setPlayerToDefault</a></li><li><a href="global.html#setPrivateSession">setPrivateSession</a></li><li><a href="global.html#setQueueToDefault">setQueueToDefault</a></li><li><a href="global.html#setToken">setToken</a></li><li><a href="global.html#setTrack">setTrack</a></li><li><a href="global.html#setUserId">setUserId</a></li><li><a href="global.html#setVolume">setVolume</a></li><li><a href="global.html#shuffleQueue">shuffleQueue</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#startPlayingFromOffset">startPlayingFromOffset</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#subscribeManyTopics">subscribeManyTopics</a></li><li><a href="global.html#subscribeTopic">subscribeTopic</a></li><li><a href="global.html#topicNotify">topicNotify</a></li><li><a href="global.html#transferPlayback">transferPlayback</a></li><li><a href="global.html#unfollowPlaylist">unfollowPlaylist</a></li><li><a href="global.html#unfollowUser">unfollowUser</a></li><li><a href="global.html#updateArtist">updateArtist</a></li><li><a href="global.html#updateImages">updateImages</a></li><li><a href="global.html#updatePassword">updatePassword</a></li><li><a href="global.html#updateToken">updateToken</a></li><li><a href="global.html#updateTrack">updateTrack</a></li><li><a href="global.html#uploadImageRoute">uploadImageRoute</a></li><li><a href="global.html#uploadImages">uploadImages</a></li><li><a href="global.html#verify">verify</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Jun 11 2020 01:43:22 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

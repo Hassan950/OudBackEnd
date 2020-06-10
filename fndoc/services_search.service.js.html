@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/search.service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/search.service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const {
+  Album,
+  Playlist,
+  Artist,
+  User,
+  Track,
+  Category,
+  Recent
+} = require('../models');
+const _ = require('lodash');
+const mongoose = require('mongoose');
+
+/**
+ * A method that searches for what the user searched for
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for what the user searched for as it takes string the user typed and gets items that the string matches their name if the type is sent then search is for this type if not its on all types
+ * @param {Object} query it contains q(string thata user typed),type(optional, if sent then search on this type if not search on all types)
+ * @returns {Array} array of items that result from the search process
+ */
+
+module.exports.search = async query => {
+  //if type is sent then search on this type if not search on all types
+  switch (query.type) {
+    case 'playlist': {
+      // if type is playlist then call this function that returns playlits that their name match what user typed
+      let playlists = await searchForPlaylists(
+        query.q,
+        query.offset,
+        query.limit
+      );
+      return playlists;
+    }
+    case 'track': {
+      // if type is track then call this function that returns tracks that their name match what user typed
+      let tracks = await searchForTracks(query.q, query.offset, query.limit);
+      return tracks;
+    }
+    case 'album': {
+      // if type is album then call this function that returns albums that their name match what user typed
+      let albums = await searchForAlbums(query.q, query.offset, query.limit);
+      return albums;
+    }
+    case 'Artist': {
+      // if type is Artist then call this function that returns artists that their displayName match what user typed
+      let artists = await searchForArtists(query.q, query.offset, query.limit);
+      return artists;
+    }
+    case 'User': {
+      // if type is User then call this function that returns users that their diplayName match what user typed
+      let users = await searchForUsers(query.q, query.offset, query.limit);
+      return users;
+    }
+    default: {
+      // if type is not sent so the search is on all types
+      let playlists = await searchForPlaylists(
+        query.q,
+        query.offset,
+        query.limit
+      );
+      let albums = await searchForAlbums(query.q, query.offset, query.limit);
+      let users = await searchForUsers(query.q, query.offset, query.limit);
+      let artists = await searchForArtists(query.q, query.offset, query.limit);
+      let tracks;
+      if (
+        artists.artists.length &amp;&amp;
+        artists.artists[0].displayName.toLowerCase() === query.q.toLowerCase()
+      ) {
+        tracks = await searchForArtistTracks(
+          artists.artists[0]._id,
+          query.offset,
+          query.limit
+        );
+      } else {
+        tracks = await searchForTracks(query.q, query.offset, query.limit);
+      }
+      let categories = await searchForCategories(
+        query.q,
+        query.offset,
+        query.limit
+      );
+      [
+        playlists,
+        tracks,
+        albums,
+        users,
+        artists,
+        categories
+      ] = await Promise.all([
+        playlists,
+        tracks,
+        albums,
+        users,
+        artists,
+        categories
+      ]);
+      return { playlists, albums, tracks, users, artists, categories };
+    }
+  }
+};
+/**
+ * A method that searches for categoriess
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for categoriess that their name match what the user typed
+ * @param {string} q the string that the user types
+ * @param {Number} offset index of the first element to return
+ * @param {Number} limit Maximum number of elements in the response
+ * @returns {Array} array of categories that their name match what user types
+ */
+const searchForCategories = async (q, offset, limit) => {
+  //options that will be done after getting items of search
+  const options = {
+    select: '-playlists',
+    skip: offset,
+    limit: limit
+  };
+  const [categories, total] = await Category.search(q, options);
+  return { categories, offset, limit, total };
+};
+/**
+ * A method that searches for tracks of specific artists
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for tracks of specific artist that their name match what the user typed
+ * @param {string} q the string that the user types
+ * @param {Number} offset index of the first element to return
+ * @param {Number} limit Maximum number of elements in the response
+ * @returns {Array} array of tracks that their name match what user types
+ */
+const searchForArtistTracks = async (id, offset, limit) => {
+  //options that will be done after getting items of search
+  let tracks = Track.find({ artists: id })
+    .populate({
+      //get artists inside every track
+      path: 'artists album',
+      select: '-tracks -genres -released -release_date',
+      select: 'displayName image images type name',
+      populate: {
+        path: 'artists',
+        select: 'type displayName images'
+      }
+    })
+    .exec();
+  let total = Track.countDocuments({ artists: id }).exec();
+  [tracks, total] = await Promise.all([tracks, total]);
+  return { tracks, offset, limit, total };
+};
+
+/**
+ * A method that searches for playlists
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for playlists that their name match what the user typed
+ * @param {string} q the string that the user types
+ * @param {Number} offset index of the first element to return
+ * @param {Number} limit Maximum number of elements in the response
+ * @returns {Array} array of playlists that their name match what user types
+ */
+
+const searchForPlaylists = async (q, offset, limit) => {
+  //options that will be done after getting items of search
+  const options = {
+    where: {
+      //playlist should be public
+      public: true
+    },
+    skip: offset,
+    limit: limit,
+    populate: {
+      //get artists inside every track
+      path: 'tracks',
+      populate: {
+        path: 'album artists',
+        select: '-tracks -genres -released -release_date',
+        select: 'type displayName image images name',
+        populate: {
+          path: 'artists',
+          select: 'type displayName images'
+        }
+      }
+    }
+  };
+  const [playlists, total] = await Playlist.search(q, options);
+  return { playlists, offset, limit, total };
+};
+
+/**
+ * A method that searches for tracks
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for tracks that their name match what the user typed
+ * @param {string} q the string that the user types
+ * @param {Number} offset index of the first element to return
+ * @param {Number} limit Maximum number of elements in the response
+ * @returns {Array} array of tracks that their name match what user types
+ */
+
+const searchForTracks = async (q, offset, limit) => {
+  //options that will be done after getting items of search
+  const options = {
+    skip: offset,
+    limit: limit,
+    populate: {
+      //get artists inside every track
+      path: 'artists album',
+      select: '-tracks -genres -released -release_date',
+      select: 'displayName image images type name',
+      populate: {
+        path: 'artists',
+        select: 'type displayName images'
+      }
+    }
+  };
+  const [tracks, total] = await Track.search(q, options);
+  return { tracks, offset, limit, total };
+};
+/**
+ * A method that searches for albums
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for albums that their name match what the user typed
+ * @param {string} q the string that the user types
+ * @param {Number} offset index of the first element to return
+ * @param {Number} limit Maximum number of elements in the response
+ * @returns {Array} array of albums that their name match what user types
+ */
+const searchForAlbums = async (q, offset, limit) => {
+  //options that will be done after getting items of search
+  const options = {
+    where: {
+      released: true
+    },
+    skip: offset,
+    limit: limit,
+    select: '-tracks -genres -released',
+    populate: {
+      //get artists inside every album
+      path: 'artists',
+      select: 'displayName type images _id'
+    }
+  };
+  const [albums, total] = await Album.search(q, options);
+  return { albums, offset, limit, total };
+};
+/**
+ * A method that searches for artists
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for artists that their displayName match what the user typed
+ * @param {string} q the string that the user types
+ * @param {Number} offset index of the first element to return
+ * @param {Number} limit Maximum number of elements in the response
+ * @returns {Array} array of artists that their name match what user types
+ */
+const searchForArtists = async (q, offset, limit) => {
+  //options that will be done after getting items of search
+  const options = {
+    skip: offset,
+    limit: limit,
+    populate: {
+      path: 'genres popularSongs',
+      select: ' name artists image album ',
+      populate: {
+        path: ' artists album',
+        select: '-tracks -genres -released -release_date',
+        select: 'displayName images type name',
+        populate: {
+          path: 'artists',
+          select: 'type displayName images'
+        }
+      }
+    }
+  };
+  const [artists, total] = await Artist.search(q, options);
+  return { artists, offset, limit, total };
+};
+/**
+ * A method that searches for users
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary searches for users that their displayName match what the user typed
+ * @param {string} q the string that the user types
+ * @param {Number} offset index of the first element to return
+ * @param {Number} limit Maximum number of elements in the response
+ * @returns {Array} array of artists that their name match what user types
+ */
+const searchForUsers = async (q, offset, limit) => {
+  //options that will be done after getting items of search
+  const options = {
+    where: {
+      role: {
+        $ne: 'artist'
+      }
+    },
+    select: 'displayName images verified lastLogin type',
+    skip: offset,
+    limit: limit
+  };
+  const [users, total] = await User.search(q, options);
+  return { users, offset, limit, total };
+};
+/**
+ * A method that adds item to recently searched for users
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary adds item to recently searched for users when user clicks on an item from search
+ * @param {object} user the logged in user
+ * @param {object} body it contains id of the item to be added and its type
+ */
+module.exports.addToRecent = async (user, body) => {
+  // get the Recent object whosh user id is the same as the logged in user
+  await Recent.find({ userId: user.id }).updateOne({
+    //add the new item and its type at the top of the recently searched array
+    $push: {
+      items: {
+        $each: [body.id],
+        $position: 0
+      },
+      types: {
+        $each: [body.type],
+        $position: 0
+      }
+    }
+  });
+};
+/**
+ * A method that gets items of recently searched for users
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary gets items of recently searched for users
+ * @param {object} user the logged in user
+ * @param {object} query it contains offset (beginning of returned items) and limit(maximum number of returned items)
+ */
+module.exports.getRecent = async (user, query) => {
+  // get the Recent object that its user id is the logged in user id
+  let recent = await Recent.findOne({ userId: user.id });
+  let i = 0;
+  //let the items array of recent object to match limits of (offset,limit)
+  let items = _.slice(recent.items, query.offset, query.offset + query.limit);
+  //let the types array of recent object to match limits of (offset,limit)
+  let types = _.slice(recent.types, query.offset, query.offset + query.limit);
+  // loop on items and get each item and its detail
+  items = await Promise.all(
+    _.map(items, async itemInRecent => {
+      //if type of this item is playlist,track,album,Artist or User
+      switch (types[i]) {
+        case 'playlist': {
+          i++;
+          // if type is playlist then call the function that gets playlist which this itemid
+          const item = await getPlaylist(itemInRecent);
+          return item;
+        }
+        case 'track': {
+          i++;
+          // if type is track then call the function that gets track which this itemid
+          const item = await getTrack(itemInRecent);
+          return item;
+        }
+        case 'album': {
+          i++;
+          // if type is album then call the function that gets album which this itemid
+          const item = await getAlbum(itemInRecent);
+          return item;
+        }
+        case 'Artist': {
+          i++;
+          // if type is Artist then call the function that gets artist which this itemid
+          const item = await getArtist(itemInRecent);
+          return item;
+        }
+        case 'User': {
+          i++;
+          // if type is User then call the function that gets user which this itemid
+          const item = await getUser(itemInRecent);
+          return item;
+        }
+      }
+    })
+  );
+  const offset = query.offset;
+  const limit = query.limit;
+  // get total of all items that were found in recently searched for this user
+  let total = await Recent.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(recent._id) } },
+    { $project: { count: { $size: '$items' } } }
+  ]);
+  total = total[0].count;
+  return { items, offset, limit, total };
+};
+/**
+ * A method that gets playlist with a specific id
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary adds item to recently searched for users when user clicks on an item from search
+ * @param {string} id the id of the playlist to find
+ * @returns {object} playlist that was found
+ */
+const getPlaylist = async id => {
+  // get the playlist of the sent id
+  let playlist = await Playlist.findById(id).populate({
+    //get tracks details inside playlist
+    path: 'tracks',
+    populate: {
+      path: 'album artists',
+      select: '-tracks -genres -released -release_date',
+      select: 'type displayName images name',
+      populate: {
+        path: 'artists',
+        select: 'type displayName images'
+      }
+    }
+  });
+  return playlist;
+};
+/**
+ * A method that gets track with a specific id
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary gets track with a specific id
+ * @param {string} id the id of the track to find
+ * @returns {object} track that was found
+ */
+const getTrack = async id => {
+  // get the track of the sent id
+  let track = await Track.findById(id).populate(
+    //get artists, album details inside playlist
+    {
+      path: 'artists album',
+      select: '-tracks -genres -released -release_date',
+      select: 'displayName images type name',
+      populate: {
+        path: 'artists',
+        select: 'type displayName images'
+      }
+    }
+  );
+  return track;
+};
+/**
+ * A method that gets album with a specific id
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary gets album with a specific id
+ * @param {string} id the id of the album to find
+ * @returns {object} album that was found
+ */
+const getAlbum = async id => {
+  // get the album of the sent id
+  let album = await Album.findById(id)
+    .select('-tracks -genres -released -release_date') //unselect tracks,genres,released,released_date
+    .populate({
+      //get artists
+      path: 'artists',
+      select: 'displayName type images _id'
+    });
+  return album;
+};
+/**
+ * A method that gets artist with a specific id
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary gets artist with a specific id
+ * @param {string} id the id of the artist to find
+ * @returns {object} artist that was found
+ */
+const getArtist = async id => {
+  // get the artist of the sent id
+  let artist = await Artist.findById(id).populate(
+    //get genres,popularSongs details of this artist
+    {
+      path: 'genres popularSongs',
+      select: ' name artists image album ',
+      populate: {
+        path: ' artists album',
+        select: '-tracks -genres -released -release_date',
+        select: 'displayName images type name',
+        populate: {
+          path: 'artists',
+          select: 'type displayName images'
+        }
+      }
+    }
+  );
+  return artist;
+};
+/**
+ * A method that gets user with a specific id
+ *
+ * @function
+ * @author Ahmed Magdy
+ * @summary gets user with a specific id
+ * @param {string} id the id of the artist to find
+ * @returns {object} user that was found
+ */
+const getUser = async id => {
+  // get the user of the sent id
+  let user = await User.findById(id).select(
+    'displayName images verified lastLogin type'
+  ); //select displayName,images,verified,lastLogin,type
+  return user;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="global.html#addToRecent">addToRecent</a></li><li><a href="global.html#addTracks">addTracks</a></li><li><a href="albumTracks.html">albumTracks</a></li><li><a href="artistAlbums.html">artistAlbums</a></li><li><a href="global.html#artistRequest">artistRequest</a></li><li><a href="categoryPlaylist.html">categoryPlaylist</a></li><li><a href="global.html#changePlaylist">changePlaylist</a></li><li><a href="global.html#createAlbum">createAlbum</a></li><li><a href="global.html#createTrack">createTrack</a></li><li><a href="global.html#createUserPlaylist">createUserPlaylist</a></li><li><a href="global.html#deleteTracks">deleteTracks</a></li><li><a href="empty.html">empty</a></li><li><a href="global.html#getCategories">getCategories</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getComments">getComments</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getLikedItems">getLikedItems</a></li><li><a href="global.html#getPlaylist">getPlaylist</a></li><li><a href="global.html#getRecent">getRecent</a></li><li><a href="getSeveral.html">getSeveral</a></li><li><a href="global.html#getTracks">getTracks</a></li><li><a href="global.html#getUserPlaylists">getUserPlaylists</a></li><li><a href="global.html#likedOrNot">likedOrNot</a></li><li><a href="global.html#likeItems">likeItems</a></li><li><a href="global.html#makeComments">makeComments</a></li><li><a href="newRelease.html">newRelease</a></li><li><a href="oneAlbum.html">oneAlbum</a></li><li><a href="oneArtist.html">oneArtist</a></li><li><a href="oneGenre.html">oneGenre</a></li><li><a href="oneTrack.html">oneTrack</a></li><li><a href="release.html">release</a></li><li><a href="global.html#reorderTracks">reorderTracks</a></li><li><a href="global.html#replaceTracks">replaceTracks</a></li><li><a href="requestHandle.html">requestHandle</a></li><li><a href="global.html#search">search</a></li><li><a href="several.html">several</a></li><li><a href="severalAlbums.html">severalAlbums</a></li><li><a href="severalArtists.html">severalArtists</a></li><li><a href="global.html#unlikeItems">unlikeItems</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateAlbum">updateAlbum</a></li><li><a href="updateBio.html">updateBio</a></li><li><a href="updatePopularSongs.html">updatePopularSongs</a></li><li><a href="global.html#uploadImage">uploadImage</a></li></ul><h3>Classes</h3><ul><li><a href="AppError.html">AppError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#acceptRequest">acceptRequest</a></li><li><a href="global.html#addDeviceToPlayer">addDeviceToPlayer</a></li><li><a href="global.html#addQueue">addQueue</a></li><li><a href="global.html#addToHistory">addToHistory</a></li><li><a href="global.html#addToQueue">addToQueue</a></li><li><a href="global.html#addTORecent">addTORecent</a></li><li><a href="global.html#addTrack">addTrack</a></li><li><a href="global.html#addTrackToPlayer">addTrackToPlayer</a></li><li><a href="global.html#albumReleaseNotify">albumReleaseNotify</a></li><li><a href="global.html#appendToQueue">appendToQueue</a></li><li><a href="global.html#artistByGenre">artistByGenre</a></li><li><a href="global.html#artistsExist">artistsExist</a></li><li><a href="global.html#artistTracksExist">artistTracksExist</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#categoryPlaylists">categoryPlaylists</a></li><li><a href="global.html#changePlayerProgress">changePlayerProgress</a></li><li><a href="global.html#checkAlbums">checkAlbums</a></li><li><a href="global.html#checkFile">checkFile</a></li><li><a href="global.html#checkFollowings">checkFollowings</a></li><li><a href="global.html#checkFollowingsPlaylist">checkFollowingsPlaylist</a></li><li><a href="global.html#checkPassword">checkPassword</a></li><li><a href="global.html#checkSavedAlbums">checkSavedAlbums</a></li><li><a href="global.html#checkSavedTracks">checkSavedTracks</a></li><li><a href="global.html#checkTracks">checkTracks</a></li><li><a href="global.html#checkUser">checkUser</a></li><li><a href="global.html#createPasswordResetToken">createPasswordResetToken</a></li><li><a href="global.html#createPlayer">createPlayer</a></li><li><a href="global.html#createQueueFromListOfTracks">createQueueFromListOfTracks</a></li><li><a href="global.html#createQueueFromRelatedAlbums">createQueueFromRelatedAlbums</a></li><li><a href="global.html#createQueueFromRelatedArtists">createQueueFromRelatedArtists</a></li><li><a href="global.html#createQueueFromRelatedPlaylists">createQueueFromRelatedPlaylists</a></li><li><a href="global.html#createQueueFromTracks">createQueueFromTracks</a></li><li><a href="global.html#createQueueWithContext">createQueueWithContext</a></li><li><a href="global.html#createRequest">createRequest</a></li><li><a href="global.html#createSimilarQueue">createSimilarQueue</a></li><li><a href="global.html#createTokenAndSend">createTokenAndSend</a></li><li><a href="global.html#createUser">createUser</a></li><li><a href="global.html#createVerifyToken">createVerifyToken</a></li><li><a href="global.html#deleteAlbum">deleteAlbum</a></li><li><a href="global.html#deleteImage">deleteImage</a></li><li><a href="global.html#deleteMessage">deleteMessage</a></li><li><a href="global.html#deleteQueueById">deleteQueueById</a></li><li><a href="global.html#deleteRequest">deleteRequest</a></li><li><a href="global.html#deleteSavedAlbums">deleteSavedAlbums</a></li><li><a href="global.html#deleteSavedTracks">deleteSavedTracks</a></li><li><a href="global.html#deleteTrack">deleteTrack</a></li><li><a href="global.html#downloadTrack">downloadTrack</a></li><li><a href="global.html#editPosition">editPosition</a></li><li><a href="global.html#editProfile">editProfile</a></li><li><a href="global.html#errorConverter">errorConverter</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#facebookAuth">facebookAuth</a></li><li><a href="global.html#facebookConnect">facebookConnect</a></li><li><a href="global.html#facebookPassport">facebookPassport</a></li><li><a href="global.html#fillQueueFromTracksUris">fillQueueFromTracksUris</a></li><li><a href="global.html#findAlbum">findAlbum</a></li><li><a href="global.html#findAlbumPrivate">findAlbumPrivate</a></li><li><a href="global.html#findAlbums">findAlbums</a></li><li><a href="global.html#findAlbumTracks">findAlbumTracks</a></li><li><a href="global.html#findAlbumUtil">findAlbumUtil</a></li><li><a href="global.html#findAndDeleteAlbum">findAndDeleteAlbum</a></li><li><a href="global.html#findArtist">findArtist</a></li><li><a href="global.html#findArtistAlbums">findArtistAlbums</a></li><li><a href="global.html#findArtists">findArtists</a></li><li><a href="global.html#findCategories">findCategories</a></li><li><a href="global.html#findCategory">findCategory</a></li><li><a href="global.html#findGenre">findGenre</a></li><li><a href="global.html#findGenres">findGenres</a></li><li><a href="global.html#findSomeArtists">findSomeArtists</a></li><li><a href="global.html#findTrack">findTrack</a></li><li><a href="global.html#findTracks">findTracks</a></li><li><a href="global.html#findTracksOfAlbum">findTracksOfAlbum</a></li><li><a href="global.html#findTrackUtil">findTrackUtil</a></li><li><a href="global.html#findUserAndCheckPassword">findUserAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckPassword">findUserByIdAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckRefreshToken">findUserByIdAndCheckRefreshToken</a></li><li><a href="global.html#followNotification">followNotification</a></li><li><a href="global.html#followPlaylist">followPlaylist</a></li><li><a href="global.html#followUser">followUser</a></li><li><a href="global.html#forgotPassword">forgotPassword</a></li><li><a href="global.html#generateAuthToken">generateAuthToken</a></li><li><a href="global.html#generateRefreshToken">generateRefreshToken</a></li><li><a href="global.html#genresExist">genresExist</a></li><li><a href="global.html#getAlbum">getAlbum</a></li><li><a href="global.html#getAlbumComment">getAlbumComment</a></li><li><a href="global.html#getAlbums">getAlbums</a></li><li><a href="global.html#getArtist">getArtist</a></li><li><a href="global.html#getArtistByGenre">getArtistByGenre</a></li><li><a href="global.html#getArtists">getArtists</a></li><li><a href="global.html#getAvailableDevices">getAvailableDevices</a></li><li><a href="global.html#getChat">getChat</a></li><li><a href="global.html#getCurrentlyPlaying">getCurrentlyPlaying</a></li><li><a href="global.html#getDevice">getDevice</a></li><li><a href="global.html#getFollowedUtil">getFollowedUtil</a></li><li><a href="global.html#getGenre">getGenre</a></li><li><a href="global.html#getGenres">getGenres</a></li><li><a href="global.html#getHashedToken">getHashedToken</a></li><li><a href="global.html#getHistory">getHistory</a></li><li><a href="global.html#getNewReleases">getNewReleases</a></li><li><a href="global.html#getPlayer">getPlayer</a></li><li><a href="global.html#getPlaylistComment">getPlaylistComment</a></li><li><a href="global.html#getPlaylists">getPlaylists</a></li><li><a href="global.html#getPopularSongs">getPopularSongs</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getQueue">getQueue</a></li><li><a href="global.html#getQueueById">getQueueById</a></li><li><a href="global.html#getRequest">getRequest</a></li><li><a href="global.html#getSavedAlbums">getSavedAlbums</a></li><li><a href="global.html#getSavedTracks">getSavedTracks</a></li><li><a href="global.html#getSomeArtists">getSomeArtists</a></li><li><a href="global.html#getThread">getThread</a></li><li><a href="global.html#getTokens">getTokens</a></li><li><a href="global.html#getTrack">getTrack</a></li><li><a href="global.html#getTrackAudioUrl">getTrackAudioUrl</a></li><li><a href="global.html#getTrackPosition">getTrackPosition</a></li><li><a href="global.html#getTracksId">getTracksId</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#getUserDevices">getUserDevices</a></li><li><a href="global.html#getUserFollowed">getUserFollowed</a></li><li><a href="global.html#getUserFollowers">getUserFollowers</a></li><li><a href="global.html#getUserName">getUserName</a></li><li><a href="global.html#getUserQueues">getUserQueues</a></li><li><a href="global.html#gift">gift</a></li><li><a href="global.html#githubAuth">githubAuth</a></li><li><a href="global.html#githubConnect">githubConnect</a></li><li><a href="global.html#githubPassport">githubPassport</a></li><li><a href="global.html#goNext">goNext</a></li><li><a href="global.html#goNextNormal">goNextNormal</a></li><li><a href="global.html#goNextShuffle">goNextShuffle</a></li><li><a href="global.html#googleAuth">googleAuth</a></li><li><a href="global.html#googleConnect">googleConnect</a></li><li><a href="global.html#googlePassport">googlePassport</a></li><li><a href="global.html#goPrevious">goPrevious</a></li><li><a href="global.html#goPreviousNormal">goPreviousNormal</a></li><li><a href="global.html#goPreviousShuffle">goPreviousShuffle</a></li><li><a href="global.html#handleRequest">handleRequest</a></li><li><a href="global.html#listenToTrack">listenToTrack</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#makeAlbumComment">makeAlbumComment</a></li><li><a href="global.html#makePlaylistComment">makePlaylistComment</a></li><li><a href="global.html#manyNotify">manyNotify</a></li><li><a href="global.html#newReleases">newReleases</a></li><li><a href="global.html#newTrack">newTrack</a></li><li><a href="global.html#nextTrack">nextTrack</a></li><li><a href="global.html#OneNotify">OneNotify</a></li><li><a href="global.html#optionalAuth">optionalAuth</a></li><li><a href="global.html#pausePlayer">pausePlayer</a></li><li><a href="global.html#previousTrack">previousTrack</a></li><li><a href="global.html#recentlyPlayed">recentlyPlayed</a></li><li><a href="global.html#redeem">redeem</a></li><li><a href="global.html#redeemCoupon">redeemCoupon</a></li><li><a href="global.html#refreshAccessToken">refreshAccessToken</a></li><li><a href="global.html#refuseRequest">refuseRequest</a></li><li><a href="global.html#rejectRefreshToken">rejectRefreshToken</a></li><li><a href="global.html#relatedArtists">relatedArtists</a></li><li><a href="global.html#releaseAlbum">releaseAlbum</a></li><li><a href="global.html#removeTrack">removeTrack</a></li><li><a href="global.html#repeatQueue">repeatQueue</a></li><li><a href="global.html#requestVerify">requestVerify</a></li><li><a href="global.html#resetPassword">resetPassword</a></li><li><a href="global.html#resumePlayer">resumePlayer</a></li><li><a href="global.html#saveAlbums">saveAlbums</a></li><li><a href="global.html#saveTracks">saveTracks</a></li><li><a href="global.html#searchForAlbums">searchForAlbums</a></li><li><a href="global.html#searchForArtists">searchForArtists</a></li><li><a href="global.html#searchForArtistTracks">searchForArtistTracks</a></li><li><a href="global.html#searchForCategories">searchForCategories</a></li><li><a href="global.html#searchForPlaylists">searchForPlaylists</a></li><li><a href="global.html#searchForTracks">searchForTracks</a></li><li><a href="global.html#searchForUsers">searchForUsers</a></li><li><a href="global.html#seekPlayer">seekPlayer</a></li><li><a href="global.html#sendEmail">sendEmail</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setAttach">setAttach</a></li><li><a href="global.html#setAttachment">setAttachment</a></li><li><a href="global.html#setImage">setImage</a></li><li><a href="global.html#setPlayerToDefault">setPlayerToDefault</a></li><li><a href="global.html#setPrivateSession">setPrivateSession</a></li><li><a href="global.html#setQueueToDefault">setQueueToDefault</a></li><li><a href="global.html#setToken">setToken</a></li><li><a href="global.html#setTrack">setTrack</a></li><li><a href="global.html#setUserId">setUserId</a></li><li><a href="global.html#setVolume">setVolume</a></li><li><a href="global.html#shuffleQueue">shuffleQueue</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#startPlayingFromOffset">startPlayingFromOffset</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#subscribeManyTopics">subscribeManyTopics</a></li><li><a href="global.html#subscribeTopic">subscribeTopic</a></li><li><a href="global.html#topicNotify">topicNotify</a></li><li><a href="global.html#transferPlayback">transferPlayback</a></li><li><a href="global.html#unfollowPlaylist">unfollowPlaylist</a></li><li><a href="global.html#unfollowUser">unfollowUser</a></li><li><a href="global.html#updateArtist">updateArtist</a></li><li><a href="global.html#updateImages">updateImages</a></li><li><a href="global.html#updatePassword">updatePassword</a></li><li><a href="global.html#updateToken">updateToken</a></li><li><a href="global.html#updateTrack">updateTrack</a></li><li><a href="global.html#uploadImageRoute">uploadImageRoute</a></li><li><a href="global.html#uploadImages">uploadImages</a></li><li><a href="global.html#verify">verify</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Jun 11 2020 01:43:22 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

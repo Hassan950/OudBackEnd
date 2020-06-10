@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/album.service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/album.service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { Album } = require('../models/album.model');
+const mongoose = require('mongoose');
+const fs = require('fs').promises;
+const AppError = require('../utils/AppError');
+const _ = require('lodash');
+
+/**
+ * A method that gets an album by it's ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets an album
+ * @param {String} id ID of the album to be retrieved
+ * @param {object} user the user object if authenticated
+ * @returns album if the album was found
+ * @returns null if the album was not found
+ */
+exports.findAlbum = async (id, user) => {
+  let album = Album.findById(id)
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      options: { limit: 50, offset: 0 },
+      select: '-album',
+      populate: { path: 'artists', select: 'displayName images' }
+    })
+    .select('-album_group');
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [album, lengthObj] = await Promise.all([album, lengthObj]);
+  if (album) {
+    if (
+      !album.released &amp;&amp;
+      (!user || String(user._id) !== String(album.artists[0]._id))
+    )
+      return new AppError(
+        "You don't have the permission to perform this action",
+        403
+      );
+
+    album.tracks = {
+      limit: 50,
+      offset: 0,
+      total: lengthObj[0].tracks,
+      items: album.tracks
+    };
+  } else return new AppError('The request resource is not found', 404);
+  return album;
+};
+
+/**
+ * A method that gets an album by it's ID (helper for other services)
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets an album
+ * @param {String} id ID of the album to be retrieved
+ * @returns album if the album was found
+ * @returns null if the album was not found
+ */
+exports.findAlbumUtil = async id => {
+  let album = await Album.findById(id)
+    .populate('artists', 'displayName images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      options: { limit: 50, offset: 0 },
+      select: '-album',
+      populate: { path: 'artists', select: 'displayName images' }
+    })
+    .select('-album_group');
+  return album;
+};
+
+/**
+ * A method that gets array of albums By their ID's
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Get list of albums
+ * @param {Array&lt;String>} ids - List of ID's of albums to be retrieved
+ * @param {object} user the user object if authenticated
+ * @returns {Array} An array containing the albums with nulls against unmatched ID's
+ */
+exports.findAlbums = async (ids, user) => {
+  let result = Album.find({ _id: ids })
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      options: { limit: 50, offset: 0 },
+      select: '-album',
+      populate: { path: 'artists', select: 'displayName images' }
+    })
+    .select('-album_group');
+
+  let lengthArray = Album.aggregate([
+    { $match: { _id: { $in: ids.map(id => mongoose.Types.ObjectId(id)) } } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+  [result, lengthArray] = await Promise.all([result, lengthArray]);
+  let length;
+
+  const albums = ids.map(id => {
+    let val = result.find(album => String(album._id) == id);
+    if (val) {
+      if (
+        !val.released &amp;&amp;
+        (!user || String(user._id) !== String(val.artists[0]._id))
+      )
+        return null;
+
+      length = lengthArray.find(
+        albumTno => String(albumTno._id) === String(id)
+      );
+      return {
+        ...val,
+        tracks: {
+          limit: 50,
+          offset: 0,
+          total: length.tracks,
+          items: val.tracks
+        }
+      };
+    } else return null;
+  });
+  return albums;
+};
+
+/**
+ * A method that deletes an album by it's ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes an album
+ * @param {String} id ID of the album to be deleted
+ */
+exports.deleteAlbum = async id => {
+  let album = Album.findByIdAndDelete(id)
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      options: { limit: 50, offset: 0 },
+      select: '-album',
+      populate: { path: 'artists', select: 'displayName images' }
+    })
+    .select('-album_group');
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [album, lengthObj] = await Promise.all([album, lengthObj]);
+  if (album) {
+    album.tracks = {
+      limit: 50,
+      offset: 0,
+      total: lengthObj[0].tracks,
+      items: album.tracks
+    };
+  }
+  return album;
+};
+
+/**
+ * A method that gets array of tracks of an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Get list of tracks of an album
+ * @param {String} id - ID of the album containing the tracks
+ * @param {Number} limit The maximum number of tracks to return
+ * @param {Nuumber} offset The index of the first track to return starting from 0
+ * @param {object} user the user object if authenticated
+ * @returns {Array} An array containing the tracks of the album
+ * @returns null if the album was not found
+ */
+exports.findTracksOfAlbum = async (id, limit, offset, user) => {
+  let result = Album.findById(id)
+    .populate({
+      path: 'tracks',
+      select: '-album',
+      populate: { path: 'artists', select: 'displayName images' },
+      options: { limit: limit, skip: offset }
+    })
+    .select('tracks released artists');
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [result, lengthObj] = await Promise.all([result, lengthObj]);
+  if (!result) return new AppError('The requested resource is not found', 404);
+  if (
+    !result.released &amp;&amp;
+    (!user || String(user._id) !== String(result.artists[0]._id))
+  )
+    return new AppError(
+      "You don't have the permission to perform this action",
+      403
+    );
+  return [result.tracks, lengthObj[0].tracks];
+};
+
+/**
+ * A method that updates an album by it's ID
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary updates an album
+ * @param {String} id ID of the album to be updated
+ * @param {object} newAlbum object containing the new values
+ * @returns Updated album
+ */
+exports.update = async (id, newAlbum) => {
+  let album = Album.findByIdAndUpdate(id, newAlbum, { new: true })
+    .lean({ virtuals: true })
+    .populate('artists', 'displayName images')
+    .populate('genres')
+    .populate({
+      path: 'tracks',
+      select: '-album',
+      options: { limit: 50, offset: 0 },
+      populate: { path: 'artists', select: 'displayName images' }
+    })
+    .select('-album_group');
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [album, lengthObj] = await Promise.all([album, lengthObj]);
+  if (album) {
+    album.tracks = {
+      limit: 50,
+      offset: 0,
+      total: lengthObj[0].tracks,
+      items: album.tracks
+    };
+  }
+  return album;
+};
+
+/**
+ * A method that updates the image of an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary updates the image of the given album
+ * @param {object} album album to be updated
+ * @param {string} path the path of the image
+ * @returns Updated album
+ */
+exports.setImage = async (album, path) => {
+  path = path.replace(/\\/g, '/');
+  album.image = path;
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(album._id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [, lengthObj] = await Promise.all([album.save(), lengthObj]);
+  album = album.toJSON();
+  album.album_group = undefined;
+  album.tracks = {
+    limit: 50,
+    offset: 0,
+    total: lengthObj[0].tracks,
+    items: album.tracks
+  };
+  return album;
+};
+
+/**
+ * A method that creates a new album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary creates an album
+ * @param {object} newAlbum object containing the new values
+ * @returns Created album
+ */
+exports.createAlbum = async newAlbum => {
+  let album = await (await Album.create(newAlbum))
+    .populate('artists', 'displayName images')
+    .populate('genres')
+    .execPopulate();
+
+  album = album.toJSON();
+  album.album_group = undefined;
+  album.tracks = {
+    limit: 50,
+    offset: 0,
+    total: 0,
+    items: album.tracks
+  };
+  return album;
+};
+
+/**
+ * A method that adds a track to an album
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Adds a track to an album
+ * @param {object} album album of the track
+ * @param {object} track the track
+ * @returns album after update
+ */
+exports.addTrack = async (album, track) => {
+  album.tracks.push(track);
+  await album.save();
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(album._id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [album, lengthObj] = await Promise.all([
+    album
+      .populate('artists', 'displayName images')
+      .populate('genres')
+      .populate({
+        path: 'tracks',
+        select: '-album',
+        options: { limit: 50, offset: 0 },
+        populate: { path: 'artists', select: 'displayName images' }
+      })
+      .execPopulate(),
+    lengthObj
+  ]);
+
+  album = album.toJSON();
+  album.album_group = undefined;
+  album.tracks = {
+    limit: 50,
+    offset: 0,
+    total: lengthObj[0].tracks,
+    items: album.tracks
+  };
+  return album;
+};
+
+/**
+ * A method that returns albums of a specific artist
+ *
+ * @function
+ * @summary Gets albums of an artist
+ * @param {String} artistId Id of the artist
+ * @param {Number} limit Maximum number of albums to be retrieved
+ * @param {Number} offset index of the first album (starting from 0)
+ * @param {Array&lt;string>} groups the required album groups
+ * @param {object} user
+ * @returns {Array&lt;Object>} array of albums of the artist
+ * @returns {Number} the length of the array
+ * @returns null if the artist has no albums or the ID doesn't belong to any artist
+ */
+exports.findArtistAlbums = async (artistId, limit, offset, groups, user) => {
+  // Initializing some options used in queries
+  let types = ['single', 'album', 'compilation'];
+  let appears = true;
+  let released = [true];
+  
+  // if the user is the artist, return albums even if they aren't released
+  if (user &amp;&amp; String(user._id) === String(artistId)) {
+    released = [true, false];
+  }
+  // If groups are specified determine what to use, else use default options
+  if (groups) {
+    types = groups.filter(group => group !== 'appears_on');
+    appears = groups.includes('appears_on');
+  }
+  // find albums of groups specified by album_type
+  let result = Album.find({
+    'artists.0': artistId,
+    album_type: types,
+    released: released
+  })
+    .populate('artists', '_id displayName images')
+    .populate('genres')
+    .select('-tracks -genres -release_date')
+    .limit(limit)
+    .skip(offset);
+  // count albums of groups specified by album_type
+  let length = Album.countDocuments({
+    'artists.0': artistId,
+    album_type: types,
+    released: released
+  });
+
+  // await for both queries simultaneously
+  [result, length] = await Promise.all([result, length]);
+
+  // if appears_on group is specified get albums that the requested artist
+  // appeared on but not their main artist.
+  if (appears) {
+    let appearsAlbums;
+    
+    // New limit &amp; skip is the limit - albums by other groups
+    if (limit - result.length !== 0) {
+      let secondskip = offset - length > 0 ? offset - length : 0;
+      
+      // query appears_on albums
+      appearsAlbums = Album.find({
+        $and: [
+          { artists: artistId, released: true },
+          { 'artists.0': { $ne: artistId } }
+        ]
+      })
+        .populate('artists', '_id displayName images')
+        .populate('genres')
+        .select('-tracks -genres -release_date')
+        .limit(limit - length)
+        .skip(secondskip);
+    } 
+    // if albums already reached the limit just resolve the promise
+    else appearsAlbums = Promise.resolve([]);
+    // Count appears on albums
+    let appearslength = Album.countDocuments({
+      $and: [
+        { artists: artistId, released: true },
+        { 'artists.0': { $ne: artistId } }
+      ]
+    });
+
+    // Wait for both simultaneously
+    [appearsAlbums, appearslength] = await Promise.all([
+      appearsAlbums,
+      appearslength
+    ]);
+
+    // update the group for each
+    appearsAlbums.forEach(album => {
+      album.album_group = 'appears_on';
+    });
+
+    // concatenate arrays and sum the counts 
+    length += appearslength;
+    result = result.concat(appearsAlbums);
+  }
+
+  // return final list and the total length
+  return [result, length];
+};
+
+/**
+ *  A method that deletes the image with the given path
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Deletes the file of an image
+ * @param {String} image path of the file
+ */
+
+exports.deleteImage = async image => {
+  if (image) {
+    try {
+      await fs.unlink(image);
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
+  }
+};
+
+/**
+ * A method that removes a track from the album tracks list
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Removes a track from tracks list
+ * @param {String} albumId ID of the album
+ * @param {String} trackId ID of the track
+ */
+
+exports.removeTrack = async (albumId, trackId) => {
+  await Album.findByIdAndUpdate(albumId, { $pull: { tracks: trackId } });
+};
+
+/**
+ * A method that releases an album if it has an image and all of its
+ * tracks have files. and returns the updated album.
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary Releases an album
+ * @param {object} album
+ * @param {object} user
+ * @returns Updated album if successful
+ * @returns null if the album didn't match the specifications of released albums
+ */
+exports.releaseAlbum = async (album, user) => {
+  if (album.image) {
+    for (let i = 0, n = album.tracks.length; i &lt; n; i++) {
+      if (!album.tracks[i].audioUrl)
+        return new AppError(
+          'All tracks of the album must have files before releasing',
+          400
+        );
+    }
+  } else
+    return new AppError(
+      'An album should have an image before being released',
+      400
+    );
+  if (album.album_type === 'single' &amp;&amp; album.tracks.length !== 1)
+    return new AppError('Single albums must have exactly one track', 400);
+
+  album.released = true;
+  if (user.popularSongs.length &lt; 5)
+    user.popularSongs = _.concat(
+      user.popularSongs,
+      _.slice(album.tracks, 0, 5)
+    );
+
+  let lengthObj = Album.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(album._id) } },
+    { $project: { tracks: { $size: '$tracks' } } }
+  ]);
+
+  [, , album, lengthObj] = await Promise.all([
+    album.save(),
+    user.save(),
+    album
+      .populate('artists', 'displayName images')
+      .populate('genres')
+      .populate({
+        path: 'tracks',
+        select: '-album',
+        options: { limit: 50, offset: 0 },
+        populate: { path: 'artists', select: 'displayName images' }
+      })
+      .execPopulate(),
+    lengthObj
+  ]);
+
+  album = album.toJSON();
+  album.album_group = undefined;
+  album.tracks = {
+    limit: 50,
+    offset: 0,
+    total: lengthObj[0].tracks,
+    items: album.tracks
+  };
+  return album;
+};
+
+/**
+ * A method that gets an album by it's ID with the tracks containing
+ * their audioUrl's for the use with releaseAlbum and not to return to
+ * the client
+ *
+ * @function
+ * @author Mohamed Abo-Bakr
+ * @summary gets an album
+ * @param {String} id ID of the album to be retrieved
+ * @returns album if the album was found
+ * @returns null if the album was not found
+ */
+exports.findAlbumPrivate = async id => {
+  return await Album.findById(id).populate({
+    path: 'tracks',
+    select: 'audioUrl'
+  });
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="global.html#addToRecent">addToRecent</a></li><li><a href="global.html#addTracks">addTracks</a></li><li><a href="albumTracks.html">albumTracks</a></li><li><a href="artistAlbums.html">artistAlbums</a></li><li><a href="global.html#artistRequest">artistRequest</a></li><li><a href="categoryPlaylist.html">categoryPlaylist</a></li><li><a href="global.html#changePlaylist">changePlaylist</a></li><li><a href="global.html#createAlbum">createAlbum</a></li><li><a href="global.html#createTrack">createTrack</a></li><li><a href="global.html#createUserPlaylist">createUserPlaylist</a></li><li><a href="global.html#deleteTracks">deleteTracks</a></li><li><a href="empty.html">empty</a></li><li><a href="global.html#getCategories">getCategories</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getComments">getComments</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getLikedItems">getLikedItems</a></li><li><a href="global.html#getPlaylist">getPlaylist</a></li><li><a href="global.html#getRecent">getRecent</a></li><li><a href="getSeveral.html">getSeveral</a></li><li><a href="global.html#getTracks">getTracks</a></li><li><a href="global.html#getUserPlaylists">getUserPlaylists</a></li><li><a href="global.html#likedOrNot">likedOrNot</a></li><li><a href="global.html#likeItems">likeItems</a></li><li><a href="global.html#makeComments">makeComments</a></li><li><a href="newRelease.html">newRelease</a></li><li><a href="oneAlbum.html">oneAlbum</a></li><li><a href="oneArtist.html">oneArtist</a></li><li><a href="oneGenre.html">oneGenre</a></li><li><a href="oneTrack.html">oneTrack</a></li><li><a href="release.html">release</a></li><li><a href="global.html#reorderTracks">reorderTracks</a></li><li><a href="global.html#replaceTracks">replaceTracks</a></li><li><a href="requestHandle.html">requestHandle</a></li><li><a href="global.html#search">search</a></li><li><a href="several.html">several</a></li><li><a href="severalAlbums.html">severalAlbums</a></li><li><a href="severalArtists.html">severalArtists</a></li><li><a href="global.html#unlikeItems">unlikeItems</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateAlbum">updateAlbum</a></li><li><a href="updateBio.html">updateBio</a></li><li><a href="updatePopularSongs.html">updatePopularSongs</a></li><li><a href="global.html#uploadImage">uploadImage</a></li></ul><h3>Classes</h3><ul><li><a href="AppError.html">AppError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#acceptRequest">acceptRequest</a></li><li><a href="global.html#addDeviceToPlayer">addDeviceToPlayer</a></li><li><a href="global.html#addQueue">addQueue</a></li><li><a href="global.html#addToHistory">addToHistory</a></li><li><a href="global.html#addToQueue">addToQueue</a></li><li><a href="global.html#addTORecent">addTORecent</a></li><li><a href="global.html#addTrack">addTrack</a></li><li><a href="global.html#addTrackToPlayer">addTrackToPlayer</a></li><li><a href="global.html#albumReleaseNotify">albumReleaseNotify</a></li><li><a href="global.html#appendToQueue">appendToQueue</a></li><li><a href="global.html#artistByGenre">artistByGenre</a></li><li><a href="global.html#artistsExist">artistsExist</a></li><li><a href="global.html#artistTracksExist">artistTracksExist</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#categoryPlaylists">categoryPlaylists</a></li><li><a href="global.html#changePlayerProgress">changePlayerProgress</a></li><li><a href="global.html#checkAlbums">checkAlbums</a></li><li><a href="global.html#checkFile">checkFile</a></li><li><a href="global.html#checkFollowings">checkFollowings</a></li><li><a href="global.html#checkFollowingsPlaylist">checkFollowingsPlaylist</a></li><li><a href="global.html#checkPassword">checkPassword</a></li><li><a href="global.html#checkSavedAlbums">checkSavedAlbums</a></li><li><a href="global.html#checkSavedTracks">checkSavedTracks</a></li><li><a href="global.html#checkTracks">checkTracks</a></li><li><a href="global.html#checkUser">checkUser</a></li><li><a href="global.html#createPasswordResetToken">createPasswordResetToken</a></li><li><a href="global.html#createPlayer">createPlayer</a></li><li><a href="global.html#createQueueFromListOfTracks">createQueueFromListOfTracks</a></li><li><a href="global.html#createQueueFromRelatedAlbums">createQueueFromRelatedAlbums</a></li><li><a href="global.html#createQueueFromRelatedArtists">createQueueFromRelatedArtists</a></li><li><a href="global.html#createQueueFromRelatedPlaylists">createQueueFromRelatedPlaylists</a></li><li><a href="global.html#createQueueFromTracks">createQueueFromTracks</a></li><li><a href="global.html#createQueueWithContext">createQueueWithContext</a></li><li><a href="global.html#createRequest">createRequest</a></li><li><a href="global.html#createSimilarQueue">createSimilarQueue</a></li><li><a href="global.html#createTokenAndSend">createTokenAndSend</a></li><li><a href="global.html#createUser">createUser</a></li><li><a href="global.html#createVerifyToken">createVerifyToken</a></li><li><a href="global.html#deleteAlbum">deleteAlbum</a></li><li><a href="global.html#deleteImage">deleteImage</a></li><li><a href="global.html#deleteMessage">deleteMessage</a></li><li><a href="global.html#deleteQueueById">deleteQueueById</a></li><li><a href="global.html#deleteRequest">deleteRequest</a></li><li><a href="global.html#deleteSavedAlbums">deleteSavedAlbums</a></li><li><a href="global.html#deleteSavedTracks">deleteSavedTracks</a></li><li><a href="global.html#deleteTrack">deleteTrack</a></li><li><a href="global.html#downloadTrack">downloadTrack</a></li><li><a href="global.html#editPosition">editPosition</a></li><li><a href="global.html#editProfile">editProfile</a></li><li><a href="global.html#errorConverter">errorConverter</a></li><li><a href="global.html#errorHandler">errorHandler</a></li><li><a href="global.html#facebookAuth">facebookAuth</a></li><li><a href="global.html#facebookConnect">facebookConnect</a></li><li><a href="global.html#facebookPassport">facebookPassport</a></li><li><a href="global.html#fillQueueFromTracksUris">fillQueueFromTracksUris</a></li><li><a href="global.html#findAlbum">findAlbum</a></li><li><a href="global.html#findAlbumPrivate">findAlbumPrivate</a></li><li><a href="global.html#findAlbums">findAlbums</a></li><li><a href="global.html#findAlbumTracks">findAlbumTracks</a></li><li><a href="global.html#findAlbumUtil">findAlbumUtil</a></li><li><a href="global.html#findAndDeleteAlbum">findAndDeleteAlbum</a></li><li><a href="global.html#findArtist">findArtist</a></li><li><a href="global.html#findArtistAlbums">findArtistAlbums</a></li><li><a href="global.html#findArtists">findArtists</a></li><li><a href="global.html#findCategories">findCategories</a></li><li><a href="global.html#findCategory">findCategory</a></li><li><a href="global.html#findGenre">findGenre</a></li><li><a href="global.html#findGenres">findGenres</a></li><li><a href="global.html#findSomeArtists">findSomeArtists</a></li><li><a href="global.html#findTrack">findTrack</a></li><li><a href="global.html#findTracks">findTracks</a></li><li><a href="global.html#findTracksOfAlbum">findTracksOfAlbum</a></li><li><a href="global.html#findTrackUtil">findTrackUtil</a></li><li><a href="global.html#findUserAndCheckPassword">findUserAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckPassword">findUserByIdAndCheckPassword</a></li><li><a href="global.html#findUserByIdAndCheckRefreshToken">findUserByIdAndCheckRefreshToken</a></li><li><a href="global.html#followNotification">followNotification</a></li><li><a href="global.html#followPlaylist">followPlaylist</a></li><li><a href="global.html#followUser">followUser</a></li><li><a href="global.html#forgotPassword">forgotPassword</a></li><li><a href="global.html#generateAuthToken">generateAuthToken</a></li><li><a href="global.html#generateRefreshToken">generateRefreshToken</a></li><li><a href="global.html#genresExist">genresExist</a></li><li><a href="global.html#getAlbum">getAlbum</a></li><li><a href="global.html#getAlbumComment">getAlbumComment</a></li><li><a href="global.html#getAlbums">getAlbums</a></li><li><a href="global.html#getArtist">getArtist</a></li><li><a href="global.html#getArtistByGenre">getArtistByGenre</a></li><li><a href="global.html#getArtists">getArtists</a></li><li><a href="global.html#getAvailableDevices">getAvailableDevices</a></li><li><a href="global.html#getChat">getChat</a></li><li><a href="global.html#getCurrentlyPlaying">getCurrentlyPlaying</a></li><li><a href="global.html#getDevice">getDevice</a></li><li><a href="global.html#getFollowedUtil">getFollowedUtil</a></li><li><a href="global.html#getGenre">getGenre</a></li><li><a href="global.html#getGenres">getGenres</a></li><li><a href="global.html#getHashedToken">getHashedToken</a></li><li><a href="global.html#getHistory">getHistory</a></li><li><a href="global.html#getNewReleases">getNewReleases</a></li><li><a href="global.html#getPlayer">getPlayer</a></li><li><a href="global.html#getPlaylistComment">getPlaylistComment</a></li><li><a href="global.html#getPlaylists">getPlaylists</a></li><li><a href="global.html#getPopularSongs">getPopularSongs</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getQueue">getQueue</a></li><li><a href="global.html#getQueueById">getQueueById</a></li><li><a href="global.html#getRequest">getRequest</a></li><li><a href="global.html#getSavedAlbums">getSavedAlbums</a></li><li><a href="global.html#getSavedTracks">getSavedTracks</a></li><li><a href="global.html#getSomeArtists">getSomeArtists</a></li><li><a href="global.html#getThread">getThread</a></li><li><a href="global.html#getTokens">getTokens</a></li><li><a href="global.html#getTrack">getTrack</a></li><li><a href="global.html#getTrackAudioUrl">getTrackAudioUrl</a></li><li><a href="global.html#getTrackPosition">getTrackPosition</a></li><li><a href="global.html#getTracksId">getTracksId</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserById">getUserById</a></li><li><a href="global.html#getUserDevices">getUserDevices</a></li><li><a href="global.html#getUserFollowed">getUserFollowed</a></li><li><a href="global.html#getUserFollowers">getUserFollowers</a></li><li><a href="global.html#getUserName">getUserName</a></li><li><a href="global.html#getUserQueues">getUserQueues</a></li><li><a href="global.html#gift">gift</a></li><li><a href="global.html#githubAuth">githubAuth</a></li><li><a href="global.html#githubConnect">githubConnect</a></li><li><a href="global.html#githubPassport">githubPassport</a></li><li><a href="global.html#goNext">goNext</a></li><li><a href="global.html#goNextNormal">goNextNormal</a></li><li><a href="global.html#goNextShuffle">goNextShuffle</a></li><li><a href="global.html#googleAuth">googleAuth</a></li><li><a href="global.html#googleConnect">googleConnect</a></li><li><a href="global.html#googlePassport">googlePassport</a></li><li><a href="global.html#goPrevious">goPrevious</a></li><li><a href="global.html#goPreviousNormal">goPreviousNormal</a></li><li><a href="global.html#goPreviousShuffle">goPreviousShuffle</a></li><li><a href="global.html#handleRequest">handleRequest</a></li><li><a href="global.html#listenToTrack">listenToTrack</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#makeAlbumComment">makeAlbumComment</a></li><li><a href="global.html#makePlaylistComment">makePlaylistComment</a></li><li><a href="global.html#manyNotify">manyNotify</a></li><li><a href="global.html#newReleases">newReleases</a></li><li><a href="global.html#newTrack">newTrack</a></li><li><a href="global.html#nextTrack">nextTrack</a></li><li><a href="global.html#OneNotify">OneNotify</a></li><li><a href="global.html#optionalAuth">optionalAuth</a></li><li><a href="global.html#pausePlayer">pausePlayer</a></li><li><a href="global.html#previousTrack">previousTrack</a></li><li><a href="global.html#recentlyPlayed">recentlyPlayed</a></li><li><a href="global.html#redeem">redeem</a></li><li><a href="global.html#redeemCoupon">redeemCoupon</a></li><li><a href="global.html#refreshAccessToken">refreshAccessToken</a></li><li><a href="global.html#refuseRequest">refuseRequest</a></li><li><a href="global.html#rejectRefreshToken">rejectRefreshToken</a></li><li><a href="global.html#relatedArtists">relatedArtists</a></li><li><a href="global.html#releaseAlbum">releaseAlbum</a></li><li><a href="global.html#removeTrack">removeTrack</a></li><li><a href="global.html#repeatQueue">repeatQueue</a></li><li><a href="global.html#requestVerify">requestVerify</a></li><li><a href="global.html#resetPassword">resetPassword</a></li><li><a href="global.html#resumePlayer">resumePlayer</a></li><li><a href="global.html#saveAlbums">saveAlbums</a></li><li><a href="global.html#saveTracks">saveTracks</a></li><li><a href="global.html#searchForAlbums">searchForAlbums</a></li><li><a href="global.html#searchForArtists">searchForArtists</a></li><li><a href="global.html#searchForArtistTracks">searchForArtistTracks</a></li><li><a href="global.html#searchForCategories">searchForCategories</a></li><li><a href="global.html#searchForPlaylists">searchForPlaylists</a></li><li><a href="global.html#searchForTracks">searchForTracks</a></li><li><a href="global.html#searchForUsers">searchForUsers</a></li><li><a href="global.html#seekPlayer">seekPlayer</a></li><li><a href="global.html#sendEmail">sendEmail</a></li><li><a href="global.html#sendMessage">sendMessage</a></li><li><a href="global.html#setAttach">setAttach</a></li><li><a href="global.html#setAttachment">setAttachment</a></li><li><a href="global.html#setImage">setImage</a></li><li><a href="global.html#setPlayerToDefault">setPlayerToDefault</a></li><li><a href="global.html#setPrivateSession">setPrivateSession</a></li><li><a href="global.html#setQueueToDefault">setQueueToDefault</a></li><li><a href="global.html#setToken">setToken</a></li><li><a href="global.html#setTrack">setTrack</a></li><li><a href="global.html#setUserId">setUserId</a></li><li><a href="global.html#setVolume">setVolume</a></li><li><a href="global.html#shuffleQueue">shuffleQueue</a></li><li><a href="global.html#signup">signup</a></li><li><a href="global.html#startPlayingFromOffset">startPlayingFromOffset</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#subscribeManyTopics">subscribeManyTopics</a></li><li><a href="global.html#subscribeTopic">subscribeTopic</a></li><li><a href="global.html#topicNotify">topicNotify</a></li><li><a href="global.html#transferPlayback">transferPlayback</a></li><li><a href="global.html#unfollowPlaylist">unfollowPlaylist</a></li><li><a href="global.html#unfollowUser">unfollowUser</a></li><li><a href="global.html#updateArtist">updateArtist</a></li><li><a href="global.html#updateImages">updateImages</a></li><li><a href="global.html#updatePassword">updatePassword</a></li><li><a href="global.html#updateToken">updateToken</a></li><li><a href="global.html#updateTrack">updateTrack</a></li><li><a href="global.html#uploadImageRoute">uploadImageRoute</a></li><li><a href="global.html#uploadImages">uploadImages</a></li><li><a href="global.html#verify">verify</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Jun 11 2020 01:43:22 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
