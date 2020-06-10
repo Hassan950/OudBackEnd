@@ -401,3 +401,54 @@ exports.googleConnect = async (req, res, next) => {
     createTokenAndSend(req.user, res);
   }
 };
+
+
+/**
+ * Github Authentication
+ * 
+ * @throws AppError 400 status
+ * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @summary if token is invalid return 400, if user`s account already connected to github send user 
+ * and token with 200 status else send user information with 200 status
+ */
+exports.githubAuth = async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError('Invalid Token', httpStatus.BAD_REQUEST));
+  }
+  if (req.user._id) {
+    createTokenAndSend(req.user, res);
+  } else {
+    res.status(httpStatus.OK).json({
+      user: req.user
+    });
+  }
+};
+
+/**
+ * Github connect
+ * 
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @summary if not authentivated return 500, if user sent access_token call next to connect to github
+ * else disconnect from github and send user and token
+ */
+exports.githubConnect = async (req, res, next) => {
+  if (req.body.access_token) {
+    // connect case
+    return next(); // send to passport githubOAuth
+  } else {
+    // disconnect case
+    if (!req.user) {
+      return next(new AppError('Must Authenticate user', httpStatus.INTERNAL_SERVER_ERROR));
+    }
+    // set github account to null
+    req.user.github_id = undefined;
+    createTokenAndSend(req.user, res);
+  }
+};
