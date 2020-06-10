@@ -2,6 +2,7 @@ const { userService, authService, emailService } = require('../services');
 const AppError = require('../utils/AppError');
 const httpStatus = require('http-status');
 const logger = require('../config/logger');
+const mongoose = require('mongoose');
 
 /**
  * 
@@ -13,8 +14,19 @@ const createTokenAndSend = (user, res) => {
   user.password = undefined;
   user.passwordConfirm = undefined;
   user.__v = undefined;
+  
+  // generate auth token and set x-auth-token header with the token
   const token = authService.generateAuthToken(user._id);
   res.setHeader('x-auth-token', token);
+
+  // set refresh token in the cookie 
+  res.cookie('refresh_token' ,user.refreshToken, {
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    httpOnly: true 
+  });
+  user.refreshToken = undefined;
+
+  // send user and the token
   return res.status(httpStatus.OK).json({
     token: token,
     user: user
@@ -44,6 +56,11 @@ exports.verify = async (req, res, next) => {
   user.verified = true;
   user.verifyToken = undefined;
 
+  // update refreshToken
+  const refreshToken = authService.generateRefreshToken(user._id);
+  user.refreshToken = refreshToken;
+ 
+
   await user.save({ validateBeforeSave: false });
   createTokenAndSend(user, res);
 }
@@ -70,6 +87,11 @@ exports.requestVerify = async (req, res, next) => {
   }
 
   const verifyToken = authService.createVerifyToken(user);
+
+  // update refreshToken
+  const refreshToken = authService.generateRefreshToken(user._id);
+  user.refreshToken = refreshToken;
+
   await user.save({ validateBeforeSave: false });
 
   const verifyURL = `${req.get(
@@ -125,6 +147,10 @@ exports.signup = async (req, res, next) => {
   // generate verify token
   const verifyToken = authService.createVerifyToken(newUser);
 
+  // update refreshToken
+  const refreshToken = authService.generateRefreshToken(newUser._id);
+  newUser.refreshToken = refreshToken;
+ 
   // save user
   await newUser.save({
     validateBeforeSave: false
@@ -178,6 +204,10 @@ exports.login = async (req, res, next) => {
   }
   user.lastLogin = new Date();
 
+  // update refreshToken
+  const refreshToken = authService.generateRefreshToken(user._id);
+  user.refreshToken = refreshToken;
+ 
   await user.save();
 
   createTokenAndSend(user, res);
@@ -217,6 +247,11 @@ exports.updatePassword = async (req, res, next) => {
 
   user.password = password;
   user.passwordConfirm = password;
+
+  // update refreshToken
+  const refreshToken = authService.generateRefreshToken(user._id);
+  user.refreshToken = refreshToken; 
+
   await user.save();
   createTokenAndSend(user, res);
 };
@@ -297,6 +332,11 @@ exports.resetPassword = async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
+
+  // update refreshToken
+  const refreshToken = authService.generateRefreshToken(user._id);
+  user.refreshToken = refreshToken; 
+
   await user.save();
   createTokenAndSend(user, res)
 };
@@ -318,6 +358,11 @@ exports.facebookAuth = async (req, res, next) => {
     return next(new AppError('Invalid Token', httpStatus.BAD_REQUEST));
   }
   if (req.user._id) {
+    // update refreshToken
+    const refreshToken = authService.generateRefreshToken(req.user._id);
+    req.user.refreshToken = refreshToken;
+    await req.user.save();
+
     createTokenAndSend(req.user, res);
   } else {
     res.status(httpStatus.OK).json({
@@ -346,8 +391,15 @@ exports.facebookConnect = async (req, res, next) => {
     if (!req.user) {
       return next(new AppError('Must Authenticate user', httpStatus.INTERNAL_SERVER_ERROR));
     }
+    
     // set facebook account to null
     req.user.facebook_id = undefined;
+
+    // update refreshToken
+    const refreshToken = authService.generateRefreshToken(req.user._id);
+    req.user.refreshToken = refreshToken;
+    await req.user.save();
+
     createTokenAndSend(req.user, res);
   }
 };
@@ -368,6 +420,11 @@ exports.googleAuth = async (req, res, next) => {
     return next(new AppError('Invalid Token', httpStatus.BAD_REQUEST));
   }
   if (req.user._id) {
+    // update refreshToken
+    const refreshToken = authService.generateRefreshToken(req.user._id);
+    req.user.refreshToken = refreshToken;
+    await req.user.save();
+
     createTokenAndSend(req.user, res);
   } else {
     res.status(httpStatus.OK).json({
@@ -398,6 +455,12 @@ exports.googleConnect = async (req, res, next) => {
     }
     // set google account to null
     req.user.google_id = undefined;
+
+    // update refreshToken
+    const refreshToken = authService.generateRefreshToken(req.user._id);
+    req.user.refreshToken = refreshToken;
+    await req.user.save();
+
     createTokenAndSend(req.user, res);
   }
 };
@@ -419,6 +482,11 @@ exports.githubAuth = async (req, res, next) => {
     return next(new AppError('Invalid Token', httpStatus.BAD_REQUEST));
   }
   if (req.user._id) {
+    // update refreshToken
+    const refreshToken = authService.generateRefreshToken(req.user._id);
+    req.user.refreshToken = refreshToken;
+    await req.user.save();
+
     createTokenAndSend(req.user, res);
   } else {
     res.status(httpStatus.OK).json({
@@ -449,6 +517,45 @@ exports.githubConnect = async (req, res, next) => {
     }
     // set github account to null
     req.user.github_id = undefined;
+
+    // update refreshToken
+    const refreshToken = authService.generateRefreshToken(req.user._id);
+    req.user.refreshToken = refreshToken;
+    await req.user.save();
+
     createTokenAndSend(req.user, res);
   }
+};
+
+/**
+ * Refresh access token
+ * 
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @summary Refresh access token
+ */
+exports.refreshAccessToken = async (req, res, next) => {
+  const refreshToken = req.cookies['refresh_token'];
+
+  if (!refreshToken || refreshToken.split('.').length < 2) return next(new AppError('Invalid refresh token', 401));
+
+  const id = refreshToken.split('.')[0];
+
+  if (!mongoose.isValidObjectId(id)) return next(new AppError('Invalid refresh token', 401));
+
+  const user = await userService.findUserByIdAndCheckRefreshToken(id, refreshToken);
+  
+  if (!user) {
+    return next(new AppError('Invalid refresh token', httpStatus.UNAUTHORIZED));
+  }
+
+  // update refreshToken
+  user.refreshToken = authService.generateRefreshToken(user._id);
+
+  await user.save();
+
+  createTokenAndSend(user, res);
 };

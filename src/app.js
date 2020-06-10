@@ -11,6 +11,7 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const config = require('config');
 const morgan = require('./config/morgan');
 const routes = require('./routes/v1');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -25,6 +26,9 @@ app.use(helmet());
 
 // parse json request body
 app.use(express.json());
+
+// parse cookies
+app.use(cookieParser());
 
 // parse urlencoded request body
 app.use(

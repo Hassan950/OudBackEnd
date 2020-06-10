@@ -42,4 +42,8 @@ router
     catchAsync(authController.githubAuth)
   );
 
+router
+  .route('/refresh_token')
+  .post(catchAsync(authController.refreshAccessToken));
+
 module.exports = router;

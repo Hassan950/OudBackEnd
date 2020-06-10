@@ -128,6 +128,10 @@ const userSchema = mongoose.Schema(
       type: Date,
       select: false
     },
+    refreshToken: {
+      type: String,
+      select: false
+    },
     lastLogin: {
       type: Date
     },

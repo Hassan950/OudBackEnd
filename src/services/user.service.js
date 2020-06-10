@@ -5,6 +5,27 @@ const fs = require('fs').promises;
 const logger = require('../config/logger');
 
 /**
+ * Find user by `userId` and check if `refreshToken` is correct
+ *
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {String} userId - User ID
+ * @param {String} refreshToken - User refreshToken
+ * @summary Find user by `userId` and check if `refreshToken` is correct
+ * @returns {Document} `user` if user found and refreshToken is correct
+ * @returns {null} `null` if user is not found or refreshToken is not correct
+ */
+const findUserByIdAndCheckRefreshToken = async (userId, refreshToken) => {
+  const user = await User.findById(userId).select('+refreshToken');
+  if (!user || user.refreshToken !== refreshToken) {
+    return null;
+  }
+  return user;
+};
+
+/**
  * A method that find user with the given userData and check password with the given password
  *
  * @function
@@ -267,5 +288,6 @@ module.exports = {
   getUserQueues,
   addQueue,
   setPrivateSession,
-  updateToken
+  updateToken,
+  findUserByIdAndCheckRefreshToken
 };
