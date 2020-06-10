@@ -3904,7 +3904,29 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  /me/auth/facebook:
+    
+  /auth/facebook:
+    post:
+      tags:
+        - Auth
+      description: Authentication with facebook
+      requestBody:
+        description: Facebook access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: Facebook access token
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/FacebookAuth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags:
         - Auth
@@ -3924,52 +3946,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Login'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /me/auth/google:
-    patch:
-      tags:
-        - Auth
-      description: Connect or disconnect your user account with google.
-      requestBody:
-        description: Google access token
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                access_token:
-                  description: >-
-                    Google access token, if passed connect with google else
-                    disconnect
-                  type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/Login'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /auth/facebook:
-    post:
-      tags:
-        - Auth
-      description: Authentication with facebook
-      requestBody:
-        description: Facebook access token
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                access_token:
-                  description: Facebook access token
-                  type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/FacebookAuth'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -3994,6 +3970,104 @@ paths:
           $ref: '#/components/responses/GoogleAuth'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags:
+        - Auth
+      description: Connect or disconnect your user account with google.
+      requestBody:
+        description: Google access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: >-
+                    Google access token, if passed connect with google else
+                    disconnect
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Login'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/github:
+    post:
+      tags:
+        - Auth
+      description: Authentication with github
+      requestBody:
+        description: Github access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: Github access token
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GithubAuth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags:
+        - Auth
+      description: Connect or disconnect your user account with github.
+      requestBody:
+        description: Google access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: >-
+                    Github access token, if passed connect with github else
+                    disconnect
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Login'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/refresh_token:
+    post:
+      tags:
+        - Auth
+      description: Refresh access token
+      parameters:
+        - in: cookie
+          name: refresh_token
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Login'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/refresh_token/reject:
+    post:
+      tags:
+        - Auth
+      description: Remove refresh token from the server
+      parameters:
+        - in: cookie
+          name: refresh_token
+          schema:
+            type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /me/queue:
@@ -5225,6 +5299,12 @@ components:
           enum:
             - F
             - M
+        github_id:
+          type: string
+        google_id:
+          type: string
+        facebook_id:
+          type: string
     Login:
       type: object
       required:
@@ -5699,6 +5779,22 @@ components:
           description: user images
           items:
             type: string
+    UserDataForGithub:
+      type: object
+      properties:
+        github_id:
+          type: string
+        email:
+          type: string
+        displayName:
+          type: string
+        username:
+          type: string
+        images:
+          type: array
+          description: user images
+          items:
+            type: string
   responses:
     FacebookAuth:
       description: >-
@@ -5730,6 +5826,21 @@ components:
             oneOf:
               - $ref: '#/components/schemas/UserWithToken'
               - $ref: '#/components/schemas/UserDataForGoogle'
+    GithubAuth:
+      description: >-
+        Github Auth response. send user account and x-auth-token if user is
+        already exists. else send user data to signup
+      headers:
+        x-auth-token:
+          description: Authentication token
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/UserWithToken'
+              - $ref: '#/components/schemas/UserDataForGithub'
     InvalidId:
       description: Invalid ID
       content:
