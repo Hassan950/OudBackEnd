@@ -62,11 +62,13 @@ const albumSchema = new mongoose.Schema(
   }
 );
 
+/* istanbul ignore next */
 albumSchema.pre('save', async function(next) {
   this.album_group = this.album_type;
   next();
 });
 
+/* istanbul ignore next */
 albumSchema.virtual('type').get(function() {
   return 'album';
 });

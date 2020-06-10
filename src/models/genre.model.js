@@ -21,6 +21,7 @@ const genreSchema = new mongoose.Schema(
   }
 );
 
+/* istanbul ignore next */
 genreSchema.virtual('type').get(function() {
   return 'genre';
 });

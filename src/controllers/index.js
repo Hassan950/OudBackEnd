@@ -17,3 +17,4 @@ exports.followController = require('./follow.controller');
 exports.searchController = require('./search.controller');
 exports.premiumController = require('./premium.controller');
 exports.commentController = require('./comment.controller');
+exports.chatController = require('./chat.controller');
