@@ -288,4 +288,23 @@ describe('Artists Controller', () => {
       });
     });
   });
+  describe('getSomeArtists', () => {
+    it('Should return some artists with status code 200', async () => {
+      mockingoose(Artist).toReturn(artists, 'find');
+      await artistController.getSomeArtists(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+  });
+  describe('getArtistByGenre', () => {
+    it('Should return artist of the given genre with status code 200', async () =>{
+      mockingoose(Artist).toReturn(artists, 'find');
+      await artistController.getArtistByGenre(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('Should throw an error with status code 404 if no artists are found', async () => {
+      mockingoose(Artist).toReturn([], 'find');
+      await artistController.getArtistByGenre(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    })
+  })
 });

@@ -91,6 +91,18 @@ npm run import
   "GoogleClientID": "3",
   "GoogleClientSecret": "4Bar",
   "SENDGRID_API_KEY": "6Baz",
+  "Firebase_Service_Acc": {
+    "type": "XXXXXX",
+    "project_id": "XXXXXX",
+    "private_key_id": "XXXXXX",
+    "private_key": "XXXXXX",
+    "client_email": "XXXXXX",
+    "client_id": "XXXXXX",
+    "auth_uri": "XXXXXX",
+    "token_uri": "XXXXXX",
+    "auth_provider_x509_cert_url": "XXXXXX",
+    "client_x509_cert_url": "XXXXXX"
+  },
   "db": "mongodb://localhost:27017/YourCollection",
   "PORT": "3000",
   "NODE_ENV": "production"
@@ -102,6 +114,7 @@ npm run import
 * `FBClientID` and `FBClientSecret`: Are used for signing up with facebook.
 * `GoogleClientID` and `GoogleClientSecret`: Are used for signing up with google.
 * `SENDGRID_API_KEY`: The api key for sending emails through sendgrid
+* `Firebase_Service_Acc`: This object has credentials of firebase that is used for pushing notifications. More Details Here [Add Firebase to your JavaScript project](https://firebase.google.com/docs/web/setup)
 * `db`: Your database path 
   > Eg: `"mongodb://localhost:27017/YourCollection"` If you're hosting on your localhost server.
 * `PORT`: Your api hosting port
