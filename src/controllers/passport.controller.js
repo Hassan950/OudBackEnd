@@ -67,7 +67,7 @@ exports.googlePassport = async (req, accessToken, refreshToken, profile, done) =
     if (req.user) {
       // handle connect case
       if (req.user.google_id) {
-        // if user sent valid access token and he is connected with facebook
+        // if user sent valid access token and he is connected with google
         throw new AppError('User already connected', 400);
       }
 
@@ -85,6 +85,54 @@ exports.googlePassport = async (req, accessToken, refreshToken, profile, done) =
       email: profile.emails.length ? profile.emails[0].value : undefined,
       displayName: profile.displayName,
       images: profile.photos.length ? [profile.photos[0].value] : undefined,
+    };
+
+    done(null, newUser);
+  } catch (error) {
+    done(error, false, error.message);
+  }
+};
+
+
+
+/**
+ * Github Authentication passport
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @param {Object} req - Express Request object
+ * @param {String} accessToken
+ * @param {String} refreshToken
+ * @param {Object} profile
+ * @param {Function} done
+ * @summary Github Authentication passport
+ */
+exports.githubPassport = async (req, accessToken, refreshToken, profile, done) => {
+  try {
+    if (req.user) {
+      // handle connect case
+      if (req.user.github_id) {
+        // if user sent valid access token and he is connected with github
+        throw new AppError('User already connected', 400);
+      }
+
+      req.user.github_id = profile.id;
+      return done(null, req.user);
+    }
+
+    const existingUser = await userService.getUser({ "github_id": profile.id });
+    if (existingUser) {
+      return done(null, existingUser);
+    }
+
+    const newUser = {
+      github_id: profile.id,
+      username: profile.username,
+      email: profile.emails.length ? profile.emails[0].value : undefined,
+      displayName: profile.displayName,
+      images: profile._json.avatar_url ? [profile._json.avatar_url] : undefined,
     };
 
     done(null, newUser);

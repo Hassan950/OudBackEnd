@@ -4,10 +4,9 @@ const { User, Followings, Track } = require('../models');
 
 try {
   const serviceAccount = config.get('Firebase_Service_Acc');
-
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://trying-59532.firebaseio.com'
+    databaseURL: 'https://oud-zerobased.firebaseio.com'
   });
 } catch (err) {
   if (config.get('NODE_ENV') === 'production') {
@@ -106,7 +105,7 @@ exports.subscribeTopic = async (token, topic) => {
     .messaging()
     .subscribeToTopic(token, `/topics/${String(topic)}`)
     .then(function(response) {
-      console.log('Successfully subscribed to topic:', response);
+      console.log('Successfully subscribed to topic:', response.errors[0]);
     })
     .catch(function(error) {
       console.log('Error subscribing to topic:', error);

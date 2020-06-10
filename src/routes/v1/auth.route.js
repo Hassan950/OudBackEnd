@@ -31,4 +31,23 @@ router
     catchAsync(authController.googleAuth)
   );
 
+router
+  .route('/github')
+  .post(validate(authValidation.githubOAuth), passport.authenticate('github-token', { session: false }), catchAsync(authController.githubAuth))
+  .patch(
+    catchAsync(auth.authenticate),
+    validate(authValidation.githubConnect),
+    authController.githubConnect,
+    passport.authenticate('github-token', { session: false }),
+    catchAsync(authController.githubAuth)
+  );
+
+router
+  .route('/refresh_token')
+  .post(catchAsync(authController.refreshAccessToken));
+
+router
+  .route('/refresh_token/reject')
+  .post(catchAsync(authController.rejectRefreshToken));
+
 module.exports = router;

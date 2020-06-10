@@ -143,7 +143,7 @@ exports.artistRequest = {
  * @property {object} params An object containing parameter values parsed from the URL path
  * @property {string} params.id Id of the request
  * @property {object} body An object that holds parameters that are sent up from the client in the post request
- * @property {Array<string>} body.accept boolean determining whether we should accept the request or not
+ * @property {boolean} body.accept boolean determining whether we should accept the request or not
  */
 exports.requestHandle = {
   params: Joi.object().keys({

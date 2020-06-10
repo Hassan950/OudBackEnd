@@ -23,6 +23,22 @@ const generateAuthToken = (userId) => {
 };
 
 /**
+ * Generate Refresh token
+ * 
+ * @function
+ * @public
+ * @async
+ * @author Abdelrahman Tarek
+ * @summary Generate Refresh token
+ * @param {String} userId User ID
+ * @returns {String} `refreshToken` refresh token
+ */
+const generateRefreshToken = (userId) => {
+  const refreshToken = userId.toString() + '.' +  crypto.randomBytes(256).toString('hex');
+  return refreshToken;
+};
+
+/**
  * Check if password is correct 
  * 
  * @function
@@ -106,5 +122,6 @@ module.exports = {
   checkPassword,
   createPasswordResetToken,
   getHashedToken,
-  createVerifyToken
+  createVerifyToken,
+  generateRefreshToken
 };

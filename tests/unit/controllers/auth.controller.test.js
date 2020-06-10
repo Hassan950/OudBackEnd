@@ -455,4 +455,152 @@ describe('Auth controllers', () => {
       })
     });
   })
+
+  describe('github auth', () => {
+    describe('github auth middleware', () => {
+      it('should return 400 if token is invalid', async () => {
+        req.user = undefined;
+        await authController.githubAuth(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(400);
+      });
+
+      it('should return user and token with 200 if user already connected to github', async () => {
+        req.user = user;
+        await authController.githubAuth(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].token).toBeDefined();
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc));
+      });
+
+      it('should return user data with 200 if user is not connected to github', async () => {
+        req.user = user;
+        req.user._id = null;
+        await authController.githubAuth(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc));
+      });
+    })
+
+    describe('github Connect middleware', () => {
+      it('should call next if access_token is defined', async () => {
+        req.body.access_token = 'token';
+        await authController.githubConnect(req, res, next);
+        expect(next.mock.calls.length).toBe(1);
+      });
+
+      it('should return 500 if user is not authenticated', async () => {
+        req.user = null;
+        await authController.githubConnect(req, res, next);
+        expect(next.mock.calls[0][0].statusCode).toBe(500);
+      });
+
+      it('should disconnect user from github and send it with token with status 200', async () => {
+        user.github_id = 'id';
+        req.user = user;
+        await authController.githubConnect(req, res, next);
+        expect(res.status.mock.calls[0][0]).toBe(200);
+        expect(res.json.mock.calls[0][0].token).toBeDefined();
+        expect(res.json.mock.calls[0][0].user).toHaveProperty(...Object.keys(user._doc))
+        expect(res.json.mock.calls[0][0].user.github_id).toBeUndefined();
+      })
+    });
+  })
+
+  describe('refreshAccessToken', () => {
+    beforeEach(() => {
+      req.cookies['refresh_token'] = user._id.toString() + '.' + '1';
+      user.refreshToken = req.cookies['refresh_token'];
+      mockingoose(User).toReturn(user, 'findOne');
+    }); 
+
+    it('should return 401 if no token passed', async () => {
+      req.cookies['refresh_token'] = null;
+      await authController.refreshAccessToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if no token does not have 2 parts', async () => {
+      req.cookies['refresh_token'] = user._id.toString();
+      await authController.refreshAccessToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if id is wrong', async () => {
+      req.cookies['refresh_token'] = '1.1';
+      await authController.refreshAccessToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if not user found with the given id', async () => {
+      mockingoose(User).toReturn(null, 'findOne');
+      await authController.refreshAccessToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if refresh token is wrong', async () => {
+      user.refreshToken = null;
+      mockingoose(User).toReturn(user, 'findOne');
+      await authController.refreshAccessToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should generate new refresh token', async () => {
+      await authController.refreshAccessToken(req, res, next);
+      if (user.refreshToken == req.cookies['refresh_token']) throw Error();
+    });
+
+    it('should save the user', async () => {
+      await authController.refreshAccessToken(req, res, next);
+      expect(user.save).toBeCalled();
+    });
+  });
+
+  describe('reject refresh token', () => {
+    beforeEach(() => {
+      req.cookies['refresh_token'] = user._id.toString() + '.' + '1';
+      user.refreshToken = req.cookies['refresh_token'];
+      mockingoose(User).toReturn(user, 'findOne');
+    }); 
+
+    it('should return 401 if no token passed', async () => {
+      req.cookies['refresh_token'] = null;
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if no token does not have 2 parts', async () => {
+      req.cookies['refresh_token'] = user._id.toString();
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if id is wrong', async () => {
+      req.cookies['refresh_token'] = '1.1';
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if not user found with the given id', async () => {
+      mockingoose(User).toReturn(null, 'findOne');
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if refresh token is wrong', async () => {
+      user.refreshToken = null;
+      mockingoose(User).toReturn(user, 'findOne');
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should delete refresh token', async () => {
+      await authController.rejectRefreshToken(req, res, next);
+      expect(user.refreshToken).toBe(undefined);
+    });
+
+    it('should save the user', async () => {
+      await authController.rejectRefreshToken(req, res, next);
+      expect(user.save).toBeCalled();
+    });
+  });
 });

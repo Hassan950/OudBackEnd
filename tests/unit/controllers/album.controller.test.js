@@ -1,10 +1,15 @@
 const { albumsController } = require('../../../src/controllers');
 const mockingoose = require('mockingoose').default;
+const AppError = require('../../../src/utils/AppError');
 let mongoose = require('mongoose');
 const requestMocks = require('../../utils/request.mock');
 let { Album, Track, Artist, Genre } = require('../../../src/models');
 let fs = require('fs').promises;
-let { trackService } = require('../../../src/services');
+let {
+  trackService,
+  albumService,
+  notifyService
+} = require('../../../src/services');
 
 artistIds = [
   '5e6c8ebb8b40fc5508fe8b32',
@@ -25,6 +30,7 @@ describe('Albums Controller', () => {
   let albums;
   beforeEach(() => {
     album = new Album({
+      _id: albumIds[0],
       album_type: 'single',
       album_group: 'compilation',
       artists: artistIds,
@@ -34,7 +40,18 @@ describe('Albums Controller', () => {
       release_date: '12-06-1999',
       tracks: [albumIds[0]]
     });
-    albums = [album, album];
+    album2 = new Album({
+      _id: albumIds[1],
+      album_type: 'single',
+      album_group: 'compilation',
+      artists: artistIds,
+      genres: ['5e6c8ebb8b40fc5518fe8b32'],
+      image: 'example.jpg',
+      name: 'The Begining',
+      release_date: '12-06-1999',
+      tracks: [albumIds[0]]
+    });
+    albums = [album, album2];
     req = { params: {}, query: {}, body: {} };
     res = requestMocks.mockResponse();
     next = jest.fn();
@@ -57,13 +74,28 @@ describe('Albums Controller', () => {
       await albumsController.getAlbum(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it('Should throw an error with status code 403 if the album is not released', async () => {
+      mockingoose(Album).toReturn(album, 'findOne');
+      req.params.id = albumIds[0];
+      await albumsController.getAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
   });
   describe('getAlbums', () => {
     it("Should return list of albums with the given ID's with status code 200", async () => {
-      mockingoose(Album).toReturn(albums, 'find');
+      albums[0].released = true;
+      albums[1].released = true;
+      mockingoose(Album)
+        .toReturn(albums, 'find')
+        .toReturn(
+          [
+            { _id: albumIds[0], tracks: 3 },
+            { _id: albumIds[1], tracks: 3 }
+          ],
+          'aggregate'
+        );
       req.query.ids = albumIds;
       await albumsController.getAlbums(req, res, next);
-      result = res.json.mock.calls;
       expect(res.json.mock.calls[0][0]).toHaveProperty('albums');
       expect(res.status.mock.calls[0][0]).toBe(200);
     });
@@ -107,6 +139,15 @@ describe('Albums Controller', () => {
       await albumsController.findAlbumTracks(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(404);
     });
+    it('Should throw an error with status code 403 if the album is not released and the user is not its main artist', async () => {
+      album.released = false;
+      mockingoose(Album).toReturn(album, 'findOne');
+      req.params.id = album._id;
+      req.query = { limit: 20, offset: 0 };
+      req.user = { _id: artistIds[1] };
+      await albumsController.findAlbumTracks(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
   });
   describe('deleteAblum', () => {
     it('Should return the deleted album with status code 200 if the album was found', async () => {
@@ -147,11 +188,25 @@ describe('Albums Controller', () => {
         .toReturn(album, 'findOne')
         .toReturn(album, 'findOneAndUpdate')
         .toReturn([{ tracks: 3 }], 'aggregate');
+      mockingoose(Artist).toReturn(album.artists, 'find');
       req.params.id = album._id;
+      req.body.artists = album.artists;
       req.user = { _id: album.artists[0]._id };
       await albumsController.updateAlbum(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(200);
       expect(res.json.mock.calls[0][0]).toMatchObject(album);
+    });
+    it("Should throw an error with status code 400 if artists doesn't exist", async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'findOneAndUpdate')
+        .toReturn([{ tracks: 3 }], 'aggregate');
+      mockingoose(Artist).toReturn([], 'find');
+      req.params.id = album._id;
+      req.body.artists = album.artists;
+      req.user = { _id: album.artists[0]._id };
+      await albumsController.updateAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
     });
     it('Should throw an error with status code 404 if the album was not found', async () => {
       mockingoose(Album)
@@ -299,6 +354,17 @@ describe('Albums Controller', () => {
       await albumsController.setImage(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
+    it('Should throw an error with status code 400 if no files were uploaded', async () => {
+      mockingoose(Album)
+        .toReturn(album, 'findOne')
+        .toReturn(album, 'save');
+      req.user = { _id: album.artists[0]._id };
+      req.params.id = album._id;
+      req.file = undefined;
+      fs.unlink = jest.fn();
+      await albumsController.setImage(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
     it('Should throw an error with status code 404 if the album is not found', async () => {
       mockingoose(Album)
         .toReturn(null, 'findOne')
@@ -376,6 +442,40 @@ describe('Albums Controller', () => {
       req.body = { name: album.name, artists: album.artists };
       await albumsController.newTrack(req, res, next);
       expect(next.mock.calls[0][0].statusCode).toBe(400);
+    });
+  });
+  describe('releaseAlbum', () => {
+    beforeEach(() => {
+      album.released = false;
+      req.get = jest.fn();
+      req.user = { _id: album.artists[0]._id }; // user is the right artist
+      notifyService.albumReleaseNotify = jest.fn();
+    });
+
+    it('Should return the released album with status code 200', async () => {
+      albumService.releaseAlbum = jest.fn().mockResolvedValue(album);
+      mockingoose(Album).toReturn(album, 'findOne');
+      await albumsController.releaseAlbum(req, res, next);
+      expect(res.status.mock.calls[0][0]).toBe(200);
+    });
+    it('Should return an error with status code 404 if the album is not found', async () => {
+      mockingoose(Album).toReturn(null, 'findOne');
+      await albumsController.releaseAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(404);
+    });
+    it("Should return an error with status code 403 if the user is not the album's main artist", async () => {
+      req.user = { _id: album.artists[1]._id };
+      mockingoose(Album).toReturn(album, 'findOne');
+      await albumsController.releaseAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
+    it("Should return an error with status code 403 if the album shouldn't be released", async () => {
+      mockingoose(Album).toReturn(album, 'findOne');
+      albumService.releaseAlbum = jest
+        .fn()
+        .mockResolvedValue(new AppError('no', 403));
+      await albumsController.releaseAlbum(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });
 });

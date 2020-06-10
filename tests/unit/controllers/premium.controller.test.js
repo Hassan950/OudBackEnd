@@ -61,7 +61,7 @@ describe('Premium Controller', () => {
   describe('gift', () => {
     it('should return an error if premiumService has returned an AppError instance', async () => {
       req.user = { role: 'free' };
-      req.body.userId = "validId";
+      req.body.userId = 'validId';
       premiumService.gift = jest
         .fn()
         .mockResolvedValue(new AppError('An Error', httpStatus.BAD_REQUEST));
@@ -71,12 +71,20 @@ describe('Premium Controller', () => {
 
     it('should send json file if everything went ok', async () => {
       req.user = { role: 'free' };
-      req.body.userId = "validId";
-      const result = 'someReturnValue';
+      req.body.userId = 'validId';
+      const result = {
+        user: {
+          displayName: 'Another Testo'
+        },
+        result: {
+          displayName: 'Testo Testo',
+          plan: Date.now()
+        }
+      };
       premiumService.gift = jest.fn().mockResolvedValue(result);
       await premiumController.gift(req, res, next);
       expect(res.status.mock.calls[0][0]).toBe(httpStatus.OK);
-      expect(json.mock.calls[0][0]).toBe(result);
+      expect(json.mock.calls[0][0]).toBe(result.user);
     });
   });
 });

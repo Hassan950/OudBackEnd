@@ -109,6 +109,9 @@ const userSchema = mongoose.Schema(
     google_id: {
       type: String
     },
+    github_id: {
+      type: String
+    },
     verifyToken: {
       type: String,
       select: false
@@ -123,6 +126,10 @@ const userSchema = mongoose.Schema(
     },
     passwordResetExpires: {
       type: Date,
+      select: false
+    },
+    refreshToken: {
+      type: String,
       select: false
     },
     lastLogin: {

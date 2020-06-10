@@ -122,6 +122,11 @@ describe('Player controller', () => {
       await playerController.pausePlayer(req, res, next);
       expect(player.isPlaying).toBe(false);
     });
+    it('should return 403 if currently playing type is ad', async () => {
+      player.currentlyPlayingType = 'ad';
+      await playerController.pausePlayer(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
   });
 
   describe('Resume player', () => {
@@ -209,6 +214,12 @@ describe('Player controller', () => {
       await playerController.resumePlayer(req, res, next);
       expect(player.positionMs).toBe(req.body.positionMs);
     });
+
+    it('should return 403 if currently playing type is ad', async () => {
+      player.currentlyPlayingType = 'ad';
+      await playerController.resumePlayer(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
+    });
   });
 
   describe('Seek player', () => {
@@ -252,6 +263,11 @@ describe('Player controller', () => {
       player.progressMs = 0;
       await playerController.seekPlayer(req, res, next);
       expect(player.progressMs).toBe(req.query.positionMs);
+    });
+    it('should return 403 if currently playing type is ad', async () => {
+      player.currentlyPlayingType = 'ad';
+      await playerController.seekPlayer(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(403);
     });
   });
 });
