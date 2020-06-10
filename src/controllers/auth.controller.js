@@ -559,3 +559,36 @@ exports.refreshAccessToken = async (req, res, next) => {
 
   createTokenAndSend(user, res);
 };
+
+/**
+ * Reject refresh token
+ * 
+ * @throws AppError 500 status
+ * @author Abdelrahman Tarek
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @summary Reject refresh token
+ */
+exports.rejectRefreshToken = async (req, res, next) => {
+  const refreshToken = req.cookies['refresh_token'];
+
+  if (!refreshToken || refreshToken.split('.').length < 2) return next(new AppError('Invalid refresh token', 401));
+
+  const id = refreshToken.split('.')[0];
+
+  if (!mongoose.isValidObjectId(id)) return next(new AppError('Invalid refresh token', 401));
+
+  const user = await userService.findUserByIdAndCheckRefreshToken(id, refreshToken);
+  
+  if (!user) {
+    return next(new AppError('Invalid refresh token', httpStatus.UNAUTHORIZED));
+  }
+
+  // update refreshToken
+  user.refreshToken = undefined;
+
+  await user.save();
+
+  res.status(httpStatus.NO_CONTENT).send();
+};

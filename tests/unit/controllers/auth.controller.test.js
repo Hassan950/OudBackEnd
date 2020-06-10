@@ -554,4 +554,53 @@ describe('Auth controllers', () => {
       expect(user.save).toBeCalled();
     });
   });
+
+  describe('reject refresh token', () => {
+    beforeEach(() => {
+      req.cookies['refresh_token'] = user._id.toString() + '.' + '1';
+      user.refreshToken = req.cookies['refresh_token'];
+      mockingoose(User).toReturn(user, 'findOne');
+    }); 
+
+    it('should return 401 if no token passed', async () => {
+      req.cookies['refresh_token'] = null;
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if no token does not have 2 parts', async () => {
+      req.cookies['refresh_token'] = user._id.toString();
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if id is wrong', async () => {
+      req.cookies['refresh_token'] = '1.1';
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if not user found with the given id', async () => {
+      mockingoose(User).toReturn(null, 'findOne');
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should return 401 if refresh token is wrong', async () => {
+      user.refreshToken = null;
+      mockingoose(User).toReturn(user, 'findOne');
+      await authController.rejectRefreshToken(req, res, next);
+      expect(next.mock.calls[0][0].statusCode).toBe(401);
+    });
+
+    it('should delete refresh token', async () => {
+      await authController.rejectRefreshToken(req, res, next);
+      expect(user.refreshToken).toBe(undefined);
+    });
+
+    it('should save the user', async () => {
+      await authController.rejectRefreshToken(req, res, next);
+      expect(user.save).toBeCalled();
+    });
+  });
 });

@@ -46,4 +46,8 @@ router
   .route('/refresh_token')
   .post(catchAsync(authController.refreshAccessToken));
 
+router
+  .route('/refresh_token/reject')
+  .post(catchAsync(authController.rejectRefreshToken));
+
 module.exports = router;
