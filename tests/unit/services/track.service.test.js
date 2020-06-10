@@ -95,9 +95,19 @@ describe('track service', () => {
       mockingoose(Track).toReturn(tracks, 'find');
       user = { _id: artistIds[0]._id };
 
-      tracks = await trackService.findTracks([track._id, tracks[1]._id], user);
-      expect(tracks[0]).toHaveProperty('name');
-      expect(tracks[1]).toBe(null);
+      result = await trackService.findTracks([track._id, tracks[1]._id], user);
+      expect(result[0]).toHaveProperty('name');
+      expect(result[1]).toBe(null);
+    });
+    it('Should return albums if they are released', async () => {
+      tracks[0].album.released = true;
+      mockingoose(Track).toReturn(tracks, 'find');
+      user = { _id: artistIds[0]._id };
+      const result = await trackService.findTracks(
+        [track._id, tracks[1]._id],
+        user
+      );
+      expect(result[0]).toHaveProperty('name');
     });
   });
 
@@ -116,6 +126,29 @@ describe('track service', () => {
       }
       expect(check).toBeCalled();
     });
+    it("Should do nothing if the audioUrl doesn't exist", async () => {
+      track.audioUrl = undefined;
+      mockingoose(Track).toReturn(track, 'findOneAndDelete');
+      fs.unlink = jest.fn().mockImplementationOnce(lol => {
+        throw { code: 'not ENOENT' };
+      });
+      await trackService.deleteTrack('id');
+      expect(fs.unlink).not.toHaveBeenCalled();
+    });
+    it('Should do nothing if the error is ENOENT', async () => {
+      check = jest.fn();
+      mockingoose(Track).toReturn(track, 'findOneAndDelete');
+      fs.unlink = jest.fn().mockImplementationOnce(lol => {
+        throw { code: 'ENOENT' };
+      });
+      try {
+        await trackService.deleteTrack(track.id);
+      } catch (err) {
+        expect(err).toBeDefined();
+        check();
+      }
+      expect(check).not.toHaveBeenCalled();
+    });
   });
 
   describe('checkFile', () => {
@@ -133,6 +166,14 @@ describe('track service', () => {
       }
       expect(check).toBeCalled();
     });
+    it('Should do nothing if audioUrl doesn\'t exist', async () => {
+      Track.findById = jest.fn().mockImplementationOnce(() => {
+        return {select: jest.fn().mockReturnThis()};
+      })
+      fs.unlink = jest.fn().mockImplementationOnce();
+      await trackService.checkFile('id');
+      expect(fs.unlink).not.toHaveBeenCalled();
+    });
   });
 
   describe('artistTracksExist', () => {
@@ -142,6 +183,18 @@ describe('track service', () => {
         track._id
       ]);
       expect(id.statusCode).toBe(400);
+    });
+    it('Should not change tracksIds if it is more than or equal to 5', async () => {
+      track.album.released = true;
+      mockingoose(Track).toReturn([track, track, track, track, track], 'find');
+      const result = await trackService.artistTracksExist(artistIds[0]._id, [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]);
+      expect(result.length).toBe(5);
     });
   });
 });
