@@ -39,7 +39,180 @@ tags:
     description: Endpoints for queue
   - name: Genres
     description: Endpoints for genres
+  - name: Notifications
+    description: Endpoints for notifications
+  - name: Chat
+    description: Endpoints for Chatting
 paths:
+  /me/chat/:
+    get:
+      tags:
+      - Chat
+      summary: Get messages' threads
+      description: gets the messages' threads of the user in paging object sorted from most frequent modified to least
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: limit
+        in: query
+        description: maximum number of threads to return (maximum 50, default 20)
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: number of threads to skip from beginning to return (starts from zero)
+        schema:
+          type: integer
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          description: list of threads inside a paging object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Thread'
+                  limit: 
+                    type: integer
+                    description:  maximum number of threads to return as set in the query or by default
+                  offset:
+                    type: integer
+                    description: index of the first element in the array
+                  total:
+                    type: integer
+                    description: total number of documents available in the database
+  /me/chat/{id}:
+    get:
+      tags:
+      - Chat
+      summary: Get messages of a thread
+      description: gets a specific thread of the user with its messages wrapped in paging object sorted from most frequent one to least.
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the thread
+      - name: limit
+        in: query
+        description: maximum number of messages to return (maximum 50, default 20)
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: number of messages to skip from beginning to return (starts from zero)
+        schema:
+          type: integer
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          description: A thread with messages paging object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Messages'
+    post:
+      tags:
+      - Chat
+      summary: Send Message to a Thread
+      description: sends a message to a specific thread of the user.
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the recipient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: The contents of the message
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '201':
+          $ref: '#/components/responses/Created'
+  /me/{id}/{messageId}:
+    delete:
+      tags:
+      - Chat
+      summary: Delete Message From a Thread
+      description: Deletes a specific message from a thread
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the thread
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the message to be deleted
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '204':
+          $ref: '#/components/responses/NoContent'
+  /me/notifications/:
+    put:
+      tags:
+        - Notifications
+      summary: Updates the registration token of a user
+      description: Updates the registration token that is used to send nofications to the user via Firebase Cloud Messaging(FCM).
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: The registration token of the user
+      responses:
+        '204':
+          description: the resources are updated and the response body is empty.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   /genres/{id}:
     get:
       tags:
@@ -105,7 +278,7 @@ paths:
                     description: total number of documents available in the database
         '400':
           $ref: '#/components/responses/InvalidId'        
-  /me/redeem:
+  /me/premium/redeem:
     patch:
       tags:
         - Premium
@@ -116,31 +289,229 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
-        description: The coupon code.
-        required: true
         content:
           application/json:
             schema:
-              type: string
+              type: object
+              properties:
+                couponId:
+                  type: string
+                  description: >-
+                    The coupon code
       responses:
         '200':
-          description: the response body contains an user's current credit in JSON format.
+          description: the response body contains the user private object with current credit in JSON format.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  credit:
-                    type: integer
+                $ref: '#/components/schemas/UserPrivate'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  /me/subscribe:
+  /me/premium/gift:
+    patch:
+      tags:
+        - Premium
+      summary: Subscribe or Resubscribe an user by spending The User's credit (Oud Coins)
+      description: >-
+        subscribe or resubscribe an user by spending The User's credit (Oud Coins) as a gift. Sends a confirmation email for the gifted user that informs him that he was gifted and his end date.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: >-
+                    The Gifted User ID.
+      responses:
+        '200':
+          description: the response body contains the user private object with current credit in JSON format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPrivate'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /albums/{id}/comments:
+    post:
+      tags:
+        - Albums
+      summary: add comments for the album
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of album to add comment to
+          schema:
+            type: string
+            format: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string    
+      responses:
+        '201':  
+          description: comment added
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      tags:
+        - Albums
+      summary: get comments for the album
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of album to add comment to
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: comments on the album
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  previous, next and limit that can be useful in future calls.
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userName:
+                          type: string
+                        comment:
+                          type: string
+                    description: the Requested releases
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The total number of items available to return
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /playlists/{id}/comments:
+    post:
+      tags:
+        - Playlists
+      summary: add comments for the playlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of playlist to add comment to
+          schema:
+            type: string
+            format: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string    
+      responses:
+        '201':  
+          description: comment added
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      tags:
+        - Playlists
+      summary: get comments for the playlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of playlist to add comment to
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: comments on the playlist
+          content:
+            application/json:
+              schema:
+                description: >-
+                  The offset-based paging object is a container for a set of
+                  objects. It contains a key called items (whose value is an
+                  array of the requested objects) along with other keys like
+                  previous, next and limit that can be useful in future calls.
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userName:
+                          type: string
+                        comment:
+                          type: string
+                    description: the Requested releases
+                  limit:
+                    type: integer
+                    description: >-
+                      The maximum number of items in the response (as set in the
+                      query or by default).
+                  offset:
+                    type: integer
+                    description: >-
+                      The offset of the items returned (as set in the query or
+                      by default).
+                  total:
+                    type: integer
+                    description: The total number of items available to return
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                      
+  /me/premium/subscribe:
     patch:
       tags:
         - Premium
@@ -150,22 +521,18 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: the response body the end date of the premium plan.
+          description: the response body the user private object with plan updated to be the end date of the premium subscription.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  endDate:
-                    type: string
-                    format: date
+                $ref: '#/components/schemas/UserPrivate'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/artists/{artistId}':
+  /artists/{artistId}:
     get:
       tags:
         - Artists
@@ -188,11 +555,36 @@ paths:
                 $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/artists/{artistId}/albums':
+  /artists/genres/{id}:
+    get:
+      tags:
+        - Artists
+      summary: Gets artists of a specific genre
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the genre.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: the response body contains a list of artist objects in JSON format.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artist'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /artists/{artistId}/albums:
     get:
       tags:
         - Artists
@@ -223,6 +615,17 @@ paths:
           schema:
             type: integer
             default: 0
+        - name: included_groups
+          in: query
+          description: >-
+                    A comma-separated list of keywords that will be used to filter the response. If not supplied, all album types will be returned. Valid values are:
+                      - album
+                      - single
+                      - appears_on
+                      - compilation'
+                    For example: include_groups=album,single.
+          schema:
+            type: string
       responses:
         '200':
           description: >-
@@ -241,7 +644,40 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AlbumSimple'
+                      type: object
+                      description: Album Simple Object
+                      properties:
+                        _id:
+                          type: string
+                          description: Unique ID of the album
+                        album_type:
+                          type: string
+                          description: >-
+                            the type of the album: one of the following 'single', 'album' or
+                            'compilation'
+                        album_group:
+                          type: string
+                          description: >-
+                            Possible values are “album”, “single”, “compilation”, “appears_on”. Compare to album_type this field represents relationship between the artist and the album.
+                        artists:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/ArtistSimple'
+                          description: >-
+                            The artists of the album. Each artist object includes a link in href
+                            to more detailed information about the artist.
+                        image:
+                          type: string
+                          description: The source url of the image
+                        name:
+                          type: string
+                          description: The name of the album
+                        type:
+                          type: string
+                          description: The object type "album"
+                        released:
+                          type: boolean
+                          description: determines if the album is released for public or private
                     description: The requested Albums.
                   limit:
                     type: integer
@@ -258,11 +694,9 @@ paths:
                     description: The maximum number of items available to return
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/artists/{artistId}/top-tracks':
+  /artists/{artistId}/top-tracks:
     get:
       tags:
         - Artists
@@ -293,11 +727,9 @@ paths:
                       $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/artists/{artistId}/related-artists':
+  /artists/{artistId}/related-artists:
     get:
       security:
         - bearerAuth: []
@@ -330,8 +762,6 @@ paths:
                       $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   /artists:
@@ -366,6 +796,22 @@ paths:
                       $ref: '#/components/schemas/Artist'
         '400':
           $ref: '#/components/responses/InvalidId'
+  /artists/some:
+    get:
+      tags:
+        - Artists
+      summary: Get some Artists
+      description: Get information for some artists without specifing anything about them.
+      responses:
+        '200':
+          description: >-
+            the response body contains an array of artist objects in JSON format. 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artist'
   /me/following/contains:
     get:
       tags:
@@ -396,21 +842,18 @@ paths:
         '200':
           description: >-
             the response body contains a JSON array of `true` or `false` values,
-            in the same order in which the `ids` were specified.
+            in the same order in which the ids were specified.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  ids:
-                    type: array
-                    items:
-                      type: boolean
+                type: array
+                items:
+                  type: boolean
         '400':
           $ref: '#/components/responses/InvalidId'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  '/playlists/{playlistId}/followers/contains':
+  /playlists/{playlistId}/followers/contains:
     get:
       tags:
         - Follow
@@ -813,7 +1256,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/playlists/{playlistId}/followers':
+  /playlists/{playlistId}/followers:
     put:
       tags:
         - Follow
@@ -894,7 +1337,7 @@ paths:
                 $ref: '#/components/schemas/UserPrivate'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  /me/profilePicure:
+  /me/profilePicture:
     patch:
       tags:
         - Users Profile
@@ -908,11 +1351,11 @@ paths:
             schema:
               type: object
               properties:
-                profileImage:
+                images:
                   type: string
                   format: binary
             encoding:
-              profileImage:
+              images:
                 contentType: 'image/png, image/jpeg'
       responses:
         '200':
@@ -979,7 +1422,36 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  '/users/{userId}':
+  /me/privateSession:
+    put:
+      tags:
+        - Users Profile
+      summary: Start or End a Private Session
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: The Value of Private Session to be set
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - privateSession
+              properties:
+                privateSession:
+                  type: boolean
+      responses:
+        '200':
+          description: the response body contains a user object in JSON format after changing the value of privateSession.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPrivate'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /users/{userId}:
     get:
       tags:
         - Users Profile
@@ -1006,7 +1478,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  /artists/request:
+  /artists/requests:
     post:
       tags:
         - Artists
@@ -1027,18 +1499,39 @@ paths:
                   items:
                     type: string
                   description: >-
-                    A list of the genres used to classify the album. example:
-                    `"Prog Rock"`, `"Post-Grunge"`. (If not yet classified, the
-                    array is empty.)"
+                    A list of the genre ID's of the genres of the artist. 
                 name:
                   type: string
                   description: The name of the artist.
+                displayName:
+                  type: string
+                  description: The name that will be displayed on his/her profile
                 bio:
                   type: string
                   description: a biography or short biographical profile of the artist.
+                email: 
+                  type: string
+                  description: An email for contact
+                country:
+                  type: string
+                  description: The country of the artist
+              required:
+              - genres
+              - email
+              - name
+              - displayName
+              - country
       responses:
-        '204':
-          description: the resources are created and the response body is empty.
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: string
+                    description: The id of the created request
         '400':
           description: >-
             The request could not be understood by the server due to malformed
@@ -1047,7 +1540,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/albums/{id}':
+  /artists/requests/{id}/attachments:
+    post:
+      tags:
+        - Artists
+      summary: Uploads an official document image
+      description: Uploads an official document that is attached to the request to be an artist.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of the request
+          required: true
+          schema:
+            type: string
+            format: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+            encoding:
+              image:
+                contentType: 'image/png, image/jpeg'
+      responses:
+        '204':
+          description: the resources are created and the response body is empty.
+        '400':
+          description: >-
+            the server cannot or will not process the request due to something that is perceived to be a client error. and the artist request will be discarded and removed from the server and the user should resubmit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /artists/requests/{id}/handle:
+    post:
+      tags:
+      - Artists
+      summary: Responds to artist requests by accepting or refusing
+      description: >-
+        Determine whether a request to be an artist should by accepted or refused and create an artist if accepted then send informing emails for the applicant.
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accept:
+                  type: boolean
+                  description: true for accepting and false for refusing the request
+              required:
+              - accept
+      responses:
+        '204':
+          description: successful operation and response body is empty
+        '400':
+          description: >-
+            The request could not be understood by the server due to malformed
+            syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /albums/{id}:
     get:
       tags:
         - Albums
@@ -1072,9 +1641,7 @@ paths:
                 $ref: '#/components/schemas/Album'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  '/me/artists/albums/{id}':
+  /me/artists/albums/{id}:
     delete:
       tags:
         - Albums
@@ -1137,9 +1704,7 @@ paths:
                 genres:
                   type: array
                   description: >-
-                    A list of the genres used to classify the album. i.e. "Prog
-                    Rock", "PostGrunge". (If not yet classified, the array is
-                    empty.)
+                    A list of the genre ID's of the genres used to classify the album.
                   items:
                     type: string
                 album_type:
@@ -1147,9 +1712,6 @@ paths:
                   description: >-
                     the type of the album: one of the following 'single',
                     'album' or 'compilation'
-                album_group:
-                  type: string
-                  description: 'one of ''single'', ''album'', ''compilation'' and ''appears_on'''
                 release_date:
                   type: string
                   description: The date the album was first released
@@ -1198,7 +1760,7 @@ paths:
                       $ref: '#/components/schemas/Album'
         '400':
           $ref: '#/components/responses/InvalidId'
-  '/albums/{id}/tracks':
+  /albums/{id}/tracks:
     get:
       tags:
         - Albums
@@ -1254,11 +1816,37 @@ paths:
                     description: The maximum number of items available to return
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/tracks/{id}':
+  /tracks/{id}/download:
+    get:
+      tags:
+        - Tracks
+      summary: Download a track
+      description: Download Track with the given id
+      security:
+        - bearerAuth: ['premium', 'artist']
+      parameters:
+        - name: id
+          in: path
+          description: ID of track to return
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        
+  /tracks/{id}:
     get:
       tags:
         - Tracks
@@ -1309,8 +1897,6 @@ paths:
                 $ref: '#/components/schemas/Track'
         '400':
           $ref: '#/components/responses/InvalidId'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -1455,9 +2041,7 @@ paths:
                 genres:
                   type: array
                   description: >-
-                    A list of the genres used to classify the album. i.e. "Prog
-                    Rock", "PostGrunge". (If not yet classified, the array is
-                    empty.)
+                    A list of the genre ID's of the genres used to classify the album.
                   items:
                     type: string
                 album_type:
@@ -1465,11 +2049,6 @@ paths:
                   description: >-
                     the type of the album: one of the following 'single',
                     'album' or 'compilation'
-                album_group:
-                  type: string
-                  description: >-
-                    one of the following 'single', 'album' or 'compilation',
-                    'appears_on'
                 release_date:
                   type: string
                   description: The date the album was first released
@@ -1492,7 +2071,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/me/artists/albums/{id}/images':
+  /me/artists/albums/{id}/images:
     post:
       tags:
         - Albums
@@ -1543,22 +2122,18 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: IDs
+        - name: ids
           in: query
           required: true
-          description: the IDs of the Albums to be saved
+          description: comma separated ids of the Albums to be saved
           schema:
             type: array
             items:
               type: string
               maximum: 50
       responses:
-        '200':
+        '201':
           description: Album Saved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Album'
         '400':
           $ref: '#/components/responses/InvalidId'
         '401':
@@ -1574,10 +2149,10 @@ paths:
         - bearerAuth: []
       summary: Remove Saved Albums for Current User
       parameters:
-        - name: IDs
+        - name: ids
           in: query
           required: true
-          description: the IDs of the Albums to be removed
+          description: comma separated ids of the Albums to be deleted
           schema:
             type: array
             items:
@@ -1674,7 +2249,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/me/artists/albums/{id}/release':
+  /me/artists/albums/{id}/release:
     patch:
       security:
         - bearerAuth: []
@@ -1713,44 +2288,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  /me/artists/images:
-    post:
-      tags:
-        - Artists
-      summary: Update artist images
-      description: Updates the current artist images
-      security:
-        - bearerAuth: []
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                profileImage:
-                  type: string
-                  format: binary
-                coverImage:
-                  type: string
-                  format: binary
-            encoding:
-              profileImage:
-                contentType: 'image/png, image/jpeg'
-              coverImage:
-                contentType: 'image/png, image/jpeg'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artist'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
   /me/artists/bio:
     patch:
       tags:
@@ -1781,7 +2318,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  /me/artists/popularsongs:
+  /me/artists/top-tracks:
     patch:
       tags:
         - Artists
@@ -1793,10 +2330,15 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                type: string
-              description: ID's of the tracks sorted
+              type: object
+              properties:
+                tracks:
+                  type: array
+                  items:
+                    type: string
+                  description: ID's of the tracks sorted. (maximum 10 tracks)
+              required: 
+              - tracks
       responses:
         '200':
           description: successful operation
@@ -1810,7 +2352,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-  '/me/artists/albums/{id}/tracks':
+  /me/artists/albums/{id}/tracks:
     post:
       tags:
         - Albums
@@ -1858,8 +2400,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-  /me/recentsearch:
-    post:
+  /me/search/recent:
+    put:
       tags:
         - Search
       summary: what user recently searched for
@@ -1887,6 +2429,22 @@ paths:
         - Search
       summary: retrive what user recently searched for
       description: retrive what the user used from rescent search
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of items to return.
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 50
+        - name: offset
+          in: query
+          description: The index of the first item to return.
+          schema:
+            type: integer
+            default: 0
+            maximum: 2000
       responses:
         '200':
           description: item the user used in recent search
@@ -1928,15 +2486,16 @@ paths:
       parameters:
         - name: q
           in: query
-          description: Search query keywords and optional field filters and operators.
+          description: name of what you want to search for eg q = Top this will return items with name that includes Top.
           schema:
             type: string
+          required: true  
         - name: type
           in: query
           description: >-
             A comma-separated list of item types to search across. Valid types
-            are album , artist, playlist, and track. Search results include hits
-            from all the specified item types.
+            are album ,User, Artist, playlist, and track. Search results include hits
+            from all the specified item types.Its optional if not sent search will be on all types.
           schema:
             type: string
         - name: limit
@@ -1957,8 +2516,8 @@ paths:
       responses:
         '200':
           description: >-
-            the response body contains array of Simplified Playlist objects in
-            JSON format.
+            the response body contains array of objects in
+            JSON format with the required type.
           content:
             application/json:
               schema:
@@ -1969,15 +2528,16 @@ paths:
                   previous, next and limit that can be useful in future calls.
                 type: object
                 properties:
-                  Tracks:
+                  tracks:
                     type: array
                     items:
                       $ref: '#/components/schemas/Track'
-                  Albums:
+              
+                  albums:
                     type: array
                     items:
                       $ref: '#/components/schemas/AlbumSimple'
-                  Artists:
+                  artists:
                     type: array
                     items:
                       $ref: '#/components/schemas/Artist'
@@ -2031,20 +2591,14 @@ paths:
               maximum: 50
       responses:
         '200':
-          description: ok
+          description: true or false if found album saved
           content:
             application/json:
               schema:
-                description: >-
-                  JSON array of true or false values, in the same order in which
-                  the ids were specified.
-                type: object
-                properties:
-                  IsFound:
-                    type: array
-                    items:
-                      type: boolean
-                      description: true or false if found album saved
+                type: array
+                items:
+                  type: boolean
+                  description: true or false if found album saved
         '400':
           description: Invalid ID
           content:
@@ -2077,20 +2631,14 @@ paths:
               maximum: 50
       responses:
         '200':
-          description: ok
+          description: true or false if found track saved
           content:
             application/json:
               schema:
-                description: >-
-                  JSON array of true or false values, in the same order in which
-                  the ids were specified.
-                type: object
-                properties:
-                  IsFound:
-                    type: array
-                    items:
-                      type: boolean
-                      description: true or false if found album saved
+                type: array
+                items:
+                  type: boolean
+                  description: true or false if found track saved
         '400':
           description: Invalid ID
           content:
@@ -2111,10 +2659,10 @@ paths:
         - bearerAuth: []
       summary: Save Tracks for Current User
       parameters:
-        - name: IDs
+        - name: ids
           in: query
           required: true
-          description: the IDs of the Tracks to be saved
+          description: comma separated Ids of the Tracks to be saved
           schema:
             type: array
             items:
@@ -2123,31 +2671,6 @@ paths:
       responses:
         '200':
           description: Tracks Saved
-          content:
-            application/json:
-              schema:
-                description: >-
-                  The saved tracks inside a paging object. The offset-based
-                  paging object is a container for a set of objects.
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/SavedTrack'
-                  limit:
-                    type: integer
-                    description: >-
-                      The maximum number of items in the response (as set in the
-                      query or by default).
-                  offset:
-                    type: integer
-                    description: >-
-                      The offset of the items returned (as set in the query or
-                      by default).
-                  total:
-                    type: integer
-                    description: The maximum number of items available to return
         '400':
           description: Invalid ID
           content:
@@ -2179,7 +2702,7 @@ paths:
         - bearerAuth: []
       summary: Remove Saved Tracks for Current User
       parameters:
-        - name: IDs
+        - name: ids
           in: query
           required: true
           description: the IDs of the Tracks to be removed
@@ -2279,7 +2802,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/browse/categories/{categoryId}':
+  /browse/categories/{categoryId}:
     get:
       security:
         - bearerAuth: []
@@ -2318,7 +2841,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/browse/categories/{category_id}/playlists':
+  /browse/categories/{category_id}/playlists:
     get:
       security:
         - bearerAuth: []
@@ -2525,7 +3048,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}':
+  /playlists/{playlist_id}:
     get:
       security:
         - bearerAuth: []
@@ -2643,7 +3166,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}/tracks':
+  /playlists/{playlist_id}/tracks:
     delete:
       security:
         - bearerAuth: []
@@ -2665,7 +3188,7 @@ paths:
           schema:
             type: object
             properties:
-              URIs:
+              ids:
                 type: array
                 items:
                   type: string
@@ -2803,7 +3326,7 @@ paths:
             schema:
               type: object
               properties:
-                uris:
+                ids:
                   type: array
                   items:
                     type: string
@@ -2855,17 +3378,17 @@ paths:
             schema:
               type: object
               properties:
-                range_start:
+                rangeStart:
                   type: integer
                   description: The position of the first track to be reordered
-                range_length:
+                rangeLength:
                   type: integer
                   description: >-
                     The amount of tracks to be reordered.The range of tracks to
                     be reordered begins from the range_start position, and
                     includes the range_length subsequent tracks
                   default: 1
-                insert_before:
+                insertBefore:
                   type: integer
                   description: >-
                     The position where the tracks should be inserted.To reorder
@@ -2898,7 +3421,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /me/playlits:
+  /me/playlists:
     get:
       security:
         - bearerAuth: []
@@ -2906,6 +3429,12 @@ paths:
         - Playlists
       summary: Get a List of current User's Playlists
       parameters:
+        - name: isOwner
+          in: query
+          description: if true you will get the playlists created by current user if false you will get the playlists followed by current user
+          required: true
+          schema:
+            type: boolean
         - name: limit
           in: query
           description: The maximum number of playlists to return.
@@ -2964,7 +3493,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}/images':
+  /playlists/{playlist_id}/images:
     get:
       security:
         - bearerAuth: []
@@ -3059,7 +3588,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/playlists/{playlist_id}/tracks/Replace':
+  /playlists/{playlist_id}/tracks/Replace:
     put:
       security:
         - bearerAuth: []
@@ -3080,7 +3609,7 @@ paths:
             schema:
               type: object
               properties:
-                uris:
+                ids:
                   type: array
                   description: uris of the tracks
                   items:
@@ -3112,7 +3641,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/users/{user_id}/playlists':
+  /users/{user_id}/playlists:
     post:
       security:
         - bearerAuth: []
@@ -3290,7 +3819,7 @@ paths:
           $ref: '#/components/responses/Login'
         '400':
           $ref: '#/components/responses/BadRequest'
-  '/users/verify/{token}':
+  /users/verify/{token}:
     patch:
       tags:
         - UsersAuth
@@ -3331,7 +3860,7 @@ paths:
           $ref: '#/components/responses/TokenSentToEmail'
         '404':
           $ref: '#/components/responses/NotFound'
-  '/users/resetPassword/{token}':
+  /users/resetPassword/{token}:
     patch:
       tags:
         - UsersAuth
@@ -3375,7 +3904,29 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  /me/auth/facebook:
+    
+  /auth/facebook:
+    post:
+      tags:
+        - Auth
+      description: Authentication with facebook
+      requestBody:
+        description: Facebook access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: Facebook access token
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/FacebookAuth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags:
         - Auth
@@ -3395,52 +3946,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Login'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /me/auth/google:
-    patch:
-      tags:
-        - Auth
-      description: Connect or disconnect your user account with google.
-      requestBody:
-        description: Google access token
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                access_token:
-                  description: >-
-                    Google access token, if passed connect with google else
-                    disconnect
-                  type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/Login'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /auth/facebook:
-    post:
-      tags:
-        - Auth
-      description: Authentication with facebook
-      requestBody:
-        description: Facebook access token
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                access_token:
-                  description: Facebook access token
-                  type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/FacebookAuth'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -3467,13 +3972,111 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags:
+        - Auth
+      description: Connect or disconnect your user account with google.
+      requestBody:
+        description: Google access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: >-
+                    Google access token, if passed connect with google else
+                    disconnect
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Login'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/github:
+    post:
+      tags:
+        - Auth
+      description: Authentication with github
+      requestBody:
+        description: Github access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: Github access token
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GithubAuth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags:
+        - Auth
+      description: Connect or disconnect your user account with github.
+      requestBody:
+        description: Google access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: >-
+                    Github access token, if passed connect with github else
+                    disconnect
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Login'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/refresh_token:
+    post:
+      tags:
+        - Auth
+      description: Refresh access token
+      parameters:
+        - in: cookie
+          name: refresh_token
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Login'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/refresh_token/reject:
+    post:
+      tags:
+        - Auth
+      description: Remove refresh token from the server
+      parameters:
+        - in: cookie
+          name: refresh_token
+          schema:
+            type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /me/queue:
     delete:
       security:
         - bearerAuth: []
       tags:
         - Queue
-      description: Delete a track from Queue
+      description: Delete a track from Queue. If the deleted track was the playing track the queue will play the first track if found and if not it will play the last queue if found
       parameters:
         - name: queueIndex
           in: query
@@ -3504,8 +4107,8 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
-          $ref: '#/components/responses/Track'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '403':
@@ -3666,7 +4269,9 @@ paths:
         - bearerAuth: []
       tags:
         - Queue
-      description: Skip User’s Playback To Previous Track
+      description: >-
+        Skip User’s Playback To Previous Track.
+        If the repeat state in player is `context` and the playing track is the first track it will go to the last track in the queue. If the repeat state in player is not `context` and the playing track is the first track it will play will play the last queue if found.
       parameters:
         - name: deviceId
           in: query
@@ -3688,7 +4293,10 @@ paths:
         - bearerAuth: []
       tags:
         - Queue
-      description: Skip User’s Playback To Next Track
+      description: >-
+        Skip User’s Playback To Next Track.
+        If the repeat state in player is `context` and the playing track is the last track it will go to the first track in the queue. If the repeat state in player is not `context` and the playing track is the last track it will create a new queue similar to the playing queue.
+                  
       parameters:
         - name: deviceId
           in: query
@@ -3862,7 +4470,7 @@ paths:
         - bearerAuth: []
       tags:
         - Queue
-      description: Start/Resume a User's Playback
+      description: Start/Resume a User's Playback. if the user is a free user every 3 tracks 1 ad will be played
       parameters:
         - name: deviceId
           in: query
@@ -3887,13 +4495,9 @@ paths:
           application/json:
             schema:
               description: >-
-                Only one of either contextUri or uris can be specified. If
-                neither is present, calling /play will resume playback. If both
-                are present the request will return 400 BAD REQUEST.If
-                contextUri is a Playlist or Album, or when uris is provided,
-                then offset can be added to specify starting track in the
-                context.If the provided contextUri corresponds to an album or
-                playlist object, an offset can be specified either by track uri
+                ContextUri or uris can be specified to create a new queue. If
+                neither is present, calling /play will resume playback.
+                an offset can be specified either by track uri
                 OR position. If both are present the request will return 400 BAD
                 REQUEST. If incorrect values are provided for position or uri,
                 the request may be accepted but with an unpredictable resulting
@@ -3905,9 +4509,9 @@ paths:
                   format: uri
                   description: >-
                     Optional. Oud URI of the context to play. Valid contexts are
-                    albums, artists, playlists.
-                  example:
-                    context_uri: 'oud:album:1Je1IMUlBXcx1Fz0WE7oPT'
+                    album, artist, playlist.
+                  example: 'oud:album:4iV5W9uYEdYUVa79Axb7Rh'
+                    
                 uris:
                   description: Optional. A JSON array of the Oud track URIs to play
                   example:
@@ -4018,6 +4622,35 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    Ad:
+      type: object
+      description: advertisement
+      properties:
+        _id:
+          type: string
+        image:
+          type: string
+          example: https://imgr.com/img.jpg
+          description: Ad Image source
+        type:
+          type: string
+          description: object type 'ad'
+          example: 'ad'
+        duration:
+          type: number
+          description: Ad duration in ms
+        audioUrl:
+          type: string
+          description: audio source
+        name:
+          type: string
+          description: Ad name
+          example: 'Pepsi'
+        link:
+          type: string
+          description: Add redirect link
+          example: 'https://www.pepsi.com'
+  
     UserWithToken:
       type: object
       properties:
@@ -4053,25 +4686,17 @@ components:
         _id:
           type: string
           description: The unique ID of the Artist
-        followersCount:
-          type: integer
-          description: Information about the number of followers of the artist.
-          minimum: 0
         genres:
           type: array
           items:
-            type: string
-          description: >-
-            A list of the genres the artist is associated with. For example:
-            `"Prog Rock"` , `"Post-Grunge"`. (If not yet classified, the array
-            is empty.)
+            $ref: '#/components/schemas/Genre'
         images:
           type: array
           items:
             type: string
             format: url
           description: 'The source URL of the image (Profile, Cover).'
-        name:
+        displayName:
           type: string
           description: The name of the artist.
         bio:
@@ -4092,16 +4717,18 @@ components:
         _id:
           type: string
           description: The unique ID of the Artist
-        name:
+        displayName:
           type: string
           description: The name of the artist.
         type:
           type: string
           description: 'The object type: "artist"'
-        image:
-          type: string
-          format: url
-          description: The Artist profile picture
+        images:
+          type: array
+          items:
+            type: string
+            format: url
+          description: 'The source URL of the image (Profile, Cover).'
     AlbumSimple:
       type: object
       description: Album Simple Object
@@ -4114,13 +4741,6 @@ components:
           description: >-
             the type of the album: one of the following 'single', 'album' or
             'compilation'
-        album_group:
-          type: string
-          description: >-
-            The field is present when getting an artist’s albums. Possible
-            values are “album”, “single”, “compilation”, “appears_on”. Compare
-            to `album_type` this field represents relationship between the
-            artist and the album.
         artists:
           type: array
           items:
@@ -4137,6 +4757,9 @@ components:
         type:
           type: string
           description: The object type "album"
+        released:
+          type: boolean
+          description: determines if the album is released for public or private
     Track:
       type: object
       description: Track Full Object
@@ -4166,6 +4789,38 @@ components:
         views:
           type: integer
           description: The number of times someone listened to this track
+    TrackWithAudioUrl:
+      type: object
+      description: Track with AudioUrl
+      properties:
+        _id:
+          type: string
+          description: The unique Id of the track
+        name:
+          type: string
+          description: The name of the Track.
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistSimple'
+          description: The artists who performed the track.
+        albumId:
+          type: string
+          description: The id of the album of the track.
+        album:
+          $ref: '#/components/schemas/AlbumSimple'
+        type:
+          type: string
+          description: The object type i.e “track”
+        duartion:
+          type: integer
+          description: The duartion of the song in ms
+        views:
+          type: integer
+          description: The number of times someone listened to this track
+        audioUrl:
+          type: string
+          description: AudioUrl to download the track
     TrackSimple:
       type: object
       description: Simple Track Object
@@ -4230,8 +4885,6 @@ components:
           description: User Display Name
           type: string
           format: string
-        followersCount:
-          type: integer
         images:
           description: The user’s profile images.
           type: array
@@ -4243,6 +4896,11 @@ components:
           type: boolean
           default: false
           nullable: false
+        lastLogin:
+          description: last time user logged in
+          type: string
+          format: date
+          nullable: true
         type:
           description: 'The object type: “user”'
           type: string
@@ -4273,6 +4931,9 @@ components:
           type: string
           format: date
           nullable: true
+        privateSession:
+          type: boolean
+          default: false
         gender:
           type: string
           enum:
@@ -4323,21 +4984,18 @@ components:
           items:
             type: string
           nullable: true
-        followersCount:
-          description: Information about the count of followers of the user.
-          type: integer
-          minimum: 0
         verified:
           description: false if user is not verified else true
           type: boolean
           default: false
           nullable: false
-        Artist:
-          description: Information about the artist of this user if the role is artist
+        lastLogin:
+          description: last time user logged in
+          type: string
+          format: date
           nullable: true
-          $ref: '#/components/schemas/Artist'
         facebook_id:
-          description: Google Authentication id
+          description: Facebook Authentication id
           nullable: true
           type: string
         google_id:
@@ -4356,6 +5014,10 @@ components:
         name:
           type: string
           description: name of the genre
+      description: >-
+            A list of the genres the artist is associated with. For example:
+            `"Prog Rock"` , `"Post-Grunge"`. (If not yet classified, the array
+            is empty.)
     Album:
       type: object
       properties:
@@ -4377,10 +5039,7 @@ components:
         genres:
           type: array
           items:
-            type: string
-          description: >-
-            A list of the genres used to classify the album. i.e. `"Prog Rock"`,
-            `"PostGrunge"`. (If not yet classified, the array is empty.)
+            $ref: '#/components/schemas/Genre'
         image:
           type: string
           description: The source url of the image
@@ -4467,11 +5126,7 @@ components:
           description: The date and time the album was saved.
           format: date-time
         album:
-          description: Information about the album.
-          type: object
-          properties:
-            schema:
-              $ref: '#/components/schemas/Album'
+          $ref: '#/components/schemas/Album'
     SavedTrack:
       type: object
       properties:
@@ -4480,11 +5135,7 @@ components:
           description: The date and time the track was saved.
           format: date-time
         track:
-          description: Information about the track.
-          type: object
-          properties:
-            schema:
-              $ref: '#/components/schemas/Track'
+          $ref: '#/components/schemas/Track'
     PlaylistSimple:
       type: object
       properties:
@@ -4499,9 +5150,9 @@ components:
           description: the user ID who owns the Playlist
         tracks:
           type: array
-          description: tracks ids in the playlist
+          description: Information about the tracks of the Playlist
           items:
-            type: string
+            $ref: '#/components/schemas/PlaylistTrack'
         collaborative:
           type: boolean
           description: true if user allows other users to modify the Playlist
@@ -4540,10 +5191,6 @@ components:
           description: >-
             The Playlist Description. Only returned for modified,verified
             playlists,otherwise null
-        followersCount:
-          type: integer
-          description: Information about the followers of the artist.
-          minimum: 0
         tracks:
           type: array
           description: Information about the tracks of the Playlist
@@ -4561,20 +5208,32 @@ components:
           description: 'The object type: `"Playlist"`'
     PlaylistTrack:
       type: object
+      description: Simple Track Object
       properties:
-        added_at:
+        _id:
           type: string
-          description: te date and time the track was created
-          format: date-time
-        added_by:
+          description: The unique Id of the track
+        name:
           type: string
-          description: the user who added the track
-        track:
-          description: information about track
-          type: object
-          properties:
-            schema:
-              $ref: '#/components/schemas/Track'
+          description: The name of the Track.
+        album:
+          type: string
+          description: id of the album
+        artists:
+          type: array
+          items:
+            type: string
+          description: ids of artists who performed the track.
+        type:
+          type: string
+          description: The object type i.e “track”
+        duartion: 
+          type: integer
+          description: The duartion of the song in ms
+        views:
+          type: integer
+          description: The number of times someone listened to this track
+
     Signup:
       type: object
       required:
@@ -4640,6 +5299,12 @@ components:
           enum:
             - F
             - M
+        github_id:
+          type: string
+        google_id:
+          type: string
+        facebook_id:
+          type: string
     Login:
       type: object
       required:
@@ -4790,6 +5455,183 @@ components:
           default: unknwon
         id:
           type: string
+    SmallArtist:
+      type: object
+      description: Small artist
+      properties:
+        _id:
+          type: string
+        displayName:
+          type: string
+        type:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+          
+    SmallAlbum:
+      type: object
+      description: Small album
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        image:
+          type: string
+        type:
+          type: string
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/SmallArtist'
+      
+    Thread:
+      type: object
+      description: Messages' Thread
+      properties:
+        _id:
+          type: string
+          description: Id of the thread
+        from:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the first user
+            displayName:
+              type: string
+        to:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the second user
+            displayName:
+              type: string
+        read:
+          type: boolean
+          description: shows if the recipient has read the message or not yet.
+        updatedAt:
+          type: string
+          description: the date at which the thread was updated/modified (i.e. a new message was added).
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: id of the message
+              author:
+                type: string
+                description: id of the author of the message
+              message:
+                type: string
+                description: the body of the message
+              sentAt:
+                type: string
+                description: the date when the message was sent.
+                
+    Messages:
+      type: object
+      description: Messages of a Thread
+      properties:
+        _id:
+          type: string
+          description: Id of the thread
+        from:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the first user
+            displayName:
+              type: string
+        to:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the second user
+            displayName:
+              type: string
+        read:
+          type: boolean
+          description: shows if the recipient has read the message or not yet.
+        updatedAt:
+          type: string
+          description: the date at which the thread was updated/modified (i.e. a new message was added).
+        createdAt:
+          type: string
+          description: the date at which the thread was created (i.e. when first message was sent).
+        messages:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: id of the message
+                  author:
+                    type: string
+                    description: id of the author of the message
+                  message:
+                    type: string
+                    description: the body of the message
+                  sentAt:
+                    type: string
+                    description: the date when the message was sent.
+            limit: 
+              type: integer
+              description:  maximum number of messages to return as set in the query or by default
+            offset:
+              type: integer
+              description: index of the first element in the array
+            total:
+              type: integer
+              description: total number of documents available in the database
+
+                      
+          
+    SmallPlaylist:
+      type: object
+      description: Small artist
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        image:
+          type: string
+        type:
+          type: string
+      
+    PlayHistoryContext:
+      type: object
+      description: Context Object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          enum:
+            - Album
+            - Artist
+            - Playlist
+        id:
+          type: string
+        item:
+          oneOf:
+            - $ref: '#/components/schemas/SmallArtist'
+            - $ref: '#/components/schemas/SmallPlaylist'
+            - $ref: '#/components/schemas/SmallAlbum'
+        
     CurrentlyPlayingContext:
       type: object
       description: Current Playing Context
@@ -4814,7 +5656,7 @@ components:
           description: 'off, track, context'
           type: string
           enum:
-            - 'off'
+            - off
             - track
             - context
         currentlyPlayingType:
@@ -4831,7 +5673,9 @@ components:
           description: >-
             The currently playing track. Can be null (e.g. If private session is
             enabled this will be null).
-          $ref: '#/components/schemas/Track'
+          oneOf:
+            - $ref: '#/components/schemas/TrackWithAudioUrl'
+            - $ref: '#/components/schemas/Ad'
         actions:
           description: >-
             Allows to update the user interface based on which playback actions
@@ -4850,7 +5694,9 @@ components:
           description: >-
             The currently playing track. Can be null (e.g. If private session is
             enabled this will be null).
-          $ref: '#/components/schemas/Track'
+          oneOf:
+            - $ref: '#/components/schemas/TrackWithAudioUrl'
+            - $ref: '#/components/schemas/Ad'
         context:
           description: >-
             A Context Object. Can be null (e.g. If private session is enabled
@@ -4875,7 +5721,7 @@ components:
                 format: date-time
               context:
                 description: The context the track was played from.
-                $ref: '#/components/schemas/Context'
+                $ref: '#/components/schemas/PlayHistoryContext'
         limit:
           description: >-
             The maximum number of items in the response (as set in the query or
@@ -4933,6 +5779,22 @@ components:
           description: user images
           items:
             type: string
+    UserDataForGithub:
+      type: object
+      properties:
+        github_id:
+          type: string
+        email:
+          type: string
+        displayName:
+          type: string
+        username:
+          type: string
+        images:
+          type: array
+          description: user images
+          items:
+            type: string
   responses:
     FacebookAuth:
       description: >-
@@ -4964,6 +5826,21 @@ components:
             oneOf:
               - $ref: '#/components/schemas/UserWithToken'
               - $ref: '#/components/schemas/UserDataForGoogle'
+    GithubAuth:
+      description: >-
+        Github Auth response. send user account and x-auth-token if user is
+        already exists. else send user data to signup
+      headers:
+        x-auth-token:
+          description: Authentication token
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/UserWithToken'
+              - $ref: '#/components/schemas/UserDataForGithub'
     InvalidId:
       description: Invalid ID
       content:
@@ -5049,6 +5926,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    Created:
+      description: >-
+        Created - The request has been fulfilled and resulted in a new resource being created.
     InternalError:
       description: Internal Server Error.
       content:
