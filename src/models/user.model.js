@@ -156,6 +156,7 @@ const userSchema = mongoose.Schema(
   }
 );
 
+/* istanbul ignore next */
 userSchema.pre('save', async function(next) {
   if (!this.password || !this.isModified('password')) return next();
 
@@ -165,6 +166,7 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
+/* istanbul ignore next */
 userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
@@ -172,11 +174,13 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+/* istanbul ignore next */
 userSchema.pre('save', function(next) {
   if (this.isNew) this.newUser = true; // if the user is new make newUser to true
   next();
 });
 
+/* istanbul ignore next */
 userSchema.post('save', async function(doc) {
   if (doc.newUser) {
     const { Player } = require('../models/player.model');
@@ -204,6 +208,7 @@ userSchema.post('save', async function(doc) {
   }
 });
 
+/* istanbul ignore next */
 userSchema.methods.changedPasswordAfter = function(user, JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(

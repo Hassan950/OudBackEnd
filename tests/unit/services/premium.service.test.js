@@ -79,7 +79,7 @@ describe('Premium Service', () => {
       user.credit = 10000;
       mockingoose(Normal).toReturn(user, 'findOneAndUpdate')
         .toReturn(user, 'findOne');
-      const result = await premiumService.gift(user, user._id);
+      const { result } = await premiumService.gift(user, user._id);
       expect(result).toBe(user);
     });
 
@@ -95,7 +95,7 @@ describe('Premium Service', () => {
       user.plan = moment();
       mockingoose(Normal).toReturn(user, 'findOneAndUpdate')
         .toReturn(user, 'findOne');
-      const result = await premiumService.gift(user, user._id);
+      const { result } = await premiumService.gift(user, user._id);
       expect(result).toBe(user);
     });
   });

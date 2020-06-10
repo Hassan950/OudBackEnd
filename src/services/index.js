@@ -18,3 +18,4 @@ exports.searchService = require('./search.service');
 exports.premiumService = require('./premium.service');
 exports.notifyService = require('./notification.service');
 exports.commentService = require('./comment.service');
+exports.chatService = require('./chat.service');
