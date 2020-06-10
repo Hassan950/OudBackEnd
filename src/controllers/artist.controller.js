@@ -239,6 +239,7 @@ exports.handleRequest = async (req, res, next) => {
   if (req.body.accept) {
     await artistService.acceptRequest(request, req.get('host'));
   } else {
+    albumService.deleteImage(request.attachment);
     await artistService.refuseRequest(request, req.get('host'));
   }
   return res.status(204).send();
