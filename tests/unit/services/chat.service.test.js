@@ -5,7 +5,7 @@ const requestMocks = require('../../utils/request.mock');
 const mockingoose = require('mockingoose').default;
 const httpStatus = require('http-status');
 
-describe('Premium Service', () => {
+describe('Chat Service', () => {
   let thread;
   let user;
   let query;

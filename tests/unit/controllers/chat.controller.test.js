@@ -4,7 +4,7 @@ const AppError = require('../../../src/utils/AppError');
 const requestMocks = require('../../utils/request.mock');
 const httpStatus = require('http-status');
 
-describe('Premium Controller', () => {
+describe('Chat Controller', () => {
   let req;
   let res;
   let next;
@@ -25,14 +25,6 @@ describe('Premium Controller', () => {
     next = jest.fn();
   });
   describe('getChat', () => {
-    it('should return an error if chatService has returned an AppError instance', async () => {
-      chatService.getChat = jest
-        .fn()
-        .mockResolvedValue(new AppError('An Error', httpStatus.NOT_FOUND));
-      await chatController.getChat(req, res, next);
-      expect(next.mock.calls[0][0].statusCode).toBe(httpStatus.NOT_FOUND);
-    });
-
     it('should send json file if everything went ok', async () => {
       const result = { data: 'someReturnValue', total: 2 };
       chatService.getChat = jest.fn().mockResolvedValue(result);

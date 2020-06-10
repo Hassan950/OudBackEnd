@@ -14,7 +14,6 @@ const httpStatus = require('http-status');
  */
 exports.getChat = async (req, res, next) => {
   const result = await chatService.getChat(req.user._id, req.query);
-  if (result instanceof AppError) return next(result);
   res.status(httpStatus.OK).json({
     items: result.data,
     offset: req.query.offset,
