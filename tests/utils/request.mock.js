@@ -7,6 +7,7 @@ const mockResponse = () => {
   res.send = jest.fn().mockReturnValue(res);
   res.end = jest.fn().mockReturnValue(res);
   res.setHeader = jest.fn().mockReturnValue(res);
+  res.cookie = jest.fn().mockReturnValue(res);
   return res;
 };
 
@@ -16,6 +17,7 @@ const mockRequest = (data) => {
   req.protocol = 'http';
   req.get = jest.fn().mockImplementation((name) => { return name; });
   req.query = {};
+  req.cookies = {};
   return req;
 };
 
