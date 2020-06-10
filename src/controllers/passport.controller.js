@@ -129,9 +129,10 @@ exports.githubPassport = async (req, accessToken, refreshToken, profile, done) =
 
     const newUser = {
       github_id: profile.id,
+      username: profile.username,
       email: profile.emails.length ? profile.emails[0].value : undefined,
       displayName: profile.displayName,
-      images: profile.photos.length ? [profile.photos[0].value] : undefined,
+      images: profile._json.avatar_url ? [profile._json.avatar_url] : undefined,
     };
 
     done(null, newUser);
