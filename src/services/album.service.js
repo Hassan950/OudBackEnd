@@ -107,6 +107,7 @@ exports.findAlbums = async (ids, user) => {
   ]);
   [result, lengthArray] = await Promise.all([result, lengthArray]);
   let length;
+
   const albums = ids.map(id => {
     let val = result.find(album => String(album._id) == id);
     if (val) {
@@ -368,16 +369,21 @@ exports.addTrack = async (album, track) => {
  * @returns null if the artist has no albums or the ID doesn't belong to any artist
  */
 exports.findArtistAlbums = async (artistId, limit, offset, groups, user) => {
+  // Initializing some options used in queries
   let types = ['single', 'album', 'compilation'];
   let appears = true;
   let released = [true];
+  
+  // if the user is the artist, return albums even if they aren't released
   if (user && String(user._id) === String(artistId)) {
     released = [true, false];
   }
+  // If groups are specified determine what to use, else use default options
   if (groups) {
     types = groups.filter(group => group !== 'appears_on');
     appears = groups.includes('appears_on');
   }
+  // find albums of groups specified by album_type
   let result = Album.find({
     'artists.0': artistId,
     album_type: types,
@@ -388,17 +394,26 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups, user) => {
     .select('-tracks -genres -release_date')
     .limit(limit)
     .skip(offset);
+  // count albums of groups specified by album_type
   let length = Album.countDocuments({
     'artists.0': artistId,
     album_type: types,
     released: released
   });
+
+  // await for both queries simultaneously
   [result, length] = await Promise.all([result, length]);
 
+  // if appears_on group is specified get albums that the requested artist
+  // appeared on but not their main artist.
   if (appears) {
     let appearsAlbums;
+    
+    // New limit & skip is the limit - albums by other groups
     if (limit - result.length !== 0) {
       let secondskip = offset - length > 0 ? offset - length : 0;
+      
+      // query appears_on albums
       appearsAlbums = Album.find({
         $and: [
           { artists: artistId, released: true },
@@ -410,23 +425,34 @@ exports.findArtistAlbums = async (artistId, limit, offset, groups, user) => {
         .select('-tracks -genres -release_date')
         .limit(limit - length)
         .skip(secondskip);
-    } else appearsAlbums = Promise.resolve([]);
+    } 
+    // if albums already reached the limit just resolve the promise
+    else appearsAlbums = Promise.resolve([]);
+    // Count appears on albums
     let appearslength = Album.countDocuments({
       $and: [
         { artists: artistId, released: true },
         { 'artists.0': { $ne: artistId } }
       ]
     });
+
+    // Wait for both simultaneously
     [appearsAlbums, appearslength] = await Promise.all([
       appearsAlbums,
       appearslength
     ]);
+
+    // update the group for each
     appearsAlbums.forEach(album => {
       album.album_group = 'appears_on';
     });
+
+    // concatenate arrays and sum the counts 
     length += appearslength;
     result = result.concat(appearsAlbums);
   }
+
+  // return final list and the total length
   return [result, length];
 };
 
@@ -494,14 +520,17 @@ exports.releaseAlbum = async (album, user) => {
 
   album.released = true;
   if (user.popularSongs.length < 5)
-    user.popularSongs = _.concat(user.popularSongs, _.slice(album.tracks, 0, 5));
+    user.popularSongs = _.concat(
+      user.popularSongs,
+      _.slice(album.tracks, 0, 5)
+    );
 
   let lengthObj = Album.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(album._id) } },
     { $project: { tracks: { $size: '$tracks' } } }
   ]);
 
-  [, ,album, lengthObj] = await Promise.all([
+  [, , album, lengthObj] = await Promise.all([
     album.save(),
     user.save(),
     album
