@@ -41,7 +41,153 @@ tags:
     description: Endpoints for genres
   - name: Notifications
     description: Endpoints for notifications
+  - name: Chat
+    description: Endpoints for Chatting
 paths:
+  /me/chat/:
+    get:
+      tags:
+      - Chat
+      summary: Get messages' threads
+      description: gets the messages' threads of the user in paging object sorted from most frequent modified to least
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: limit
+        in: query
+        description: maximum number of threads to return (maximum 50, default 20)
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: number of threads to skip from beginning to return (starts from zero)
+        schema:
+          type: integer
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          description: list of threads inside a paging object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Thread'
+                  limit: 
+                    type: integer
+                    description:  maximum number of threads to return as set in the query or by default
+                  offset:
+                    type: integer
+                    description: index of the first element in the array
+                  total:
+                    type: integer
+                    description: total number of documents available in the database
+  /me/chat/{id}:
+    get:
+      tags:
+      - Chat
+      summary: Get messages of a thread
+      description: gets a specific thread of the user with its messages wrapped in paging object sorted from most frequent one to least.
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the thread
+      - name: limit
+        in: query
+        description: maximum number of messages to return (maximum 50, default 20)
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: number of messages to skip from beginning to return (starts from zero)
+        schema:
+          type: integer
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          description: A thread with messages paging object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Messages'
+    post:
+      tags:
+      - Chat
+      summary: Send Message to a Thread
+      description: sends a message to a specific thread of the user.
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the recipient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: The contents of the message
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '201':
+          $ref: '#/components/responses/Created'
+  /me/{id}/{messageId}:
+    delete:
+      tags:
+      - Chat
+      summary: Delete Message From a Thread
+      description: Deletes a specific message from a thread
+      security:
+          - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the thread
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the message to be deleted
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '204':
+          $ref: '#/components/responses/NoContent'
   /me/notifications/:
     put:
       tags:
@@ -152,6 +298,38 @@ paths:
                   type: string
                   description: >-
                     The coupon code
+      responses:
+        '200':
+          description: the response body contains the user private object with current credit in JSON format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPrivate'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /me/premium/gift:
+    patch:
+      tags:
+        - Premium
+      summary: Subscribe or Resubscribe an user by spending The User's credit (Oud Coins)
+      description: >-
+        subscribe or resubscribe an user by spending The User's credit (Oud Coins) as a gift. Sends a confirmation email for the gifted user that informs him that he was gifted and his end date.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: >-
+                    The Gifted User ID.
       responses:
         '200':
           description: the response body contains the user private object with current credit in JSON format.
@@ -5166,7 +5344,117 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SmallArtist'
-            
+      
+    Thread:
+      type: object
+      description: Messages' Thread
+      properties:
+        _id:
+          type: string
+          description: Id of the thread
+        from:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the first user
+            displayName:
+              type: string
+        to:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the second user
+            displayName:
+              type: string
+        read:
+          type: boolean
+          description: shows if the recipient has read the message or not yet.
+        updatedAt:
+          type: string
+          description: the date at which the thread was updated/modified (i.e. a new message was added).
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: id of the message
+              author:
+                type: string
+                description: id of the author of the message
+              message:
+                type: string
+                description: the body of the message
+              sentAt:
+                type: string
+                description: the date when the message was sent.
+                
+    Messages:
+      type: object
+      description: Messages of a Thread
+      properties:
+        _id:
+          type: string
+          description: Id of the thread
+        from:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the first user
+            displayName:
+              type: string
+        to:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: Id of the second user
+            displayName:
+              type: string
+        read:
+          type: boolean
+          description: shows if the recipient has read the message or not yet.
+        updatedAt:
+          type: string
+          description: the date at which the thread was updated/modified (i.e. a new message was added).
+        createdAt:
+          type: string
+          description: the date at which the thread was created (i.e. when first message was sent).
+        messages:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: id of the message
+                  author:
+                    type: string
+                    description: id of the author of the message
+                  message:
+                    type: string
+                    description: the body of the message
+                  sentAt:
+                    type: string
+                    description: the date when the message was sent.
+            limit: 
+              type: integer
+              description:  maximum number of messages to return as set in the query or by default
+            offset:
+              type: integer
+              description: index of the first element in the array
+            total:
+              type: integer
+              description: total number of documents available in the database
+
+                      
           
     SmallPlaylist:
       type: object
@@ -5465,6 +5753,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    Created:
+      description: >-
+        Created - The request has been fulfilled and resulted in a new resource being created.
     InternalError:
       description: Internal Server Error.
       content:
