@@ -25,6 +25,7 @@ exports.findTracks = async (ids, user) => {
       populate: { path: 'artists', select: 'displayName images' }
     });
   let val;
+
   const tracks = ids.map(id => {
     val = result.find(track => String(track._id) === id);
     if (!val) return null;
