@@ -60,7 +60,7 @@
     "joi-country-extension": "^1.2.0",
     "joi-objectid": "^3.0.1",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lodash-move": "^1.1.1",
     "mockingoose": "^2.13.2",
     "moment": "^2.24.0",
